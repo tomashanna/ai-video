@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+#loader-bar {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #060606;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.3) 3px,
+    rgba(0,0,0,0.3) 4px
+  );
+  pointer-events: none;
+  z-index: 900;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 68% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+  z-index: 890;
+}
+
+.label {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 52px;
+  letter-spacing: 20px;
+  color: #d8d8d8;
+  text-shadow: 0 0 20px rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  opacity: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.track-wrap {
+  position: relative;
+  width: 840px;
+  height: 12px;
+  z-index: 1;
+  opacity: 0;
+}
+
+.track-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.fill-bar {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0%;
+  height: 100%;
+  background: #f0f0f0;
+  box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+/* Leading edge glow */
+.glow-lead {
+  position: absolute;
+  top: -16px;
+  left: 0%;
+  width: 32px;
+  height: 44px;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.pct-val {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: rgba(200,200,200,0.6);
+  opacity: 0;
+  position: relative;
+  z-index: 1;
+  margin-top: -24px;
+  align-self: flex-end;
+  margin-right: calc((1080px - 840px) / 2);
+}
+
+/* Horizontal static bar that flickers */
+.static-bar {
+  position: absolute;
+  left: 0; right: 0;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 800;
+}
+#sb1 { top: 380px; }
+#sb2 { top: 1540px; }
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 850;
+}
+</style>
+</head>
+<body>
+<div id="loader-bar" data-composition-id="loader-bar" data-width="1080" data-height="1920" data-start="0">
+  <div class="vignette"></div>
+  <div class="static-bar" id="sb1"></div>
+  <div class="static-bar" id="sb2"></div>
+
+  <div class="label" id="label">LOADING</div>
+
+  <div class="track-wrap" id="track-wrap">
+    <div class="track-bg"></div>
+    <div class="fill-bar" id="fill-bar"></div>
+    <div class="glow-lead" id="glow-lead"></div>
+  </div>
+
+  <div class="pct-val" id="pct-val">0%</div>
+
+  <div class="flash" id="flash"></div>
+  <div class="scanlines"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// Flicker
+tl.to("#loader-bar", { opacity: 0.85, duration: 0.04, ease: "none" }, 0.5);
+tl.to("#loader-bar", { opacity: 1,    duration: 0.04, ease: "none" }, 0.54);
+tl.to("#loader-bar", { opacity: 0.9,  duration: 0.03, ease: "none" }, 1.9);
+tl.to("#loader-bar", { opacity: 1,    duration: 0.04, ease: "none" }, 1.93);
+
+// Static bars
+tl.to("#sb1", { opacity: 1, duration: 0.04, ease: "none" }, 0.65);
+tl.to("#sb1", { opacity: 0, duration: 0.08, ease: "none", overwrite: "auto" }, 0.69);
+tl.to("#sb2", { opacity: 0.6, duration: 0.04, ease: "none" }, 2.1);
+tl.to("#sb2", { opacity: 0,   duration: 0.06, ease: "none" }, 2.14);
+
+// Entrance
+tl.fromTo("#label",     { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, ease: "power3.out" }, 0.15);
+tl.fromTo("#track-wrap",{ scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.42, ease: "power3.out" }, 0.3);
+tl.fromTo("#pct-val",   { opacity: 0 }, { opacity: 1, duration: 0.28, ease: "power2.out" }, 0.5);
+
+// Progress
+const pctState = { val: 0 };
+const pctEl = document.getElementById("pct-val");
+tl.to(pctState, {
+  val: 100,
+  duration: 2.4,
+  ease: "power1.inOut",
+  onUpdate: function() { pctEl.textContent = Math.round(pctState.val) + '%'; }
+}, 0.52);
+tl.to("#fill-bar",  { width: "100%", duration: 2.4, ease: "power1.inOut" }, 0.52);
+tl.set("#glow-lead", { xPercent: -50 }, 0.52);
+tl.to("#glow-lead", { left: "100%",  duration: 2.4, ease: "power1.inOut" }, 0.52);
+
+// Fill complete — fade everything out cleanly
+tl.to(["#label", "#pct-val", "#track-wrap"], { opacity: 0, duration: 0.5, ease: "power2.in" }, 3.0);
+
+window.__timelines["loader-bar"] = tl;
+</script>
+</body>
+</html>

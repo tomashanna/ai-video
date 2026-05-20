@@ -1,0 +1,27 @@
+# Python virtual environments
+.venv/
+.venv-*/
+
+# Renders (large video outputs)
+renders/
+
+# macOS
+.DS_Store
+
+# Large archives
+*.zip
+
+# Old video project folders (kept locally, not in repo)
+bosque-abandonado/
+cabana-tormenta/
+cabina-14/
+calabozo-catacumbas/
+cinema-abandonado/
+elige-companero/
+isla-faro/
+maikol-crucero/
+matadero-banquete/
+mina-abandonada/
+pueblo-fantasma-desierto/
+videosref_elige_tu_compa/
+Videos referencia/

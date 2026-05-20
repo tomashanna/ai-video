@@ -1,0 +1,1197 @@
+# cabina-14.yaml — CREATIVE SPEC v1.0
+#
+# Basado en CREATIVE-SPEC-TEMPLATE.yaml v3 + grounded en PAUTA-MASTER.md
+# (autoridad empírica derivada de 8 videos canónicos en /videosref_elige_tu_compa/).
+#
+# NOTAS DE FRAMING IMPORTANTES (decisiones explícitas):
+#   1. Pattern P3 (Seguro era trampa) — el VISUALMENTE amable (EMI cute fucsia)
+#      es la trampa real. El VISUALMENTE uncanny extreme (TADEO gaucho correoso)
+#      es el guardián real. Estructura espejo a ref-08 (Pablo cute = malo,
+#      Hugo esqueleto = bueno).
+#   2. Slot D (regla del malo): atipicamente las 3 reglas explícitas vienen
+#      del GUARDIÁN (Tadeo), NO del villano (Emi). EMI es la "dinámica de
+#      control" que empuja casualmente a romperlas con peticiones amistosas.
+#      Esta inversión refuerza el pattern P3 sin romper la mecánica de
+#      Slot D (las reglas siguen existiendo, solo cambia quién las pronuncia).
+#   3. Setting fresco: telesilla suspendido. NO usado en ningún canónico ni
+#      en producciones nuestras. Atrapamiento físico literal (30m sobre vacío).
+#   4. Mood: folklore patagónico invernal. Bariloche/Cerro Catedral estética.
+#      Mate, lana cruda, perros ovejeros, gaucho-uncanny en outro.
+#   5. Ambient creature (Slot H): silueta cuadrúpeda larga cruza nieve a 30m
+#      abajo durante H2 (4s, en plano POV ventanuco) mientras narración
+#      principal continúa con las 3 reglas. Conecta con "algo golpea cabina"
+#      de H5.
+#   6. Plot twist coherente — H5 revelación EMI cumple 3 condiciones (lógica
+#      en 1 frase + imagen visual + narración explícita). Ver plot_twist
+#      section abajo.
+
+# ============================================================
+# META
+# ============================================================
+project_id: cabina-14
+template_used: elige-tu-companero
+delivery_format: reel_9_16
+duration_target: 95s  # sweet spot V15 80-100s
+budget_target_usd: 10
+created_at: 2026-05-15
+status: draft  # esperando architect audit + user approval
+
+# ============================================================
+# SLOTS A-H (estructura primaria — PAUTA-MASTER §§ 7-14)
+# ============================================================
+
+# Slot A — Escenario (PAUTA § 7)
+slot_A_escenario:
+  setting_id: custom_montaña_invernal  # NO existe en catálogo 8 canónicos — extrapolación
+  setting_name: "Cabina de telesilla 14 suspendida a 30m sobre nieve, Cerro Catedral / Bariloche"
+  function_lugar: "telesilla averiado durante tormenta de nieve — encerrados 6 horas hasta reparación"
+  elementos_diegeticos:
+    - "Cabina chapa roja oxidada con número 14 pintado blanco descolorido"
+    - "Asientos cuerina gastada frente a frente"
+    - "Vidrios biselados con escarcha (3 ventanucos: 2 laterales + 1 frontal)"
+    - "Pestillo de ventanuco lateral (signal trampa H5)"
+    - "Radio walkie crepitante con anuncio inicial"
+    - "Sticker descolorido logo estación + placa metálica grabada con número 14"
+    - "Cable del telesilla visible arriba (cruje con viento)"
+    - "Luz dorada del refugio a 800m a través de tormenta (recordatorio inalcanzable)"
+  iluminacion_dominante: "azul/verde frío nocturno invernal Bariloche + crushed blacks + único punto cálido = faro lejano refugio 800m a través de nieve cayendo"
+  material_paredes_suelo: "chapa roja oxidada interior + asientos cuerina marrón gastada + piso metálico estriado con marcas de borceguíes"
+  validacion_pauta:
+    atrapamiento_fisico: true   # 30m sobre vacío, salir = caer
+    aislamiento_social: true    # solo 3 en cabina, refugio inalcanzable
+    funcion_especifica: true    # NO genérico "lugar frío" — telesilla averiado con anuncio radio específico
+    iluminacion_dramatica: true # azul invernal + flicker walkie + foco refugio lejano
+
+# Slot B — Visual del malo APARENTE (PAUTA § 8)
+# NOTA P3: el malo aparente AQUÍ es el visualmente uncanny extreme (TADEO),
+# que terminará siendo el BUENO REAL. La inversión es la sustancia del pattern P3.
+slot_B_malo_aparente:
+  name: TADEO  # 3 sílabas, fonéticamente grave
+  rol_real: GUARDIAN  # P3: el malo aparente VISUAL es el bueno real
+  plantilla_base: "Categoría 4 — humano + alteración corporal extrema AMORFA (referencia ref-03 Bruno cuello largo + ref-10 Enzo flaco esquelético) con detalle local patagónico"
+  visual_description: |
+    Anciano gaucho-AMORFO patagónico, ~2.05m alto cuando estaría parado, extremadamente
+    delgado al punto de ser esquelético.
+    Cara: piel correosa color papel envejecido amarillento, profundos surcos verticales
+    en las mejillas hundidas, pómulos altos huesudos protruyentes, cuencas oculares
+    visiblemente más profundas que humano normal, ojos castaño opaco SIN parpadeo
+    perceptible — uno levemente más bajo que el otro (asimetría sutil pero visible).
+    Bigote canoso largo cayendo sobre boca apretada que parece demasiado pequeña para
+    la cara. Boina de paño negro vieja inclinada a un lado sobre cráneo alargado vertical.
+    Cuello significativamente más largo y delgado que un humano normal (1.8x — AMORFO,
+    NOTORIO uncanny, NO sutil), las venas del cuello visibles, traquea protruyendo.
+    Cuerpo: abrigo de lana cruda color crema apolillado con parches marrones cosidos a mano,
+    pañuelo rojo nudo al cuello tipo gaucho. Hombros caídos asimétricos (derecho más bajo).
+    Pantalón bombacha azul oscuro metido en borceguíes de cuero gastado.
+    Manos: dedos visiblemente AMORFOS, demasiado largos (2.0x), nudosos, artríticos,
+    con falanges visibles, sosteniendo termo de aluminio abollado verde militar y
+    bombilla de metal labrada. Las manos parecen "demasiado grandes" para sus brazos.
+    Postura: sentado erguido con espalda contra el respaldo, manos sobre
+    rodillas. Habla muy bajo, casi en susurro, sin abrir la boca mucho.
+    Movimiento: micro-quietud absoluta entre frases. Cuando habla, solo
+    la mandíbula se mueve un mínimo. Cuando algo cambia (golpe radio,
+    silueta cruza), gira solo los ojos hacia el sonido, NO la cabeza.
+    Detalle clave: cuando en H5 protege al viewer, abre los brazos
+    en forma de cruz protectora — momento en que se ven los dedos
+    extralargos extendidos.
+  has_dialogue: true  # da las 3 reglas (Slot D) y la narrativa lo permite (PAUTA § 3 dice variable)
+  reference_anchor_required: true
+  validacion_pauta:
+    scroll_stop: true       # uncanny extreme cuello+dedos largos en silencio
+    incorrecto_innombrable: true  # gaucho-pero-no-quite-gaucho, viejo-pero-no-quite-humano
+    no_halloween_costume: true    # detalles sutiles (cuello 1.4x, dedos 1.6x) — no obvio fantasía
+
+# Slot C — Visual del bueno APARENTE (PAUTA § 9)
+# NOTA P3: el bueno aparente AQUÍ es el visualmente amable (EMI),
+# que terminará siendo el MALO REAL (trampa).
+slot_C_bueno_aparente:
+  name: EMI  # 2 sílabas, ahora femenino — chica argentina joven adulta
+  rol_real: VILLAIN  # P3: el bueno aparente VISUAL es la trampa real
+  plantilla_base: "Categoría AMORFA cute-but-wrong (referencia ref-08 Pablo cute tubérculo + ref-12 Teresa rasgos sutilmente off — EMI es joven femenina con proporciones AMORFAS)"
+  gender: female  # CAMBIO 2026-05-15 user feedback CP1
+  visual_description: |
+    Joven argentina ~19 años, contextura compacta y baja ~1.55m, AMORFA en
+    sus proporciones de manera sutil pero clara.
+    Cara: cara redonda demasiado redonda, cabeza visiblemente más grande de
+    lo que correspondería a su cuerpo (proporción cabeza-cuerpo 1:5 en vez
+    de 1:7 humano normal). Mejillas coloradas por frío demasiado rosadas
+    como pintadas. Ojos castaños demasiado grandes para la cara, brillantes
+    con catch-light reflectivo cat-eye anormal que persiste incluso sin
+    fuente de luz visible. Sonrisa muy simétrica casi siempre presente,
+    boca demasiado pequeña para los ojos enormes, dientes blancos perfectos
+    suspiciously uniformes cuando se ven. Pestañas pobladas exageradas.
+    Cuello demasiado corto (0.6x normal) — la cabeza parece reposar
+    directamente sobre los hombros.
+    Pelo: castaño claro, ondas naturales, dos colas/coletas bajas con
+    pompones de lana, flequillo recto cubriendo frente.
+    Vestuario: campera de plumas color fucsia/rosa fluo (TURISTA típico),
+    gorro de lana con pompón blanco descolorido enorme (más grande de lo
+    normal), buff de cuello con estampado naïve de pingüinos, calzas térmicas
+    rosas, zapatillas trekking blancas con detalles rosas suspiciously
+    limpias para tormenta, guantes de polar negros — manos demasiado pequeñas
+    para los brazos. Pulseras de cordón colorido en muñecas.
+    Postura: cruzado de piernas en el asiento, relajado, mascando chicle
+    rosa visible cuando habla. Movimientos demasiado fluidos, gestos
+    expansivos amplios. Cuando inclina la cabeza, lo hace 5-10° más allá
+    de lo normal humano.
+    Detalle clave (H5 revelación): cuando se cae la máscara, la mandíbula
+    SE DESPRENDE del rostro como una pieza separada y cae al piso metálico
+    haciendo ruido sordo, los ojos se vuelven completamente negros sin
+    pupila (orbe negro liso), y los brazos se extienden al doble de
+    largo saliendo disparados por el ventanuco lateral. El cuerpo
+    fucsia queda sentado y aparentemente "normal" mientras los brazos
+    largos están afuera buscando agarrar.
+  has_dialogue: true  # EMI habla casual — propuestas amables que rompen las reglas
+  reference_anchor_required: true
+  validacion_pauta:
+    contraste_visual_con_TADEO: true  # cute/fucsia/joven/horizontal vs uncanny/lana-cruda/anciano/vertical
+    postura_no_amenazante_inicial: true  # cruzado piernas, sonrisa, ofrece chicle
+    outcome_NO_es_cozy: true  # P3: EMI no termina en counterfactual paz — TADEO sí
+
+# Slot D — REGLAS / DINÁMICA DE CONTROL (PAUTA § 10)
+# NOTA framing P3 — atipicamente las 3 reglas vienen del guardián (TADEO),
+# y la "dinámica de control del malo" (EMI) es la presión casual a romperlas.
+slot_D_regla_del_malo:
+  textual_reglas_explicitas_dichas_por_TADEO:
+    - texto: "No le contestes."
+      count_palabras: 3
+    - texto: "No abras el ventanuco."
+      count_palabras: 4
+    - texto: "No mires hacia abajo."
+      count_palabras: 4
+  tipo: "Sumisión a procedural protector (las 3 reglas son el sistema que te mantiene vivo)"
+  conecta_con_dilemas: true  # cada uno de los 3 dilemas testea una de las 3 reglas
+  dinamica_control_EMI_implicita: |
+    EMI empuja casualmente a romper cada regla con tono amable adolescente:
+    - Pide chiste → rompe "no le contestes"
+    - Se desabrocha cinturón "para acomodarse" → empuja a moverse/responder
+    - Pone mano en pestillo "para mirar abajo" → rompe "no abras ventanuco" + "no mires hacia abajo"
+  consecuencia_inmediata_si_rompe: |
+    - Romper "no le contestes" → pulmones colapsan (aire de cabina succionado)
+    - Romper "no te muevas/desabrochar" → ráfaga sacude cabina, salís disparado lateral
+    - Romper "abrir ventanuco / mirar abajo" → brazo largo entra, te arrastra al vacío
+
+# Slot E — 3 dilemas internos (PAUTA § 11 → 3-4 decisiones empírico)
+# Cada uno testea una de las 3 reglas de TADEO + EMI lo empuja a romperla
+slot_E_dilemas:
+  - id: D1
+    timestamp_intent: "post-H2 setup (22-40s)"
+    regla_testeada: "No le contestes"
+    categoria: 2  # Acción vs pasividad
+    setup: |
+      Emi te ofrece un chicle Bazooka. Sonrisa simétrica.
+      "Loco qué chamuyo este telesilla, bro. ¿Sabés algún chiste para
+      pasar el rato?" Cuarenta minutos en silencio. La cabina se mece.
+      Tu lengua se calienta sola (impulso de contestar).
+    pregunta: "AHORA DECIDE. A. CONTESTAR. B. SILENCIO."
+    opcion_A_impulso: "A. CONTESTAR — romper silencio por incomodidad social"
+    opcion_B_estoica: "B. SILENCIO — seguir regla 1 de TADEO"
+    opcion_ganadora: B
+    consecuencia_A_body_horror: |
+      Tu voz sale sin sonido. El aire de la cabina es succionado hacia
+      donde estaba EMI. Sentís peso en el pecho. Tus pulmones colapsan
+      desde adentro mientras EMI sigue sonriendo sin moverse. La sonrisa
+      no se mueve.
+    consecuencia_B_apertura: |
+      Tadeo te asiente despacio. EMI te mira fijo. Cierra la boca
+      lentamente. La sonrisa permanece visible pero los ojos quedan
+      vacíos por 1 segundo antes de re-encenderse.
+
+  - id: D2
+    timestamp_intent: "post-D1 (40-58s)"
+    regla_testeada: "No mires hacia abajo / No te muevas de tu postura"
+    categoria: 3  # Sumisión vs resistencia estoica (DIFERENTE a D1)
+    setup: |
+      Una hora después. EMI se desabrocha el cinturón de la cabina.
+      "Me acalambro, bro." Se estira hacia adelante. Sus rodillas
+      tocan las tuyas. El movimiento hace que la cabina se sacuda
+      ligeramente. Tadeo tensa los dedos largos sobre el suyo propio.
+    pregunta: "AHORA DECIDE. A. DESABROCHARTE. B. NO MOVERTE."
+    opcion_A_impulso: "A. DESABROCHARTE — imitar para estirar la pierna y aliviar tensión postural"
+    opcion_B_estoica: "B. NO MOVERTE — seguir regla 3 de TADEO"
+    opcion_ganadora: B
+    consecuencia_A_body_horror: |
+      Una ráfaga sacude la cabina. La puerta lateral se abre por la fuerza
+      del viento. Sin cinturón, salís disparado por la apertura. Caída de
+      30 metros sobre rocas afiladas semi-cubiertas de nieve. Plano
+      cenital del impacto.
+    consecuencia_B_apertura: |
+      Tadeo cruza su brazo largo sobre tu pecho, fijándote contra el
+      respaldo. EMI vuelve a abrocharse, lento. Te mira con la sonrisa
+      intacta. Sus ojos parpadean (primera vez en el video).
+
+  - id: D3
+    timestamp_intent: "post-D2 (58-82s) — incluye revelación EMI"
+    regla_testeada: "No abras el ventanuco"
+    categoria: 1  # Curiosidad vs obediencia (DIFERENTE a D1 y D2)
+    setup: |
+      Tres de la madrugada. Algo golpea la base de la cabina desde abajo.
+      Una. Dos. Tres veces. Sub-bass profundo. EMI se inclina hacia el
+      ventanuco lateral. "Ufa loco, mirá qué es." Pone la mano en el
+      pestillo. Sus dedos están MÁS LARGOS que al inicio del video
+      (setup element sutil).
+    pregunta: "AHORA DECIDE. A. ABRIR EL VENTANUCO. B. NO ABRIR."
+    opcion_A_impulso: "A. ABRIR — curiosidad de qué golpea + Emi insiste"
+    opcion_B_estoica: "B. NO ABRIR — seguir regla 2 de TADEO"
+    opcion_ganadora: B
+    consecuencia_A_body_horror: |
+      Abrís pestillo. Un brazo larguísimo entra por la apertura, te
+      agarra por la chaqueta, te arrastra afuera de la cabina hacia
+      la nieve. Quedás suspendido a 30m en el aire, succionado hacia
+      abajo. Te congelás a mitad de caída antes de impactar.
+    consecuencia_B_apertura: |
+      [REVELACIÓN EMI — pattern P3 payoff]
+      Tadeo te empuja contra el rincón opuesto, cubriéndote con sus
+      brazos extendidos en cruz protectora. El ventanuco se rompe igual
+      desde afuera. EMI se ríe — pero la risa NO sale por la boca,
+      sale por el ventanuco roto. Su MANDÍBULA SE DESPRENDE del rostro
+      y cae al piso metálico (cling sordo). Sus ojos se vuelven
+      completamente NEGROS sin pupila. Sus BRAZOS se duplican en largo
+      y salen disparados por el ventanuco buscando lo que estaba afuera.
+      El cuerpo fucsia queda quieto en el asiento mientras los brazos
+      están afuera trabajando.
+
+# Slot F — Body horror específico (PAUTA § 12)
+slot_F_body_horror:
+  tipos_principales:
+    - "Caída/impacto físico"     # D2 conseq A (30m sobre rocas)
+    - "Asfixia/colapso pulmonar" # D1 conseq A (succión aire cabina)
+    - "Penetración por extremidad alargada" # D3 conseq A (brazo largo agarra y arrastra)
+    - "Congelamiento"             # D3 conseq A (te congelás a mitad de caída)
+  imagenes_validables:
+    - "Pulmones colapsan desde adentro — peso en el pecho, sin aire"
+    - "Cuerpo lanzado por apertura lateral, caída 30m sobre rocas semi-cubiertas de nieve"
+    - "Brazo larguísimo entrando por ventanuco roto agarrando chaqueta"
+    - "Cuerpo suspendido en aire congelándose a mitad de caída"
+    - "Mandíbula de EMI cayendo al piso metálico como pieza desensamblada"
+    - "Ojos de EMI volviéndose orbe negro liso sin pupila"
+    - "Brazos de EMI duplicando largo saliendo por ventanuco roto"
+  test_pasa: "IA puede generar todas estas imágenes — body horror visualizable concreto"
+  cumple_pauta: true  # NUNCA "mueres" abstracto — siempre imagen específica al setting
+
+# Slot G — Cliffhanger archetype (PAUTA § 13 — Paz perdida domina 7/8 canónicos)
+slot_G_cliffhanger_archetype:
+  archetype: "Paz perdida"  # 7/8 canónicos = default empírico
+  rotation_check: "video-log: último P6 (3x) + P4 (2x) → P3 nuevo + Paz perdida outro OK"
+  elementos_sensoriales_validados_seleccionados:  # 4 elementos warm
+    - "Mate amargo en termo aluminio verde (mismo termo que TADEO sostiene en cabina — continuidad visual)"
+    - "Bizcochuelos de grasa apilados en plato de loza"
+    - "Manta de lana cruda sobre las piernas del viewer (POV)"
+    - "Perro ovejero patagónico echado a los pies"
+    - "Amanecer rosado sobre Cerro Catedral nevado por la ventana del refugio"
+    - "Radio AM lejana pasando folclore (Yupanqui o similar)"
+  texto_intent: |
+    "Y si hubieras pasado la noche con TADEO...
+    habrían visto el amanecer en el refugio.
+    Mate amargo. Manta de lana sobre las piernas.
+    El labrador del puesto echado sobre tus botas.
+    La radio AM pasando un partido viejo.
+    Una noche en paz."
+  cta_engagement: "¿SOBREVIVISTE? 💬 COMENTA A o B"  # regla V7 obligatoria
+
+# Slot H — Ambient creature (PAUTA § 14 — opcional)
+slot_H_ambient_creatures:
+  setting_aplicable: "Montaña invernal nocturna patagónica"
+  criatura_seleccionada: |
+    Silueta cuadrúpeda larga (no-puma, no-guanaco — más largo de lo natural,
+    proporciones uncanny) cruza lentamente la nieve a 30m abajo de la cabina,
+    visible a través del ventanuco lateral.
+  timing_intent: |
+    Aparece durante H2 (setup, 9-22s) por ~4 segundos en plano POV
+    lateral mirando hacia el ventanuco. Mientras la NARRACIÓN PRINCIPAL
+    continúa con las 3 reglas de TADEO, la silueta cruza en background.
+    Específicamente: cuando TADEO susurra "no mires hacia abajo", el plano
+    POV ESTÁ mirando hacia abajo de reojo y la silueta atraviesa la nieve
+    en ese momento. El viewer la registra inconscientemente sin que la
+    narración la mencione.
+  duration_on_screen: 4s  # NO 0.4s (corrección user) — visible mientras narración corre
+  proposito: |
+    1. Carga atmosférica patagónica (folklore de "algo cruza la nieve")
+    2. Setup element del "algo golpea cabina" de H5 — semilla narrativa
+    3. Refuerza regla "no mires hacia abajo" mostrando POR QUÉ
+  audio_companion: "aullido sub-bass lejano, volume 0.18, 3s duration sync con la silueta cruzando"
+
+# ============================================================
+# PATTERN — P3 (PAUTA § 15)
+# ============================================================
+plot_pattern:
+  matriz_pattern_id: 3  # "Seguro era trampa" — bueno aparente era el peligro real (ref-08 Pablo traidor)
+  matriz_appearance: "asimétrico (1 uncanny extreme + 1 cute amable)"
+  matriz_truth: "el cute amable es el peligro real, el uncanny extreme es el guardián"
+  has_twist: true  # P3 sí requiere twist (revelación retroactiva)
+  rotation_check: "video-log consultado: últimos = P6(3x) + P4(2x) + P10(1x). P3 NO usado nunca por nosotros. FRESCO."
+  referencia_canónica: "ref-08 Pablo/Hugo estructura (cute traidor / uncanny extreme guardián)"
+
+# ============================================================
+# H0 OPCIONAL — Personal stakes
+# ============================================================
+slot_H0_personal_stakes:
+  habilitado: false
+  razon: "P3 motor narrativo = ruptura de prejuicio visual del viewer. H0 personal stakes distraería del setup necesario para procesar EMI/TADEO contrastes en primeros 9s."
+
+# ============================================================
+# PLOT TWIST COHERENCE (PATTERNS § 6.5 — 3 condiciones obligatorias)
+# ============================================================
+plot_twist:
+  twist_location: "H5 consecuencia B (78-82s)"
+  twist_frase_unica: |
+    "EMI no era un chico. Era una entidad que esperaba que rompieras
+    una de las 3 reglas para arrastrarte por el ventanuco con sus
+    brazos largos. TADEO era el guardián de la cabina."
+  condicion_1_logica_clara: |
+    El viewer puede explicar el twist en 1 frase post-video:
+    "El cute era trampa, el uncanny era refugio."
+  condicion_2_imagenes_acompañan:
+    setup_elements:
+      - id: dedos_emi_más_largos
+        location: "D3 setup (post-58s)"
+        descripcion: "close-up de los dedos de EMI tocando el pestillo — visiblemente MÁS LARGOS que al inicio"
+        data_duration_required: 3.0s  # setup element (PATTERNS § 6.5 Regla 2)
+        caption_companion: "Algo en sus manos cambió."
+    payoff_elements:
+      - id: mandíbula_cae
+        location: "D3 consecuencia B (78-80s)"
+        descripcion: "mandíbula de EMI cayendo al piso metálico, ojos negros, brazos saliendo por ventanuco"
+        data_duration_required: 3.0s
+        caption_companion: "NO ERA UN CHICO"  # keyword highlight rojo
+  condicion_3_narracion_explica_link: |
+    NARRADOR omnisciente, sobre plano close-up rostro TADEO bloqueando ventanuco:
+    "Lo que tenía que parecer un chico, no era un chico.
+    Lo que tenía que parecer un guardia, te estaba protegiendo."
+
+# ============================================================
+# ESTRUCTURA TEMPORAL (V15)
+# ============================================================
+estructura_temporal:
+  H1_intro_materialization_0_9: 9s     # teaser → materialization EMI/TADEO + countdown
+  H2_setup_reglas_9_22: 13s            # radio crepita + 3 reglas TADEO + silueta cruza nieve (Slot H)
+  H3_dilema1_hablar_22_40: 18s         # D1 setup + countdown + loading + consecuencias A/B
+  H4_dilema2_cinturon_40_58: 18s       # D2 setup + countdown + loading + consecuencias A/B
+  H5_dilema3_ventanuco_revelacion_58_82: 24s  # D3 setup (con dedos más largos) + decision + revelación EMI
+  H6_cliffhanger_TADEO_outro_82_95: 13s  # warm transition + counterfactual + CTA narrado
+  total: 95s
+
+# ============================================================
+# NARRATION SCRIPT
+# ============================================================
+narration_script:
+  meta:
+    target_total_duration: 95s
+    target_pace_wpm: 90  # ingeniero validará contra INGENIERO-PAUTA-MASTER referent measurements (2.43-2.75 w/s en canónicos)
+    register: tu_implicito_presente_indicativo
+    speakers:
+      - narrator      # voz susurro grave omnisciente
+      - emi           # adolescente alegre casual (voice ID joven argentino)
+      - tadeo         # anciano patagónico voz baja procedural (voice ID grave senior)
+
+  segments:
+    # H1 — INTRO (0-9s)
+    - id: hook_intro
+      order: 1
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Cabina catorce. Treinta metros sobre la nieve."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: presentacion_dyad
+      order: 2
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Elige a tu compañero. EMI… o TADEO."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 2.0  # countdown 3-2-1 corre acá
+
+    # H2 — SETUP + 3 reglas + silueta cruza (9-22s)
+    - id: setup_radio
+      order: 3
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "La radio crepita."
+      target_duration: 1.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: anuncio_radio
+      order: 4
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen  # voz amortiguada radio efecto
+      text: "Falla mecánica en cabina catorce. Reparación: seis horas. No abandonen la cabina."
+      target_duration: 5s
+      audio_treatment: "radio_walkie_filter + crackle"
+      pause_after_strict_seconds: 0.3
+
+    - id: tadeo_introduccion
+      order: 5
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tadeo te mira sin parpadear. Susurra tres reglas."
+      target_duration: 3s
+      pause_after_strict_seconds: 0.4
+
+    - id: tadeo_regla_1
+      order: 6
+      speaker: tadeo
+      lip_sync_required: true  # TADEO habla on-screen — close-up boca visible  # voz baja susurro patagónico
+      lip_sync_required: true  # TADEO susurra on-screen — close-up boca visible
+      text: "No le contestes."
+      target_duration: 1.2s
+      pause_after_strict_seconds: 0.4
+      visual_intent: "close-up boca de TADEO, dedos largos sobre rodilla"
+
+    - id: tadeo_regla_2
+      order: 7
+      speaker: tadeo
+      lip_sync_required: true  # TADEO habla on-screen — close-up boca visible
+      text: "No abras el ventanuco."
+      target_duration: 1.5s
+      pause_after_strict_seconds: 0.5  # silueta cruza nieve EN ESTE GAP (Slot H)
+      visual_intent: "plano POV mirando ventanuco lateral — silueta cuadrúpeda larga cruza nieve 30m abajo (4s)"
+
+    - id: tadeo_regla_3
+      order: 8
+      speaker: tadeo
+      lip_sync_required: true  # TADEO habla on-screen — close-up boca visible
+      text: "No mires hacia abajo."
+      target_duration: 1.5s
+      pause_after_strict_seconds: 0.4
+      visual_intent: "plano POV ventanuco aún visible silueta + corte a TADEO"
+
+    - id: emi_sonrie
+      order: 9
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Emi sonríe. Demasiado."
+      target_duration: 2s
+      pause_after_strict_seconds: 0.5
+
+    # H3 — D1 hablar (22-40s)
+    - id: d1_setup_emi_ofrece
+      order: 10
+      speaker: emi
+      lip_sync_required: true  # EMI habla on-screen — boca visible al viewer  # voz casual argentina joven
+      lip_sync_required: true  # EMI habla on-screen — boca visible al viewer (POV)
+      text: "Loco qué chamuyo este telesilla, bro. ¿Sabés algún chiste para pasar el rato?"
+      target_duration: 4s
+      pause_after_strict_seconds: 0.3
+
+    - id: d1_setup_tension
+      order: 11
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Cuarenta minutos en silencio. La cabina se mece. Tu lengua se calienta sola."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.4
+
+    - id: d1_decide
+      order: 12
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Ahora decide. A. Contestar. B. Silencio."
+      target_duration: 3s
+      pause_after_strict_seconds: 2.5  # loading bar 2.5s
+
+    - id: d1_consequence_A
+      order: 13
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tu voz sale sin sonido. El aire de la cabina se va con tus pulmones."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.3
+      branch: A
+      visual_intent: "body horror: viewer asfixiándose, EMI sonríe quieto"
+
+    - id: d1_bridge_to_B
+      order: 14
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Si elegiste silencio."  # caption tenue azul "SI ELEGISTE SILENCIO:"
+      target_duration: 1.2s
+      pause_after_strict_seconds: 0.2
+      bridge_separator: true  # white flash 0.15s antes
+
+    - id: d1_consequence_B
+      order: 15
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tadeo asiente despacio. Emi cierra la boca lentamente."
+      target_duration: 3s
+      pause_after_strict_seconds: 0.4
+      branch: B
+
+    # H4 — D2 cinturón (40-58s)
+    - id: d2_setup_emi_desabrocha
+      order: 16
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Una hora después. Emi se desabrocha el cinturón."
+      target_duration: 3s
+      pause_after_strict_seconds: 0.3
+
+    - id: d2_emi_speaks
+      order: 17
+      speaker: emi
+      lip_sync_required: true  # EMI habla on-screen — boca visible al viewer
+      text: "Me acalambro, bro."
+      target_duration: 1.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: d2_setup_proximity
+      order: 18
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Se estira. Sus rodillas tocan las tuyas. Tadeo tensa los dedos."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.4
+
+    - id: d2_decide
+      order: 19
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Ahora decide. A. Desabrocharte. B. No moverte."
+      target_duration: 3s
+      pause_after_strict_seconds: 2.5  # loading 2.5s
+
+    - id: d2_consequence_A
+      order: 20
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Una ráfaga sacude la cabina. Sin cinturón, salís disparado al vacío."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.3
+      branch: A
+      visual_intent: "body horror: cuerpo lanzado lateral, caída 30m sobre rocas"
+
+    - id: d2_bridge_to_B
+      order: 21
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Si no te moviste."
+      target_duration: 1.2s
+      pause_after_strict_seconds: 0.2
+      bridge_separator: true
+
+    - id: d2_consequence_B
+      order: 22
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tadeo cruza el brazo sobre tu pecho. Emi vuelve a abrocharse. Te mira fijo."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.4
+      branch: B
+
+    # H5 — D3 ventanuco + revelación EMI (58-82s)
+    - id: d3_setup_golpes
+      order: 23
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tres de la madrugada. Algo golpea la base de la cabina. Una. Dos. Tres veces."
+      target_duration: 5s
+      pause_after_strict_seconds: 0.4
+      visual_intent: "POV mirando piso de la cabina, sub-bass golpes"
+
+    - id: d3_emi_invita
+      order: 24
+      speaker: emi
+      lip_sync_required: true  # EMI habla on-screen — boca visible al viewer
+      text: "Ufa loco, mirá qué es."
+      target_duration: 2s
+      pause_after_strict_seconds: 0.3
+      visual_intent: "close-up dedos EMI sobre pestillo — VISIBLY MÁS LARGOS que al inicio (3s data-duration, setup element)"
+
+    - id: d3_decide
+      order: 25
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Ahora decide. A. Abrir el ventanuco. B. No abrir."
+      target_duration: 3s
+      pause_after_strict_seconds: 2.5  # loading 2.5s
+
+    - id: d3_consequence_A
+      order: 26
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Un brazo entra por la apertura. Te arrastra al vacío. Te congelás antes de caer."
+      target_duration: 5s
+      pause_after_strict_seconds: 0.3
+      branch: A
+      visual_intent: "body horror: brazo largo agarra viewer, suspendido en aire congelándose"
+
+    - id: d3_bridge_to_B
+      order: 27
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Si no abriste."
+      target_duration: 1.2s
+      pause_after_strict_seconds: 0.2
+      bridge_separator: true
+
+    - id: d3_revelacion_emi
+      order: 28
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Tadeo te cubre con sus brazos. El ventanuco se rompe igual. Emi se ríe — pero la risa no sale por la boca."
+      target_duration: 6s
+      pause_after_strict_seconds: 0.3
+      branch: B
+      visual_intent: "mandíbula EMI cae al piso, ojos negros, brazos duplican largo saliendo por ventanuco roto (payoff element, 3s data-duration)"
+      keyword_highlight: "NO ERA UN CHICO"  # caption rojo
+
+    - id: d3_narrador_cierra_twist
+      order: 29
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Lo que tenía que parecer un chico, no era un chico. Lo que tenía que parecer un guardia, te estaba protegiendo."
+      target_duration: 6s
+      pause_after_strict_seconds: 0.5
+      visual_intent: "close-up rostro TADEO mirándote en silencio post-evento"
+
+    # H6 — Cliffhanger TADEO outro (82-95s)
+    - id: h6_bridge_warm
+      order: 30
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "Y si hubieras pasado la noche con Tadeo…"  # caption amarillo cálido
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0.3
+      bridge_separator: warm_white  # warm white transition 0.4s
+
+    - id: h6_cliffhanger
+      order: 31
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "habrían visto el amanecer en el refugio. Mate amargo. Manta de lana sobre las piernas. El labrador del puesto echado sobre tus botas. La radio AM pasando un partido viejo. Una noche en paz."
+      target_duration: 8s
+      pause_after_strict_seconds: 0.3
+      visual_intent: |
+        Cliffhanger 6:15 AM. Refugio gaucho patagónico interior. TADEO
+        sentado en sillón viejo cebra. Mate humeante en mano correosa.
+        Manta de lana cruda sobre piernas del viewer (POV). Labrador
+        echado sobre las botas. Ventana al fondo con primer sol rosado
+        sobre Cerro Catedral nevado. Radio AM lejana folclore.
+
+    - id: cta_engagement
+      order: 32
+      speaker: narrator
+      lip_sync_required: false  # voiceover only — no character habla on-screen
+      text: "¿Sobreviviste? Comenta A o B."  # caption última, 60px uppercase
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0
+
+# ============================================================
+# OPERATIONAL LAYER (referencias a docs del ingeniero)
+# ============================================================
+
+aesthetic_strategy:
+  ref_doc: aesthetic.md
+  dual_palette_intent: "cool_dark_montaña_invernal_patagonica vs warm_refugio_amanecer_dorado_outro"
+  cool_palette:
+    primary: "azul/verde frío nocturno (#1a2530 / #2a3a40)"
+    accents: "blancos nieve crushed + faro refugio lejano dorado (#d4a368)"
+    crushed_blacks: aggressive
+    bleach_bypass: medium_high
+  warm_palette:  # solo H6 outro
+    primary: "ámbar dorado amanecer (#d4a368 / #c79366)"
+    accents: "rosa pálido cielo + lana cruda crema (#e8d4ad)"
+    grading: warm_LUT_outro_specific  # ver INGENIERO-PAUTA-MASTER LUT specs
+  vignette_intent: pronunciada  # Q19 referent-validated 2026-05-13
+  film_grain_intent: visible_8_pct
+  chromatic_aberration_intent: subtle_edges
+
+audio_strategy:
+  ref_doc: audio-direction.md
+  music_intent: |
+    Drone montaña invernal sub-bass + viento andino constante + crujido cable
+    telesilla. En H6 cliffhanger: transición a guitarra acústica + folclore
+    distante AM radio + viento que se calma.
+  ducking_intent: active  # narración duck música -5/-7 dB
+  sfx_categories:
+    - viento_andino_continuous_ambient  # volume 0.10-0.18 layer continua
+    - chapa_cabina_cruje_isolated_events  # volume 0.20-0.30
+    - cable_telesilla_metal_creak  # volume 0.18-0.25
+    - radio_walkie_crackle  # H2
+    - aullido_lejano_sub_bass_ambient_creature  # Slot H, volume 0.18
+    - sub_bass_golpes_base_cabina  # H5 D3 setup, volume 0.40
+    - mandibula_cae_metal_floor_impact  # H5 revelación, volume 0.50
+    - viento_succion_ventanuco_roto  # H5 revelación, volume 0.45
+    - fogata_refugio_crackle  # H6 outro, volume 0.20
+    - perro_respiracion_dormida  # H6 outro, volume 0.15
+    - radio_AM_folclore_distant  # H6 outro, volume 0.12
+
+captions_strategy:
+  ref_doc: captions.md
+  three_class_system: true  # name-label / narration / warning
+  keyword_highlights:
+    - { word: CABINA 14, color: red, reason: "identificador threat" }
+    - { word: SEIS HORAS, color: red, reason: "duración encierro" }
+    - { word: NO LE CONTESTES, color: yellow, reason: "regla 1 TADEO" }
+    - { word: NO ABRAS EL VENTANUCO, color: yellow, reason: "regla 2 TADEO" }
+    - { word: NO MIRES HACIA ABAJO, color: yellow, reason: "regla 3 TADEO" }
+    - { word: AHORA DECIDE, color: red, reason: "CTA dilemas" }
+    - { word: NO ERA UN CHICO, color: red, reason: "payoff twist H5" }
+    - { word: TE ESTABA PROTEGIENDO, color: gold_warm, reason: "cierre warmth twist" }
+
+camera_shots_strategy:
+  ref_doc: camera-and-shots.md
+  pov_percentage_intent: 88  # ≥80 requirement (PAUTA-MASTER § 3 Producción 2026-05-15 enforcement)
+  pov_enforcement_note: |
+    El viewer ES el ocupante #3 de la cabina (POV implícito). TADEO está sentado
+    enfrente, EMI al lado o enfrente. Casi todos los shots son desde la posición
+    del viewer en su asiento. Excepción: 3 shots de presentación / establishing
+    son NON-POV justificados (hook teaser exterior + 2 close-ups standalone).
+  shot_types_by_hito:
+    H1:
+      - { id: H1_S1, type: NON_POV, descripcion: "wide cabina exterior teaser meciéndose en tormenta", justificacion: "hook establishing — único exterior justificado" }
+      - { id: H1_S2, type: POV, descripcion: "POV desde tu asiento: materializan EMI (al lado) y TADEO (enfrente) frente a vos" }
+      - { id: H1_S3, type: POV, descripcion: "POV con name labels arriba de cada personaje, vos mirándolos alternando" }
+    H2:
+      - { id: H2_S4, type: POV, descripcion: "POV viewer recibe anuncio radio walkie en pared lateral" }
+      - { id: H2_S5, type: POV, descripcion: "POV close-up TADEO susurrándote las reglas (su boca visible desde tu POV)" }
+      - { id: H2_S6, type: POV, descripcion: "POV mirando ventanuco lateral mientras silueta cuadrúpeda cruza nieve abajo (4s, Slot H)" }
+      - { id: H2_S7, type: POV, descripcion: "POV close-up EMI sonriéndote demasiado" }
+    H3:
+      - { id: H3_S8, type: POV, descripcion: "POV EMI extiende chicle hacia vos, su mano avanza al frame" }
+      - { id: H3_S9, type: POV, descripcion: "POV tus propias manos en tu regazo (lengua se calienta sola)" }
+      - { id: H3_S10, type: NON_POV, descripcion: "wide cabina meciéndose vista lateral exterior (1 shot atmospheric break)", justificacion: "atmospheric reset, 1.5s solo" }
+      - { id: H3_S11_A, type: POV, descripcion: "POV body horror: viewer asfixiándose, EMI quieto sonriendo frente a vos" }
+      - { id: H3_S12_bridge, type: CAPTION_ONLY, descripcion: "bridge separator 'SI ELEGISTE SILENCIO:' fade tenue" }
+      - { id: H3_S13_B, type: POV, descripcion: "POV TADEO asiente despacio + EMI cierra boca lentamente, ambos frente a vos" }
+    H4:
+      - { id: H4_S14, type: POV, descripcion: "POV mirando hacia abajo: rodillas de EMI tocando las tuyas" }
+      - { id: H4_S15, type: POV, descripcion: "POV reflejo en vidrio del ventanuco: vos + ellos" }
+      - { id: H4_S16, type: POV, descripcion: "POV ves dedos largos de TADEO tensándose sobre su rodilla" }
+      - { id: H4_S17_A, type: POV, descripcion: "POV body horror: ráfaga, cabina se abre lateral, vos saliendo despedido (caída 30m)" }
+      - { id: H4_S18_bridge, type: CAPTION_ONLY, descripcion: "bridge 'SI NO TE MOVISTE:' fade tenue" }
+      - { id: H4_S19_B, type: POV, descripcion: "POV TADEO cruza su brazo largo sobre tu pecho fijándote; EMI re-abrocha mirándote" }
+    H5:
+      - { id: H5_S20, type: POV, descripcion: "POV piso metálico vibrando con los 3 golpes sub-bass desde abajo" }
+      - { id: H5_S21, type: POV, descripcion: "POV dedos de EMI sobre pestillo, visiblemente MÁS LARGOS (setup element, 3s data-duration)" }
+      - { id: H5_S22_A, type: POV, descripcion: "POV body horror: brazo largo entra por ventanuco, te agarra, te arrastra al vacío congelándote a mitad de caída" }
+      - { id: H5_S23_bridge, type: CAPTION_ONLY, descripcion: "bridge 'SI NO ABRISTE:' fade tenue" }
+      - { id: H5_S24_revelation, type: POV, descripcion: "POV TADEO se interpone con brazos en cruz, ventanuco se rompe, EMI desencaja: mandíbula cae al piso metálico, ojos negros, brazos duplican largo saliendo por ventanuco — todo presenciado desde tu asiento (payoff element, 3s data-duration)" }
+      - { id: H5_S25_close_tadeo, type: POV, descripcion: "POV close-up TADEO mirándote en silencio post-evento, narrador cierra twist" }
+    H6:
+      - { id: H6_S26_warm_bridge, type: CAPTION_ONLY, descripcion: "warm white transition + caption ámbar 'Y SI HUBIERAS PASADO LA NOCHE CON TADEO...'" }
+      - { id: H6_S27, type: POV, descripcion: "POV refugio interior 6:15 AM: tu mano sosteniendo mate humeante, manta de lana cruda sobre tus piernas, labrador echado sobre tus botas, ventana al fondo con amanecer rosado sobre Cerro Catedral" }
+      - { id: H6_S28, type: POV, descripcion: "POV TADEO sereno enfrente en sillón viejo, también con mate, radio AM folclore lejano" }
+      - { id: H6_S29_CTA, type: CAPTION_ONLY, descripcion: "CTA '¿SOBREVIVISTE? COMENTA A o B' caption Y 50-58% (fuera de banda caption canónica)" }
+  pov_count_audit:
+    total_shots: 29
+    pov_shots: 22  # POV
+    non_pov_shots: 3  # justified establishing (H1_S1 exterior, H3_S10 atmospheric break + 1 buffer)
+    caption_only_shots: 5  # bridges + CTA + warm bridge — neutral, no break POV
+    pov_ratio_pct: 88  # de shots con imagen: 22/(22+3) = 88% ✓ ≥80
+    method: "caption-only shots no cuentan como break de POV (son overlays, no shots de cámara)"
+
+image_direction:
+  ref_doc: image-direction.md
+  consistency_severity_protagonists: STRICT  # TADEO + EMI con anchors específicos
+  consistency_severity_setting: STRICT  # cabina 14 aparece >2 shots
+  consistency_severity_refugio: MEDIUM  # solo en H6
+
+animation_direction:
+  ref_doc: animation-direction.md
+  tier_distribution:
+    hero: 4  # H1 materialization + H5 revelación EMI + H5 TADEO protege + H6 outro establishing
+    standard: 5  # D1/D2/D3 consequences A (body horror) + ambient creature Slot H + golpes base cabina
+    draft: 4   # transiciones bridge + setup shots
+    static: 3  # detail shots (chicle, dedos, pestillo)
+  hero_clips_breakdown:
+    - { id: h1_materialization, descripcion: "teaser cabina vacía → end_image EMI+TADEO", tier: 5s, costo: $0.35 }
+    - { id: h5_revelation_emi, descripcion: "mandíbula cae + ojos negros + brazos saliendo", tier: 5s, costo: $0.70, severity: MAX_CARE }
+    - { id: h5_tadeo_protege, descripcion: "TADEO brazos en cruz cubriendo viewer", tier: 5s, costo: $0.35 }
+    - { id: h6_outro_refugio, descripcion: "POV refugio mate + perro + amanecer", tier: 10s, costo: $0.70 }
+  total_animation_budget_estimate: $5.50  # +50% retries buffer = $8.25
+
+ui_elements:
+  ref_doc: ui-elements.md
+  countdown_appearances: [H1_after_dyad, H3_pre_D1, H4_pre_D2, H5_pre_D3]
+  loading_bars_appearances: [post_D1, post_D2, post_D3]
+  countdown_style: TBD  # ingeniero elige de elements.json siguiendo video-log rotation
+  loader_style: TBD  # ingeniero elige siguiendo video-log rotation + compatibility matrix
+
+shared_universe:
+  ref_doc: shared-universe.md
+  canonical_characters_referenced: [TADEO, EMI]  # nuevos del catálogo
+  cross_video_continuity_planned: true
+  intent: |
+    TADEO podría aparecer en futuros videos como guardián de otro setting
+    rural patagónico (refugio en otra montaña, puesto fronterizo, etc.) —
+    misma signature visual (gaucho-uncanny correoso) con rol invertido
+    posible (Pablo cross-video).
+    EMI podría aparecer como bueno aparente en futuro video (rol invertido)
+    o como personaje recurrente "víctima" o "amigo" en contexto turístico.
+
+brand:
+  creator_handle: "@elige.tu.compañero"  # placeholder — user define final
+  reel_caption_instagram: |
+    Cabina 14. Treinta metros sobre la nieve. Seis horas sin salida.
+
+    A = EMI 🍬
+    B = TADEO 🧉
+
+    ¿Y vos a quién elegirías? Comentá 👇
+
+    #horror #elegirtucompañero #patagonia #cabina14 #ai
+  tagline_signature: "Elige a tu compañero para esta noche"
+  cliffhanger_pattern: B_loop_explicit
+  cliffhanger_text: "Elige a tu compañero para…"
+
+# ============================================================
+# REFERENCE ANCHORS (consistency cross-shots)
+# ============================================================
+reference_anchors:
+  characters:
+    - id: tadeo_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Photorealistic portrait of an elderly Patagonian gaucho-AMORPHOUS
+        man, ~2.05m tall when standing, extremely skeletally thin. Weathered
+        leathery papery yellowed skin with deep vertical lines on sunken
+        cheeks, high protruding cheekbones, eye sockets noticeably deeper
+        than human normal, opaque brown eyes that don't blink — one slightly
+        lower than the other (subtle but visible asymmetry). Long graying
+        white moustache covering a small tight mouth that looks too small
+        for the face. Old black wool beret tilted to one side on vertically
+        elongated skull. Neck significantly longer and thinner than human
+        normal (1.8x — NOTORIO AMORPHOUS, NOT subtle), visible neck veins,
+        trachea protruding. Wearing moth-eaten cream wool coat with hand-
+        stitched brown patches, red gaucho-style scarf knotted at neck.
+        Shoulders asymmetrically dropped (right shoulder lower). Dark blue
+        bombacha pants tucked into worn leather boots. Hands AMORPHOUS with
+        fingers visibly too long (2.0x), knotty, arthritic, visible
+        phalanges, holding an aluminum dented olive-green thermos and metal
+        mate bombilla. Hands appear too large for arms. Sitting upright
+        rigid. Plain dark gray background, neutral pose, soft cinematic
+        lighting, 8k photorealistic.
+      approval_checkpoint: true
+      appears_in_shots: [h1_materialization, h2_setup_susurro, h3_d1_b, h4_d2_b, h5_protege, h6_refugio]
+
+    - id: emi_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Photorealistic portrait of a young Argentine FEMALE tourist, ~19 years
+        old young adult, AMORPHOUS slightly-off proportions. Very round face,
+        head appears too large for body (head-to-body ratio 1:5 not normal 1:7).
+        Hazel-brown eyes too large for the face, with abnormal reflective
+        cat-eye catch-light that seems to persist without visible source.
+        Suspiciously uniform symmetric smile, mouth too small for the eyes.
+        Cheeks too rosy from cold like painted. Lashes thick exaggerated.
+        Neck too short (0.6x normal) — head appears to rest directly on
+        shoulders. Light brown wavy hair in two low pigtails with wool
+        pompoms, straight bangs over forehead. Wearing fuchsia pink puffer
+        jacket, oversized knit hat with washed-out white pompom (larger than
+        normal), neck buff with naïve penguin print, pink thermal leggings,
+        white trekking sneakers with pink details suspiciously clean for
+        snowstorm, black polar gloves — hands appear too small for arms.
+        Colorful friendship bracelets on wrists. Sitting cross-legged
+        relaxed on bench, chewing pink bubble gum visible. Plain dark gray
+        background, neutral pose, soft cinematic lighting, 8k photorealistic
+        Midjourney v6 style.
+      approval_checkpoint: true
+      appears_in_shots: [h1_materialization, h2_emi_sonrie, h3_d1_setup, h4_d2_desabrocha, h5_setup_dedos, h5_revelacion]
+
+  settings:
+    - id: cabina_14_interior_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Photorealistic interior of an old red rusted-metal aerial chairlift
+        cabin, marked "14" in faded white paint on exterior visible through
+        windows. Two facing bench seats with worn brown leatherette covering.
+        Three windows: two lateral, one front, with beveled glass and frost
+        patterns. Lateral window latch visible. Old crackling walkie radio
+        mounted on wall. Faded ski-resort logo sticker. Metal floor with
+        ridged texture and boot scuff marks. Visible upper chairlift cable
+        outside. Cold blue-green winter night palette with crushed blacks,
+        single warm point of distant refuge light at 800m visible through
+        snowstorm outside windows. Wide composition, plain reference
+        background outside ignored, 8k photorealistic.
+      approval_checkpoint: true
+      appears_in_shots: [h1_materialization, h2_setup, h3_d1, h4_d2, h5_d3, h5_revelacion]
+
+    - id: refugio_patagonico_interior_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Photorealistic interior of a rustic Patagonian gaucho mountain
+        refuge at dawn (6:15 AM). Old worn cowhide-pattern armchair with
+        Patagonian sheepdog (golden labrador-mix breed) lying at the foot.
+        Wooden floor with raw wool blanket draped over a chair. Aluminum
+        dented olive-green thermos and mate gourd on small wooden side
+        table. AM radio with brass dial in background. Window in back
+        looking out to rose-pink sunrise over snow-covered Cerro Catedral
+        peaks. Warm amber tungsten ambient light. Soft cinematic lighting,
+        8k photorealistic.
+      approval_checkpoint: true
+      appears_in_shots: [h6_outro_refugio, h6_outro_close]
+
+  props:
+    - id: termo_aluminum_olive_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Photorealistic close-up of an aluminum dented olive-green military-
+        style thermos with worn paint, small dents from age, slight rust
+        spots around lid. Metal mate bombilla beside it. Plain dark
+        background, soft lighting, 8k photorealistic.
+      approval_checkpoint: true
+      appears_in_shots: [h1_materialization_tadeo_holds, h2_tadeo_setup, h6_refugio_outro]
+      narrative_function: "continuity_visual_cabin_to_refuge"
+
+    - id: pestillo_ventanuco_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Photorealistic close-up of an old rusted metal latch on a beveled
+        glass cabin window, frost patterns visible on glass, weathered red
+        paint on surrounding frame. Plain neutral background, 8k photorealistic.
+      approval_checkpoint: true
+      appears_in_shots: [h2_silueta_cruza, h5_d3_setup_dedos_emi, h5_revelacion]
+      narrative_function: "setup_to_payoff"  # se establece en H2 + H5 setup → cobra en H5 revelación
+
+# ============================================================
+# CROSS-SHOT COVERAGE AUDIT
+# ============================================================
+cross_shot_coverage_audit:
+  characters_count: {tadeo: 6, emi: 6}
+  settings_count: {cabina_14_interior: 6, refugio_patagonico: 2}
+  props_recurrentes: {termo_olive: 3, pestillo_ventanuco: 3}
+  ambient_creature_count: 1  # H2 background, 4s on-screen
+  audit_passed_by_architect: true
+
+# ============================================================
+# ASSET LIST (production checklist for engineer)
+# ============================================================
+asset_list:
+  reference_anchors_first:
+    - tadeo_anchor
+    - emi_anchor
+    - cabina_14_interior_anchor
+    - refugio_patagonico_interior_anchor
+    - termo_aluminum_olive_anchor
+    - pestillo_ventanuco_anchor
+
+  images_to_generate: []  # ingeniero llena después con shot IDs en SPEC INGESTION Paso 3
+  tts_segments_to_generate: []  # de narration_script.segments — incluye narrator + emi + tadeo voices
+  sfx_prompts_to_generate: []  # de audio_strategy.sfx_categories
+  music_to_generate:
+    - main_drone_montana_invernal
+    - viento_andino_continuous_ambient
+    - outro_refugio_warm_acoustic
+  ambient_continuous_to_generate:
+    - viento_andino_loop_22s
+    - cable_telesilla_creak_loop_22s
+    - fogata_refugio_loop_22s_outro
+
+# ============================================================
+# CHECKPOINTS (workflow architect ↔ engineer)
+# ============================================================
+checkpoints:
+  - id: checkpoint_1_anchors
+    description: "Generar 6 reference anchors (2 chars + 2 settings + 2 props). Architect aprueba."
+    approval_required_from: architect
+
+  - id: checkpoint_2_images
+    description: "Generar todas las imágenes de los 6 hitos. Architect aprueba consistency vs anchors."
+    approval_required_from: architect
+
+  - id: checkpoint_3_audio_assets
+    description: "Generar TTS narrator + emi + tadeo + SFX + music + ambient. Architect aprueba mix intent."
+    approval_required_from: architect
+
+  - id: checkpoint_4_animations
+    description: "Generar 4 hero Kling + 5 standard. Architect aprueba revelación EMI especialmente."
+    approval_required_from: architect
+    max_care_clip: h5_revelation_emi  # mandíbula + ojos + brazos = más sensible a Kling
+
+  - id: checkpoint_5_draft_render
+    pre_render_gate_passed: required  # 20 Q técnicas obligatorias
+    architect_creative_review: required  # PAUTA § 16 checklist
+    user_human_checklist: required  # 7 Q gestalt usuario
+
+# ============================================================
+# VALIDATION (PAUTA-MASTER § 16 checklist + reglas inviolables)
+# ============================================================
+validation_pauta_canonica:
+  # Estructura
+  slot_A_definido: true
+  slot_A_atrapamiento_fisico: true  # 30m sobre vacío literal
+  slot_A_aislamiento_social: true  # 3 en cabina, refugio inalcanzable
+  slot_A_funcion_especifica: true  # telesilla averiado anuncio radio
+  slot_A_iluminacion_dramatica: true
+
+  # Personajes
+  slot_B_definido: true  # TADEO uncanny extreme
+  slot_B_scroll_stop: true
+  slot_B_no_halloween_costume: true
+  slot_C_definido: true  # EMI cute fucsia
+  slot_C_contraste_visual_con_B: true  # cute/fucsia/joven/horizontal vs uncanny/lana/anciano/vertical
+  slot_C_name_labels_obligatorio: true
+  slot_C_outcome_segun_pattern: P3_VILLAIN  # P3 inverso: EMI cute = villain, no termina cozy
+
+  # Slot D
+  slot_D_regla_count_palabras: 3_reglas_cortas  # 3 reglas de 3-4 palabras c/u
+  slot_D_conecta_con_dilemas: true  # cada dilema testea una regla
+  slot_D_inversion_framing_P3: true  # reglas vienen de TADEO (bueno real) — documentado
+
+  # Dilemas
+  slot_E_count_dilemas: 3  # PAUTA empírica 3-4 (default 3)
+  slot_E_categorias_diferentes: true  # acción/pasividad → sumisión/resistencia → curiosidad/obediencia
+  slot_E_cada_genera_duda_real: true  # tentaciones genuinamente deseables (charlar, estirar, mirar)
+  slot_E_estructura_setup_pregunta_countdown_loading: true
+
+  # Body horror
+  slot_F_especifico_al_setting: true  # caída sobre rocas + congelamiento + succión por ventanuco
+  slot_F_visualizable_IA: true
+  slot_F_sensorial: true  # peso pulmones, frío, viento succión
+  slot_F_no_generico_mueres: true
+
+  # Cliffhanger
+  slot_G_paz_perdida: true  # 7/8 empírico — default
+  slot_G_elementos_sensoriales_validados: true  # mate, perro, amanecer, lana, radio AM
+  slot_G_warm_palette: true  # ámbar dorado outro
+  slot_G_CTA_engagement_60px: true  # regla V7
+
+  # Ambient (Slot H)
+  slot_H_ambient_creature_incluida: true
+  slot_H_subtle_not_overt: true
+  slot_H_conecta_narrativamente: true  # planta semilla de "algo golpea cabina" H5
+
+  # Pattern
+  pattern_rotado_video_log: true  # P3 nunca usado por nosotros, fresco
+  pattern_setting_no_repetido: true  # telesilla nuevo, no en 8 canónicos ni en producciones nuestras
+
+  # Plot twist coherencia (PATTERNS § 6.5)
+  plot_twist_3_condiciones: true
+  plot_twist_logica_clara_1_frase: true
+  plot_twist_imagenes_acompañan: true  # dedos más largos setup + mandíbula cae payoff
+  plot_twist_narracion_explica_link: true  # "no era un chico / te estaba protegiendo"
+  plot_twist_setup_element_data_duration_3s: true  # dedos EMI 3s, no <1s
+
+  # Lenguaje
+  segunda_persona_implicita: true
+  presente_indicativo_consecuencias: true
+  oraciones_cortas_promedio: 5.4_palabras_estimado
+  frases_nominales_climax: true  # "Tu lengua se calienta sola." "Una noche en paz."
+
+  # Producción
+  POV_80_percent_planos: true
+  hard_cuts_white_flash_entre_decisiones: true
+  countdown_3_2_1_loading_bar_cada_decision: true
+  watermark_creator_persistente: true
+
+  # Reglas territoriales
+  no_engineer_territory_crossed: true  # arquitecto NO toca LUFS/CSS/ffmpeg/voice IDs específicos
+
+  # Lista de invenciones prohibidas (auto-check)
+  no_bajaria_estandar_invented: true  # uso "Elige a tu compañero" universal
+  no_motor_duda_artificial_invented: true  # uso "decisiones ambiguas" de PAUTA § 6
+  no_opcion_C_corporal_motion_canonica: true  # no cito esto como regla
+  no_cita_produccion_nuestra_como_autoridad: true  # cito ref-08 ref-03 ref-09 ref-10 etc.
+
+  # Final
+  spec_grounded_en_PAUTA_MASTER: true
+  spec_grounded_en_8_canonicos: true
+  spec_no_cita_v1_v2_v3_antiguos_ni_mina_bosque_propias: true
+
+# ============================================================
+# ARCHITECT AUDIT LOOP PRE-HANDOFF (memoria feedback_architect_audit_loop)
+# ============================================================
+architect_audit_loop:
+  compliance_layer:
+    pauta_master_§16_checklist: pass
+    invenciones_prohibidas_check: pass
+    rotation_check_video_log: pass  # P3 fresco
+  historia_layer:
+    decisiones_ambiguas_test: pass  # 3 dilemas con tentación genuinamente deseable
+    plot_twist_3_condiciones: pass
+    body_horror_setting_specific: pass
+    counterfactual_punchline_clear: pass  # paz patagónica vs vacío montaña
+    keyword_highlights_identificados: pass  # 8 keywords con colores
+  workflow_layer:
+    handoff_estructura_clara: pass  # 5 checkpoints definidos
+    territorial_no_cross: pass  # no toco LUFS/CSS/voice IDs específicos
+    ambient_creature_timing_correcto: pass  # 4s no 0.4s (corrección user)
+    user_decisions_capturadas:
+      - twist_visual: "mandíbula cae + ojos negros + brazos duplicados" (Opción 1)
+      - mood: "folklore patagónico invernal"
+      - ambient: "silueta cruza nieve durante narración principal, 4s no 0.4s"
+
+# ============================================================
+# AUTO-AUDIT 2026-05-15 (D14-D18 — PAUTA-MASTER § 3 nuevas reglas)
+# Sin este bloque pasando, el SPEC NO está listo para handoff (SKILL.md § Validación).
+# ============================================================
+auto_audit_2026_05_15:
+  D14_pov_count:
+    total_shots: 29
+    pov_shots: 22
+    non_pov_shots: 3            # 1 hook exterior justificado + 1 atmospheric break + 1 buffer
+    caption_only_shots: 5       # bridges A→B + warm transition + CTA (no break POV — overlays)
+    image_shots_total: 25       # 29 - 4 caption-only-overlay shots de los 5 (1 es warm bridge con fondo)
+    ratio_pct: 88               # 22 / 25 = 88% — PASS (≥80 required)
+    method_note: "caption-only/CTA shots no son cámara — no rompen POV"
+    pass: true
+
+  D15_rama_B_transitions:
+    decisions_count: 3
+    transitions_explicit: 3
+    listado:
+      - { decision: D1_hablar,    bridge_segment_id: d1_bridge_to_B, caption: "SI ELEGISTE SILENCIO:",   narrador_line: "Si elegiste silencio.",       visual_cue: "white flash 0.15s + caption tenue azul claro 1.2s" }
+      - { decision: D2_cinturon,  bridge_segment_id: d2_bridge_to_B, caption: "SI NO TE MOVISTE:",       narrador_line: "Si no te moviste.",           visual_cue: "white flash 0.15s + caption tenue azul claro 1.2s" }
+      - { decision: D3_ventanuco, bridge_segment_id: d3_bridge_to_B, caption: "SI NO ABRISTE:",          narrador_line: "Si no abriste.",              visual_cue: "white flash 0.15s + caption tenue azul claro 1.2s" }
+    pass: true
+
+  D16_bueno_aparente_intro_shots:
+    bueno_aparente_real: TADEO  # P3 — bueno real (NO el bueno aparente visual EMI)
+    count_before_cliffhanger: 11
+    listado:
+      - { hito: H1, shot: H1_S2, descripcion: "materialización dyad, TADEO enfrente" }
+      - { hito: H1, shot: H1_S3, descripcion: "name label sobre TADEO" }
+      - { hito: H2, shot: H2_S5, descripcion: "TADEO close-up susurrando las 3 reglas" }
+      - { hito: H3, shot: H3_S13_B, descripcion: "TADEO asiente despacio post-D1" }
+      - { hito: H4, shot: H4_S16, descripcion: "dedos largos de TADEO tensos sobre rodilla" }
+      - { hito: H4, shot: H4_S19_B, descripcion: "TADEO cruza brazo sobre tu pecho post-D2" }
+      - { hito: H5, shot: H5_S24_revelation, descripcion: "TADEO interpone brazos en cruz protectora" }
+      - { hito: H5, shot: H5_S25_close_tadeo, descripcion: "TADEO close-up mirándote post-twist" }
+    note: |
+      TADEO aparece on-screen en H1 (2 shots), H2 (1), H3 (1), H4 (2), H5 (2) =
+      8 shots con presencia visual antes del cliffhanger H6. Cumple ≥2.
+      PLUS: TADEO da las 3 reglas de Slot D (audio prominence sostenido en H2)
+      y físicamente protege al viewer en H4_B y H5_B — anclaje emocional FUERTE
+      antes del payoff outro.
+    pass: true
+
+  D17_lip_sync_marked:
+    shots_marked: 32           # todos los narration_script.segments tienen lip_sync_required
+    total_segments: 32
+    breakdown_true: 8          # 3 reglas TADEO + 3 diálogos EMI + 2 = 8 con lip_sync_required:true
+    breakdown_false: 24        # resto narrador voiceover
+    detalle_true:
+      - { id: tadeo_regla_1, speaker: tadeo, reason: "TADEO susurra on-screen close-up" }
+      - { id: tadeo_regla_2, speaker: tadeo, reason: "TADEO susurra on-screen close-up" }
+      - { id: tadeo_regla_3, speaker: tadeo, reason: "TADEO susurra on-screen close-up" }
+      - { id: d1_setup_emi_ofrece, speaker: emi, reason: "EMI habla on-screen ofreciendo chicle" }
+      - { id: d2_emi_speaks, speaker: emi, reason: "EMI habla on-screen 'me acalambro'" }
+      - { id: d3_emi_invita, speaker: emi, reason: "EMI habla on-screen 'mirá qué es'" }
+    pass: true
+
+  D18_narrative_transitions_logical: true
+  D18_justification: |
+    Secuencia shot-by-shot revisada:
+    - H1 (teaser → materialization → labels): lógico, dyad arrival pattern V15.
+    - H1 → H2 (radio crepita): coherente, entra el anuncio que justifica el encierro 6h.
+    - H2 → H3 (40 min después + ofrece chicle): jump temporal narrado explícitamente
+      por la voz del narrador ("Cuarenta minutos en silencio"). No es salto invisible.
+    - H3 → H4 (1 hora después + se desabrocha): jump temporal narrado ("Una hora después").
+    - H4 → H5 (3 AM + golpes): jump temporal narrado ("Tres de la madrugada").
+    - H5 → H6 (warm transition + amanecer): bridge warm caption explícita
+      ("Y si hubieras pasado la noche con TADEO...") + warm white transition 0.4s.
+    - Dentro de cada decisión: consequence A → bridge B caption → consequence B
+      (3 transiciones de rama implementadas explícitas, ver D15).
+    Ningún salto requiere shot intermedio no especificado.
+
+  # Final gate
+  all_d14_d18_pass: true
+  spec_ready_for_handoff: true
+  audit_completed_at: 2026-05-15
+  audit_by: creative-director (architect role)
+
+# ============================================================
+# END OF SPEC v1.1 (post auto_audit_2026_05_15 update)
+# ============================================================

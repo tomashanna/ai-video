@@ -1,0 +1,215 @@
+# cinema-abandonado — DRAFT SPEC sketch (auditor pre-architect)
+# Pattern: P3 (bueno aparente controla y daña) — Hugo+Pablo acuario equivalent
+# Setting: cine abandonado años 50 (movie theater abandoned)
+# Status: AUDITOR SKETCH — architect refines + commits final SPEC
+# Schema: v9 (heredando GAPS #23-#28 fields obligatorios)
+# Built with EMPIRICAL canonical bands per Track B engineer measurements (NOT inferred)
+
+meta:
+  format: horror-choice
+  delivery: reel
+  aspect_ratio: 9:16
+  duration_target_s: 88
+  pattern: P3
+  format_template: horror-choice-format
+  schema_version: v9
+  canonical_validation_status: pending_user_perceptual  # post-architect refine + render
+  language_register: spanish_neutral  # ⭐ OBLIGATORIO post 2026-05-20 — NO voseo argentino (use tú/dices/eliges NOT vos/decís/elegís)
+  cliche_avoidance_compliance: true  # ⭐ OBLIGATORIO post 2026-05-20 — NO cliché horror phrases (see memory feedback_anti_cliche_horror)
+
+references:
+  primary_canonical_ref: ref-08  # Hugo+Pablo acuario P3 archetype 9.10/10 Gemini empirical
+  secondary_refs: [ref-03, ref-06]
+  empirical_bands_source: "referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+
+narrative_pacing:
+  # EMPIRICAL bands per Track B engineer measurements 2026-05-20 (canonical_validation_status: validated)
+  countdown_digit_duration_s: 1.0  # user perceptual validated (matadero iter 7)
+  countdown_pause_beat_s: 0.9  # empirical median (was 0.3 inferred — REFUTED architect)
+  countdown_total_duration_s: 3.0
+  ambient_duck_db_during_countdown: 0  # empirical median +0.22 dB ≈ 0 (was -6 inferred — REFUTED)
+  freeze_frame_applied: false  # empirical 86% canonical refs DO NOT freeze (was 87% inferred — INVERTED)
+  decision_filter_overlay_type: null  # pending Phase 2 measurement
+
+  # Per-segment WPM bands (empirical 8/8 refs)
+  hook_framing_wpm_target: 180  # median canonical
+  setup_establishing_wpm_target: 152
+  decision_setup_wpm_target: 165
+  consequence_narration_wpm_target: 158
+  cliffhanger_wpm_target: 130
+
+asset_list:
+  reference_anchors_first:
+    - proyeccionista_anchor
+    - acomodador_anchor
+    - cinema_interior_anchor
+    - cinema_projection_booth_anchor
+    - cinema_screen_anchor
+    - cinema_corridor_lobby_anchor
+    - popcorn_box_anchor
+    - linterna_acomodador_anchor
+  shot_list_total: 22
+  tts_segments_to_generate: 19
+  sfx_prompts_to_generate:
+    - projector_running_loop
+    - film_reel_spinning
+    - dust_particles_ambient
+    - seat_creak_oscillation
+    - footsteps_carpet_aisle_x5
+    - rat_scratching_seats
+    - screen_static_flicker
+    - light_beam_hum_electric
+    - distant_rain_on_roof
+    - popcorn_kernels_falling
+  music_to_generate:
+    - main_drone_eerie_50s_film_score_60bpm
+    - cliffhanger_endless_loop_waltz_carnival_70bpm
+    - transition_film_reel_change
+  ambient_continuous_to_generate:
+    - cinema_projector_run_loop
+    - cinema_atmosphere_dust_ambient
+
+# CHARACTERS
+characters:
+  proyeccionista:
+    name: "Proyeccionista"
+    role: bueno_aparente_que_daña  # P3 pattern
+    visual_anchor_prompt: |
+      Humanoide alto extremadamente delgado, piel pálida grisácea, ojos hundidos negros,
+      vestimenta: uniforme proyeccionista años 1950 (camisa blanca arrugada manchada de aceite + corbatín + chaleco gris desgastado + guantes blancos sucios manchados de celuloide),
+      signature: BOCA COSIDA con hilo de film celluloide marrón (mouth stitched shut con tira de película 35mm)
+      lighting: eyes glow warm tungsten orange-amber cuando habla (projector lamp inside eyes)
+    voice_id_canonical: "Oxley 2gPFXx8pN3Avh27Dw5Ma"  # validated_canonical narrator/character
+    voice_effects_chain: ["pitch_-200", "highpass_120", "lowpass_3500", "reverb_old_film_20"]
+    lip_sync_required: true  # face visible — GAP #24 OBLIGATORIO
+    active_gesture_potential: |
+      hands gesturing projecting film + head turns + breath visible cold cinema +
+      eyes glow intensifying when speaks (despite stitched mouth)
+    canonical_validation_status: pending_architect_review
+
+  acomodador:
+    name: "Acomodador"
+    role: malo_aparente_que_salva  # P3 inverse twist
+    visual_anchor_prompt: |
+      Humanoide bajo corpulento, cabeza grande con ojos ENORMES negros sin pupilas,
+      vestimenta: uniforme acomodador rojo desgastado (saco rojo bordó manchado + pantalones negros + zapatos brillados),
+      signature: LLEVA CAJA DE POPCORN que se mueve sola (kernels jumping out occasionally como popping silently)
+      lighting: linterna acomodador shining beam directional follows speech direction
+    voice_id_canonical: "Kate qWWAqFomnJ99VwQLREfT"  # validated_canonical character voice
+    lip_sync_required: true  # face visible — GAP #24 OBLIGATORIO
+    active_gesture_potential: |
+      linterna sweeping + head tilts when speaks + popcorn box visibly shaking +
+      eyes blink slow (every 2-3s)
+    canonical_validation_status: pending_architect_review
+
+# NARRATION SCRIPT (sketch — architect refines exact words)
+narration_script:
+  segments:
+    - id: narrator_intro_framing
+      timestamp_intent_s: [2, 5]
+      speaker: narrator
+      voice_id: "Oxley 2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Decide con quién pasarás la noche: el proyeccionista... o el acomodador."  # ⭐ Spanish NEUTRAL (decide NOT decidí)
+      wpm_target: 180  # empirical hook_framing median
+      lip_sync_required: false  # narrator off-screen
+
+    - id: hook_acomodador_warning
+      timestamp_intent_s: [5, 7]
+      speaker: acomodador
+      voice_id: "Kate qWWAqFomnJ99VwQLREfT"
+      text_canonical: "Quédate conmigo. Tengo tu boleto."  # ⭐ Spanish neutral + anti-cliché (replaced "Te traje popcorn" → "Tengo tu boleto" = specific concrete object)
+      wpm_target: 165  # decision_setup band
+      lip_sync_required: true  # ON-screen
+
+    # ... more segments (architect writes full narrative)
+
+# SHOT_LIST (sketch — architect refines per beat per PAUTA-MASTER § 11)
+shot_list:
+  - id: shot_01_hook
+    timestamp_intent: [0, 9]  # extended canonical 7-9s window
+    duration_intent_s: 9
+    description: "Hook + dyad presentation + narrator framing + countdown 3-2-1 AVU"
+    pov: true
+    pov_traversal_intent: static  # name labels presentation = static framing canonical
+
+    # ⭐ GAP #23 OBLIGATORIO
+    setting_ambient_creature_or_object: "rata gris escapando entre filas de butacas al fondo (visible ~5% frame width, motion lateral subtle)"
+
+    # ⭐ GAP #26 OBLIGATORIO ≥3
+    atmospheric_motions_count: 5
+    atmospheric_motions_list:
+      - "polvo flotando atmospheric (illuminated by projector beam)"
+      - "haz de luz proyector dust particles dancing"
+      - "cortina raida swaying ligero from below ceiling"
+      - "luz fluorescente del cartel exit FLICKERING intermitente"
+      - "humedad goteo from ceiling occasional drip frame edge"
+
+    # ⭐ GAP #27 character active gestures (both visible in hook)
+    character_active_gesture_per_shot: |
+      proyeccionista: head turn slow toward viewer + eyes glow tungsten pulse breathing rhythm +
+                     gloves visible reaching toward projector (off-frame implied)
+      acomodador:   linterna sweep beam viewer direction + popcorn box shake subtle +
+                     eyes blink slow + head tilt curious
+
+    visual_intent: |
+      Wide-medium dyad presentation cinema interior — proyeccionista left side (tall thin uncanny),
+      acomodador right side (short ovoid head with linterna beam directional).
+      Setting: cinema interior años 50 with red velvet seats rows + screen blank at back +
+      film reels on projector booth visible.
+
+    ui_active: [name_label_proyeccionista_Y11_5, name_label_acomodador_Y11_5,
+                caption_setting_EL_CINE_ABANDONADO_Y48,
+                countdown_avu_film_leader_5_to_8_LAST_3s, watermark]
+
+    avu_assets_used:
+      - "countdown-3-2-1-film-leader-with-ticks.mp4 (hook AVU)"
+
+    keyframe_canonical_ref: "ref-08 frame_000.5 hook dyad presentation + ref-03 name labels style"
+    canonical_validation_status: pending_architect_refine
+
+  # ... more shots (architect populates 22 total)
+
+# CLIFFHANGER ARCHETYPE (P3 inverse twist)
+# ⭐ Spanish neutral + anti-cliché rewrite per memory feedback_anti_cliche_horror 2026-05-20
+cliffhanger:
+  type: prision_emocional_eterna
+  ref_canonical_anchor: ref-08  # acuario equivalent emotional prison
+  description: |
+    Si eliges al PROYECTOR (bueno aparente): te sienta en la fila tres asiento siete.
+    El proyector enciende. En pantalla: tu cumpleaños de los nueve años, el que olvidaste.
+    La película retrocede sola cuando intentas levantarte. El boleto en tu mano marca
+    una fecha en blanco. La función dura lo que dura tu memoria.
+
+    Si eliges al ACOMODADOR (malo aparente que salva — TWIST): camina hacia la salida
+    con la linterna apuntando al piso. Te abre la puerta lateral del cine. Te entrega
+    un boleto sin imprimir y dice "no regreses el martes". Sales al amanecer con
+    olor a celuloide quemado en la camisa.
+  counterfactual_punchline: |
+    Si hubieras elegido al acomodador, habrías salido a tiempo... con un boleto que
+    nunca usaste para entrar.
+
+# Continue with more sections per architect refines...
+
+# AUDITOR NOTES (sketch quality)
+auditor_notes:
+  - "DRAFT sketch — architect refines per PAUTA-MASTER § 11 narrative beats"
+  - "ALL GAPS #23-#28 fields populated per shot_01 (template — copy pattern to shot_02-22)"
+  - "Empirical bands integrated per Track B engineer measurements 2026-05-20"
+  - "REFUTATIONS applied: NO ambient duck, NO freeze frame default, 0.9s pause beat"
+  - "Voice IDs heredados matadero canonical_validation: Oxley + Kate"
+  - "AVU library 4/4 available for use"
+  - "Pattern rotation P6→P3 NEW (per video-log.md forward)"
+  - "Estimate: 1-2 iter humanas (heredando 28 gaps codified)"
+  - "Cost estimate: ~$10-12 budget cap (vs matadero $15.56)"
+  - "⭐ Spanish NEUTRAL throughout — NO voseo (tú/dices/eliges NOT vos/decís/elegís)"
+  - "⭐ Anti-cliché horror writing — concrete specific sensory, NO 'bucle eterno' / 'cena sin terminar' / 'nunca encuentras la salida'"
+  - "⭐ Watermark @elige_tucompanero (NOT @referent-a)"
+
+# Forward action items
+architect_refinement_needed:
+  - "Full narration_script 19 segments per beat per PAUTA § 11"
+  - "Full shot_list 22 shots with GAPS #23-#28 fields per shot"
+  - "Cliffhanger ref-08 acuario pattern adapt to cinema"
+  - "P3 archetype slot mapping per PAUTA § 15"
+  - "Architect Q-picks per CP3 variant selection"
+  - "rotation_check vs video_log.md OBLIGATORIO"

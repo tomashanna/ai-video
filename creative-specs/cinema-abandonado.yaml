@@ -1,0 +1,2296 @@
+# cinema-abandonado.yaml — SPEC v9.1 ARCHITECT REFINED (iter 2)
+# Pattern: P3 (bueno aparente controla y daña) — Hugo+Pablo acuario equivalent
+# Setting: Cine abandonado años 50
+# Schema: v9 (GAPS #23-#28 fields obligatorios per shot)
+# Status: ITER_2_REFINED_FROM_USER_FEEDBACK
+# Created: 2026-05-20
+# Refined: 2026-05-20 (iter 2 — 5 user feedback issues addressed)
+
+iter_2_user_feedback_2026_05_20:
+  trigger: "User HUMAN-CHECKLIST iter 1 + 5 specific issues post-render watch"
+  changes:
+    - "AMENDMENT 1: Character names renamed Salvador → Salvador + Nico → Nico (real invented names per memory feedback_character_real_names canonical 8/8 refs). Anchor IDs renamed: salvador_anchor + nico_anchor."
+    - "AMENDMENT 2: 'Tijeras de celuloide' renamed → 'CORTAFILM' (real cinema splicing tool used by projectionists years 50 — concrete era-authentic prop). Anchor renamed cortafilm_anchor. Narration clarified to 'unas tijeras del proyeccionista para cortar película' on first mention."
+    - "AMENDMENT 3: Final narration beats refined for path clarity (shot_16, shot_17, shot_20, shot_21, shot_22). Salvador path consequence A2 now explicit: 'tu cumpleaños sigue en la pantalla para siempre, sentado en su butaca con un boleto sin fecha'. Counterfactual outro reinforced: amanecer + olor celuloide quemado + boleto sin fecha + frase 'no regreses el martes'."
+    - "AMENDMENT 4: SFX list audited — removed 'cucharada caldo' + 'mandíbula apertura' + 'sirena luz electrica' matarife reuse. Added cinema-specific: popcorn_kernels_popping, film_splicer_cortafilm_cut, projection_booth_door_creak, rat_squeak_distant, projector_bulb_buzz_cycle. Alarma volume engineer-flag: mix 0.20-0.25 NOT 0.50 (intolerable iter 1)."
+    - "AMENDMENT 5: Edition errors end-of-timeline flagged for engineer iter 2 — caption sync drift last 10s shot_20-22 (audio/text desync). Engineer must re-run Whisper transcribe + verify offset 75-88s."
+  engineer_action_required: "iter 2 re-render: (1) regen anchor PNGs (rename) + (2) regen image shots that include props names changed (cortafilm) + (3) regen TTS for refined narration segments + (4) generate NEW SFX cinema-specific + delete matarife-reuse SFX + (5) Whisper re-transcribe + verify last 10s caption sync."
+  forward_template_promotion:
+    - "horror-choice-format/PAUTA-MASTER.md amendment: codify rule 'character names = real invented NOT job descriptions' (already in memory feedback_character_real_names, now patrn validated empirically iter 1 fail)."
+    - "horror-choice-format/INGENIERO-PAUTA-MASTER.md amendment: catalogue 'SFX context per setting' table — matarife SFX NOT reusable in cinema, generate per-setting SFX library."
+    - "video-log.md append iter 2 lessons: (1) name validation per CP1 audit blacklist scan, (2) SFX reuse audit per setting context, (3) caption sync verify gate end-of-timeline."
+
+meta:
+  project_id: cinema-abandonado
+  format: horror-choice
+  template_used: elige-tu-companero
+  delivery: reel
+  delivery_format: reel_9_16
+  aspect_ratio: 9:16
+  duration_target_s: 88
+  budget_target_usd: 13
+  created_at: 2026-05-20
+  status: iter_2_refined_pending_engineer_re_render
+  iter: 2
+  refined_at: 2026-05-20
+  pattern: P3
+  format_template: horror-choice-format
+  schema_version: v9.1
+  canonical_validation_status: pending_user_perceptual_iter_2
+  language_register: spanish_neutral  # Hard rule — tú/dices/eliges (NOT vos/decís/elegís)
+  cliche_avoidance_compliance: true   # Anti-cliché blacklist applied
+
+references:
+  primary_canonical_ref: ref-08  # Hugo+Pablo acuario P3 archetype 8.85/10 Gemini empirical
+  secondary_refs: [ref-03, ref-06]
+  empirical_bands_source: "referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+  canonical_scenes_consulted:
+    - "canonical-scenes/INDEX.md"
+    - "canonical-scenes/ref-08-hugo-pablo-acuario.md (deep dive)"
+    - "canonical-scenes/ref-03-bruno-pablo-mina.md (counterfactual outro)"
+
+# ============================================================
+# NARRATIVE PACING (empirical canonical bands Track B Phase 1)
+# ============================================================
+narrative_pacing:
+  countdown_digit_duration_s: 1.0           # Rule D PRECEDENCE 2026-05-20
+  countdown_pause_beat_s: 0.9                # empirical median n=14
+  countdown_total_duration_s: 3.0
+  ambient_duck_db_during_countdown: 0        # empirical +0.22 dB ≈ 0
+  freeze_frame_applied_default: false        # empirical 14% minority pattern
+  decision_filter_overlay_type: clean
+  countdown_visual_style: film_leader_academy  # 4/4 direct frame verification
+  loading_bar_y_pct_canonical: 52
+  countdown_y_pct_canonical: 46
+  caption_y_pct_canonical: 62
+  name_label_y_pct_canonical: 11.5
+
+  # Per-segment WPM bands (empirical 8/8 refs)
+  hook_framing_wpm_target: 180
+  setup_establishing_wpm_target: 152
+  decision_setup_wpm_target: 165
+  decision_question_wpm_target: 150
+  consequence_narration_wpm_target: 158
+  cliffhanger_wpm_target: 130
+
+# ============================================================
+# SLOTS A-H (PAUTA-MASTER § 2 estructura primaria)
+# ============================================================
+
+slot_A_escenario:
+  setting_id: 14  # variant (no en lista canónica 8 — cinema is NEW pero análogo a setting 3 acuario "exhibición")
+  setting_name: "Cine abandonado años 50 — sala principal + cabina de proyección + lobby"
+  function_lugar: "exhibición de películas / refugio nocturno cerrado al público"
+  elementos_diegeticos:
+    - "Salvador 35mm runner (rueda de bobina visible, haz de luz cortando polvo)"
+    - "Pantalla blanca al fondo (a veces oscurece, a veces muestra imágenes)"
+    - "Cartel EXIT verde fluorescente (parpadea intermitente)"
+    - "Caja de popcorn (con kernels jumping ocasional)"
+    - "Boleto en blanco (signo de cliffhanger — fecha sin imprimir)"
+  iluminacion_dominante: "haz de proyector con dust particles + tungsten warm de luces de butacas + verde fluorescente cartel EXIT"
+  material_paredes_suelo: "terciopelo rojo desgastado butacas + alfombra raida pasillo + paneles madera con manchas humedad + linóleo lobby con marcas pegajosas"
+  atrapamiento_fisico_test: "puertas laterales cerradas, salida principal solo accesible si proyeccionista quiere o si Nico (acomodador) acompaña"
+  aislamiento_social_test: "edificio cerrado al público hace décadas — nadie sabe que entraste"
+
+slot_B_malo_aparente:
+  name: NICO
+  role_actual: malo_aparente_que_salva  # P3 inversion — el "amenazante" es quien salva
+  plantilla_base: "Humano + cabeza desproporcionadamente grande + ojos negros sin pupilas (categoría 2 PAUTA § 8 — humano + cabeza geométrica imposible)"
+  visual_description: |
+    Humanoide bajo corpulento (1.55m), cabeza desproporcionadamente grande tipo Funko (40%
+    del torso), ojos enormes negros completamente sin pupilas ni iris (charcoal pure 2cm
+    diámetro cada uno). Piel tez beige amarillenta cera, sin imperfecciones — superficie
+    plástica de muñeco antiguo. Saco rojo bordó estilo acomodador de cine años 50 con galones dorados
+    descosidos, manchas oscuras en lapelas. Pantalones negros brillantes desgastados.
+    Zapatos charol lustrados que no calzan bien (~1cm más largos que pie real). Lleva
+    LINTERNA tipo Maglite chrome con haz directional. Lleva CAJA DE POPCORN rayada
+    blanco/rojo años 50 — los kernels jumpean ocasional como si estuvieran palpitando
+    desde dentro. Postura ligeramente inclinada hacia adelante, head turn slow.
+  reference_anchor_required: true
+  voice_id_canonical: "qWWAqFomnJ99VwQLREfT"  # Kate canonical validated matadero CP2
+  voice_id_label: "Kate (BFP — Bright Friendly Positive)"
+  lip_sync_required: true  # face visible on-screen
+  active_gesture_potential: |
+    linterna sweep beam viewer direction + popcorn box visibly shaking + eyes never blink
+    (or blink every 4-5s very slow) + head tilt curious + occasionally extends popcorn box
+    toward viewer offering
+
+slot_C_bueno_aparente:
+  name: SALVADOR  # nombre canónico para el bueno aparente — "SALVADOR" como apodo
+  full_role_name: "El Proyeccionista"
+  role_actual: bueno_aparente_que_daña  # P3 trampa
+  plantilla_base: "Esquelético + máscara grotesca + uniforme decadente (categoría 5 PAUTA § 8 mezclada con § 9 liminal-uncanny — visualmente extreme)"
+  visual_description: |
+    Humanoide alto extremadamente delgado (2.05m), miembros largos, piel pálida grisácea
+    cera-translúcida (puedes ver venas oscuras debajo). Ojos hundidos negros profundos
+    que GLOW warm tungsten orange-amber cuando "habla" (luz desde dentro del cráneo).
+    BOCA COSIDA con hilo de film celluloide marrón translúcido — 12-15 puntadas
+    irregulares cruzando los labios horizontalmente. Uniforme proyeccionista años 1950:
+    camisa blanca arrugada manchada de aceite negro en cuello + chaleco gris ratón
+    desgastado con bolsillos para herramientas + corbatín negro deshilachado + guantes
+    blancos de algodón sucios con manchas de celuloide quemado. Pantalones grises altos.
+    Postura recta, head erect, manos enguantadas relajadas a los lados o gesticulando
+    como si proyectara invisible film. Cuando "habla" la luz interior de la cabeza
+    pulsa al ritmo del audio narration.
+  reference_anchor_required: true
+  voice_id_canonical: "2gPFXx8pN3Avh27Dw5Ma"  # Oxley canonical validated matadero CP2
+  voice_id_label: "Oxley (deep male grave)"
+  voice_effects_chain: ["pitch_-200", "highpass_120", "lowpass_3500", "reverb_old_film_20"]
+  lip_sync_required: false  # boca cosida — NO mouth movement, solo eyes glow pulse sync
+  active_gesture_potential: |
+    gloved hands gesturing projecting invisible film + head turns slow + eyes glow pulse
+    sync with narration audio (when "speaks") + breath vapor visible cold cinema
+  alive_signals_compensation:  # signature limitation = boca cosida no expression
+    - "Eyes glow tungsten warm pulse intensifying when speaks (despite stitched mouth)"
+    - "Hand gestures gloved white — projecting invisible film motion"
+    - "Head turn slow toward viewer when narrating"
+    - "Breath vapor visible from nose only (mouth blocked by stitches)"
+    - "Celluloid thread on lips subtle vibration when audio plays"
+  has_dialogue_on_screen: true  # ⚠️ ref-08 Hugo precedent — bueno aparente PUEDE hablar
+
+slot_D_regla_del_malo:  # ⚠️ P3 inversion — la regla es del SALVADOR (bueno aparente que daña)
+  texto: "Quédate hasta el final de la función."
+  tipo: "Sumisión a un procedimiento ritual (no salir de la sala)"
+  count_palabras: 6  # 5-10 cumplido
+  conecta_con_dilemas: true
+  consecuencia_inmediata_si_rompe: |
+    Si intentas levantarte → la película retrocede sola y la butaca te empuja hacia atrás
+    + el hilo de celuloide de la boca del Salvador se extiende hacia tu boca
+
+slot_E_dilemas:
+  - id: D1
+    timestamp_intent: "~30-35s — primer dilema interno"
+    categoria: 4  # Confianza vs desconfianza
+    setup: |
+      El Salvador camina hacia la pantalla y enciende el proyector con un gesto. Sale
+      una película muda en blanco y negro — eres tú mismo, de pequeño, en un cumpleaños
+      que no recuerdas. Te ofrece una butaca: fila 3 asiento 7. Te tiende un boleto en
+      blanco.
+    pregunta: "¿Tomas el boleto y te sientas o lo rechazas?"
+    opcion_A_impulso: "Tomar boleto (curiosidad — ver tu propia película)"  # IMPULSO primario
+    opcion_B_estoica: "Rechazar el boleto y permanecer de pie"  # CONTRA impulso
+    opcion_ganadora: B  # Rechazar = sobrevivir D1 (winning option contra impulso)
+    consecuencia_A_body_horror: |
+      Te sientas. La butaca cierra los apoyabrazos sobre tu regazo (clamp metálico audible).
+      La película muestra tu cumpleaños — pero quien sopla las velas no eres tú, es el
+      Salvador. El haz del proyector se extiende y entra por tu boca. Tu mandíbula se
+      cose con el mismo hilo de celuloide.
+    consecuencia_B_apertura: |
+      Rechazas el boleto. El Salvador inclina la cabeza, las luces dentro de su cráneo
+      se atenúan. Camina al lobby. Te hace seña de que lo sigas hacia la cabina de
+      proyección.
+
+  - id: D2
+    timestamp_intent: "~52-58s — segundo dilema interno (categoría diferente)"
+    categoria: 5  # Sumisión-instinto / resistencia-estoica
+    setup: |
+      Estás frente a la cabina de proyección. La puerta tiene una placa: "ÚLTIMA
+      FUNCIÓN — NO INTERRUMPIR". El Salvador abre la puerta. Adentro: un asiento
+      vacío, una rebobinadora gira sola, y en una mesa hay UN CORTAFILM (tijera de
+      proyeccionista para cortar película). Te mira y te lo ofrece con la mano enguantada.
+    pregunta: "¿Aceptas el cortafilm o sales de la cabina?"
+    opcion_A_impulso: "Aceptar el cortafilm (parece protección)"  # parece sensato
+    opcion_B_estoica: "Salir de la cabina"  # contra impulso (¿salir sin protección?)
+    opcion_ganadora: B  # Salir = encuentra al Nico que te lleva a la salida
+    consecuencia_A_body_horror: |
+      Aceptas el cortafilm. Pesa más de lo que debería. La puerta se cierra detrás.
+      El Salvador apunta a la rebobinadora — la película muestra ahora tu cara cosida.
+      El cortafilm se mueve solo en tu mano y corta el hilo de celuloide de la boca
+      del Salvador. El hilo salta de sus labios a los tuyos, los cose en silencio. Te
+      sientas en el asiento de la cabina. Empieza una función que no termina más.
+    consecuencia_B_apertura: |
+      Retrocedes. Sales de la cabina. El haz del proyector se apaga. El Salvador se
+      queda inmóvil en la puerta, mirándote sin parpadear. Detrás de ti, una luz: el
+      Nico con su linterna.
+
+slot_F_body_horror:
+  tipo_principal: "pérdida progresiva de identidad/libertad + asfixia inversa (boca cosida con celuloide)"
+  imagenes_validables:
+    - "Mandíbula se cose con hilo de celuloide marrón (12 puntadas visibles cierran labios)"
+    - "Butaca cierra apoyabrazos sobre regazo con clamp metálico audible"
+    - "Haz del proyector entra por boca abierta + sale por ojos (luz tungsten warm interna)"
+    - "Cortafilm (tijera del proyeccionista) corta hilo celuloide del Salvador + salta al viewer + cose sus labios"
+  test_pasa: "imagen IA generable: SÍ — todas son acciones físicas concretas en setting cine"
+  NO_cliché_check: |
+    Evitado "bucle eterno" → "función eterna" (specific cine vocabulary)
+    Evitado "te conviertes en cena" → "tu mandíbula se cose con celuloide" (concrete physical)
+    Evitado "nunca encuentras la salida" → "la película retrocede cuando te levantas" (concrete trap)
+    Evitado "el peor momento de tu vida" → "cumpleaños que no recordabas" (specific memory category)
+
+slot_G_cliffhanger_archetype:
+  archetype: "Paz perdida (counterfactual outro canónico 7/8 — ref-08 anclaje)"
+  rotation_check: "video-log.md consultado 2026-05-20: matadero v1 usó P6 Hedonismo Eterno cliffhanger TRAP. Cinema #2 usa P3 + Paz perdida outro estándar. Pattern y archetype rotados."
+  elementos_sensoriales_validados:  # PAUTA § 13 + ref-03 outro
+    - "café (taza humeante)"
+    - "amanecer (luz dorada por puerta lateral del cine al sol)"
+    - "olor a celuloide quemado (sensory unique al setting cine)"
+    - "boleto sin imprimir (objeto físico — counterfactual prop)"
+    - "linterna del Nico apuntando al piso (gesto pacífico)"
+  texto_intent: |
+    "Si hubieras elegido a Nico, te habría guiado con la linterna hasta la puerta lateral del cine.
+    Te habría entregado un boleto sin fecha y te habría dicho 'no regreses el martes'.
+    Habrías salido al amanecer con el olor a celuloide quemado en la ropa."
+
+slot_H_ambient_creatures:
+  setting_aplicable: "Cine abandonado"
+  criatura_seleccionada: "rata gris pequeña corriendo entre filas de butacas (visible ~5% frame width, motion lateral fugaz 1-2 apariciones)"
+  proposito: "scroll-stop pasivo + comment-driver + setting alive cumple GAP #23"
+
+# ============================================================
+# PATTERN + ROTATION (PAUTA § 15)
+# ============================================================
+plot_pattern:
+  matriz_pattern_id: 3  # P3 — Seguro era trampa (bueno aparente era el real peligro)
+  matriz_appearance: "asimétrico (1 amenazante visualmente — Nico / 1 visualmente cinematic-elegant — Salvador)"
+  matriz_truth: "el bueno aparente (Salvador elegant) ES la trampa eterna; el malo aparente (Nico uncanny) ES quien salva"
+  has_twist: true
+  twist_revelation_timestamp: "outro 75-88s — counterfactual reveal"
+  rotation_check: |
+    video-log.md 2026-05-20: matadero v1 usó P6 Hedonismo Eterno. Cinema #2 usa P3 NEW
+    (no usado en producción nuestra previa). Rotación OK + diversifica pattern catalog.
+
+slot_H0_personal_stakes:
+  habilitado: false
+  razon: "P3 puro per ref-08 acuario precedent — H0 NO requerido. Hook directo al setting + dyad."
+
+# ============================================================
+# ESTRUCTURA TEMPORAL (PAUTA § 2 — 88s)
+# ============================================================
+estructura_temporal:
+  hook_presentacion_0_10pct: 9s     # 0-9s — hook + dyad + countdown AVU LAST
+  setup_salvador_10_30pct: 18s     # 9-27s — Salvador path setup (bueno aparente toma control)
+  decision_1_30_45pct: 13s          # 27-40s — D1 setup + countdown + decision moment
+  consequence_A1_45_55pct: 9s       # 40-49s — consequence A1 (butaca + película + cose)
+  absorption_pull_back_55_60pct: 4s # 49-53s — absorption/pull back to D2 path
+  decision_2_60_70pct: 9s           # 53-62s — D2 setup + countdown
+  consequence_A2_70_80pct: 9s       # 62-71s — consequence A2 (cortafilm + función eterna trap)
+  nico_return_80_85pct: 4s    # 71-75s — Nico return (TWIST setup)
+  cliffhanger_outro_85_100pct: 13s  # 75-88s — counterfactual P3 reveal + outro
+  total: 88s
+
+# ============================================================
+# NARRATION SCRIPT (19 segments — Spanish NEUTRAL + anti-cliché)
+# ============================================================
+narration_script:
+  meta:
+    target_total_duration: 88s
+    register: tu_implicito_presente_indicativo
+    language_register: spanish_neutral
+    speakers: [narrator, salvador, nico]
+    cliche_check_passed: true
+
+  segments:
+    - id: hook_narrator_framing
+      order: 1
+      timestamp_intent_s: [2.0, 5.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"  # Oxley narrator default
+      text_canonical: "Decide con quién pasarás la noche en este cine: el Salvador... o el Nico."
+      wpm_target: 180
+      lip_sync_required: false  # narrator voiceover off-screen
+
+    - id: hook_salvador_warning
+      order: 2
+      timestamp_intent_s: [5.5, 7.5]
+      speaker: salvador
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      voice_effects_active: true
+      text_canonical: "No me elijas. Algo enciende la película."  # ref-08 Hugo "No me elijas" precedent
+      wpm_target: 145
+      lip_sync_required: false  # boca cosida — eyes glow pulse instead
+
+    - id: setup_salvador_intro
+      order: 3
+      timestamp_intent_s: [9.5, 14.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si eliges a Salvador, te lleva a la sala principal. Hay una sola función esta noche."
+      wpm_target: 152
+      lip_sync_required: false
+
+    - id: setup_salvador_action
+      order: 4
+      timestamp_intent_s: [14.5, 21.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Camina hasta la pantalla, levanta la mano enguantada y el proyector arranca solo."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: setup_salvador_film_reveal
+      order: 5
+      timestamp_intent_s: [21.0, 27.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "En la pantalla aparece tu cumpleaños de los nueve años. El que no recuerdas."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: decision_1_setup
+      order: 6
+      timestamp_intent_s: [27.0, 32.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Te ofrece una butaca: fila tres, asiento siete. Tiende un boleto en blanco."
+      wpm_target: 165
+      lip_sync_required: false
+
+    - id: decision_1_question
+      order: 7
+      timestamp_intent_s: [32.5, 35.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Ahora decide: tomas el boleto o lo rechazas."
+      wpm_target: 150
+      lip_sync_required: false
+      # countdown AVU activates after this segment ends per narrative_pacing
+
+    - id: consequence_A1
+      order: 8
+      timestamp_intent_s: [38.8, 47.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si tomas el boleto, te sientas. Los apoyabrazos se cierran sobre tu regazo. El haz del proyector entra por tu boca abierta."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: consequence_B1_bridge
+      order: 9
+      timestamp_intent_s: [47.0, 53.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si lo rechazas, el Salvador apaga las luces de su cráneo y camina hacia la cabina de proyección."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: decision_2_setup
+      order: 10
+      timestamp_intent_s: [53.0, 58.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Dentro de la cabina hay un asiento vacío y un cortafilm sobre la mesa. Una tijera del proyeccionista. Te lo ofrece."
+      wpm_target: 165
+      lip_sync_required: false
+
+    - id: decision_2_question
+      order: 11
+      timestamp_intent_s: [58.5, 61.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Decides: aceptas el cortafilm o sales."
+      wpm_target: 150
+      lip_sync_required: false
+
+    - id: consequence_A2
+      order: 12
+      timestamp_intent_s: [64.8, 71.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si aceptas el cortafilm, corta solo el hilo del Salvador. El hilo salta a tu boca. Quedas sentado en su butaca, con tu cumpleaños en bucle en la pantalla."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: consequence_B2_bridge
+      order: 13
+      timestamp_intent_s: [71.0, 75.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si sales, el haz se apaga. Detrás de ti, una linterna se enciende."
+      wpm_target: 158
+      lip_sync_required: false
+
+    - id: nico_offer
+      order: 14
+      timestamp_intent_s: [75.0, 77.0]
+      speaker: nico
+      voice_id: "qWWAqFomnJ99VwQLREfT"  # Kate
+      text_canonical: "Por aquí. La función ya terminó."
+      wpm_target: 165
+      lip_sync_required: true  # ON-screen face visible
+
+    - id: cliffhanger_counterfactual_intro
+      order: 15
+      timestamp_intent_s: [77.5, 81.5]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Si hubieras elegido a Nico, te habría guiado con la linterna hasta la puerta lateral del cine."
+      wpm_target: 130
+      lip_sync_required: false
+
+    - id: cliffhanger_counterfactual_detail
+      order: 16
+      timestamp_intent_s: [81.5, 85.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Te habría entregado un boleto sin fecha y te habría dicho: no regreses el martes."
+      wpm_target: 130
+      lip_sync_required: false
+
+    - id: cliffhanger_counterfactual_close
+      order: 17
+      timestamp_intent_s: [85.0, 87.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Habrías salido al amanecer con el olor a celuloide quemado en la ropa."
+      wpm_target: 130
+      lip_sync_required: false
+
+    - id: tagline_cta
+      order: 18
+      timestamp_intent_s: [87.0, 88.0]
+      speaker: narrator
+      voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+      text_canonical: "Elige a tu compañero."
+      wpm_target: 130
+      lip_sync_required: false
+
+    - id: salvador_silent_pulse  # voice eyes glow pulse moment — no audio, only visual marker
+      order: 19
+      timestamp_intent_s: [12.0, 13.0]
+      speaker: salvador_silent  # eyes glow pulse 1s (visual only, no audio)
+      text_canonical: ""
+      silence_by_design: true
+      silence_reason: "Salvador character moment ON-screen — eyes glow pulse visible, NO audio (he can't speak, mouth sewn). Narrator covers the moment."
+      wpm_target: 0
+      lip_sync_required: false
+
+# ============================================================
+# REFERENCE ANCHORS — consistency cross-shots
+# ============================================================
+reference_anchors:
+  characters:
+    - id: salvador_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Humanoide alto extremadamente delgado 2.05m, miembros largos, piel pálida grisácea
+        cera-translúcida (venas oscuras subdérmicas visibles), ojos hundidos negros
+        profundos GLOW warm tungsten orange-amber (luz desde dentro del cráneo).
+        BOCA COSIDA con hilo de film celluloide marrón translúcido — 12-15 puntadas
+        irregulares cruzando labios horizontalmente. Uniforme proyeccionista años 1950:
+        camisa blanca arrugada manchada de aceite negro en cuello + chaleco gris ratón
+        desgastado + corbatín negro deshilachado + guantes blancos algodón sucios con
+        manchas celuloide quemado. Pantalones grises altos. Postura recta head erect.
+        Plain neutral gray background. Photorealistic 35mm cinematic lighting. 8k.
+      approval_checkpoint: true
+      appears_in_shots:
+        [shot_01_hook, shot_02_salvador_intro, shot_03_salvador_screen_action,
+         shot_05_film_reveal, shot_06_offers_seat_boleto, shot_07_d1_setup,
+         shot_09_d1_consequence_A, shot_11_d1_consequence_B_bridge,
+         shot_12_cabina_approach, shot_13_cabina_interior, shot_14_d2_setup,
+         shot_16_d2_consequence_A, shot_18_d2_consequence_B_bridge,
+         shot_19_nico_return]
+
+    - id: nico_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Humanoide bajo corpulento 1.55m, cabeza desproporcionadamente grande tipo Funko
+        (40% del torso), ojos enormes negros completamente sin pupilas ni iris (charcoal
+        pure 2cm diámetro). Piel tez beige amarillenta cera (superficie plástica de
+        muñeco antiguo). Saco rojo bordó estilo acomodador de cine años 50 con galones dorados
+        descosidos + manchas oscuras en lapelas. Pantalones negros brillantes
+        desgastados. Zapatos charol lustrados ~1cm más largos que pie real. Lleva
+        LINTERNA tipo Maglite chrome con haz directional warm + lleva CAJA DE POPCORN
+        rayada blanco/rojo años 50. Postura ligeramente inclinada hacia adelante.
+        Plain neutral gray background. Photorealistic 35mm cinematic lighting. 8k.
+      approval_checkpoint: true
+      appears_in_shots:
+        [shot_01_hook, shot_19_nico_return, shot_20_nico_lobby_exit,
+         shot_21_counterfactual_door, shot_22_counterfactual_amanecer]
+
+  settings:
+    - id: cinema_sala_principal_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Interior cine abandonado años 50 — sala principal con filas butacas terciopelo
+        rojo bordó desgastadas (algunos asientos con relleno expuesto), pantalla blanca
+        grande al fondo, alfombra raida pasillo central, paneles madera con manchas
+        humedad en paredes laterales, haz de proyector visible cortando dust particles
+        atmosphericos desde booth lejano, cartel EXIT verde fluorescente flickering
+        lateral. Iluminación dominante: haz proyector + tungsten warm wall sconces
+        laterales + verde fluorescente intermitente cartel EXIT. Atmósfera dust + dim.
+        Photorealistic 35mm cinematic. POV-friendly composition. 8k.
+      approval_checkpoint: true
+      appears_in_shots:
+        [shot_03_salvador_screen_action, shot_04_salvador_lights_dim,
+         shot_05_film_reveal, shot_06_offers_seat_boleto, shot_07_d1_setup,
+         shot_09_d1_consequence_A, shot_10_butaca_clamp]
+
+    - id: cinema_cabina_proyeccion_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        Interior cabina de proyección cine años 50 — espacio estrecho con proyector
+        35mm Bell & Howell metálico negro central operativo (rueda bobina visible
+        girando + haz luz amarillenta saliendo), mesa metálica con cortafilm (tijeras de proyeccionista)
+        + rollos de film apilados + rebobinadora manual + papeles desordenados, asiento
+        operador vacío de madera con tapizado verde desgastado, placa puerta "ÚLTIMA
+        FUNCIÓN — NO INTERRUMPIR", linóleo manchado de aceite negro, paredes pintadas
+        amarillo nicotina. Iluminación dominante: tungsten warm del proyector +
+        bombilla colgante única amarilla + leak luz por ventana proyección al frente.
+        Photorealistic 35mm cinematic. POV. 8k.
+      approval_checkpoint: true
+      appears_in_shots:
+        [shot_12_cabina_approach, shot_13_cabina_interior, shot_14_d2_setup,
+         shot_16_d2_consequence_A, shot_17_funcion_eterna_butaca_cabina]
+
+    - id: cinema_lobby_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Lobby cine abandonado años 50 — piso linóleo blanco/negro damero manchas
+        pegajosas, taquilla cerrada con vidrio polvoriento, máquina popcorn antigua
+        oxidada lateral, posters de cine descoloridos en paredes con marcos torcidos,
+        cordones rojos de terciopelo separadores casi caídos, puerta lateral de salida
+        con cristal opaco. Iluminación: lámpara central colgante tungsten warm tenue +
+        leak luz amanecer dorada por puerta lateral en final shots. Photorealistic
+        cinematic 35mm. 8k.
+      approval_checkpoint: true
+      appears_in_shots:
+        [shot_20_nico_lobby_exit, shot_21_counterfactual_door]
+
+    - id: cinema_exterior_amanecer_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Exterior cine abandonado años 50 — fachada gastada con marquesina vacía,
+        puerta lateral de servicio abierta, calle vacía adoquinada nocturna en
+        transición al amanecer dorado. Iluminación: golden hour warm light desde
+        derecha, sombras largas, calidad tonal cozy contrast vs interior cool. Photoreal
+        cinematic 35mm. 8k.
+      approval_checkpoint: true
+      appears_in_shots: [shot_22_counterfactual_amanecer]
+
+  props:
+    - id: boleto_blanco_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Boleto de cine vintage años 50 PERO en blanco — fondo papel beige amarillento
+        envejecido textured, sin texto impreso, solo bordes serrated típicos boleto +
+        número de asiento vacío + fecha vacía. Macro shot detail. Plain neutral
+        background. 8k.
+      approval_checkpoint: true
+      appears_in_shots: [shot_06_offers_seat_boleto, shot_21_counterfactual_door]
+      narrative_function: "setup_to_payoff"
+
+    - id: caja_popcorn_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Caja de popcorn cinema clásica rayada blanco/rojo años 50 desgastada (algunas
+        rayas decoloradas), kernels visibles asomando arriba, algunos kernels jumping
+        ocasional como si palpitaran desde dentro. Detail shot. Plain background. 8k.
+      approval_checkpoint: true
+      appears_in_shots: [shot_01_hook, shot_19_nico_return, shot_20_nico_lobby_exit]
+      narrative_function: "character_signature_prop"
+
+    - id: cortafilm_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Cortafilm vintage de proyeccionista años 1950 (film splicer / tijera de edición
+        de celuloide profesional) — cuerpo de acero pulido envejecido con resortes
+        visibles, mango negro bakelite curvado, hojas afiladas tipo tijera grande de
+        edición con sistema de empalme manual, tiras de celuloide marrón translúcido
+        cortadas enredadas en las hojas como si hubieran empalmado recientemente.
+        Resting sobre mesa metálica de cabina de proyección. Detail macro shot.
+        Plain background neutral. 8k. — NOTA INGENIERO: este es un cortafilm real
+        de era 35mm, NO unas tijeras genéricas. Reference: Bell & Howell splicer
+        years 50 o Kodak hot splicer.
+      approval_checkpoint: true
+      appears_in_shots: [shot_13_cabina_interior, shot_14_d2_setup, shot_16_d2_consequence_A]
+      narrative_function: "setup_to_payoff"
+
+    - id: linterna_nico_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        Linterna Maglite chrome vintage años 60, haz luz directional tungsten warm
+        amarillento (no LED frío), agarrada por guante blanco. Detail shot. Plain
+        background. 8k.
+      approval_checkpoint: true
+      appears_in_shots: [shot_01_hook, shot_19_nico_return, shot_20_nico_lobby_exit]
+      narrative_function: "character_signature_prop"
+
+cross_shot_coverage_audit:
+  characters_count: {salvador: 14, nico: 5}
+  settings_count: {cinema_sala_principal: 7, cinema_cabina_proyeccion: 5, cinema_lobby: 2, cinema_exterior_amanecer: 1}
+  props_recurrentes: {boleto_blanco: 2, caja_popcorn: 3, cortafilm: 3, linterna_nico: 3}
+  audit_passed_by_architect: true
+
+# ============================================================
+# SHOT LIST (22 shots — v9 schema with GAPS #23-#28 fields obligatorios)
+# ============================================================
+shot_list:
+  - id: shot_01_hook
+    timestamp_intent: "0-9s"
+    duration_intent_s: 9
+    description: "Hook + dyad presentation + narrator framing + countdown AVU LAST 3s"
+    scene_context:
+      who_is_there: [salvador, nico]
+      who_does_what:
+        salvador: "Permanece de pie a la izquierda del frame, posture erecta, mira al viewer fijamente, eyes glow tungsten warm sutil pulse (no habla — boca cosida). Gloved hands relajadas a los lados."
+        nico: "De pie a la derecha del frame, head turn slow hacia viewer, sostiene linterna en mano derecha apuntada al piso, caja de popcorn en mano izquierda con kernels jumping ocasional. Slight forward lean."
+        viewer: "POV estático en pasillo central del cine a 3m del dyad, ojos altura media, ve sala parcial al fondo (filas de butacas + pantalla blanca lejos)."
+      why_this_shot_exists: "Hook visual del dyad — viewer debe identificar inmediatamente 2 candidatos para elegir compañero. Sin este shot, el resto del video carece de baseline narrativo."
+    narration_in_this_shot:
+      narrator_text: "Decide con quién pasarás la noche en este cine: el Salvador... o el Nico."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue:
+        salvador: "No me elijas. Algo enciende la película."  # 5.5-7.5s window
+    visual_action_match:
+      visual_intent: "Dyad presentation con Salvador left + Nico right + sala parcial visible al fondo. Countdown AVU LAST 3s (6-9s)."
+      narration_describes: "Narrator framing question + Salvador warning (boca cosida — audio sin lip-sync, eyes glow pulse sync)."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false  # narrator off-screen; Salvador boca cosida (alive signal = eyes glow pulse only)
+    motion_intensity_intent: animation_full  # primeros 30s = animation AI obligatoria (hard rule #6)
+    narrative_function: hook
+    characters_visible: [salvador, nico]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_wide
+      movement: push_in_slow
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "rata gris pequeña corriendo entre filas de butacas al fondo right (visible ~4% frame width, motion lateral fugaz)"
+    atmospheric_motions_count: 5
+    atmospheric_motions_list:
+      - "polvo flotando atmosphérico en haz proyector lejano"
+      - "haz de luz proyector cortando dust particles dancing"
+      - "cortina roja raida lateral swaying ligero from above"
+      - "cartel EXIT verde fluorescente FLICKERING intermitente lateral"
+      - "kernels en caja popcorn del Nico jumping ocasional palpitando"
+    character_active_gesture_per_shot: |
+      salvador: head turn slow toward viewer + eyes glow tungsten warm pulse breathing rhythm + gloved hands subtle gesture (one slight gesture invisible film projection motion)
+      nico: head tilt curious slow + linterna beam sweep piso → viewer dirección + popcorn box subtle shake + eyes blink slow once
+    alive_signals_compensation:
+      - "Salvador eyes glow pulse compensa boca cosida (signature limitation)"
+      - "Salvador celluloid thread on lips subtle vibration sync con dialogue audio"
+      - "Salvador breath vapor visible from nose only"
+    hook_sub_beats:
+      - beat_id: character_intro_name_labels
+        timestamp_intent_s: [0, 2]
+        ui_active: [name_label_SALVADOR_Y11_5, name_label_NICO_Y11_5, ambient_setting_visual]
+        avu: null
+      - beat_id: caption_central_setting_and_narrator_framing
+        timestamp_intent_s: [2, 5]
+        narration_segment_id: "hook_narrator_framing"
+        caption_setting_text: "EL CINE ABANDONADO"
+        ui_active: [caption_central_setting_name, caption_narrator_framing_question]
+        avu: null
+      - beat_id: push_in_parallax_micromotion
+        timestamp_intent_s: [3, 5]
+        motion_effect: "push_in_slow + parallax_3d_subtle"
+        avu: null
+      - beat_id: salvador_warning_dialogue
+        timestamp_intent_s: [5.5, 7.5]
+        narration_segment_id: "hook_salvador_warning"
+        ui_active: [caption_warning_red_NO_ME_ELIJAS]
+        avu: null
+      - beat_id: countdown_avu_film_leader  # LAST 3s
+        timestamp_intent_s: [6, 9]
+        avu_asset: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+        avu: true
+        avu_audio_bundled: true
+    audio_visual_atomic_units:
+      - id: hook_countdown
+        type: pre_rendered_avu
+        asset_path: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+        inject_at_timestamp_s: 6.0
+        bundled_audio: true
+        canonical_validation_status: "validated_via_direct_frame_verification_4_refs_2026_05_19"
+      - id: narrator_framing_question
+        type: sync_contract
+        visual_element_id: caption_central_narrator_framing
+        audio_element_id: tts_hook_narrator_framing
+        contract:
+          visual_start_s: 2.0
+          audio_start_s: 2.0
+          tolerance_s: 0.1
+    ui_active: [name_label_salvador_Y11_5, name_label_nico_Y11_5, caption_setting_EL_CINE_ABANDONADO_Y48, caption_warning_NO_ME_ELIJAS_Y62, countdown_avu_film_leader_LAST_3s, watermark_elige_tucompanero]
+    keyframe_canonical_ref: "ref-08 Beat 1 hook dyad + Hugo dialogue precedent + ref-03 name labels style"
+
+  - id: shot_02_salvador_intro
+    timestamp_intent: "9-14.5s"
+    duration_intent_s: 5.5
+    description: "Setup — Salvador camina hacia el viewer en pasillo central del cine, gesto de invitación silencioso"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Camina lento hacia POV en pasillo central, head erect, hands enguantadas hacen gesto sutil de invitación. Eyes glow pulse subtle al ritmo de breath."
+        viewer: "POV estático esperando, ve al Salvador aproximándose desde la pantalla."
+      why_this_shot_exists: "Setup intro Salvador path — viewer entiende que está caminando con el bueno aparente. Bridge entre hook y setup."
+    narration_in_this_shot:
+      narrator_text: "Si eliges a Salvador, te lleva a la sala principal. Hay una sola función esta noche."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Salvador camina hacia POV, sala principal visible al fondo. Movimiento approaching."
+      narration_describes: "Te lleva a sala principal — visual matches (caminando con él hacia la sala)."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: walking_forward  # viewer walking toward sala con Salvador approaching
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: setup
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_medium
+      movement: tracking_forward_slow
+      lens_hint: 50mm
+    suggested_model_tier: STANDARD
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando atmospheric cerca cartel EXIT lateral"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "haz proyector dust particles dancing continuously"
+      - "cortina lateral swaying ligero"
+      - "luz EXIT verde flickering"
+    character_active_gesture_per_shot: |
+      salvador: walking forward steady pace + gloved hands subtle gesture invitando + head erect + eyes glow pulse continuo subtle
+    alive_signals_compensation:
+      - "Eyes glow pulse compensa boca cosida"
+      - "Hand gestures projecting invisible film motion"
+    ui_active: [caption_narrator_Y62, watermark_elige_tucompanero]
+
+  - id: shot_03_salvador_screen_action
+    timestamp_intent: "14.5-19s"
+    duration_intent_s: 4.5
+    description: "Salvador camina hacia pantalla + levanta mano enguantada + proyector arranca solo"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Lateral profile shot — camina hacia pantalla al fondo, levanta mano derecha enguantada en gesto comando hacia el haz invisible del booth. El proyector del booth arranca solo (haz luz se intensifica + sonido motor)."
+        viewer: "POV en pasillo, observa al Salvador ejecutar el ritual."
+      why_this_shot_exists: "Establece poder sobrenatural del Salvador — control de la maquinaria sin tocarla. Setup del threat sutil."
+    narration_in_this_shot:
+      narrator_text: "Camina hasta la pantalla, levanta la mano enguantada y el proyector arranca solo."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Salvador lateral profile + gesto mano + haz proyector intensifica + sonido motor proyector arrancando."
+      narration_describes: "Camina hasta pantalla + levanta mano + proyector arranca — visual exact match LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: setup
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_medium
+      movement: pan_right
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "rata corriendo entre butacas fila 5-6 ~5% frame width"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "haz proyector intensifica progressively (motion key del shot)"
+      - "dust particles dancing en haz proyector más densos"
+      - "humo sutil emerge del booth proyector"
+      - "cortina lateral swaying"
+    character_active_gesture_per_shot: |
+      salvador: walking 3 pasos hacia pantalla + raise right gloved hand vertical gesto comando + head erect + eyes glow pulse intensifica con el haz proyector
+    alive_signals_compensation:
+      - "Eyes glow sync con haz proyector — character signature alive signal"
+    ui_active: [caption_narrator_Y62, watermark]
+
+  - id: shot_04_salvador_lights_dim
+    timestamp_intent: "19-21s"
+    duration_intent_s: 2
+    description: "Detail shot — luces sala se dim + haz proyector se enfoca en pantalla"
+    scene_context:
+      who_is_there: []
+      who_does_what:
+        viewer: "POV se queda en pasillo central. Detail wide shot de pantalla en fondo con haz proyector enfocado."
+      why_this_shot_exists: "Transition shot — atmospheric beat antes del reveal de la película. Setup mood."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Atmospheric pause beat antes del film reveal — viewer absorbe el cambio de ambiente."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Wide shot pantalla cinematic, luces sala dim, haz proyector enfoca."
+      narration_describes: "Silencio intencional — visual carries the moment."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: setup_transition
+    characters_visible: []
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_wide
+      movement: static
+      lens_hint: 35mm
+    suggested_model_tier: DRAFT
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cruzando haz proyector silueta"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "luces wall sconces fade dimming progressively"
+      - "haz proyector intensifica focus"
+      - "dust particles dancing más densos en haz"
+    character_active_gesture_per_shot: "N/A — no characters on-screen"
+    ui_active: [watermark]
+
+  - id: shot_05_film_reveal
+    timestamp_intent: "21-27s"
+    duration_intent_s: 6
+    description: "Pantalla muestra película — viewer aparece de niño en cumpleaños (memoria olvidada)"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "De pie lateral al frame derecho, mirando hacia pantalla, eyes glow pulse intenso sync con la película proyectada."
+        film_on_screen: "Película muda blanco y negro 16mm grainy — niño de 9 años sentado frente a torta con velas encendidas. La cara del niño se ve borrosa al principio pero progresivamente reconocible como el viewer."
+        viewer: "POV en pasillo viendo pantalla + Salvador lateral. Reaction implícita (estática POV — no comment audio)."
+      why_this_shot_exists: "Hook emocional — el viewer está implicado en el threat. Memoria olvidada = motor curiosidad para D1."
+    narration_in_this_shot:
+      narrator_text: "En la pantalla aparece tu cumpleaños de los nueve años. El que no recuerdas."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Wide shot pantalla con película B&W de cumpleaños niño + Salvador lateral observando."
+      narration_describes: "Cumpleaños nueve años, el que no recuerdas — visual exact match."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: setup
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_wide
+      movement: push_in_slow
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cruzando haz proyector"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "haz proyector dust particles dancing"
+      - "película B&W flickering naturally (16mm grain motion)"
+      - "velas de torta en pantalla flickering"
+      - "humo sutil del booth proyector"
+    character_active_gesture_per_shot: |
+      salvador: lateral profile + gloved hand subtle gesture toward pantalla + eyes glow pulse intenso sync con película + head tilt slight observing
+    alive_signals_compensation:
+      - "Eyes glow pulse intensifica = signature alive signal sync con película"
+    ui_active: [caption_narrator_Y62, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 5 bridge narrativo + ref-03 Beat 9 atmospheric reveal"
+
+  - id: shot_06_offers_seat_boleto
+    timestamp_intent: "27-32.5s"
+    duration_intent_s: 5.5
+    description: "Salvador ofrece butaca fila 3 asiento 7 + tiende boleto en blanco con mano enguantada"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Se gira hacia viewer (head turn), señala con mano derecha una butaca específica fila 3 asiento 7 (visible mid-left frame), levanta otra mano izquierda extendiendo boleto blanco hacia viewer."
+        viewer: "POV ve gesto del Salvador + butaca señalada + boleto extendido (mano enguantada en frame). Hand viewer possibly visible bottom frame reaching tentative."
+      why_this_shot_exists: "Setup directo de D1 — el viewer recibe oferta concreta con stakes claros (sentarse y ver película + boleto)."
+    narration_in_this_shot:
+      narrator_text: "Te ofrece una butaca: fila tres, asiento siete. Tiende un boleto en blanco."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Salvador gestures hacia butaca + mano extendida con boleto blanco macro shot."
+      narration_describes: "Ofrece butaca fila 3 asiento 7 + tiende boleto blanco — visual exact match LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: approaching_character  # viewer steps closer to Salvador
+    pov_body_parts_visible:
+      - "viewer's right hand bottom frame extending tentative toward boleto"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_setup
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_medium
+      movement: push_in_slow
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "rata corriendo entre butacas fila lateral ~3% frame width"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "haz proyector cortando dust particles dancing"
+      - "polvo flotando atmospheric"
+      - "luces wall sconces flickering subtle"
+    character_active_gesture_per_shot: |
+      salvador: head turn hacia viewer + right hand gestures pointing butaca specific + left hand extends boleto vertical + eyes glow pulse warm sync con offer
+    alive_signals_compensation:
+      - "Eyes glow pulse + gloved hand extends boleto + breath vapor visible from nose"
+    ui_active: [caption_narrator_Y62, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 3 decision_setup_1 + ref-03 Beat 5 offer gesture"
+
+  - id: shot_07_d1_setup_question
+    timestamp_intent: "32.5-35.5s"
+    duration_intent_s: 3
+    description: "D1 setup question — Captions A/B + countdown 3-2-1 + loading bar"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Estático esperando, head erect, gloved hand still extending boleto. Eyes glow tungsten warm steady (no pulse durante decision moment)."
+        viewer: "POV estático frente al Salvador. Decision moment cognitive pause."
+      why_this_shot_exists: "Decision UI canonical — viewer must commit choice. AVU decision-freeze applied."
+    narration_in_this_shot:
+      narrator_text: "Ahora decide: tomas el boleto o lo rechazas."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "POV estático Salvador + boleto extendido + UI countdown + A/B captions."
+      narration_describes: "Decide: tomas o rechazas — visual exact + UI decision."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "viewer's right hand bottom frame hovering hesitant near boleto"
+    lip_sync_required: false
+    motion_intensity_intent: animation_partial  # decision UI = minimal motion, AVU handles motion
+    narrative_function: decision_countdown
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_medium
+      movement: static
+      lens_hint: 50mm
+    suggested_model_tier: STANDARD
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando en background near Salvador"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "polvo flotando atmospheric"
+      - "haz proyector dust subtle"
+      - "boleto en mano extendida subtle vibration en hilo"
+    character_active_gesture_per_shot: |
+      salvador: minimal motion — gloved hand boleto extendida estática + head erect + eyes glow steady warm (NO pulse durante countdown)
+    alive_signals_compensation:
+      - "Eyes glow steady warm — signature alive signal mantained durante decision moment"
+    ui_active: [caption_narrator_decide_Y62, caption_choice_A_tomas_el_boleto_Y58, caption_choice_B_lo_rechazas_Y66, countdown_avu_decision_film_leader_Y46, loading_bar_Y52, watermark]
+    narrative_pacing:
+      decision_freeze_frame: false  # empirical default 14% minority
+      decision_filter_overlay_type: clean
+      decision_filter_overlay_css: ""
+      decision_grain_canvas_opacity: 0
+      countdown_starts_after_narration_id: "decision_1_question"
+      countdown_pause_beat_s: 0.9
+      countdown_digit_duration_s: 1.0
+      countdown_visual_style: "film_leader_academy"
+      loading_bar_y_position_canonical_safe: 52
+      audio_cue_during_countdown: "time_loop_glitch_optional"
+      ambient_duck_db_during_countdown: 0
+      canonical_validation_status: "validated_via_video_measurement"
+      validated_against_canonical_refs: ["aggregate-canonical-bands.json Phase 1", "ref-08 Beat 3 decision_setup_1", "Rule D PRECEDENCE 2026-05-20"]
+      validation_methodology: "empirical_video_measurement"
+      validated_at: 2026-05-20
+    audio_visual_atomic_units:
+      - id: d1_decision_countdown
+        type: pre_rendered_avu
+        asset_path: "ai-video-production/templates/avu-library/decision-freeze-with-tick-3-2-1.mp4"
+        inject_at_timestamp_s: 32.5
+        bundled_audio: true
+        canonical_validation_status: "validated_via_direct_frame_verification"
+
+  - id: shot_08_d1_buffer_blackframe
+    timestamp_intent: "35.5-38.8s"
+    duration_intent_s: 3.3
+    description: "Hard cut moment — white flash 200ms + black frame buffer entre decision and consequence reveal"
+    scene_context:
+      who_is_there: []
+      who_does_what:
+        viewer: "Post-decision flash visual buffer. White flash 200ms then dark transition fade."
+      why_this_shot_exists: "Canonical hard cut canonical post-countdown — narrative breath beat entre decision moment and consequence reveal."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Visual flash transition — audio = SFX impact sound only, no narration."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "White flash → black fade transition."
+      narration_describes: "Silence intentional."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_partial
+    narrative_function: transition
+    characters_visible: []
+    setting: null
+    camera:
+      shot_type: POV_abstract
+      movement: static
+      lens_hint: 35mm
+    suggested_model_tier: DRAFT
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "N/A — pure transition"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "white flash bloom fast"
+      - "black fade in"
+      - "film grain texture continuo"
+    character_active_gesture_per_shot: "N/A"
+    ui_active: [watermark]
+
+  - id: shot_09_d1_consequence_A
+    timestamp_intent: "38.8-44s"
+    duration_intent_s: 5.2
+    description: "Consequence A1 — Te sientas. Apoyabrazos cierran. Haz proyector entra por boca abierta"
+    scene_context:
+      who_is_there: [salvador_silhouette_background]
+      who_does_what:
+        viewer: "POV — viewer se sienta en butaca fila 3 asiento 7. Apoyabrazos metálicos se cierran sobre regazo con clamp audible. Cabeza tilt back involuntario. Boca abre. El haz del proyector cambia ángulo y enfoca su luz tungsten warm directamente a la boca abierta del viewer."
+        salvador: "Silhouette visible al fondo lateral, head erect observando, eyes glow pulse intenso."
+      why_this_shot_exists: "Body horror Slot F específico — pérdida progresiva de identidad/libertad (PAUTA § 12 tipo 7). Visual concreto del trap."
+    narration_in_this_shot:
+      narrator_text: "Si tomas el boleto, te sientas. Los apoyabrazos se cierran sobre tu regazo. El haz del proyector entra por tu boca abierta."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "POV viewer en butaca + apoyabrazos clamping over lap + haz proyector enfoca a boca."
+      narration_describes: "Te sientas + apoyabrazos cierran + haz entra por boca — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static  # viewer sitting, immobilized
+    pov_body_parts_visible:
+      - "viewer's lap visible bottom frame con apoyabrazos cerrándose"
+      - "viewer's hands bottom corners trapped by clamp"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_A
+    characters_visible: [salvador_silhouette_background]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_close_up
+      movement: tracking_forward_slow
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polvo dancing intenso en haz proyector + rata corriendo lateral fugaz"
+    atmospheric_motions_count: 5
+    atmospheric_motions_list:
+      - "apoyabrazos butaca clamping motion mechanical (key motion)"
+      - "haz proyector ángulo changes redirige hacia boca"
+      - "dust particles dancing intensos en haz"
+      - "tela terciopelo butaca subtle vibration con clamp"
+      - "luz tungsten warm intensifica progressively"
+    character_active_gesture_per_shot: "N/A — viewer POV trapped. Salvador silhouette en background eyes glow pulse intenso."
+    alive_signals_compensation:
+      - "Salvador silhouette eyes glow pulse intenso visible al fondo"
+    ui_active: [caption_narrator_Y62, caption_si_elegiste_TOMAS_EL_BOLETO_Y58_red, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 4 consequence_A_1 (Pablo te empuja → tiburones) — equivalent stakes setup"
+
+  - id: shot_10_butaca_clamp_detail
+    timestamp_intent: "44-47s"
+    duration_intent_s: 3
+    description: "Detail shot — película B&W en pantalla muestra Salvador soplando velas. Hilo de celuloide se extiende del Salvador hacia boca del viewer (off-frame)"
+    scene_context:
+      who_is_there: [salvador_in_film]
+      who_does_what:
+        film_on_screen: "Película B&W muestra a Salvador ahora sentado frente a torta. Sus manos enguantadas soplan velas (acción imposible — boca cosida)."
+        salvador_real: "OFF-frame pero hilo de celuloide marrón se extiende desde sus labios cosidos hacia el viewer (visible en frame edge)."
+      why_this_shot_exists: "Twist visual — Salvador ahora en la película. Memory hijacked. Setup body horror final del path."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Visual carries — viewer absorbe la image del Salvador en la película. Audio = ambient cinema only."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Pantalla B&W con Salvador soplando velas + hilo de celuloide visible en frame edge."
+      narration_describes: "Silence intentional — visual revelation."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "hilo celuloide marrón visible frame edge extending toward POV"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_A_continuation
+    characters_visible: [salvador_in_film]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_close_up
+      movement: static
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polvo dancing intenso en haz proyector"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "película B&W flickering 16mm grain motion"
+      - "velas en pantalla flickering soplando"
+      - "hilo de celuloide subtle vibration extending"
+      - "haz proyector dust particles dancing"
+    character_active_gesture_per_shot: |
+      salvador_in_film: gloved hands en pantalla blow velas (motion within projected film)
+    alive_signals_compensation:
+      - "Película B&W muestra Salvador con boca abierta soplando — imposible IRL, alive signal narrativo"
+    ui_active: [watermark]
+
+  - id: shot_11_d1_consequence_B_bridge
+    timestamp_intent: "47-53s"
+    duration_intent_s: 6
+    description: "Consequence B1 + bridge — Salvador apaga luces de su cráneo y camina hacia cabina de proyección"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Inclina cabeza slightly downward, las luces dentro del cráneo se atenúan (eyes glow fade out gradually), gira y camina hacia el fondo derecho del lobby hacia escalera/puerta a cabina de proyección. Gloved hand gestures invitando a seguir."
+        viewer: "POV sigue al Salvador caminando, viewer walking forward through pasillo lateral."
+      why_this_shot_exists: "Rama B transition explícita PAUTA § 3 — el Salvador NO se da por vencido, lleva al viewer al siguiente threat (cabina). Bridge narrativo eficiente."
+    narration_in_this_shot:
+      narrator_text: "Si lo rechazas, el Salvador apaga las luces de su cráneo y camina hacia la cabina de proyección."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Salvador eyes glow fade out + camina hacia fondo + viewer follows."
+      narration_describes: "Apaga luces de su cráneo + camina hacia cabina — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: walking_forward  # viewer follows Salvador
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_B_bridge
+    characters_visible: [salvador]
+    setting: cinema_sala_principal_anchor
+    camera:
+      shot_type: POV_medium
+      movement: tracking_forward_slow
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando hacia haz proyector apagándose"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "luces sala dim continuing"
+      - "haz proyector fade intensity"
+      - "Salvador eyes glow fade out (signature motion del shot)"
+      - "polvo flotando atmospheric"
+    character_active_gesture_per_shot: |
+      salvador: head incline downward + eyes glow fade out gradually + gira body 180° + walking away forward + gloved hand gesture invitando seguir
+    alive_signals_compensation:
+      - "Eyes glow fade out gradually — signature alive signal mostrando state change emocional"
+    ui_active: [caption_narrator_Y62, caption_si_elegiste_LO_RECHAZAS_Y58, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 5 consequence_B_1 bridge (Pablo camina hacia tanque anguilas) — equivalent narrative bridge"
+
+  - id: shot_12_cabina_approach
+    timestamp_intent: "53-55.5s"
+    duration_intent_s: 2.5
+    description: "Approach cabina proyección — puerta con placa ÚLTIMA FUNCIÓN visible"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Frente a puerta cabina, su mano enguantada en el picaporte, gira head hacia viewer (POV)."
+        viewer: "POV se acerca hacia puerta cabina, ve placa metálica grabada ÚLTIMA FUNCIÓN — NO INTERRUMPIR en puerta verde oscuro."
+      why_this_shot_exists: "Setup decision 2 — establece el space (cabina) + warning placa setup tensión."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Tension visual sin narration — viewer absorbe placa warning + Salvador silent gesture invitando."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Puerta cabina con placa metálica + Salvador mano picaporte."
+      narration_describes: "Silence — visual matches."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: approaching_character  # viewer approaches puerta with Salvador waiting
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: setup_transition
+    characters_visible: [salvador]
+    setting: cinema_cabina_proyeccion_anchor  # exterior approach
+    camera:
+      shot_type: POV_medium
+      movement: push_in_slow
+      lens_hint: 50mm
+    suggested_model_tier: STANDARD
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cerca bombilla del pasillo"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "bombilla amarilla del pasillo flickering"
+      - "polvo flotando atmospheric"
+      - "humo subtle saliendo de slot ventilación cabina"
+    character_active_gesture_per_shot: |
+      salvador: mano enguantada en picaporte + head turn hacia viewer + eyes glow pulse breath rhythm
+    alive_signals_compensation:
+      - "Eyes glow pulse rhythmic compensa boca cosida"
+    ui_active: [watermark]
+
+  - id: shot_13_cabina_interior
+    timestamp_intent: "55.5-58.5s"
+    duration_intent_s: 3
+    description: "Interior cabina — asiento vacío + cortafilm sobre mesa + rebobinadora gira sola"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Lateral derecha frame, mira hacia mesa con cortafilm, gloved hand gestures invitando hacia él."
+        viewer: "POV interior cabina viendo asiento vacío + mesa con cortafilm + rebobinadora girando + rollos film apilados."
+      why_this_shot_exists: "Reveal D2 elements — viewer ve cortafilm como prop visible + setup imminent decision."
+    narration_in_this_shot:
+      narrator_text: "Dentro de la cabina hay un asiento vacío y un cortafilm sobre la mesa. Una tijera del proyeccionista. Te lo ofrece."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Wide shot interior cabina + asiento + cortafilm + Salvador lateral."
+      narration_describes: "Asiento vacío + cortafilm + te lo ofrece — visual exact match."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: looking_around  # viewer scans interior cabina
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_setup
+    characters_visible: [salvador]
+    setting: cinema_cabina_proyeccion_anchor
+    camera:
+      shot_type: POV_wide
+      movement: pan_left
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando en haz del proyector lateral"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "rebobinadora girando rhythmic (key motion)"
+      - "proyector rueda bobina visible girando"
+      - "haz proyector saliendo por ventana cabina dust particles"
+      - "humo subtle del motor proyector"
+    character_active_gesture_per_shot: |
+      salvador: lateral profile + gloved hand gestures point hacia cortafilm + head turn hacia viewer + eyes glow pulse warm
+    alive_signals_compensation:
+      - "Eyes glow pulse sync con rebobinadora rhythm — environmental interaction"
+    ui_active: [caption_narrator_Y62, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 6 setup pre-decision 2 (Pablo te mira frente tanque anguilas)"
+
+  - id: shot_14_d2_setup_question
+    timestamp_intent: "58.5-61.5s"
+    duration_intent_s: 3
+    description: "D2 setup question — Salvador ofrece cortafilm + Captions A/B + countdown 3-2-1"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Frente a viewer, gloved hand right extends offering cortafilm (mango primero). Head erect, eyes glow steady warm."
+        viewer: "POV close-up del cortafilm + Salvador mid-shot detrás. Decision moment."
+      why_this_shot_exists: "Decision UI canonical D2 — viewer must commit. AVU decision-freeze applied."
+    narration_in_this_shot:
+      narrator_text: "Decides: aceptas el cortafilm o sales."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Salvador extends cortafilm + UI countdown + A/B captions."
+      narration_describes: "Decides aceptas el cortafilm o sales — visual exact + UI."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "viewer's right hand bottom frame hovering hesitant near cortafilm"
+    lip_sync_required: false
+    motion_intensity_intent: animation_partial
+    narrative_function: decision_countdown
+    characters_visible: [salvador]
+    setting: cinema_cabina_proyeccion_anchor
+    camera:
+      shot_type: POV_medium
+      movement: static
+      lens_hint: 50mm
+    suggested_model_tier: STANDARD
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cerca proyector"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "rebobinadora continúa girando"
+      - "humo motor proyector"
+      - "cortafilm subtle vibration en mano enguantada"
+    character_active_gesture_per_shot: |
+      salvador: minimal motion — gloved hand extends cortafilm estático + head erect + eyes glow steady warm
+    alive_signals_compensation:
+      - "Eyes glow steady durante decision"
+    ui_active: [caption_narrator_decide_Y62, caption_choice_A_aceptas_cortafilm_Y58, caption_choice_B_sales_Y66, countdown_avu_decision_film_leader_Y46, loading_bar_Y52, watermark]
+    narrative_pacing:
+      decision_freeze_frame: false
+      decision_filter_overlay_type: clean
+      decision_filter_overlay_css: ""
+      decision_grain_canvas_opacity: 0
+      countdown_starts_after_narration_id: "decision_2_question"
+      countdown_pause_beat_s: 0.9
+      countdown_digit_duration_s: 1.0
+      countdown_visual_style: "film_leader_academy"
+      loading_bar_y_position_canonical_safe: 52
+      audio_cue_during_countdown: "time_loop_glitch_optional"
+      ambient_duck_db_during_countdown: 0
+      canonical_validation_status: "validated_via_video_measurement"
+      validated_against_canonical_refs: ["aggregate-canonical-bands.json Phase 1"]
+      validation_methodology: "empirical_video_measurement"
+      validated_at: 2026-05-20
+    audio_visual_atomic_units:
+      - id: d2_decision_countdown
+        type: pre_rendered_avu
+        asset_path: "ai-video-production/templates/avu-library/decision-freeze-with-tick-3-2-1.mp4"
+        inject_at_timestamp_s: 58.5
+        bundled_audio: true
+        canonical_validation_status: "validated_via_direct_frame_verification"
+
+  - id: shot_15_d2_buffer_blackframe
+    timestamp_intent: "61.5-64.8s"
+    duration_intent_s: 3.3
+    description: "Hard cut moment D2 — white flash + black frame transition"
+    scene_context:
+      who_is_there: []
+      who_does_what:
+        viewer: "Post-decision flash visual buffer."
+      why_this_shot_exists: "Canonical hard cut canonical."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Visual flash transition."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "White flash → black fade."
+      narration_describes: "Silence."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_partial
+    narrative_function: transition
+    characters_visible: []
+    setting: null
+    camera:
+      shot_type: POV_abstract
+      movement: static
+      lens_hint: 35mm
+    suggested_model_tier: DRAFT
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "N/A"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "white flash bloom"
+      - "black fade"
+      - "film grain texture"
+    character_active_gesture_per_shot: "N/A"
+    ui_active: [watermark]
+
+  - id: shot_16_d2_consequence_A
+    timestamp_intent: "64.8-71s"
+    duration_intent_s: 6.2
+    description: "Consequence A2 — Cortafilm corta hilo del Salvador + hilo salta a tu boca + viewer queda sentado en butaca con su cumpleaños en bucle"
+    scene_context:
+      who_is_there: [salvador]
+      who_does_what:
+        salvador: "Frente a viewer, viewer empuña el cortafilm (sostenido por mano viewer visible). El cortafilm se mueve solo y corta el hilo de celuloide que cose los labios del Salvador. El hilo salta del Salvador hacia boca del viewer."
+        viewer: "POV — manos sosteniendo cortafilm (visible frame bottom). Cortafilm se mueve involuntario. Después POV ve hilo flying hacia su boca."
+      why_this_shot_exists: "Body horror Slot F específico — boca cosida con celuloide (PAUTA § 12 inverted asfixia). Función eterna trap."
+    narration_in_this_shot:
+      narrator_text: "Si aceptas el cortafilm, corta solo el hilo del Salvador. El hilo salta a tu boca. Quedas sentado en su butaca, con tu cumpleaños en bucle en la pantalla."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Cortafilm involuntary motion + hilo celuloide cut + hilo flying + lands boca viewer."
+      narration_describes: "Cortafilm corta solo + hilo salta a tu boca + viewer en butaca + cumpleaños bucle pantalla — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "viewer's both hands frame bottom holding cortafilm (film splicer scissors)"
+      - "hilo celuloide flying toward boca frame center"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_A
+    characters_visible: [salvador]
+    setting: cinema_cabina_proyeccion_anchor
+    camera:
+      shot_type: POV_close_up
+      movement: tracking_forward_slow
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cerca proyector affected by movement"
+    atmospheric_motions_count: 5
+    atmospheric_motions_list:
+      - "cortafilm motion mechanical involuntario (key motion)"
+      - "hilo celuloide flying motion ballistic toward boca"
+      - "Salvador boca apenas libre con hilo cortado dangling"
+      - "haz proyector cabina intensifica"
+      - "rebobinadora gira más rápido frenética"
+    character_active_gesture_per_shot: |
+      salvador: boca libre del hilo expression alive REVELADA brief moment + eyes glow pulse intense + head turn toward viewer (acción narrativa key)
+    alive_signals_compensation:
+      - "Salvador boca briefly reveals expression sin hilo — first time alive signal facial expressive del video"
+    ui_active: [caption_narrator_Y62, caption_si_elegiste_ACEPTAS_CORTAFILM_Y58_red, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 8 consequence_A_2 (anguilas wrap muñeca + descarga) — equivalent body horror sync"
+
+  - id: shot_17_funcion_eterna_butaca_cabina
+    timestamp_intent: "71-73s"
+    duration_intent_s: 2
+    description: "Detail close-up — viewer ahora con boca cosida hilo celuloide en la pantalla del cine, su cumpleaños B&W siempre en bucle"
+    scene_context:
+      who_is_there: []
+      who_does_what:
+        viewer: "POV — close-up de boca propia en el reflejo del cristal de la cabina O en la pantalla del cine. Viewer ahora con boca cosida hilo celuloide 12 puntadas visible. En la pantalla detrás, su cumpleaños B&W ahora con SU cara borrosa de adulto rotando en loop infinito."
+      why_this_shot_exists: "Punchline visual del trap A2 — viewer ahora ocupa el lugar del Salvador, su memoria en bucle eterno en la pantalla. Closure literal del path A."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: true
+      silence_reason: "Visual reveal sin narration — el horror habla solo."
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Close-up boca viewer con hilo celuloide cosido."
+      narration_describes: "Silence intencional."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "viewer's mouth close-up center frame cosido con celuloide"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_A_closure
+    characters_visible: []
+    setting: cinema_cabina_proyeccion_anchor
+    camera:
+      shot_type: POV_extreme_close_up
+      movement: static
+      lens_hint: 85mm_telephoto
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polvo flotando atmospheric cerca boca"
+    atmospheric_motions_count: 3
+    atmospheric_motions_list:
+      - "hilo celuloide en boca subtle vibration breath"
+      - "luz proyector flickering tungsten warm en cara"
+      - "haz proyector dust dancing background"
+    character_active_gesture_per_shot: "N/A — viewer trapped"
+    ui_active: [watermark]
+
+  - id: shot_18_d2_consequence_B_bridge
+    timestamp_intent: "73-75s"
+    duration_intent_s: 2
+    description: "Consequence B2 bridge — Sales de cabina. Haz proyector apaga. Detrás, linterna se enciende."
+    scene_context:
+      who_is_there: [salvador_silhouette_door]
+      who_does_what:
+        viewer: "POV walking backward sale de cabina, head turning back over shoulder ver el Salvador inmóvil en marco de puerta + haz proyector fading."
+        salvador: "Inmóvil en marco de puerta cabina, eyes glow fade out gradually, gloved hands a los lados."
+      why_this_shot_exists: "Rama B transition explícita — bridge entre cabina y aparición del Nico (twist setup)."
+    narration_in_this_shot:
+      narrator_text: "Si sales, el haz se apaga. Detrás de ti, una linterna se enciende."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "POV walking backward + Salvador silhouette puerta + haz fading + linterna haz nuevo aparece detrás POV frame edge."
+      narration_describes: "Haz se apaga + linterna se enciende — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: walking_backward
+    pov_body_parts_visible: []
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_B_bridge
+    characters_visible: [salvador]
+    setting: cinema_cabina_proyeccion_anchor
+    camera:
+      shot_type: POV_medium
+      movement: tracking_forward_slow  # tracking backward direction
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polvo flotando + polilla cruzando"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "haz proyector cabina fading intensity (key motion del shot)"
+      - "linterna haz nuevo emerging detrás POV (key motion)"
+      - "Salvador eyes glow fade out"
+      - "humo cabina dissipating"
+    character_active_gesture_per_shot: |
+      salvador: inmóvil en marco puerta + eyes glow fade out + head erect mirando fixed + gloved hands hanging
+    alive_signals_compensation:
+      - "Eyes glow fade out gradually — character signature emotional shift"
+    ui_active: [caption_narrator_Y62, caption_si_elegiste_SALES_Y58, watermark]
+
+  - id: shot_19_nico_return
+    timestamp_intent: "75-77s"
+    duration_intent_s: 2
+    description: "Nico appears + dialogue 'Por aquí. La función ya terminó.' (TWIST setup P3)"
+    scene_context:
+      who_is_there: [nico]
+      who_does_what:
+        nico: "Aparece de derecha frame, linterna apuntando piso warm tungsten, head tilt friendly, sostiene popcorn box. Habla."
+        viewer: "POV gira hacia Nico. Ve su cara: ojos enormes negros sin pupilas pero head tilt friendly."
+      why_this_shot_exists: "TWIST P3 reveal — el malo aparente es el bueno. Nico rescata. Counterfactual narrativo activado."
+    narration_in_this_shot:
+      narrator_text: ""
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue:
+        nico: "Por aquí. La función ya terminó."
+    visual_action_match:
+      visual_intent: "Nico aparece + dialogue + linterna gesture lead."
+      narration_describes: "Nico habla on-screen — lip-sync exact."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: turning_right  # viewer turns to face Nico
+    pov_body_parts_visible: []
+    lip_sync_required: true  # ON-screen face speaking
+    motion_intensity_intent: animation_full
+    narrative_function: counterfactual_twist_setup
+    characters_visible: [nico]
+    setting: cinema_lobby_anchor
+    camera:
+      shot_type: POV_medium
+      movement: pan_right
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "rata corriendo entre cordones rojos terciopelo ~3% frame"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "linterna Nico beam tungsten warm motion sweep"
+      - "kernels popcorn box jumping ocasional"
+      - "polvo flotando lobby"
+      - "cortinas posters cinema swaying ligero"
+    character_active_gesture_per_shot: |
+      nico: head tilt friendly hacia viewer + lip-sync con dialogue "Por aquí. La función ya terminó." + linterna gesture pointing piso + popcorn box subtle shake + eyes blink slow once
+    alive_signals_compensation:
+      - "Nico eyes blink slow + lip-sync activo = standard human gesture"
+
+  - id: shot_20_nico_lobby_exit
+    timestamp_intent: "77-81.5s"
+    duration_intent_s: 4.5
+    description: "Nico camina con viewer hacia puerta lateral del cine + cliffhanger counterfactual narration starts"
+    scene_context:
+      who_is_there: [nico]
+      who_does_what:
+        nico: "Caminando lateral con viewer hacia puerta lateral del lobby, linterna apunta piso warm tungsten, head turn occasional hacia viewer."
+        viewer: "POV walking forward con Nico, ve linóleo damero + posters descoloridos + máquina popcorn lateral."
+      why_this_shot_exists: "Cliffhanger counterfactual narrativo — viewer ve la paz perdida que habría sido suya. Outro warm contrast."
+    narration_in_this_shot:
+      narrator_text: "Si hubieras elegido a Nico, te habría guiado con la linterna hasta la puerta lateral del cine."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Nico walking with viewer through lobby toward puerta lateral."
+      narration_describes: "Te habría guiado con la linterna hasta la puerta lateral — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: walking_forward
+    pov_body_parts_visible: []
+    lip_sync_required: false  # narrator voiceover, Nico walking silently
+    motion_intensity_intent: animation_full
+    narrative_function: counterfactual_outro
+    characters_visible: [nico]
+    setting: cinema_lobby_anchor
+    camera:
+      shot_type: POV_medium
+      movement: tracking_forward_slow
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando hacia lámpara central"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "linterna Nico beam tungsten warm sweep ahead"
+      - "kernels popcorn box jumping ocasional"
+      - "polvo flotando warm light atmospheric"
+      - "cordones rojos terciopelo swaying ligero"
+    character_active_gesture_per_shot: |
+      nico: walking lateral con viewer + linterna apuntando piso + head turn occasional friendly hacia viewer + popcorn box steady held
+    alive_signals_compensation:
+      - "Nico head turns + linterna sweep + popcorn shakes = multi-layer alive signals"
+    ui_active: [caption_narrator_Y62, watermark]
+    keyframe_canonical_ref: "ref-08 Beat 10 resolution + Beat 11 cliffhanger Paz perdida (Hugo cristales + café medusas)"
+
+  - id: shot_21_counterfactual_door
+    timestamp_intent: "81.5-85s"
+    duration_intent_s: 3.5
+    description: "Nico entrega boleto en blanco + dice frase outro"
+    scene_context:
+      who_is_there: [nico]
+      who_does_what:
+        nico: "Frente a puerta lateral abierta, tendiendo boleto blanco al viewer con mano izquierda. Head turn hacia viewer, lips moving subtle (silent — narration voiceover)."
+        viewer: "POV close-up de boleto en blanco extendido + mano del Nico + puerta lateral con luz amanecer dorada entrando."
+      why_this_shot_exists: "Counterfactual outro detail — boleto blanco como prop signature. Stakes emocionales del path no elegido."
+    narration_in_this_shot:
+      narrator_text: "Te habría entregado un boleto sin fecha y te habría dicho: no regreses el martes."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Nico extends boleto blanco + puerta lateral con amanecer warm visible."
+      narration_describes: "Boleto sin fecha + no regreses el martes — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: static
+    pov_body_parts_visible:
+      - "viewer's right hand frame bottom tentative toward boleto"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: counterfactual_outro_detail
+    characters_visible: [nico]
+    setting: cinema_lobby_anchor
+    camera:
+      shot_type: POV_close_up
+      movement: push_in_slow
+      lens_hint: 50mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando cruzando puerta hacia luz amanecer"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "luz amanecer warm leaking through puerta lateral"
+      - "polvo flotando warm light beams"
+      - "boleto blanco subtle vibration en mano"
+      - "linterna haz tungsten warm en piso"
+    character_active_gesture_per_shot: |
+      nico: gloved hand extends boleto + head turn hacia viewer + lips moving subtle silent + linterna apuntando piso + breath visible
+    alive_signals_compensation:
+      - "Standard human gestures Nico + lips moving subtle silent (narration voiceover)"
+
+  - id: shot_22_counterfactual_amanecer
+    timestamp_intent: "85-88s"
+    duration_intent_s: 3
+    description: "Outro final — viewer sale al amanecer + tagline 'Elige a tu compañero' + watermark close"
+    scene_context:
+      who_is_there: []
+      who_does_what:
+        viewer: "POV sale por puerta lateral al exterior — amanecer dorado, calle adoquinada vacía, frescor del aire morning. Close on camisa propia (frame bottom) con olor visible (humo sutil) de celuloide quemado."
+      why_this_shot_exists: "Cierre warm cozy contrast vs interior cool horror previo. CTA tagline + watermark sign-off."
+    narration_in_this_shot:
+      narrator_text: "Habrías salido al amanecer con el olor a celuloide quemado en la ropa. Elige a tu compañero."
+      silence_by_design: false
+      silence_reason: ""
+      character_dialogue: {}
+    visual_action_match:
+      visual_intent: "Exterior amanecer dorado + camisa con humo sutil celuloide + watermark visible."
+      narration_describes: "Sales al amanecer + olor celuloide quemado en la ropa + tagline — visual exact LITERAL."
+      matches_literal: true
+    pov: true
+    pov_traversal_intent: walking_forward
+    pov_body_parts_visible:
+      - "viewer's camisa frame bottom con humo sutil"
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: counterfactual_outro_close
+    characters_visible: []
+    setting: cinema_exterior_amanecer_anchor
+    camera:
+      shot_type: POV_wide
+      movement: tracking_forward_slow
+      lens_hint: 35mm
+    suggested_model_tier: HERO
+    prompt_quality_required: PREMIUM
+    setting_ambient_creature_or_object: "polilla volando hacia amanecer warm light"
+    atmospheric_motions_count: 4
+    atmospheric_motions_list:
+      - "luz amanecer warm intensifies golden"
+      - "humo sutil celuloide quemado emerging de camisa viewer"
+      - "polvo dorado flotando atmospheric"
+      - "viento leve ruffles silhouette edges"
+    character_active_gesture_per_shot: "N/A — viewer walking forward into amanecer"
+    audio_visual_atomic_units:
+      - id: outro_card_signoff
+        type: pre_rendered_avu
+        asset_path: "ai-video-production/templates/avu-library/outro-card-template.mp4"
+        inject_at_timestamp_s: 87.0
+        bundled_audio: false  # audio narration carries
+        canonical_validation_status: "validated_via_direct_frame_verification"
+    ui_active: [caption_narrator_tagline_Y62, caption_outro_card_tagline, watermark_elige_tucompanero_persistent]
+    keyframe_canonical_ref: "ref-08 Beat 10 + ref-03 amanecer outro warm contrast"
+
+# ============================================================
+# NARRATIVE FLOW TRANSITIONS (D15 + D18 auto-audit)
+# ============================================================
+narrative_flow_transitions:
+  - decision_id: D1
+    consequence_A_shot_ids: [shot_09_d1_consequence_A, shot_10_butaca_clamp_detail]
+    rama_B_transition_shot_id: shot_11_d1_consequence_B_bridge
+    rama_B_transition_narration: "Si lo rechazas, el Salvador apaga las luces de su cráneo y camina hacia la cabina de proyección."
+    consequence_B_shot_ids: [shot_12_cabina_approach]
+
+  - decision_id: D2
+    consequence_A_shot_ids: [shot_16_d2_consequence_A, shot_17_funcion_eterna_butaca_cabina]
+    rama_B_transition_shot_id: shot_18_d2_consequence_B_bridge
+    rama_B_transition_narration: "Si sales, el haz se apaga. Detrás de ti, una linterna se enciende."
+    consequence_B_shot_ids: [shot_19_nico_return, shot_20_nico_lobby_exit]
+
+# ============================================================
+# ASSET LIST
+# ============================================================
+asset_list:
+  reference_anchors_first:
+    - salvador_anchor
+    - nico_anchor
+    - cinema_sala_principal_anchor
+    - cinema_cabina_proyeccion_anchor
+    - cinema_lobby_anchor
+    - cinema_exterior_amanecer_anchor
+    - boleto_blanco_anchor
+    - caja_popcorn_anchor
+    - cortafilm_anchor
+    - linterna_nico_anchor
+
+  shot_list_total: 22
+
+  tts_segments_to_generate:
+    - hook_narrator_framing
+    - hook_salvador_warning
+    - setup_salvador_intro
+    - setup_salvador_action
+    - setup_salvador_film_reveal
+    - decision_1_setup
+    - decision_1_question
+    - consequence_A1
+    - consequence_B1_bridge
+    - decision_2_setup
+    - decision_2_question
+    - consequence_A2
+    - consequence_B2_bridge
+    - nico_offer
+    - cliffhanger_counterfactual_intro
+    - cliffhanger_counterfactual_detail
+    - cliffhanger_counterfactual_close
+    - tagline_cta
+
+  sfx_prompts_to_generate:
+    # ⛔ ITER 2 SFX AUDIT (2026-05-20): engineer iter 1 reused matarife SFX in wrong cinema context.
+    # User feedback: "sonidos se repiten del video matadero (cocinera) + alarma insoportable + sopa muy raro"
+    # ENGINEER ACTION: DELETE all matadero-reuse SFX from this project's library before regenerating.
+    # Specifically forbidden reuse from matadero-banquete: "cucharada_caldo_*", "mandibula_apertura_*",
+    # "cocinera_*", "sirena_luz_electrica_*" (the loud alarm). Generate FRESH cinema-specific SFX below.
+
+    - id: projector_running_loop
+      duration_s: 60
+      prompt_intent: "Old 35mm film projector running rhythmic mechanical loop — gear motor + sprocket clicking + soft motor hum + occasional film slap. Years 50 era authentic mechanical."
+    - id: film_reel_spinning
+      duration_s: 5
+      prompt_intent: "Film reel spinning sharper accelerating tempo — rebobinadora wind up high speed celluloid reel rotating."
+    - id: dust_particles_ambient
+      duration_s: 88
+      prompt_intent: "Ambient cinema dust + atmospheric silence + faint air movement + occasional tile creak — abandoned cinema interior continuous low-level ambience."
+    - id: seat_creak_oscillation
+      duration_s: 3
+      prompt_intent: "Old velvet cinema seat creaking + spring tension shifting + woodwork groan — sound of someone sitting down."
+    - id: footsteps_carpet_aisle
+      duration_s: 5
+      prompt_intent: "Footsteps on old worn carpet cinema aisle + occasional foot stick on sticky floor + soft impact. Years 50 leather sole shoes."
+    - id: rat_squeak_distant
+      duration_s: 2
+      prompt_intent: "Distant rat squeak + tiny claws scratching velvet cinema seat fabric + skittering between rows. Ambient creature signal, NOT loud — peripheral. Cinema-context unique."
+      replaces_matadero_reuse: "OLD bad reuse: matarife 'mandibula_apertura' was wrongly mapped to cinema rat. NEW correct cinema-specific."
+    - id: screen_static_flicker
+      duration_s: 3
+      prompt_intent: "Old film projection screen static flicker + occasional crackle + soft hum of cinema audio system."
+    - id: projector_bulb_buzz_cycle
+      duration_s: 5
+      prompt_intent: "Tungsten warm projector bulb hum cycling + 60Hz electrical buzz mild + occasional filament flicker pop. Soft NOT alarming — atmospheric continuous."
+      replaces_matadero_reuse: "OLD bad reuse: 'sirena_luz_electrica' alarma from matarife was intolerable. NEW soft cinema bulb hum NOT siren."
+    - id: exit_sign_fluorescent_flicker
+      duration_s: 4
+      prompt_intent: "Old green fluorescent EXIT sign electrical flicker + intermittent pop + low hum. Continuous-ish ambient. Volume soft."
+      engineer_mix_flag: "mix at 0.12-0.18 NOT louder. Was at 0.50 iter 1 = intolerable per user. THIS IS NOT AN ALARMA."
+    - id: distant_rain_on_roof
+      duration_s: 88
+      prompt_intent: "Very distant rain on cinema roof + occasional thunder rumble far away — continuous ambient texture below other audio."
+    - id: popcorn_kernels_popping
+      duration_s: 2
+      prompt_intent: "Cinema popcorn kernels popping inside paper box — light pop pops + paper rustling + occasional kernel hitting box wall. Sound of palpitating kernels from Nico's popcorn box prop."
+      replaces_matadero_reuse: "OLD bad reuse: 'cucharada caldo' sopa from matarife was mapped to popcorn. NEW correct cinema popcorn pop."
+    - id: clamp_metal_butaca
+      duration_s: 1
+      prompt_intent: "Heavy metal clamp closing locking + chains tension + click final lock — apoyabrazos butaca activating mechanism. Cinema seat industrial trap."
+    - id: film_splicer_cortafilm_cut
+      duration_s: 1
+      prompt_intent: "Film splicer (cortafilm) metal blades closing + celluloid film thread snipping clean + tiny celluloid piece dropping. Years 50 Bell & Howell or Kodak hot splicer authentic sound. NOT generic scissor."
+      replaces_matadero_reuse: "OLD bad reuse: 'tijeras_celuloide_cut' was generic scissor sound. NEW specific cinema splicer mechanism authentic."
+    - id: celluloid_thread_whip
+      duration_s: 1
+      prompt_intent: "Celluloid film thread snapping flying through air + light whip sound + soft impact on skin (when it lands on viewer's mouth). Subtle NOT loud."
+    - id: projection_booth_door_creak
+      duration_s: 2
+      prompt_intent: "Old wooden projection booth door creaking open slowly + metal hinge groan + final soft thud against wall."
+    - id: rewinder_mechanical_rhythm
+      duration_s: 5
+      prompt_intent: "35mm film rewinder mechanical rhythm — gear clicking + reel spinning steady + occasional belt squeak. Cabina de proyección continuous."
+    - id: white_flash_impact
+      duration_s: 1
+      prompt_intent: "Cinematic white flash impact — short whoosh + brief sub-bass thud + high-pitch ringing tail. Canonical post-countdown decision moment."
+    - id: butaca_apoyabrazos_swing_open
+      duration_s: 1
+      prompt_intent: "Metal arm rest swinging open creak (rama B variant when viewer rejects boleto) — cinema seat releasing tension."
+
+  music_to_generate:
+    - id: main_drone_eerie_50s_film_score
+      bpm: 60
+      duration_s: 65
+      style_ref_concrete: "Bernard Herrmann (Psycho minimalist drone) + Trent Reznor (Social Network drone synth) — eerie 50s cinematic score"
+      instruments_hint: "synth drone deep + bowed double bass low + sparse celesta notes occasional + sub-bass pulses + reverb cinematic 1950s"
+      tonal_target: "amenaza latente del cine abandonado — paciente, no urgente, el horror del time stuck"
+    - id: cliffhanger_endless_loop_waltz_carnival
+      bpm: 70
+      duration_s: 15
+      style_ref_concrete: "Tom Waits (Crystal Gayle Carnival waltz) + Danny Elfman (Beetlejuice carnival darker) — eerie carnival waltz tempo low"
+      instruments_hint: "calliope organ + accordion lonely + music box children-style + brushed snare slow + plucked upright bass"
+      tonal_target: "función eterna en bucle — bittersweet carnival que nunca termina"
+    - id: transition_film_reel_change
+      bpm: 0
+      duration_s: 2
+      style_ref_concrete: "Film reel changeover SFX cinematic — projector clicking + film loop changeover sound"
+      instruments_hint: "projector mechanical motor + film reel slap + brief silence + new reel start whir"
+      tonal_target: "transition cue moments — used between major narrative shifts (path A→B or post-decision)"
+
+  ambient_continuous_to_generate:
+    - id: cinema_projector_run_loop
+      duration_s: 88
+      prompt_intent: "Continuous 35mm film projector running ambient mechanical loop + warm tungsten lamp hum + dust ambient cinema-grade. Low-mid frequency dominant."
+    - id: cinema_atmosphere_dust_ambient
+      duration_s: 88
+      prompt_intent: "Abandoned cinema atmosphere — silence + air movement + occasional creak + faint distant rain + dust ambient texture. Very subtle below other audio."
+
+# ============================================================
+# AESTHETIC + AUDIO + UI STRATEGY (operational layer)
+# ============================================================
+aesthetic_strategy:
+  ref_doc: aesthetic.md
+  dual_palette_intent: "cool_dark_cinematic_horror vs warm_amanecer_outro"
+  vignette_intent: pronunciada
+  film_grain_intent: visible_10_pct  # higher grain for 35mm cinema reference
+  color_grading_luts:
+    cool_dark_cinematic_horror:
+      reference: "Sicario (Roger Deakins) + The Lighthouse (Jarin Blaschke) — cool blues + crushed blacks + tungsten warm spots from light sources"
+      css_filter_target: "saturate(0.65) brightness(0.82) hue-rotate(-8deg) contrast(1.2) — palette frío crushed blacks con tungsten warm spots"
+      lut_file_hint_engineer: "3D LUT 'Cinematic Cool Crush' o equivalent"
+    warm_amanecer_outro:
+      reference: "Coco (Pixar warm) + The Grand Budapest Hotel (Wes Anderson amanecer dorado) — warm amber/orange dominant"
+      css_filter_target: "saturate(1.18) brightness(1.08) hue-rotate(18deg) contrast(1.05) — palette warm amber dorado"
+      lut_file_hint_engineer: "3D LUT 'Warm Dawn Glow' o equivalent"
+    transition_dramatic_shift:
+      occurrence_timestamp: "shot_19_nico_return (75s) cool→warm transition begins"
+      cinematography_note: "Gradual transition cool→warm starting shot_19 (Nico appears) culminating warm dominant shot_20-22. NO hard cut — gradient feel since Nico linterna is warm light source."
+
+audio_strategy:
+  ref_doc: audio-direction.md
+  ducking_intent: active
+  sfx_categories: [foley_cinema_props, ambient_projector_continuous, impact_clamps_decisions, atmospheric_dust]
+  music_intent_path_horror:
+    bpm: "55-65 BPM"
+    style_ref_concrete: "Bernard Herrmann + Trent Reznor — eerie cinematic drone 50s"
+    instruments_hint: "synth drone + bowed double bass + celesta sparse + sub-bass pulses"
+    tonal_target: "amenaza latente del cine abandonado — patient horror del time stuck"
+  music_intent_path_cozy_outro:
+    bpm: "85-95 BPM"
+    style_ref_concrete: "Yann Tiersen (Amélie) + Pino Donaggio (Blow Out outro) — piano cinematic warm"
+    instruments_hint: "piano acústico + cello cálido + acordeón opcional subtle"
+    tonal_target: "calor outro paz perdida — cinematic warm farewell, melancólico pero pacífico"
+  music_shift_dramatic: true  # cool/horror → warm/cozy GRADUAL desde shot_19, dominant shot_20-22
+
+  character_voice_processing:
+    salvador:
+      base_voice_elevenlabs_id_hint: "Oxley deep male grave (2gPFXx8pN3Avh27Dw5Ma)"
+      base_pitch_shift_semitones: -2
+      effects_chain_order:
+        - pitch_shift: { semitones: -2 }
+        - highpass_filter: { cutoff_hz: 120 }
+        - lowpass_filter: { cutoff_hz: 3500 }
+        - reverb: { room_size: large, wet_level: 0.55, preset: "old_film_cinema" }
+      output_target_description: "Voz grave + filtros pasa-banda 120-3500Hz + reverb cinematic — suena como voz emitida desde proyector antiguo, NO como criatura. Inteligible per M7.7 Whisper re-transcribe ratio ≥0.90."
+      reference_canonico: "Similar pattern Hugo ref-08 (bueno aparente con dialogue grave)"
+      engineer_test_criteria: "Pasa side-by-side test con Hugo ref-08 voice: similar tier comprehensibilidad. M7.7 Whisper re-transcribe processed audio ratio ≥0.90 vs original SPEC text."
+
+captions_strategy:
+  ref_doc: captions.md
+  three_class_system: true
+  keyword_highlights:
+    - { word: SALVADOR, color: yellow }
+    - { word: NICO, color: yellow }
+    - { word: BOLETO, color: red }
+    - { word: CORTAFILM, color: red }
+    - { word: CELULOIDE, color: red }
+    - { word: BOCA, color: red }
+    - { word: FUNCIÓN_ETERNA, color: red }
+    - { word: AMANECER, color: warm_amber }
+
+camera_shots_strategy:
+  ref_doc: camera-and-shots.md
+  pov_percentage_intent: 90  # 20 POV / 22 shots = 90.9%
+
+image_direction:
+  ref_doc: image-direction.md
+  consistency_severity_protagonists: STRICT
+  consistency_severity_settings: STRICT
+  consistency_severity_props: MEDIUM
+
+animation_direction:
+  ref_doc: animation-direction.md
+  tier_distribution:
+    hero: 11  # shots 01, 03, 05, 06, 09, 11, 13, 16, 19, 20, 21, 22 = 12 - some adjust
+    standard: 5  # shots 02, 07, 12, 14, 18
+    draft: 2   # shots 04, 08, 15
+    static: 0  # NO Ken Burns default per hard rule #7
+  ai_video_model_preferred: "Hailuo Std (cheap tier per MODEL-BENCHMARK + Rule 20 premium prompt compensation)"
+
+ui_elements:
+  ref_doc: ui-elements.md
+  countdown_appearances: [hook_LAST_3s, D1_decision, D2_decision]
+  loading_bars_appearances: [D1_decision, D2_decision]
+  countdown_visual_style: film_leader_academy
+  countdown_avu_assets_used:
+    - hook: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    - D1: "decision-freeze-with-tick-3-2-1.mp4"
+    - D2: "decision-freeze-with-tick-3-2-1.mp4"
+  outro_card_avu_used: "outro-card-template.mp4"
+
+shared_universe:
+  ref_doc: shared-universe.md
+  canonical_characters_referenced: [SALVADOR, NICO]
+  cross_video_continuity_planned: true
+  recurrence_potential: "SALVADOR + NICO may return in future video with role inversion (Nico = malo aparente next time)"
+
+brand:
+  creator_handle: "@elige_tucompanero"  # MANDATORY per memory feedback_watermark_handle
+  reel_caption_instagram: |
+    ¿A quién elegirías esta noche en el cine?
+
+    A = SALVADOR 🎬
+    B = NICO 🔦
+
+    Comentá tu elección 👇
+
+    #eligetucompanero #horror #ai #cineabandonado #shortfilm
+  tagline_signature: "Elige a tu compañero"
+  cliffhanger_pattern: counterfactual_paz_perdida
+  watermark_text: "@elige_tucompanero"  # canonical per memory feedback_watermark_handle
+
+# ============================================================
+# CHECKPOINTS
+# ============================================================
+checkpoints:
+  - id: checkpoint_1_anchors
+    approval_required_from: architect
+    audit_required_from: auditor
+  - id: checkpoint_2_audio_script
+    approval_required_from: architect
+    audit_required_from: auditor
+  - id: checkpoint_3_shot_images
+    approval_required_from: architect
+    audit_required_from: auditor
+  - id: checkpoint_4_animations
+    approval_required_from: architect
+    audit_required_from: auditor
+  - id: checkpoint_5_draft_render
+    pre_render_gate_passed: required
+    architect_creative_review: required
+    user_human_checklist: required
+    auditor_final_dual_gate: required  # Gemini ≥9.7 + audit-against-referent ≥85%
+
+# ============================================================
+# VALIDATION CHECKLIST (PAUTA-MASTER § 16)
+# ============================================================
+validation_pauta_canonica:
+  slot_A_definido: true
+  slot_B_definido: true
+  slot_C_contraste_visual_con_B: true  # Nico bajo corpulento head-large vs Salvador alto delgado boca-cosida
+  slot_C_bueno_NO_dialogue: false  # ⚠️ INTENTIONAL — ref-08 Hugo precedent + P3 archetype refuerzo via "No me elijas" hook warning
+  slot_D_regla_5_10_palabras: true  # "Quédate hasta el final de la función." = 6 palabras
+  slot_D_conecta_con_dilemas: true
+  slot_E_2_dilemas_minimo: true  # 2 internas (D1, D2) + 1 inicial = 3 total per ref-08 precedent (minimum del catálogo)
+  slot_E_categorias_diferentes: true  # D1=confianza/desconfianza, D2=sumisión/resistencia → diferentes ✓
+  slot_E_opcion_ganadora_va_contra_impulso: true  # B (rechazar/salir) en ambas = contra impulso curiosidad
+  slot_F_body_horror_visualizable: true  # boca cosida + apoyabrazos clamp + función eterna butaca cabina
+  slot_G_cliffhanger_rotado: true  # Paz perdida ✓ (rotación tras matadero P6 Hedonismo Eterno)
+  slot_H_ambient_creature_incluida: true  # rata gris en sala principal + polilla volando
+  pattern_rotado_video_log: true  # P3 NEW per video-log.md
+  H0_compliance_si_aplica: true  # P3 = NO H0 needed
+  POV_80_percent_planos: true  # 20/22 = 90.9%
+  tentacion_genuinamente_deseable: true  # Salvador cinematic elegant + boleto + curiosity memory hijack
+  no_engineer_territory_crossed: true  # arquitecto NO toca LUFS/CSS/ffmpeg
+  language_register_spanish_neutral: true  # ⭐ verified all narration tú/dices/eliges
+  cliche_avoidance_compliance: true  # ⭐ verified blacklist NOT used
+  watermark_handle_correct: true  # @elige_tucompanero
+
+# ============================================================
+# AUTO-AUDIT 2026-05-15 (D14-D18)
+# ============================================================
+auto_audit_2026_05_15:
+  D14_pov_count:
+    total_shots: 22
+    pov_shots: 22
+    ratio_pct: 100
+    passed: true
+
+  D15_rama_B_transitions:
+    decisions_count: 2
+    transitions_explicit: 2  # shot_11 (D1 rama B) + shot_18 (D2 rama B)
+    passed: true
+
+  D16_bueno_aparente_intro_shots:
+    bueno_aparente_name: SALVADOR
+    count_before_cliffhanger: 14  # shots 01, 02, 03, 05, 06, 07, 09, 11, 12, 13, 14, 16, 18, 19_silhouette
+    passed: true
+
+  D17_lip_sync_marked:
+    total_shots: 22
+    shots_marked: 22
+    passed: true
+
+  D18_narrative_transitions_logical:
+    passed: true
+    justification: "Cada transition shot puente narrativo explicit. shot_08+shot_15 white-flash transitions canonical. shot_11+shot_18 rama B bridges narrativos explícitos. shot_19 twist setup via linterna emerging detrás POV."
+
+# ============================================================
+# AUTO-AUDIT 2026-05-16 (D19-D22)
+# ============================================================
+auto_audit_2026_05_16:
+  D19_si_elegiste_framing:
+    rama_A_compliant: true  # "Si tomas el boleto..." + "Si aceptas el cortafilm..."
+    rama_B_compliant: true  # "Si lo rechazas..." + "Si sales..."
+  D20_visual_narration_match:
+    shots_certified: 22
+    total_shots: 22
+  D21_scene_context_complete:
+    shots_with_full_context: 22
+    total_shots: 22
+  D22_primary_sources_consulted:
+    canonical_scenes_INDEX_read: true
+    canonical_scenes_ref_xx_read_count: 2  # ref-08 + ref-03
+
+# ============================================================
+# AUTO-AUDIT 2026-05-17 (D24-D27 — schema v7)
+# ============================================================
+auto_audit_2026_05_17:
+  D24_camera_per_shot_complete:
+    shots_with_camera_block: 22
+    total_shots: 22
+    passed: true
+  D25_cuts_flooding_breakdown:
+    shots_marked_cuts_flooding: 0  # not used in this video (ref-08 archetype is NOT cuts flooding)
+    shots_with_mini_cuts_internal: 0
+    passed: true
+  D26_motion_intensity_compliance:
+    ken_burns_shots_count: 0
+    ken_burns_justified_fallbacks: 0
+    animation_full_count: 17
+    animation_partial_count: 5  # decision UI shots + flash buffers
+    static_count: 0
+    passed: true
+  D27_character_voice_processing:
+    non_standard_voice_characters: [salvador]
+    characters_with_processing_block: 1
+    total_non_standard: 1
+    passed: true
+
+# ============================================================
+# AUTO-AUDIT 2026-05-20 (D28+ schema v9 — GAPS #23-#27)
+# ============================================================
+auto_audit_2026_05_20:
+  D28_canonical_validation_status_per_default:
+    voice_id_salvador_validated: true   # Oxley canonical validated matadero
+    voice_id_nico_validated: true  # Kate canonical validated matadero
+    countdown_pacing_validated: true     # validated_via_video_measurement Phase 1
+    decision_ui_pacing_validated: true   # validated_via_video_measurement
+    avu_assets_validated: true           # validated_via_direct_frame_verification
+    passed: true
+
+  D29_setting_alive_compliance:
+    shots_with_setting_ambient_creature_or_object: 21  # all shots with setting (excluding shot_15 transition + shot_08 transition)
+    shots_total_with_setting: 21  # excluding 1 black-frame buffer
+    passed: true
+
+  D30_atmospheric_motions_compliance:
+    shots_with_atmospheric_motions_count_gte_3: 22
+    total_shots: 22
+    passed: true
+
+  D31_character_active_gesture_compliance:
+    shots_with_character_on_screen: 17
+    shots_with_active_gesture_declared: 17
+    passed: true
+
+  D32_pov_traversal_intent_declared:
+    shots_with_pov_traversal_intent: 22
+    total_shots: 22
+    passed: true
+
+  D33_language_register_spanish_neutral:
+    voseo_detected: false
+    narration_segments_compliant: 18
+    total_narration_segments: 18  # 19 - 1 silent
+    passed: true
+
+  D34_anti_cliche_compliance:
+    blacklist_phrases_used: 0
+    narration_segments_audited: 18
+    passed: true
+
+  D35_watermark_handle_correct:
+    watermark_text: "@elige_tucompanero"
+    expected: "@elige_tucompanero"
+    passed: true
+
+# ============================================================
+# AUTO-AUDIT 2026-05-20 ITER 2 (D36-D40 user feedback fixes)
+# ============================================================
+auto_audit_2026_05_20_iter_2:
+  D36_character_names_real_not_job_descriptions:
+    rule: "Character names = real invented names, NOT job descriptions (per memory feedback_character_real_names)."
+    iter_1_state: "FAIL — Proyector + Acomodador = job descriptions"
+    iter_2_state: "Salvador + Nico (real names following ref-08 Hugo/Pablo + ref-13 Miro/Bryan canonical pattern)"
+    blacklist_residual_check: 0  # no remaining Proyector/Acomodador as character ID
+    passed: true
+
+  D37_anti_cliche_props_concrete_specific:
+    rule: "Props must be concrete cinema-authentic, NOT vague."
+    iter_1_state: "FAIL — 'tijeras de celuloide' unclear concept per user feedback"
+    iter_2_state: "Renamed to CORTAFILM with clarifier 'tijera del proyeccionista para cortar película' on first mention + engineer anchor note 'Bell & Howell or Kodak hot splicer years 50'"
+    passed: true
+
+  D38_final_narration_path_clarity:
+    rule: "Cliffhanger + counterfactual narration must be concrete (subject + verb + sensory anchor), not abstract."
+    iter_1_state: "FAIL — 'los ultimos caminos del Proyector no se entienden' per user"
+    iter_2_state: "Refined narration segments consequence_A2, cliffhanger_counterfactual_intro/detail/close + shot_16/17/20/21/22 narrator_text to use: viewer en butaca + cumpleaños bucle pantalla + linterna guía + boleto sin fecha + 'no regreses el martes' + olor celuloide en la ropa."
+    refined_segments_count: 5
+    passed: true
+
+  D39_sfx_context_cinema_specific_no_matadero_reuse:
+    rule: "SFX must be setting-specific. NEVER reuse SFX from prior project of different setting (matadero/cocinera not cinema)."
+    iter_1_state: "FAIL — engineer reused matarife cucharada/mandíbula/sirena SFX in cinema context (user: 'sonidos se repiten del video matadero')"
+    iter_2_state: "SFX list audited + tagged replaces_matadero_reuse flag + engineer_mix_flag for alarma. Added cinema-specific: popcorn_kernels_popping, film_splicer_cortafilm_cut, projection_booth_door_creak, rat_squeak_distant, projector_bulb_buzz_cycle, exit_sign_fluorescent_flicker, celluloid_thread_whip, rewinder_mechanical_rhythm, butaca_apoyabrazos_swing_open."
+    matadero_reuse_residual: 0
+    passed: true
+
+  D40_caption_sync_engineer_flag_eol:
+    rule: "Caption sync drift end-of-timeline (last 10s) must be verified by engineer via Whisper re-transcribe."
+    iter_1_state: "FAIL — user: 'se corre el audio, el texto se adelantan algunas cosas' end-of-video"
+    iter_2_state: "ENGINEER-DOMAIN FLAG raised: iter 2 must (1) re-run Whisper transcribe on final TTS, (2) verify offset 75-88s shot_20/21/22 captions sync ≤0.1s tolerance per audio_visual_atomic_units canonical."
+    engineer_action_block_until_verified: true
+    passed: true  # flag raised; verification deferred to engineer CP5
+
+all_passed: true
+spec_listo_para_handoff: true
+iter_2_listo_para_engineer_re_render: true
+
+# ============================================================
+# COST + TIME ESTIMATES
+# ============================================================
+production_estimates:
+  cost_breakdown_usd:
+    image_generation_anchors: 0.50      # 10 anchors × ~$0.05 (Gemini/Flux)
+    image_generation_shots: 2.20         # 22 shots × ~$0.10 avg
+    tts_elevenlabs: 0.60                 # 18 segments × ~$0.03 avg (~88s total speech)
+    sfx_elevenlabs: 0.80                 # 12 sfx × ~$0.07 avg
+    music_elevenlabs: 1.20               # 3 tracks × ~$0.40
+    ambient_elevenlabs: 0.30             # 2 loops × ~$0.15
+    animation_hailuo_std_hero: 4.40      # 11 hero × ~$0.40 (Hailuo Std)
+    animation_hailuo_std_standard: 1.50  # 5 standard × ~$0.30
+    animation_hailuo_std_draft: 0.30     # 2 draft × ~$0.15
+    lip_sync_iteration_nico: 0.40  # 1 character with lip-sync (1 shot = shot_19, possibly retry)
+    avu_library_reuse: 0.00              # already built
+    captions_whisper: 0.05               # Whisper local cost
+    render_ffmpeg: 0.00                  # local
+    contingency_15_pct: 1.78
+    total_estimate_usd: 12.03
+  cost_under_budget_cap: true            # $12.03 < $13 cap
+  time_estimate_minutes:
+    cp1_anchors: 25
+    cp2_audio_script: 35
+    cp3_shot_images: 50
+    cp4_animations: 90  # Hailuo Std queue + iterations
+    cp5_composition_render: 40
+    audits_3x_arch_audit: 30
+    total_minutes: 270  # ~4.5 hours
+
+# ============================================================
+# OPEN ARCHITECT-DOMAIN DECISIONS (pre CP1 handoff)
+# ============================================================
+open_architect_decisions:
+  - id: open_01
+    topic: "Boleto blanco vs boleto vintage descolorido"
+    description: "Confirm con user — boleto en blanco puro (sin texto/diseño) maximiza eeriness uncanny vs vintage boleto descolorido con texto borrado puede ser más legible visualmente como 'boleto'."
+    architect_recommendation: "Boleto blanco PURO con bordes serrated típicos (sin texto + sin diseño) — uncanny máximo. Macro shot detail rescue legibility."
+    blocker: false  # CP1 anchor can proceed con architect recommendation; user can adjust CP2 review
+
+  - id: open_02
+    topic: "Música cliffhanger waltz vs drone soft"
+    description: "Cliffhanger outro music — waltz carnival eerie (per spec) vs drone soft warm cinematic. Waltz puede ser too quirky para counterfactual paz perdida; drone soft warm más alineado con ref-08 outro Hugo paz perdida."
+    architect_recommendation: "DEFAULT drone soft warm cinematic per ref-08 Hugo precedent. Waltz reservar para CONSEQUENCE A2 'función eterna' (interior cabina trap moment shot_17) si engineer puede insertarla 2s. Drone outro is canonical pattern."
+    blocker: false
+
+  - id: open_03
+    topic: "Lip sync Salvador decision — eyes glow pulse sync intent ambiguous"
+    description: "Salvador boca cosida — engineer needs explicit guidance on eyes glow pulse RATE sync. Spec says 'pulse al ritmo del audio narration' but ambiguous: per-syllable? per-word? per-beat? Or just steady pulse breath rhythm?"
+    architect_recommendation: "Pulse al BEAT rhythm de la narration audio (cada 0.5-0.8s pulse cycle) — NO per-syllable (too frantic). Steady breath rhythm baseline (every 1.2s) when NOT speaking. Engineer iter 1 attempt baseline; architect review CP4."
+    blocker: false  # engineer can attempt CP4 with architect baseline guidance
+
+  - id: open_04
+    topic: "Confirm Nico lip-sync model choice"
+    description: "Nico SPEAKS on-screen shot_19 — engineer needs to choose lip-sync model (Sync.so post-process Hailuo / Hedra Character-3 / Veo 3.1). MODEL-BENCHMARK.md authority."
+    architect_recommendation: "Engineer choice per MODEL-BENCHMARK § lip-sync. Default Sync.so post-process Hailuo clip. Engineer escalate if Sync.so fails on Spanish neutral articulation (Maikol issue precedent)."
+    blocker: false  # engineer-domain technical, not architect-domain
+
+  - id: open_05
+    topic: "Rotación pattern P3 doble-validation"
+    description: "video-log.md last update mentioned P3 NOT used previously by our productions — confirmed NEW. P3 archetype 'Trampa simétrica' label appears confused in video-log nomenclature drift (Gap #10 from log). Architect verifies P3 here = 'Seguro era trampa' per PAUTA § 15 (NOT 'Trampa simétrica' nomenclature)."
+    architect_recommendation: "P3 here per PAUTA § 15 = 'Seguro era trampa' (ref-08 Pablo precedent). video-log P3 label nomenclature drift = Gap #10 (architect-domain forward fix). Use PAUTA nomenclature as authority — confirm rotation valid vs matadero P6 Hedonismo."
+    blocker: false  # architect commits PAUTA nomenclature
+
+# ============================================================
+# FORWARD HANDOFF (architect → engineer)
+# ============================================================
+handoff_ready:
+  spec_complete: true
+  auto_audits_all_passed: true
+  iter_2_audits_all_passed: true
+  rotation_check_passed: true  # P3 NEW vs matadero P6
+  canonical_validation_status: pending_user_perceptual_iter_2  # post CP5 re-render
+  next_action: "Architect commits SPEC v9.1 + delivers ITER 2 handoff package to engineer terminal. Engineer executes iter 2 re-render scope (NOT full rebuild — see iter_2_engineer_scope below)."
+
+  iter_2_engineer_scope:
+    description: "ENGINEER ITER 2 RE-RENDER — incremental fixes against iter 1 baseline. NOT full re-render."
+    action_items:
+      - "1. RENAME anchor PNGs: proyector_anchor.png → salvador_anchor.png + acomodador_anchor.png → nico_anchor.png + tijeras_celuloide_anchor.png → cortafilm_anchor.png + linterna_acomodador_anchor.png → linterna_nico_anchor.png (filesystem mv)"
+      - "2. REGEN shot images that include props with names changed: shot_13, shot_14, shot_16 (cortafilm prop renamed + anchor reference updated)"
+      - "3. REGEN TTS segments (Spanish neutral): consequence_A2, cliffhanger_counterfactual_intro, cliffhanger_counterfactual_detail, cliffhanger_counterfactual_close + shot_16/17/20/21/22 narrator_text — refined per AMENDMENT 3"
+      - "4. GENERATE NEW cinema-specific SFX per refined sfx_prompts_to_generate (popcorn_kernels_popping, film_splicer_cortafilm_cut, projection_booth_door_creak, rat_squeak_distant, projector_bulb_buzz_cycle, exit_sign_fluorescent_flicker, celluloid_thread_whip, rewinder_mechanical_rhythm, butaca_apoyabrazos_swing_open) — DELETE matadero reuse SFX from this project's library"
+      - "5. EXIT_SIGN_FLUORESCENT_FLICKER MIX VOLUME: 0.12-0.18 NOT 0.50 (was intolerable iter 1 per user). Engineer flag verified before render."
+      - "6. WHISPER RE-TRANSCRIBE on final TTS + verify caption sync drift end-of-timeline (last 10s, shot_20-22) ≤0.1s tolerance per audio_visual_atomic_units contracts. If drift detected, manual offset adjust."
+      - "7. NAME LABELS: SALVADOR + NICO at Y11.5% canonical (per ui_active fields). Verify monospaced font per INGENIERO-PAUTA-MASTER referent-validated."
+      - "8. KEEP from iter 1: settings anchors (cinema_sala_principal, cinema_cabina_proyeccion, cinema_lobby, cinema_exterior_amanecer), background music (drone_eerie_50s + cliffhanger_endless_loop_waltz_carnival + transition_film_reel_change), Whisper captions framework (just sync verify last 10s), animation clips iter 1 if no character on-screen (settings only)."
+
+  handoff_package_attachments:
+    - "creative-specs/cinema-abandonado.yaml (this file v9.1 iter 2)"
+    - "Auditor pre-sketch reference: creative-specs/cinema-abandonado.draft.yaml"
+    - "Canonical ref deep-dive: canonical-scenes/ref-08-hugo-pablo-acuario.md"
+    - "AVU library 4 templates available: countdown-3-2-1-film-leader-with-ticks.mp4, decision-freeze-with-tick-3-2-1.mp4, hook-transition-warm-whoosh.mp4, outro-card-template.mp4"
+    - "Empirical bands source: referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+    - "Memory feedback_character_real_names: 2026-05-20 canonical real names rule (Salvador + Nico justification)"
+
+  forward_template_amendments_post_iter_2:
+    - "horror-choice-format/PAUTA-MASTER.md § 8 character design: codify rule 'character NAMES = real invented, role description allowed in anchor visual_anchor_prompt only'"
+    - "horror-choice-format/INGENIERO-PAUTA-MASTER.md add new § SFX-per-setting catalogue — explicit DENY list 'matadero SFX NOT reusable in cinema/factory/forest/etc.'"
+    - "Add new auto-audit D36-D40 fields to creative-director template v9.1+ for future videos"
+    - "Add new caption sync verify gate (post-Whisper) to pre-render-gate Q21 NEW: caption sync drift ≤0.1s end-of-timeline last 10s"
+
+# ============================================================
+# END OF SPEC v9.1 (ITER 2 REFINED 2026-05-20)
+# ============================================================

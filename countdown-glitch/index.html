@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+#countdown-glitch {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #050505;
+  position: relative;
+}
+
+/* Heavy CRT scan lines for VHS feel */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.38) 2px,
+    rgba(0,0,0,0.38) 3px
+  );
+  pointer-events: none;
+  z-index: 900;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 62% 52% at 50% 50%, transparent 0%, rgba(0,0,0,0.9) 100%);
+  pointer-events: none;
+  z-index: 890;
+}
+
+/* VHS tracking horizontal glitch bands */
+.track-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.12);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 800;
+}
+#tl1 { top: 480px; }
+#tl2 { top: 720px; }
+#tl3 { top: 1200px; }
+#tl4 { top: 1440px; }
+
+/* Moving scan line (TV sweep) */
+.sweep {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, transparent 3%, rgba(255,255,255,0.18) 30%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.18) 70%, transparent 97%);
+  top: 0;
+  pointer-events: none;
+  z-index: 850;
+}
+
+.digit {
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-weight: 700;
+  font-size: 400px;
+  line-height: 1;
+  color: #e8e8e8;
+  text-shadow: 0 0 20px rgba(255,255,255,0.8), 3px 0 rgba(200,200,200,0.35), -3px 0 rgba(200,200,200,0.2);
+  position: absolute;
+  top: calc(50% - 215px);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  user-select: none;
+}
+
+/* White flash */
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 860;
+}
+</style>
+</head>
+<body>
+<div id="countdown-glitch" data-composition-id="countdown-glitch" data-width="1080" data-height="1920" data-start="0">
+  <div class="vignette"></div>
+
+  <div class="sweep" id="sweep"></div>
+
+  <div class="track-line" id="tl1"></div>
+  <div class="track-line" id="tl2"></div>
+  <div class="track-line" id="tl3"></div>
+  <div class="track-line" id="tl4"></div>
+
+  <div class="digit" id="d3">3</div>
+  <div class="digit" id="d2">2</div>
+  <div class="digit" id="d1">1</div>
+
+  <div class="flash" id="flash"></div>
+  <div class="scanlines"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// TV sweep line: 0.58s per pass × 8 plays = 4.64s total
+tl.fromTo("#sweep", { y: -5 }, { y: 1925, duration: 0.58, ease: "none", repeat: 7 }, 0);
+
+// Flicker
+tl.to("#countdown-glitch", { opacity: 0.82, duration: 0.05, ease: "none" }, 0.38);
+tl.to("#countdown-glitch", { opacity: 1,    duration: 0.04, ease: "none" }, 0.43);
+tl.to("#countdown-glitch", { opacity: 0.88, duration: 0.03, ease: "none" }, 1.91);
+tl.to("#countdown-glitch", { opacity: 1,    duration: 0.04, ease: "none" }, 1.94);
+tl.to("#countdown-glitch", { opacity: 0.78, duration: 0.05, ease: "none" }, 2.7);
+tl.to("#countdown-glitch", { opacity: 1,    duration: 0.06, ease: "none" }, 2.75);
+
+// Tracking lines (VHS artifact)
+tl.to("#tl1", { opacity: 1, duration: 0.04, ease: "none" }, 0.22);
+tl.to("#tl1", { opacity: 0, duration: 0.08, ease: "none" }, 0.26);
+tl.to(["#tl2","#tl4"], { opacity: 0.8, duration: 0.04, ease: "none" }, 1.05);
+tl.to(["#tl2","#tl4"], { opacity: 0,   duration: 0.1,  ease: "none" }, 1.09);
+tl.to(["#tl1","#tl3"], { opacity: 0.7, duration: 0.04, ease: "none" }, 2.28);
+tl.to(["#tl1","#tl3"], { opacity: 0,   duration: 0.08, ease: "none" }, 2.32);
+
+
+function glitch(id, t) {
+  tl.set(id, { opacity: 1, x: 0 }, t);
+  // Jitter in
+  tl.to(id, { x: -18, duration: 0.05, ease: "none" }, t);
+  tl.to(id, { x: 13,  duration: 0.05, ease: "none" }, t + 0.05);
+  tl.to(id, { x: -9,  opacity: 0.6, duration: 0.04, ease: "none" }, t + 0.10);
+  tl.to(id, { x: 6,   opacity: 1,   duration: 0.04, ease: "none" }, t + 0.14);
+  tl.to(id, { x: -3,               duration: 0.05, ease: "none" }, t + 0.18);
+  tl.to(id, { x: 0,                duration: 0.07, ease: "power3.out" }, t + 0.23);
+  // Flash on appear
+  tl.to("#flash", { opacity: 0.35, duration: 0.04, ease: "none" }, t);
+  tl.to("#flash", { opacity: 0,    duration: 0.1,  ease: "power2.out", overwrite: "auto" }, t + 0.04);
+  // Jitter out
+  tl.to(id, { x: 14,  opacity: 0.7, duration: 0.04, ease: "none" }, t + 0.82);
+  tl.to(id, { x: -10, duration: 0.04, ease: "none" }, t + 0.86);
+  tl.to(id, { x: 16,  opacity: 0.3, duration: 0.04, ease: "none" }, t + 0.90);
+  tl.to(id, { x: 0,   opacity: 0,   duration: 0.04, ease: "none" }, t + 0.94);
+}
+
+glitch("#d3", 0.12);
+glitch("#d2", 1.12);
+glitch("#d1", 2.12);
+
+window.__timelines["countdown-glitch"] = tl;
+</script>
+</body>
+</html>

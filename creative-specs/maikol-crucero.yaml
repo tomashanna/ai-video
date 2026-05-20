@@ -1,0 +1,954 @@
+# maikol-crucero.yaml — CREATIVE SPEC v1.0
+#
+# Basado en CREATIVE-SPEC-TEMPLATE.yaml v3 (post auditoria 2026-05-13 PM)
+# pero corregido contra PAUTA-MASTER.md (autoridad empírica actual derivada
+# de 8 videos canónicos en /videosref_elige_tu_compa/).
+#
+# NOTAS DE FRAMING IMPORTANTES (correcciones a doctrina vieja):
+#   1. NO existe "verbo H1 canónico estándar". El tagline universal es
+#      "Elige a tu compañero" (PAUTA § 2). BAILARÍAS es válido — no es override.
+#   2. PAUTA § 6 refutó "opción ganadora va contra impulso" como universal.
+#      Para este video pattern P6, el motor narrativo es DECISIÓN AMBIGUA
+#      (viewer no tiene confianza 100% en cuál es correcta).
+#   3. CHELO (calamar antropomorfo) NO tiene precedente empírico en los 8
+#      canónicos. Extrapolación creativa documentada. Plantilla más cercana =
+#      ref-08 Hugo (esqueleto humanoide alto con pipa). Categoría § 5
+#      "bueno aparente uncanny extreme".
+#   4. PAUTA § 3 documenta que diálogo del bueno NO es regla estricta
+#      (ref-08 Hugo habla). Para este video, CHELO no habla — decisión por
+#      contraste con MAIKOL parlante, no por regla.
+#   5. Pattern P6 (Hedonismo eterno) es coherente con ref-13 Bryan fiesta
+#      carpinchos. Outcome del path "correcto" NO es supervivencia — es
+#      loop placentero eterno. Body horror tipo 7 (pérdida identidad).
+
+# ============================================================
+# META
+# ============================================================
+project_id: maikol-crucero
+template_used: elige-tu-companero
+delivery_format: reel_9_16
+duration_target: 90s
+budget_target_usd: 10
+created_at: 2026-05-13
+status: draft
+
+# ============================================================
+# SLOTS A-H (estructura primaria — PAUTA-MASTER §§ 7-14)
+# ============================================================
+
+# Slot A — Escenario (PAUTA § 7)
+slot_A_escenario:
+  setting_id: custom_marítimo  # variante del catálogo § 7 (ref-08 acuario + ref-09 cockpit océano)
+  setting_name: "Salón de baile de crucero abandonado a la deriva en alta mar"
+  function_lugar: "salón de baile activo años 80s en crucero abandonado — la música nunca paró"
+  elementos_diegeticos:
+    - "Bola disco rota girando lenta (gira sola, signal)"
+    - "Parquet húmedo del salón con marcas de pasos"
+    - "Ojos de buey con vista al océano negro"
+    - "Pasillo iluminado al fondo del salón (signal trampa)"
+    - "Bailarines sombra sin rostro al fondo (revealed H5)"
+  iluminacion_dominante: "par de focos amarillos parpadeantes + bola disco proyectando puntos errantes + ojos de buey con luz lunar fría"
+  material_paredes_suelo: "parquet de madera húmedo + paneles de madera oscura con espejos rajados + brocado raído"
+  validacion_pauta:
+    atrapamiento_fisico: true  # alta mar, sin puerto
+    aislamiento_social: true  # crucero vacío excepto bailarines-sombra
+    funcion_especifica: true  # NO genérico "barco viejo"
+    iluminacion_dramatica: true  # par single + flicker
+
+# Slot B — Visual del malo aparente (PAUTA § 8)
+slot_B_malo_aparente:
+  name: MAIKOL
+  plantilla_base: "Categoría 5 — esquelético/correoso + máscara grotesca (ref-09 Victor) combinada con alteración corporal extrema (cat 4)"
+  visual_description: |
+    Animatrónico pop entertainer cursed degradado por décadas de humedad marítima.
+    Rostro: máscara de látex pálido agrietado (cracks visibles), pómulos altos
+    redondeados (NO post-rhinoplasty MJ-style), nariz ancha-mediana (NO narrow),
+    mandíbula angular desencajada del marco animatrónico (jaw seam visible).
+    Ojos: animatronic glass, enfocan solos y twitchean cada 2-3s con micro-retardo.
+    Pelo lacio negro grasoso peinado hacia atrás pegado al cráneo (NO wet curls).
+    Vestuario: smoking blanco oxidado con manchas amarillas de humedad + camisa negra
+    abierta dejando ver percebes adheridos al esternón animatronic + corbata roja torcida.
+    Fedora roja inclinada con borde podrido. Calcetines blancos visibles.
+    Mocasines negros brillantes pero con sal pegada.
+    Detalle clave: GUANTE BLANCO DE LENTEJUELAS en mano derecha (signature pop-era trope),
+    las lentejuelas son hojas afiladas pequeñas si te acercás.
+    Pose signature: dedo índice apuntando al cielo + cuerpo inclinado hacia atrás.
+    Movimiento: micro-twitches animatrónicos entre poses, gestos amplios de baile,
+    boca abre y cierra ligeramente DESFASADA del audio (loose animatronic mouth motion,
+    no lip sync exacto — ver narration_script.meta.lip_sync_required = "loose_animatronic"),
+    cabeza gira 180° fluida cuando se ofende.
+  validacion_pauta:
+    scroll_stop_test: true  # ayuwoki MJ-cursed es viral-able
+    se_siente_incorrecto_innombrable: true
+    no_halloween_costume_normal: true  # animatronic degradado no es disfraz
+    categoria_pauta: "5 (esquelético/máscara) + 4 (alteración corporal: cuello animatronic giro 180°)"
+  pop_era_aesthetic_inspiration: |
+    AESTHETIC INSPIRATION, NOT LITERAL COPY (post-audit 2026-05-13 fix).
+    El personaje evoca pop entertainer animatronic 80s era cursed — sin ser
+    legalmente reconocible como Michael Jackson exacto.
+    Signature tropes que MANTENER (son tropes pop-era genéricos, no exclusivos legal):
+    - Fedora ✓
+    - Guante lentejuelas ✓
+    - Pose dedo arriba ✓
+    - Smoking + calcetines blancos ✓
+    - Mocasines negros ✓
+    - Movimientos de baile amplios (spin, lean, gestos teatrales)
+    Elementos que EVITAR (para no ser MJ exacto legalmente):
+    - Cara con nariz narrow post-rhinoplasty
+    - Wet curls hair (jheri curl)
+    - Moonwalk literal específico
+    - Cualquier mención textual a "Michael Jackson" o "MJ"
+    Lo cursed viene de: degradación animatronic + humedad + percebes
+    + glitch motion + ojos enfocando solos + cabeza-girando-180° +
+    mouth motion desfasada del audio (loose animatronic).
+  reference_anchor_required: true
+
+# Slot C — Visual del bueno aparente (PAUTA § 9, hallazgo §5 "uncanny extreme válido")
+slot_C_bueno_aparente:
+  name: CHELO
+  plantilla_base: "EXTRAPOLACIÓN sin precedente en 8 canónicos — calamar antropomorfo"
+  precedente_empirico_mas_cercano: "ref-08 Hugo (esqueleto humanoide alto con pipa) — uncanny extreme válido por § 5"
+  flag_extrapolacion: |
+    Decisión creativa que se aleja del catálogo Slot C de los 8 canónicos.
+    Aceptable porque § 5 valida buenos uncanny extreme. Riesgo: comportamiento
+    cozy debe estar reforzado claramente para que viewer no lea como malo.
+  visual_description: |
+    Calamar antropomorfo de pie. Cabeza completa de calamar (tentáculos colgando 8
+    + 2 tentáculos largos enroscados como brazos largos). Color piel: lavanda
+    pálido con motas iridiscentes naranjas/azules. Ojos grandes negros expressivos
+    con párpados que parpadean.
+    Vestuario: bodysuit de marinero rayas blancas/azules clásicas (estilo Jean-Paul
+    Gaultier) + faja roja en cintura. Lentes redondos vintage colgando del cuello
+    con cordón. Pequeño tatuaje de ancla en uno de los tentáculos.
+    Postura: SENTADO en silla de barco, NO parado (contraste vertical/horizontal
+    vs MAIKOL parado-vertical-tense).
+    Detalle clave: 2 de sus tentáculos sostienen MATE Y BOMBILLA mateando.
+    Otro tentáculo sostiene plato pequeño con ceviche de limón.
+    Movimiento: sereno, tentáculos ondulan suaves, parpadea, sonríe (boca de calamar
+    se curva en una sonrisa tipo emoji).
+  contraste_vs_MAIKOL:
+    color: "lavanda+naranja iridiscente vs blanco-oxidado+rojo-podrido"
+    forma: "orgánica fluida tentaculada vs rígida animatronic vertical"
+    postura: "SENTADO horizontal acogedor vs PARADO vertical tense"
+    movimiento: "ondulante orgánico vs glitch animatronic"
+    color_palette_emocional: "warm friendly (mate caliente) vs cold-flicker disco (ballroom)"
+  has_dialogue: false  # decisión por contraste con MAIKOL parlante, NO por regla inviolable (PAUTA § 3 documenta esto no es regla)
+  reference_anchor_required: true
+
+# Slot D — La REGLA / dinámica de control del malo (PAUTA § 10)
+slot_D_regla_del_malo:
+  texto: "Bailá conmigo. No te detengas."
+  tipo: "Sumisión procedural — no detenerse + mantener la danza"
+  count_palabras: 5
+  conecta_con_dilemas: true
+  consecuencia_inmediata_si_rompe: |
+    Si aceptás algo prohibido (champagne con perlas-cristal) → te corta por dentro.
+    Si te detenés (correr al pasillo) → los espejos te expulsan al océano.
+    Si seguís bailando → quedás en el loop eterno.
+  presentacion_en_video:
+    momento: "H2 setup (12-15s)"
+    como: "MAIKOL lo dice mirando a cámara mientras te ofrece la mano"
+
+# Slot E — 2 dilemas internos (PAUTA § 11)
+slot_E_dilemas:
+  - id: D1
+    timestamp_intent: "post-H2 setup (~22s)"
+    categoria: 4  # Confianza vs desconfianza — DIFERENTE de D2 (acción/pasividad) ✓
+    rediseno_2026_05_13: |
+      D1 original era "tocar guante con lentejuelas brillantes" — fallaba el test PAUTA
+      § 6 "¿el viewer realmente querría hacerlo?" — el guante peligroso era visualmente
+      obvio. Rediseñado a copa de champagne con perlas brillantes: tentación REAL
+      (sed tras 3 noches a la deriva + cordialidad social + curiosidad del trago).
+      Precedente válido: ref-08 Pablo ofrece algo y el dilema es aceptar/negar
+      (categoría 4 confianza). Body horror sigue siendo tipo 6 penetración.
+    setup: |
+      MAIKOL te lleva al bar del salón. Sirve dos copas de champagne dorado.
+      Las copas tienen perlas brillantes flotando dentro como decoración premium.
+      Te ofrece una. "Brindemos. La noche apenas empieza."
+    pregunta: "¿LA BEBÉS?"
+    opcion_A_impulso: "Aceptás la copa y bebés (sed + cordialidad social + curiosidad)"
+    opcion_B_estoica: "Rechazás (desconfianza precavida)"
+    opcion_que_evita_consecuencia_inmediata: B
+    test_PAUTA_seccion_6_tentacion_real:
+      pasa: true
+      razones:
+        - "Sed real — llevás 3 noches a la deriva"
+        - "Cordialidad social — rechazar un brindis es activamente romper código"
+        - "Visual seductor — champagne dorado con perlas brillantes es premium-looking"
+        - "Curiosidad — qué son esas perlas tan lindas"
+    nota_pauta_motor: |
+      PAUTA § 6 refutó "opción ganadora va contra impulso" como universal.
+      Acá B (no beber) evita muerte inmediata pero B+B lleva a loop eterno (motor P6).
+      Decisión ambigua: aceptás cordialidad y morís ahora, o rechazás y MAIKOL acepta
+      tu compañía silenciosa para el loop eterno.
+    consecuencia_A_body_horror: |
+      "Las perlas eran cristal afilado. Te corta la garganta por dentro.
+      Escupís cristales y sangre en la copa. La música no para."
+      Body horror tipo 6 (penetración interna). Visual: POV mirando la copa con
+      sangre dentro, perlas-cristal escupidas sobre el bar, mano agarrándote el
+      cuello, MAIKOL bebiendo de su copa como si nada.
+    consecuencia_B_apertura: |
+      "MAIKOL alza su copa solo. Bebe. Las perlas pasan por su mecanismo animatronic.
+      Las ves crujir y caer dentro de su pecho. Sonríe."
+      Apertura: pan revela el salón completo — bailarines-sombra al fondo (setup
+      retroactivo para H5).
+
+  - id: D2
+    timestamp_intent: "post-D1 + setup buildup (~50s)"
+    categoria: 2  # Acción vs pasividad (DIFERENTE de D1)
+    setup: "Las luces parpadean. La bola disco rota gira más rápido. Al fondo del salón se abre un pasillo iluminado. La música sigue. MAIKOL sigue bailando."
+    pregunta: "¿CORRÉS AL PASILLO O SEGUÍS BAILANDO?"
+    opcion_A_impulso: "Corrés al pasillo (acción — salida visible, instinto de escape)"
+    opcion_B_estoica: "Seguís bailando (pasividad — obediencia a Slot D)"
+    opcion_que_evita_consecuencia_inmediata: B
+    consecuencia_A_body_horror: |
+      "El pasillo es espejos infinitos. MAIKOL en cada uno. Tu reflejo te empuja al ojo de buey. Caés al océano negro."
+      Body horror tipos 1+4 (caída + ahogamiento). Visual: pasillo de espejos con MAIKOL multiplicado, vidrio rompiéndose, agua negra subiendo a cámara POV.
+    consecuencia_B_apertura: |
+      "MAIKOL se quita la fedora. Su cabeza es una caja de música girando. La canción cambia. Bailás otro tema."
+      Apertura: reveal animatronic — caja de música en lugar de cráneo, mecanismo girando. Transición a la resolución H5.
+
+# Slot F — Body horror específico (PAUTA § 12)
+slot_F_body_horror:
+  tipos_aplicables: [6, 1, 4, 7]  # penetración + caída + asfixia + pérdida identidad
+  imagenes_validables:
+    - imagen: "Garganta cortada por dentro por perlas-cristal del champagne, escupís cristales y sangre en la copa"
+      tipo: 6
+      contexto: "D1 consequence A"
+      test_pasa: true
+    - imagen: "POV cayendo al océano negro a través de ojo de buey roto"
+      tipo: 1
+      contexto: "D2 consequence A"
+      test_pasa: true
+    - imagen: "POV ahogándose en agua negra desde abajo, viendo la luna desde fondo"
+      tipo: 4
+      contexto: "D2 consequence A continuación"
+      test_pasa: true
+    - imagen: "Te ves bailando entre los bailarines-sombra sin rostro, tu reflejo en la bola disco"
+      tipo: 7  # pérdida identidad — PRINCIPAL del path B+B (P6 hedonismo eterno)
+      contexto: "H5 resolución path 'correcto'"
+      test_pasa: true
+      precedente: "ref-13 Bryan fiesta eterna carpinchos"
+
+# Slot G — Archetype del cliffhanger (PAUTA § 13)
+slot_G_cliffhanger_archetype:
+  archetype: "Paz perdida"
+  rotation_check: |
+    video-log.md último video #6 isla-faro P6 + cabana-tormenta #5 P6 + bosque #2 P6.
+    P6 sobre-usado pero rotación de archetype cliffhanger refiere a Paz perdida — la cual
+    es archetype de outro (cozy alternativo). Diferente del PATTERN P6 (hedonismo eterno).
+    PAUTA § 13: 7/8 canónicos usan Paz perdida como cliffhanger. Mantener.
+  elementos_sensoriales_validados_PAUTA:
+    - "perro labrador (mascota cozy — ref-06 ENZO precedente)"
+    - "amanecer naranja sobre el océano (validado PAUTA § 13)"
+  elementos_extrapolados_no_validados:
+    flag: "low risk — PAUTA § 13 lista elementos canónicos pero NO los hace exclusivos"
+    elementos:
+      - "mate caliente (el matecito con tentáculo es el PUNCHLINE)"
+      - "ceviche con limón (comida fresca marina específica al setting)"
+      - "gaviotas (ambient sonoro local marítimo)"
+    mitigacion: "complementar con elementos validados (perro + amanecer cubren la base canónica)"
+  texto_intent: |
+    "Si hubieras elegido a CHELO...
+    Te habría servido mate con uno de sus tentáculos.
+    Habrías visto el amanecer en cubierta.
+    Una noche en paz."
+  punchline_counterfactual: "mate con tentáculo" (absurdo-mundano)
+  visual_intent: |
+    Cubierta del barco al amanecer naranja. Mate humeante.
+    CHELO sentado en una silla de cubierta sirviéndote con tentáculo.
+    Plato de ceviche al lado. Gaviotas en cielo dorado.
+    Perro labrador a sus pies. Tu silueta sonriendo.
+
+# Slot H — Ambient creatures (PAUTA § 14 — opcional)
+slot_H_ambient_creatures:
+  habilitado: false
+  razon: "PAUTA § 14 — no detectado sistemáticamente en 8 canónicos. Opcional. Skip por simplicidad este video."
+
+# ============================================================
+# RISK FLAGS (extrapolaciones + decisiones sin precedente empírico)
+# Documentados explícitamente para que el ingeniero los conozca + mitigue
+# ============================================================
+risk_flags:
+  - id: MJ_celebrity_reference
+    severity: low_medium  # downgraded post-fix 2026-05-13 — mitigación AHORA aplicada al prompt
+    status: mitigated_in_anchor_v2
+    issue: |
+      MAIKOL evoca aesthetic de pop entertainer 80s (fedora + guante + signature pose).
+      NINGÚN video de los 8 canónicos usa referente celebrity reconocible.
+      Risk inicial: que el visual_anchor saliera con cara reconocible Michael Jackson →
+      takedown IG por IP del Estate.
+    riesgos_originales:
+      - "IP/legal: Estate de Michael Jackson agresivo con uso de imagen reconocible."
+      - "Empírico: zero precedentes — no sabemos si meme-recognition ayuda viralidad o distrae."
+    mitigacion_aplicada_v2: |
+      Engineer flagueó contradicción anchor↔risk_flag (2026-05-13). Resuelto rewriteando
+      el visual_anchor_prompt para ser IP-safe sin perder el aesthetic uncanny:
+      - MANTENIDOS (tropes pop-era genéricos, no exclusivos legal): fedora roja, guante
+        lentejuelas, smoking blanco, signature pose dedo arriba, mocasines.
+      - REMOVIDOS del prompt: "maximum fidelity to Michael Jackson", "post-rhinoplasty
+        narrow nose", "wet curls", "unmistakably MJ".
+      - REEMPLAZADOS: nariz medium-width (no narrow), hair slick combed back (no curls),
+        framing como "cursed amusement-park animatronic from decommissioned theme park".
+      - Captions/reel description: NUNCA mencionar "Michael Jackson" o "MJ" textualmente.
+    decision_arquitecto: |
+      Mitigación AHORA self-contained en el visual_anchor_prompt v2. Engineer puede usar
+      el prompt EXACTO sin modificaciones. Risk_flag se mantiene documentado por
+      transparencia + para evitar regresión en futuras revisiones.
+
+  - id: CHELO_no_empirical_precedent
+    severity: low_medium
+    issue: "Calamar antropomorfo no está en catálogo Slot C de los 8 canónicos."
+    mitigacion_propuesta: |
+      § 5 PAUTA valida "bueno aparente uncanny extreme". Refuerzo de comportamiento
+      cozy obligatorio: postura sentada + tentáculo ofreciendo mate + warm lighting +
+      sonrisa emoji + perro labrador a sus pies. Si CHELO se lee monstruoso,
+      fallaría el contraste tonal.
+    decision_arquitecto: "Aceptado. Doc explícito en slot_C_bueno_aparente.flag_extrapolacion."
+
+  - id: P6_motor_only_NO_twist
+    severity: low
+    issue: "Único precedente P6 (ref-13) tiene twist good-as-trap. Mi video usa motor sin twist."
+    mitigacion_propuesta: |
+      Compensar fuerza narrativa del twist faltante con:
+      - Punchline counterfactual ABSURDO-MUNDANO fuerte (mate con tentáculo)
+      - Reveal animatronic en H5 (MAIKOL caja de música) — sustituto del twist
+    decision_arquitecto: "Aceptado como variante creativa de P6 motor-only."
+
+  - id: Slot_G_elementos_no_validados
+    severity: low
+    issue: "Mate + ceviche + gaviotas no están en catálogo § 13 PAUTA. Solo perro + amanecer son validados."
+    mitigacion_propuesta: "Complementar con perro + amanecer (ya en spec) — cubren la base canónica."
+    decision_arquitecto: "Aceptado — los elementos no-validados son setting-specific (marítimo argentino) y refuerzan el punchline."
+
+  - id: Setting_custom_marítimo
+    severity: low
+    issue: "Salón de baile crucero abandonado no está en los 8 settings catálogo § 7."
+    mitigacion_propuesta: "N/A — el setting cumple checklist § 7 (atrapamiento, aislamiento, función, diegéticos, ilum dramática). Las 8 referencias del catálogo son ejemplos, no lista cerrada."
+    decision_arquitecto: "Aceptado — extrapolación válida cumpliendo la regla del § 7."
+
+  - id: D1_categoria_4_confianza
+    severity: none
+    issue: "D1 original (guante con lentejuelas) fallaba test PAUTA § 6 tentación-débil. Rediseñado a champagne (categoría 4 confianza/desconfianza)."
+    decision_arquitecto: "Fix aplicado 2026-05-13 post auto-audit."
+
+# ============================================================
+# PATTERN + CLIFFHANGER MATRIX (PAUTA § 15)
+# ============================================================
+plot_pattern:
+  matriz_pattern_id: 6  # P6 — Hedonismo eterno
+  pattern_variant: motor_only_NO_twist_good_as_trap
+  pattern_variant_explanation: |
+    Mi video usa el MOTOR de P6 (Hedonismo eterno = outcome de loop placentero
+    en lugar de muerte) pero NO replica el twist específico de ref-13
+    (good-as-trap, donde el bueno aparente Miro era trampa retroactiva).
+    En mi video, CHELO es GENUINAMENTE bueno en el counterfactual.
+    Es una variante NO empíricamente validada — el único precedente de P6 (ref-13)
+    incluye el twist, no lo separa del motor.
+    Decisión consciente del arquitecto: priorizar la fuerza del counterfactual
+    cozy (mate-tentáculo punchline) sobre replicar el twist invertido.
+  matriz_appearance: "asimétrica (MAIKOL uncanny extreme animatronic + CHELO uncanny extreme calamar)"
+  matriz_truth: "MAIKOL te ofrece placer eterno-trampa (no muerte). CHELO era cozy real."
+  has_twist: false
+  twist_reason: "P6 no requiere plot twist de identidad — la trampa es el OUTCOME (loop placentero) no la identidad (MAIKOL ES claramente el malo desde el inicio)"
+  precedente_empirico: "ref-13 Bryan/Miro fiesta carpinchos (con caveat de variante motor-only)"
+  rotation_check: |
+    P6 fue usado #2 bosque, #5 cabana, #6 isla-faro. 3 consecutivos.
+    PERO esos 3 fueron framing legacy "Trampa simétrica" — no P6 Hedonismo eterno empírico.
+    P6 empírico (ref-13 estilo) NUNCA fue usado en nuestros videos.
+    Pattern P6 Hedonismo eterno = primera vez en nuestro pipeline ✓ rotación válida.
+
+# ============================================================
+# H0 OPCIONAL
+# ============================================================
+slot_H0_personal_stakes:
+  habilitado: false
+  razon: "PAUTA § 4 dice H0 no observado en 8/8 canónicos. Skip — el setup directo del crucero a la deriva (3 noches) ya carga stakes implícitos suficientes."
+
+# ============================================================
+# ESTRUCTURA TEMPORAL (V15 PATTERNS § 1)
+# ============================================================
+estructura_temporal:
+  hook_0_9pct: 9s        # intro dyad + countdown
+  setup_9_22pct: 13s     # entrada al salón + MAIKOL invitación + Slot D
+  D1_22_38pct: 16s       # primer dilema + countdown + consecuencias A/B
+  D2_38_55pct: 17s       # buildup + segundo dilema + countdown + consecuencias A/B
+  resolucion_55_75pct: 20s  # loop eterno revelado + "Bailas para siempre"
+  counterfactual_75_90pct: 15s  # CHELO amanecer + mate-tentáculo + CTA
+  total: 90s
+
+# ============================================================
+# NARRATION SCRIPT
+# ============================================================
+narration_script:
+  meta:
+    target_total_duration: 90s
+    target_pace_wpm: 90  # PAUTA § 3 lenguaje pausado staccato
+    register: tu_implicito_presente_indicativo
+    speakers: [narrator, maikol]
+    notes: |
+      MAIKOL habla 2 líneas (Slot D + D1_invita) — voz separada del narrador.
+      CHELO no habla (decisión por contraste, no por regla).
+    lip_sync_required:
+      narrator: "n/a (voice over omnisciente — no on-screen mouth)"
+      maikol: "loose_animatronic"
+    lip_sync_decision_maikol:
+      mode: loose_animatronic
+      tool_implication: "Kling con prompt 'lips move slightly out-of-sync animatronic'"
+      cost_extra: 0
+      decision_arquitecto_2026_05_13: |
+        Elegido sobre full lip sync (Hedra/Sync.so, +$2-4) y no-lip-sync (estático).
+        Razones:
+          1. Coherente con voice_intent "voz hueca animatronic con eco metálico"
+          2. Coherente con visual signature "micro-twitches animatrónicos"
+          3. Lip sync perfecto MATARÍA la estética cursed — el uncanny viene
+             del movimiento NO natural
+          4. 8/8 canónicos no usan lip sync profesional para criaturas uncanny
+          5. $0 extra alineado con budget
+      implementation_hint_for_engineer: |
+        En prompts Kling para shots con MAIKOL hablando, agregar tag:
+          "lips move slightly with subtle out-of-sync animatronic delay, mouth
+          opening and closing at irregular intervals, not synced to dialogue audio,
+          mechanical jaw seam visible while mouth moves"
+        Aplica a:
+          - h2-maikol-invitacion-mano (slot_D regla "Bailá conmigo. No te detengas.")
+          - d1-maikol-ofreciendo-copa (D1_maikol_invita "Brindemos. La noche apenas empieza.")
+
+  segments:
+    # === HOOK 0-9s ===
+    - id: hook
+      order: 1
+      speaker: narrator
+      text: "Llevas tres noches a la deriva. Esta no la pasás solo."
+      target_duration: 4.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: presentacion_dyad
+      order: 2
+      speaker: narrator
+      text: "Elige a tu compañero. MAIKOL o CHELO."
+      target_duration: 3.0s
+      pause_after_strict_seconds: 0.2
+      countdown_ui_after: 2.0s  # 3-2-1 + flash
+
+    # === SETUP 9-22s ===
+    - id: setup_salon
+      order: 3
+      speaker: narrator
+      text: "El salón de baile sigue iluminado. La música nunca paró."
+      target_duration: 4.0s
+      pause_after_strict_seconds: 0.4
+
+    - id: setup_invitacion
+      order: 4
+      speaker: narrator
+      text: "MAIKOL te invita a bailar."
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: maikol_regla  # SLOT D
+      order: 5
+      speaker: maikol
+      text: "Bailá conmigo. No te detengas."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.5
+      voice_intent: "voz masculina hueca con eco metálico animatronic + ligero pitch-shift falsetto teatral 80s"
+
+    # === D1 22-38s ===
+    - id: D1_setup
+      order: 6
+      speaker: narrator
+      text: "Te lleva al bar. Sirve dos copas. El champagne dorado tiene perlas brillantes flotando."
+      target_duration: 5.0s
+      pause_after_strict_seconds: 0.3
+
+    - id: D1_maikol_invita
+      order: 6.5
+      speaker: maikol
+      text: "Brindemos. La noche apenas empieza."
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0.3
+      voice_intent: "voz hueca animatronic con eco — mismo voice ID que slot_D"
+
+    - id: D1_pregunta
+      order: 7
+      speaker: narrator
+      text: "Ahora decidís. ¿La bebés?"
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0.2
+      countdown_ui_after: 0.5s
+      loading_bar_after: 2.5s
+
+    - id: D1_consequence_A
+      order: 8
+      speaker: narrator
+      text: "Las perlas eran cristal. Te cortan la garganta por dentro. Escupís sangre en la copa. La música no para."
+      target_duration: 5.5s
+      pause_after_strict_seconds: 0.4
+      branch: A
+      bridge_caption_after: "SI RECHAZÁS:"  # PATTERNS § 8 separador rama
+
+    - id: D1_consequence_B
+      order: 9
+      speaker: narrator
+      text: "MAIKOL alza su copa solo. Bebe. Las perlas crujen en su mecanismo animatronic. Sonríe. Te muestra el salón."
+      target_duration: 5.5s
+      pause_after_strict_seconds: 0.3
+      branch: B
+      visual_reveal_intent: "bailarines-sombra sin rostro al fondo (SETUP para H5 loop reveal)"
+
+    # === D2 38-55s ===
+    - id: D2_setup
+      order: 10
+      speaker: narrator
+      text: "Las luces parpadean. La bola disco gira más rápido."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.3
+
+    - id: D2_setup_pasillo
+      order: 11
+      speaker: narrator
+      text: "Al fondo del salón se abre un pasillo iluminado."
+      target_duration: 3.0s
+      pause_after_strict_seconds: 0.3
+
+    - id: D2_pregunta
+      order: 12
+      speaker: narrator
+      text: "Ahora decidís. ¿Corrés al pasillo o seguís bailando?"
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.2
+      countdown_ui_after: 0.5s
+      loading_bar_after: 2.5s
+
+    - id: D2_consequence_A
+      order: 13
+      speaker: narrator
+      text: "El pasillo es espejos infinitos. Tu reflejo te empuja al ojo de buey. Caés al océano negro."
+      target_duration: 5.5s
+      pause_after_strict_seconds: 0.4
+      branch: A
+      bridge_caption_after: "SI SEGUÍS BAILANDO:"
+
+    # === RESOLUCIÓN 55-75s ===
+    - id: D2_consequence_B
+      order: 14
+      speaker: narrator
+      text: "MAIKOL se quita la fedora. Su cabeza es una caja de música."
+      target_duration: 4.0s
+      pause_after_strict_seconds: 0.3
+      branch: B
+      visual_reveal_intent: "head removal reveal — caja de música mecanismo girando dentro del cráneo"
+
+    - id: resolucion_repeticion
+      order: 15
+      speaker: narrator
+      text: "Otro tema. Y otro. Y otro."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.5
+      lenguaje_nota: "staccato nominal PAUTA § 3"
+
+    - id: resolucion_bailarines
+      order: 16
+      speaker: narrator
+      text: "Los otros bailarines no tienen rostro."
+      target_duration: 3.0s
+      pause_after_strict_seconds: 0.3
+
+    - id: resolucion_te_ves
+      order: 17
+      speaker: narrator
+      text: "Te ves bailando entre ellos."
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0.5
+      visual_reveal_intent: "POV de espejo / bola disco — tu silueta entre los bailarines-sombra"
+
+    - id: resolucion_crucero
+      order: 18
+      speaker: narrator
+      text: "El crucero nunca llegó a puerto. Nunca lo hará."
+      target_duration: 4.0s
+      pause_after_strict_seconds: 0.5
+
+    - id: resolucion_cierre  # CIERRE HORROR (user-approved)
+      order: 19
+      speaker: narrator
+      text: "Bailas para siempre."
+      target_duration: 2.5s
+      pause_after_strict_seconds: 1.0
+      lenguaje_nota: "Frase nominal staccato. Cierre horror path. NO 'Una noche en paz' (esa va al counterfactual)."
+
+    # === COUNTERFACTUAL 75-90s ===
+    - id: counterfactual_bridge
+      order: 20
+      speaker: narrator
+      text: "Si hubieras elegido a CHELO..."
+      target_duration: 3.0s
+      pause_after_strict_seconds: 0.4
+      transition_intent: "warm white fade — PATTERNS § 2 corte tipo WARM WHITE"
+
+    - id: counterfactual_mate
+      order: 21
+      speaker: narrator
+      text: "Te habría servido mate con uno de sus tentáculos."
+      target_duration: 4.0s
+      pause_after_strict_seconds: 0.3
+      punchline_beat: true
+
+    - id: counterfactual_amanecer
+      order: 22
+      speaker: narrator
+      text: "Habrías visto el amanecer en cubierta."
+      target_duration: 3.5s
+      pause_after_strict_seconds: 0.4
+
+    - id: counterfactual_tagline
+      order: 23
+      speaker: narrator
+      text: "Una noche en paz."
+      target_duration: 2.0s
+      pause_after_strict_seconds: 0.5
+
+    - id: cta_final
+      order: 24
+      speaker: narrator
+      text: "¿Sobreviviste? Comentá A o B."
+      target_duration: 2.5s
+      pause_after_strict_seconds: 0
+      cta: true
+
+# ============================================================
+# OPERATIONAL LAYER — referencias a docs operacionales
+# (intent only — engineer implementa)
+# ============================================================
+
+aesthetic_strategy:
+  ref_doc: aesthetic.md
+  dual_palette_intent: "cool_disco_flicker (salón horror) vs warm_amanecer_marítimo (counterfactual cubierta)"
+  vignette_intent: pronunciada
+  film_grain_intent: visible_8_pct
+  setting_palette_notes: |
+    Salón de baile: parquet húmedo + brocado raído + bola disco + focos amarillos
+    parpadeantes + espejos rajados. Paleta cool-flicker: blanco oxidado, rojo podrido,
+    amarillo enfermo, negro océano por las ventanas.
+    Cubierta amanecer: naranja cálido + dorado + azul-mate + verde gaviotas.
+
+audio_strategy:
+  ref_doc: audio-direction.md
+  music_intent: |
+    Salón horror: música de baile años 80s GLITCHEADA y descompuesta. Loop infinito
+    pero deformado — un Thriller-ish que se rompe, retrocede, salta. Sub-bass profundo
+    debajo. Ducking activo cuando narrador habla.
+    Counterfactual amanecer: instrumental acústica cálida + gaviotas + olas suaves.
+  music_genre_horror: "synthwave/disco 80s glitched + sub-bass drone marítimo"
+  music_genre_outro: "acústica cálida + ambient gaviotas/olas"
+  ducking_intent: active_-6dB
+  sfx_categories:
+    - foley_pasos_parquet_humedo
+    - bola_disco_chirrido_mecanico
+    - flicker_lampara_buzz
+    - white_flash_impactos_sub_bass
+    - cabeza_girando_180_servo_animatronic
+    - cuchillas_lentejuelas_cae_metal
+    - cristal_ventana_rompiendo (D2 A)
+    - agua_oceano_subiendo_ahogamiento
+    - caja_musica_metalica_descompuesta (H5 reveal)
+    - mate_sorbete_humeante (counterfactual)
+    - gaviotas_amanecer
+  ambient_continuous:
+    - oleaje_continuo_bajo_durante_todo_video
+    - viento_distante_ventanas
+    - musica_baile_glitch_loop_continuo (track principal)
+
+captions_strategy:
+  ref_doc: captions.md
+  three_class_system: true
+  keyword_highlights:
+    - { word: MAIKOL, color: red_warning }
+    - { word: CHELO, color: yellow_warm }
+    - { word: BAILARÍAS, color: red_warning }
+    - { word: CHAMPAGNE, color: red_warning }
+    - { word: PERLAS, color: red_warning }
+    - { word: CRISTAL, color: red_warning }
+    - { word: PASILLO, color: red_warning }
+    - { word: ESPEJOS, color: red_warning }
+    - { word: BAILAS_PARA_SIEMPRE, color: red_warning }  # cierre horror
+    - { word: MATE, color: yellow_warm }
+    - { word: AMANECER, color: yellow_warm }
+    - { word: TENTÁCULO, color: yellow_warm }  # punchline
+    - { word: UNA_NOCHE_EN_PAZ, color: yellow_warm }  # tagline
+
+camera_shots_strategy:
+  ref_doc: camera-and-shots.md
+  pov_percentage_intent: 100  # ⭐ USER OVERRIDE — TODAS las tomas POV primera persona
+  pov_strict_rule: |
+    Decisión creativa del arquitecto: 100% POV en todas las tomas del video.
+    Más estricto que PAUTA-MASTER § 3 (que pide >70%). Razón: maximizar inmersión
+    horror-choice — el viewer ES el protagonista, nunca lo ve desde afuera.
+    Shots con apariencia third-person deben resolverse como POV indirecto
+    (reflejo en espejo, en bola disco, en pantalla, en agua).
+  signature_shots:
+    - "H1 dyad — POV mirando a MAIKOL (izq) y CHELO (der) frente a vos. Tus manos en el frame inferior si aporta."
+    - "H2 setup — POV entrando al salón, parquet acercándose. MAIKOL aparece bailando frente a cámara."
+    - "POV bar del salón — MAIKOL sirve dos copas frente a vos. Las perlas brillantes flotan dentro."
+    - "POV copa de champagne en primer plano — perlas-cristal flotando, dorado profundo."
+    - "POV garganta cortada (D1 A) — tu mano agarrándote el cuello, copa con sangre y cristales, MAIKOL bebe la suya."
+    - "POV MAIKOL bebe (D1 B) — las perlas-cristal pasan por su mecanismo animatronic visible bajo la camisa abierta."
+    - "POV salón reveal — pan lento horizontal mostrando bailarines-sombra al fondo."
+    - "POV luces parpadean (D2 setup) — ojos parpadeando junto con las luces, bola disco frontal."
+    - "POV pasillo iluminado (D2) — el pasillo se abre frente a vos al fondo del salón."
+    - "POV espejos infinitos (D2 A) — MAIKOL multiplicado en cada espejo lateral."
+    - "POV ojo de buey rompiéndose (D2 A) — vidrio se quiebra, océano negro entra al lente."
+    - "POV cayendo al océano (D2 A) — agua negra subiendo, luna distorsionada arriba."
+    - "POV MAIKOL quitándose fedora (D2 B) — frente a tus ojos su cabeza se abre revelando caja de música."
+    - "POV bola disco (H5 reveal) — mirás hacia arriba a la bola disco rota; tu reflejo aparece entre bailarines-sombra (truco POV indirecto)."
+    - "POV cubierta amanecer (H6) — mirás a CHELO sentado frente a vos. Sus tentáculos extendidos sirviéndote mate."
+    - "POV mate humeante closeup — el mate sostenido por tentáculo entrando al frame frontal."
+    - "POV perro labrador — el perro se acerca a tus pies / lente."
+    - "POV gaviotas y horizonte — mirás al horizonte naranja amanecer."
+  truco_POV_indirecto:
+    descripcion: |
+      Cuando el shot requiera mostrarte a vos mismo (e.g., "te ves bailando entre ellos"),
+      resolver SIEMPRE vía superficie reflectante diegética:
+      - Bola disco rota (H5 — tu reflejo distorsionado entre los bailarines-sombra)
+      - Espejo rajado del salón
+      - Ojo de buey con vidrio en oscuridad
+      - Agua/charco
+    nunca_third_person: true
+
+image_direction:
+  ref_doc: image-direction.md
+  consistency_severity_protagonists: STRICT
+  notes_MAIKOL: "máxima fidelidad a Michael Jackson animatrónico cursed. Anchor prompt riguroso con detalles signature MJ."
+  notes_CHELO: "consistencia calamar antropomorfo cross-shots — mismos colores piel/iridiscencia, mismo bodysuit, mismos lentes vintage."
+
+animation_direction:
+  ref_doc: animation-direction.md
+  tier_distribution_intent:
+    hero: 4  # H1 dyad + D1 reveal head-180° + D2 reveal head-music-box + counterfactual amanecer
+    standard: 3  # H1-b corporal motion + D1 setup guante + D2 setup pasillo
+    draft: 4  # ambient salón transiciones
+    static: 2  # detail shots
+  primeros_30s_animation_ai_obligatorio: true  # CLAUDE.md hard rule #6 (model-agnostic post G2 2026-05-16)
+  notes_MAIKOL_motion: |
+    Dance motion — twists, spins, lean theatrical + glitch micro-twitches animatronic.
+    Mejor referencias: Replicate Kling tier 5s/10s con prompts específicos de movimientos
+    de pop entertainer animatronic degradado.
+    Lip sync: loose_animatronic (ver narration_script.meta.lip_sync_decision_maikol).
+    Mouth motion en clips Kling con MAIKOL hablando = ligeramente desfasada del audio,
+    intervalos irregulares, jaw seam mecánico visible — NO usar Hedra/Sync.so.
+
+ui_elements:
+  ref_doc: ui-elements.md
+  countdown_appearances: [hook, post_D1_pregunta, post_D2_pregunta]
+  loading_bars_appearances: [post_D1, post_D2]
+  countdown_loader_combo_intent: "rotar vs video #6 isla-faro (engineer consulta video-log)"
+
+shared_universe:
+  ref_doc: shared-universe.md
+  canonical_characters_referenced: [MAIKOL, CHELO]
+  cross_video_continuity_planned: true
+  potencial_recurrencia: |
+    MAIKOL podría reaparecer como bueno aparente en otro video (universo Pablo/Axel
+    rol-invertido § 4 PAUTA). CHELO podría tener camafeo en video futuro acuático.
+
+brand:
+  creator_handle: "@elige.tu.compañero"
+  reel_caption_instagram: |
+    Llevas tres noches a la deriva en alta mar.
+    Esta no la pasás solo.
+
+    A = MAIKOL 🎩🕺
+    B = CHELO 🦑🧉
+
+    ¿Sobreviviste? Comentá tu elección 👇
+
+    #horror #eligetucompañero #ayuwoki #crucerofantasma #animatronic #ai
+  tagline_signature: "Elige a tu compañero para esta noche"
+  cliffhanger_pattern: B_loop_explicit
+  cliffhanger_text: "Elige a tu compañero para..."
+
+# ============================================================
+# REFERENCE ANCHORS (character consistency cross-shots)
+# ============================================================
+reference_anchors:
+  - id: maikol_anchor
+    severity: STRICT
+    revision: "v2 post-audit 2026-05-13 — IP-safe rewrite (engineer flagged anchor↔risk_flag contradiction)"
+    visual_anchor_prompt: |
+      Photorealistic full body portrait, plain dark gray studio background, neutral standing
+      pose looking at camera, 8k detail, dramatic single-source rim lighting.
+      Subject: cursed animatronic pop entertainer from a decommissioned 1980s theme park
+      attraction, decayed by decades of saltwater humidity. Latex mask face: pale skin
+      with visible hairline cracks running across cheeks and forehead, high rounded
+      cheekbones, medium-width nose (NOT narrow), angular jaw with visible animatronic
+      seam where the jaw plate disconnects from the skull.
+      Hair: straight black greasy hair combed back, slicked flat against the scalp
+      (NOT curly, NOT wet curls, NOT jheri curl style).
+      Animatronic glass eyes that converge with slight delay, micro-twitching every 2-3s,
+      with faint mechanical iris adjustment visible.
+      Wardrobe: oxidized white tuxedo jacket with yellow humidity stains + open black shirt
+      revealing barnacle-encrusted animatronic chest plate underneath + red crooked bowtie.
+      Red fedora hat tilted at an angle with rotten brim edge. Visible white socks above
+      polished black loafers crusted with sea salt.
+      Right hand: SINGLE WHITE SEQUIN-COVERED GLOVE catching the light — sequins on close
+      inspection are small razor blades fanning outward.
+      Signature pose: right index finger pointed upward toward sky, body leaning slightly
+      backward, left hand resting on hip — theatrical animatronic stage pose.
+      Atmosphere: subtle animatronic motion blur, particles of salt dust in the air,
+      faint mildew aesthetic. Uncanny valley horror, mechanically degraded performer.
+      Style reference: cursed amusement-park animatronic horror, hyperreal 8k cinema
+      horror photography (think "decommissioned Disney animatronic found at the bottom
+      of a flooded warehouse").
+      Avoid: cartoon, anime, friendly, modern human realistic, ANY reference to specific
+      real-world celebrities or their likenesses, narrow post-rhinoplasty noses,
+      wet-curl hairstyles. Required: animatronic + pop-entertainer-trope + decay + uncanny.
+    approval_checkpoint: true
+
+  - id: chelo_anchor
+    severity: STRICT
+    visual_anchor_prompt: |
+      Photorealistic full body portrait, plain dark gray studio background, sitting pose
+      on simple wooden chair, looking at camera with calm warmth, 8k detail, soft warm
+      single-source lighting from upper left.
+      Subject: anthropomorphic squid-humanoid hybrid standing about 5'8" sitting.
+      Head: complete squid cephalon with 8 short tentacles hanging downward like dreadlocks
+      and 2 long arm-tentacles coiled forward holding objects. Skin color: pale lavender
+      base with iridescent orange and blue mottling spots scattered. Large expressive
+      black eyes with blinking eyelids. Mouth: subtle squid beak curved into a friendly
+      emoji-style smile.
+      Wardrobe: classic French sailor striped bodysuit (white and navy horizontal stripes)
+      + red waist sash + vintage round eyeglasses hanging from cord around neck +
+      small anchor tattoo on one tentacle.
+      Posture: SEATED on chair, body leaning forward warmly toward camera, ONE arm-tentacle
+      holding a wooden mate gourd with bombilla (Argentine yerba mate) steaming gently,
+      OTHER arm-tentacle holding small plate with ceviche and lime wedges.
+      Movement intent: serene, tentacles undulate softly, occasional eye blink, slight
+      warm head tilt toward viewer.
+      Atmosphere: warm gentle ambient, almost cozy despite the alien anatomy.
+      Style: hyperreal 8k cinematic, painterly creature design (think Guillermo del Toro
+      meets Studio Ghibli sea creature). Uncanny but warm — the goodness reads through
+      posture and offering gesture.
+      Avoid: monstrous, threatening, cold, sterile. Required: warm + offering + seated +
+      tentacles undulating.
+    approval_checkpoint: true
+
+# ============================================================
+# ASSET LIST (production checklist for engineer)
+# ============================================================
+asset_list:
+  reference_anchors_first: [maikol_anchor, chelo_anchor]
+  images_to_generate:
+    # H1 dyad + corporal
+    - h1-characters    # wide dyad MAIKOL + CHELO ambos facing camera
+    - h1-characters-b  # corporal motion variant
+    # SETUP salón
+    - h2-salon-wide
+    - h2-salon-bola-disco
+    - h2-maikol-invitacion-mano
+    # D1 dilema (rediseñado: champagne con perlas-cristal)
+    - d1-bar-dos-copas-wide
+    - d1-copa-champagne-perlas-closeup
+    - d1-maikol-ofreciendo-copa
+    - d1-A-garganta-cortada-pov
+    - d1-A-copa-con-sangre-cristales
+    - d1-B-maikol-bebe-perlas-mecanismo
+    - d1-B-salon-reveal-bailarines-sombra
+    # D2 dilema
+    - d2-pasillo-iluminado-fondo
+    - d2-luces-parpadeo
+    - d2-A-espejos-infinitos
+    - d2-A-pov-oceano-cayendo
+    - d2-A-pov-ahogandose
+    - d2-B-maikol-quita-fedora
+    - d2-B-cabeza-caja-musica
+    # H5 resolución
+    - h5-bailarines-sin-rostro
+    - h5-pov-reflejo-bola-disco
+    - h5-tu-bailando-entre-ellos
+    # Counterfactual H6
+    - h6-cubierta-amanecer-wide
+    - h6-chelo-sirviendo-mate-tentaculo
+    - h6-mate-humeante-closeup
+    - h6-ceviche-limon-detail
+    - h6-perro-labrador-cubierta
+    - h6-gaviotas-cielo-dorado
+  tts_segments_to_generate: "ver narration_script.segments (24 segments)"
+  sfx_prompts_to_generate: "ver audio_strategy.sfx_categories + ambient_continuous"
+  music_to_generate:
+    - main_glitched_80s_disco_loop  # principal horror
+    - outro_acustica_amanecer_calida  # counterfactual
+  ambient_continuous_to_generate:
+    - oleaje_continuo_loop
+    - viento_distante_ventanas_loop
+
+# ============================================================
+# CHECKPOINTS (workflow architect ↔ engineer)
+# ============================================================
+checkpoints:
+  - id: checkpoint_1_anchors
+    description: "Reference anchors MAIKOL + CHELO generados y aprobados por arquitecto"
+    approval_required_from: architect
+    key_validation: |
+      MAIKOL: ¿inmediatamente reconocible como Michael Jackson animatrónico cursed?
+      CHELO: ¿lee como warm/offering pese a la anatomía alien?
+
+  - id: checkpoint_2_images
+    description: "Resto de imágenes (shot list) generadas con consistency strict cross-shots"
+    approval_required_from: architect
+
+  - id: checkpoint_3_audio_assets
+    description: "TTS + música glitch disco + música amanecer + SFX + ambient"
+    approval_required_from: architect
+    key_validation: |
+      Música glitch debe sonar Thriller-ish descompuesto, NO genérico horror drone.
+      Punchline 'mate con tentáculo' debe tener pausa beat antes.
+
+  - id: checkpoint_4_animations
+    description: "Kling clips para tier hero + standard"
+    approval_required_from: architect
+    key_validation: |
+      MAIKOL dance motion (twists, spins, MJ lean) + glitch animatronic — no generic horror walk.
+      D2 B reveal: la fedora se levanta + caja de música girando dentro debe ser claramente legible.
+
+  - id: checkpoint_5_draft_render
+    pre_render_gate_passed: required
+    architect_creative_review: required
+    user_human_checklist: required
+
+# ============================================================
+# VALIDATION CHECKLIST (PAUTA-MASTER § 16)
+# ============================================================
+validation_pauta_master:
+  slot_A_atrapamiento_aislamiento: true
+  slot_B_uncanny_visual: true
+  slot_C_contraste_visual_con_B: true
+  slot_C_es_extrapolacion_documentada: true  # CHELO sin precedente
+  slot_D_5_a_10_palabras: true  # "Bailá conmigo. No te detengas." = 5
+  slot_D_conecta_con_dilemas: true
+  slot_E_3_a_4_decisiones_total: true  # 1 inicial + 2 internas = 3
+  slot_E_categorias_diferentes: true  # D1=curiosidad/obediencia, D2=acción/pasividad
+  slot_E_decisiones_ambiguas: true  # motor P6 — viewer no tiene confianza 100%
+  slot_F_body_horror_visualizable: true
+  slot_F_especifico_al_setting: true
+  slot_G_cliffhanger_paz_perdida: true
+  slot_G_elementos_sensoriales_validados: true
+  slot_G_punchline_absurdo_mundano: true  # "mate con tentáculo"
+  slot_H_opcional_skip: true
+  pattern_P6_rotado: true  # primera vez en pipeline
+  H0_correcto_para_pattern: true  # P6 — H0 skip OK
+  POV_100_percent: true  # user override — más estricto que PAUTA § 3 (>70%)
+  no_engineer_territory_crossed: true  # arquitecto NO toca LUFS/CSS/ffmpeg
+
+  # Validación del auto-loop del SKILL (D2, D9, D13, etc.)
+  D2_personaje_uncanny_extreme: true  # MAIKOL ayuwoki MJ + CHELO calamar — ambos
+  D9_keyword_highlights_5_a_10: true  # 11 keywords identificadas con colores
+  D13_counterfactual_punchline_absurdo: true  # "mate con tentáculo"
+  D11_hook_uncanny_visual_warning_countdown: true
+  pattern_rotation_vs_video_log: true
+  stakes_vitales: true  # loop eterno = pérdida identidad = stakes existenciales
+  decision_points_3_ramificacion_clara: true
+
+# ============================================================
+# END OF SPEC v1.0
+# ============================================================

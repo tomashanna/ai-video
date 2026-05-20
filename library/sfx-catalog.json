@@ -1,0 +1,124 @@
+{
+  "version": "1.0",
+  "updated": "2026-05-10",
+  "total_sfx": 53,
+  "description": "Catálogo machine-readable de SFX reutilizables. Antes de generar nuevo SFX, buscar acá.",
+  "categories": {
+    "cuts": {
+      "description": "Sistema de 7 cortes NARRATIVE-LED-EDITING. Universales a cualquier formato.",
+      "ref_doc": "ai-video-production/NARRATIVE-LED-EDITING.md",
+      "items": [
+        {"file": "cuts/cut-white-flash.mp3", "duration": 0.5, "use": "cliff/branch fork", "volume": [0.55, 0.65], "type": 1},
+        {"file": "cuts/cut-bad-thud.mp3", "duration": 0.7, "use": "entrada a rama mala (game-over)", "volume": [0.50, 0.60], "type": 2},
+        {"file": "cuts/cut-drone-low.mp3", "duration": 1.0, "use": "sostener momento muerto", "volume": [0.35, 0.45], "type": 3},
+        {"file": "cuts/cut-rise-drone.mp3", "duration": 0.6, "use": "transicion rama mala → buena", "volume": [0.40, 0.55], "type": 4},
+        {"file": "cuts/cut-exhale.mp3", "duration": 0.5, "use": "entrada a rama buena (alivio)", "volume": [0.35, 0.45], "type": 5},
+        {"file": "cuts/cut-silence-drone.mp3", "duration": 0.3, "use": "pausa entre nominales narrador", "volume": [0.10, 0.20], "type": 6},
+        {"file": "cuts/cut-warm-whoosh.mp3", "duration": 0.5, "use": "transicion al cliffhanger calido", "volume": [0.40, 0.50], "type": 7}
+      ]
+    },
+    "impacts": {
+      "description": "Flash, stab, shatter. Universales.",
+      "items": [
+        {"file": "impacts/stab-subbass.mp3", "duration": 0.5, "use": "hit corto sub-bass, reveal nombre", "volume": [0.55, 0.60]},
+        {"file": "impacts/flash-sharp.mp3", "duration": 0.7, "use": "white flash con crack agudo + sub-bass", "volume": [0.55, 0.65]},
+        {"file": "impacts/flash-soft.mp3", "duration": 0.5, "use": "variante suave del flash", "volume": [0.50, 0.60]},
+        {"file": "impacts/flash-warm.mp3", "duration": 0.7, "use": "flash para transicion calida", "volume": [0.50, 0.60]},
+        {"file": "impacts/glass-shatter-soft.mp3", "duration": 0.8, "use": "cristal rompiendose sutil", "volume": [0.25, 0.35]}
+      ]
+    },
+    "drones": {
+      "description": "Tension, build, atmospheric drones.",
+      "items": [
+        {"file": "drones/loading-drone-buildup.mp3", "duration": 2.5, "use": "drone sube durante loading bar", "volume": [0.30, 0.40]},
+        {"file": "drones/tension-rise-3s.mp3", "duration": 3, "use": "build tension termina en cliff", "volume": [0.30, 0.40]},
+        {"file": "drones/cave-drone-deep.mp3", "use": "drone deep escenarios subterraneos", "volume": [0.20, 0.30]}
+      ]
+    },
+    "ambients": {
+      "description": "Loops largos como capa de fondo. Mix volume 0.10-0.18. Para >22s usar stream_loop.",
+      "items": [
+        {"file": "ambients/forest-wind-loop-22s.mp3", "duration": 22, "use": "bosque nocturno, viento, arboles", "volume": [0.10, 0.15], "loopable": true},
+        {"file": "ambients/dawn-warmth-loop-12s.mp3", "duration": 12, "use": "amanecer calido, pajaros lejanos", "volume": [0.13, 0.18], "loopable": true},
+        {"file": "ambients/mine-industrial-loop.mp3", "use": "mina/industrial subterraneo", "volume": [0.10, 0.15], "loopable": true}
+      ]
+    },
+    "footsteps": {
+      "description": "Diferentes superficies. Loopables.",
+      "items": [
+        {"file": "footsteps/leaves-loop-4s.mp3", "duration": 4, "use": "hojas secas, loopable", "volume": [0.25, 0.30]},
+        {"file": "footsteps/leaves-2nd-set-creepy.mp3", "duration": 5, "use": "segundo set de pasos detras (horror)", "volume": [0.20, 0.25]},
+        {"file": "footsteps/gravel-6s.mp3", "duration": 6, "use": "transicion leaves a grava (salida)", "volume": [0.25, 0.30]},
+        {"file": "footsteps/mine-loop-4s.mp3", "duration": 4, "use": "pasos en mina, loopable", "volume": [0.25, 0.30]},
+        {"file": "footsteps/soil.mp3", "use": "pasos en tierra suelta", "volume": [0.25, 0.30]}
+      ]
+    },
+    "voices-sfx": {
+      "description": "Whispers, breaths, exhales, laughter. NO son narracion TTS.",
+      "items": [
+        {"file": "voices-sfx/whisper-creepy-old-man.mp3", "duration": 2, "use": "susurro horror viejo ininteligible", "volume": [0.30, 0.40]},
+        {"file": "voices-sfx/whisper-warn-male.mp3", "use": "susurro masculino advertencia", "volume": [0.30, 0.40]},
+        {"file": "voices-sfx/breath-behind-raspy.mp3", "duration": 1.5, "use": "respiracion detras del oido", "volume": [0.30, 0.35]},
+        {"file": "voices-sfx/exhale-release-warm.mp3", "duration": 3, "use": "exhalacion larga alivio + warm pad", "volume": [0.25, 0.35]},
+        {"file": "voices-sfx/exhale-relief.mp3", "use": "exhalacion corta alivio", "volume": [0.25, 0.35]},
+        {"file": "voices-sfx/gasp-collapse.mp3", "use": "gasp de colapso/asfixia", "volume": [0.30, 0.40]},
+        {"file": "voices-sfx/laughter-distant-faint.mp3", "duration": 2, "use": "risas lejanas casi subliminales", "volume": [0.18, 0.25]},
+        {"file": "voices-sfx/laughter-warm-group.mp3", "duration": 3, "use": "risas calidas grupo cliffhanger", "volume": [0.25, 0.30]}
+      ]
+    },
+    "body-impacts": {
+      "description": "Falls, grips, splinters. Horror.",
+      "items": [
+        {"file": "body-impacts/body-fall-leaves.mp3", "duration": 1.5, "use": "cuerpo cayendo sobre hojas", "volume": [0.30, 0.40]},
+        {"file": "body-impacts/cold-grip.mp3", "duration": 1, "use": "mano fria agarrando hombro", "volume": [0.30, 0.40]},
+        {"file": "body-impacts/fall-pit.mp3", "use": "caida a pozo/mina", "volume": [0.35, 0.45]},
+        {"file": "body-impacts/wood-splinter.mp3", "use": "madera astillandose", "volume": [0.30, 0.40]}
+      ]
+    },
+    "warm-cliffhanger": {
+      "description": "Sonidos calidos de cierre. Para H6/cliffhanger.",
+      "items": [
+        {"file": "warm-cliffhanger/fire-distant-warm.mp3", "duration": 6, "use": "fuego lejano filtrado calido", "volume": [0.20, 0.28]},
+        {"file": "warm-cliffhanger/fire-crackle-loop-8s.mp3", "duration": 8, "use": "crepitar fogata intimo loopable", "volume": [0.25, 0.30], "loopable": true},
+        {"file": "warm-cliffhanger/acoustic-strum-warm.mp3", "duration": 2, "use": "strum unico guitarra calida", "volume": [0.25, 0.35]},
+        {"file": "warm-cliffhanger/cup-toast-clink.mp3", "duration": 0.5, "use": "brindis tazas metalicas", "volume": [0.25, 0.35]},
+        {"file": "warm-cliffhanger/cup-set-soft.mp3", "use": "taza apoyandose suavemente", "volume": [0.20, 0.30]},
+        {"file": "warm-cliffhanger/dawn-birds-chorus.mp3", "duration": 4, "use": "coro pajaros amanecer", "volume": [0.25, 0.30]},
+        {"file": "warm-cliffhanger/first-bird-single.mp3", "duration": 1.5, "use": "primer pajaro amanecer una nota", "volume": [0.25, 0.30]},
+        {"file": "warm-cliffhanger/bird-distant-dawn.mp3", "use": "pajaro lejano alternativa", "volume": [0.25, 0.30]},
+        {"file": "warm-cliffhanger/warm-pad-resolution.mp3", "duration": 2, "use": "acorde mayor resolutivo hopeful", "volume": [0.25, 0.35]},
+        {"file": "warm-cliffhanger/paper-rustle.mp3", "use": "papel/libro", "volume": [0.20, 0.30]}
+      ]
+    },
+    "motion": {
+      "description": "Movimiento, transiciones, aceleracion.",
+      "items": [
+        {"file": "motion/footsteps-accelerate.mp3", "duration": 3, "use": "pasos acelerando lento a urgente", "volume": [0.25, 0.30]},
+        {"file": "motion/footstep-return.mp3", "duration": 1, "use": "pisada vuelta al camino", "volume": [0.20, 0.25]},
+        {"file": "motion/footstep-relief.mp3", "use": "pisada despues de salvarse", "volume": [0.20, 0.25]},
+        {"file": "motion/whoosh-presence-vanish.mp3", "duration": 2, "use": "whoosh presencia desaparece", "volume": [0.20, 0.25]},
+        {"file": "motion/wakeup-disorient-tinnitus.mp3", "duration": 2, "use": "despertar disoriented tinnitus", "volume": [0.30, 0.40]},
+        {"file": "motion/knock-pillar.mp3", "use": "golpe ritmico pilar (4 veces)", "volume": [0.30, 0.40]},
+        {"file": "motion/pickaxe-distant.mp3", "use": "pico lejano cavando", "volume": [0.20, 0.30]}
+      ]
+    },
+    "horror-specific": {
+      "description": "Solo aplicables a formatos horror.",
+      "items": [
+        {"file": "horror-specific/howl-distant-low.mp3", "duration": 3, "use": "aullido lejano horror ambient", "volume": [0.25, 0.35]}
+      ]
+    },
+    "countdown": {
+      "description": "Sonidos de countdown 3-2-1.",
+      "items": [
+        {"file": "countdown/tick.mp3", "duration": 0.1, "use": "tick countdown reutilizable triple", "volume": [0.75, 0.85]}
+      ]
+    }
+  },
+  "rules": [
+    "Antes de generar nuevo SFX, buscar primero en este catalogo.",
+    "Copiar a tu proyecto (cp), no mover. La library queda intacta.",
+    "Si generaste algo reutilizable en un proyecto nuevo, agregarlo de vuelta + actualizar este JSON + LIBRARY.md.",
+    "No agregar dialogos especificos, narraciones, voces de personajes."
+  ]
+}

@@ -1,0 +1,189 @@
+[
+  {
+    "_comment_ambient": "Ambient layers continuos — generar con loop:true y expandir con ffmpeg stream_loop después (ver PIPELINE § 12.5)",
+    "out": "assets/sfx/ambient-forest-wind-loop.mp3",
+    "text": "continuous abandoned forest night wind, dead trees creaking in the breeze, cold atmospheric ambience, no animals, no rain, no music, perfectly looping",
+    "duration": 22.0,
+    "influence": 0.5,
+    "loop": true
+  },
+  {
+    "out": "assets/sfx/ambient-dawn-warmth.mp3",
+    "text": "warm dawn forest ambience, soft distant morning birds, gentle wind through trees, cozy peaceful golden hour, no music, perfectly looping",
+    "duration": 12.0,
+    "influence": 0.5,
+    "loop": true
+  },
+
+  {
+    "_comment_h1": "H1 — presentación",
+    "out": "assets/sfx/h1-distant-howl.mp3",
+    "text": "very distant low animalistic howl far away through fog, almost imperceptible, single event, no music, isolated horror atmosphere",
+    "duration": 3.0,
+    "influence": 0.4
+  },
+  {
+    "out": "assets/sfx/h1-name-stab.mp3",
+    "text": "low frequency cinematic sub-bass stab impact for title reveal, single short hit, dry no reverb tail, no music",
+    "duration": 0.5,
+    "influence": 0.5
+  },
+
+  {
+    "_comment_tick": "tick.mp3 OBLIGATORIO — se reutiliza en TODOS los countdown 3-2-1 (H2, H3, H4). Sin esto los countdown se sienten silenciosos.",
+    "out": "assets/sfx/tick.mp3",
+    "text": "single short film projector tick click, mechanical analog vintage, dry no reverb, very short percussive hit, no music",
+    "duration": 0.5,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h2-loading-drone.mp3",
+    "text": "low rising tension drone slow build sub-bass cinematic horror buildup, no melody, no rhythm, intensifies smoothly, single continuous event",
+    "duration": 2.5,
+    "influence": 0.7
+  },
+  {
+    "out": "assets/sfx/h2-flash-impact.mp3",
+    "text": "short cinematic white-flash impact, sharp crack with deep sub-bass tail, like a camera flash crossed with thunder, dry, single event",
+    "duration": 0.7,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h2-glass-shatter-soft.mp3",
+    "text": "soft glass tinkle shatter, subtle, single event, short decay, no echo, no music",
+    "duration": 0.8,
+    "influence": 0.4
+  },
+
+  {
+    "out": "assets/sfx/h3-footsteps-leaves-loop.mp3",
+    "text": "slow heavy human footsteps walking on dry dead crunchy leaves, single person, steady pace, dry no reverb, no music",
+    "duration": 4.0,
+    "influence": 0.5,
+    "loop": true
+  },
+  {
+    "out": "assets/sfx/h3-whisper.mp3",
+    "text": "creepy hushed unintelligible whisper of an old man very close to the ear, breathy, single short phrase, no music, no melody, horror whisper",
+    "duration": 2.0,
+    "influence": 0.6
+  },
+  {
+    "out": "assets/sfx/h3-second-footsteps.mp3",
+    "text": "second set of footsteps on dry leaves slightly out of sync with the first, almost imperceptible, slow, behind listener, no music",
+    "duration": 5.0,
+    "influence": 0.6
+  },
+  {
+    "out": "assets/sfx/h3-breath-behind.mp3",
+    "text": "single low exhaled breath very close behind the listener's ear, raspy, single event, no words, horror, no music",
+    "duration": 1.5,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h3-flash-impact.mp3",
+    "text": "white flash transition impact, sharp crack plus low sub bass boom, single hit, dry",
+    "duration": 0.7,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h3-cold-grip.mp3",
+    "text": "sudden cold grip impact, fabric and skin contact, single horror impact, quiet wet thud, no music",
+    "duration": 1.0,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h3-body-fall.mp3",
+    "text": "human body collapsing onto dead leaves and earth, dull thud no scream, single event, no music",
+    "duration": 1.5,
+    "influence": 0.6
+  },
+  {
+    "out": "assets/sfx/h3-release-exhale.mp3",
+    "text": "long slow released exhale, calm relief, ambient warm low sub-bass tail, single event, no music",
+    "duration": 3.0,
+    "influence": 0.5
+  },
+
+  {
+    "out": "assets/sfx/h4-flash-soft.mp3",
+    "text": "soft white flash transition, low boom only, no sharp high crack, single event, dry",
+    "duration": 0.5,
+    "influence": 0.4
+  },
+  {
+    "out": "assets/sfx/h4-tension-rise.mp3",
+    "text": "rising tension drone sub-bass building suspense, no melody, intensifies, ends on a cliff",
+    "duration": 3.0,
+    "influence": 0.7
+  },
+  {
+    "out": "assets/sfx/h4-flash-impact.mp3",
+    "text": "white flash impact with sub-bass thunder and metallic shimmer tail, dry, single hit",
+    "duration": 0.7,
+    "influence": 0.5
+  },
+
+  {
+    "out": "assets/sfx/h5-footsteps-gravel.mp3",
+    "text": "footsteps transitioning from dry leaves onto gravel and dirt road, quiet morning, single person walking, no music",
+    "duration": 6.0,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h5-disappear.mp3",
+    "text": "soft whoosh of leaves rustling and a presence vanishing, no impact, ambient release, single event, no music",
+    "duration": 2.0,
+    "influence": 0.4
+  },
+  {
+    "out": "assets/sfx/h5-first-bird.mp3",
+    "text": "single distant blackbird call, one clear note, dawn morning forest, lone bird far away, no other animals, no music",
+    "duration": 1.5,
+    "influence": 0.6
+  },
+
+  {
+    "out": "assets/sfx/h6-flash-warm.mp3",
+    "text": "soft warm whoosh transition without any horror, gentle wind change, single event, no music",
+    "duration": 0.7,
+    "influence": 0.4
+  },
+  {
+    "out": "assets/sfx/h6-fire-crackle-loop.mp3",
+    "text": "warm intimate campfire crackling close-up, dry wood embers popping, cozy continuous ambient",
+    "duration": 8.0,
+    "influence": 0.5,
+    "loop": true
+  },
+  {
+    "out": "assets/sfx/h6-laughter-warm.mp3",
+    "text": "small group of three or four people laughing softly around a campfire, warm intimate genuine laughter, slight distance, no music, no words",
+    "duration": 3.0,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h6-acoustic-strum.mp3",
+    "text": "single warm acoustic guitar chord strum, open major chord, nylon strings, intimate close-up, single event no progression, no other instruments",
+    "duration": 2.0,
+    "influence": 0.6
+  },
+  {
+    "out": "assets/sfx/h6-cup-toast.mp3",
+    "text": "two metal tin cups clinking together once, friendly toast sound, dry, single event, no music",
+    "duration": 0.5,
+    "influence": 0.4
+  },
+  {
+    "out": "assets/sfx/h6-dawn-birds.mp3",
+    "text": "warm dawn morning birds chorus, multiple species singing, countryside spring atmosphere, no traffic, no humans, peaceful",
+    "duration": 4.0,
+    "influence": 0.5
+  },
+  {
+    "out": "assets/sfx/h6-warm-pad.mp3",
+    "text": "warm major chord low pad resolution, feel-good, no rhythm, hopeful, single sustained event",
+    "duration": 2.0,
+    "influence": 0.5
+  }
+]

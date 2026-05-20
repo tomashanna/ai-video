@@ -1,0 +1,111 @@
+{
+  "schema_version": "v1",
+  "extraction_date": "2026-05-20",
+  "n_refs": 8,
+  "hook_sub_beat_frequency": {
+    "framing_question": 7,
+    "countdown_trigger": 1,
+    "character_threat": 1
+  },
+  "hook_sub_beat_order_per_ref": [
+    {
+      "ref_id": "ref-03",
+      "beat_order": [
+        "framing_question"
+      ]
+    },
+    {
+      "ref_id": "ref-06",
+      "beat_order": []
+    },
+    {
+      "ref_id": "ref-08",
+      "beat_order": [
+        "framing_question",
+        "countdown_trigger"
+      ]
+    },
+    {
+      "ref_id": "ref-09",
+      "beat_order": []
+    },
+    {
+      "ref_id": "ref-10",
+      "beat_order": [
+        "character_threat",
+        "framing_question",
+        "framing_question"
+      ]
+    },
+    {
+      "ref_id": "ref-11",
+      "beat_order": [
+        "framing_question"
+      ]
+    },
+    {
+      "ref_id": "ref-12",
+      "beat_order": [
+        "framing_question"
+      ]
+    },
+    {
+      "ref_id": "ref-13",
+      "beat_order": [
+        "framing_question"
+      ]
+    }
+  ],
+  "decision_windows_per_ref": [
+    {
+      "ref_id": "ref-03",
+      "n_decisions": 3
+    },
+    {
+      "ref_id": "ref-06",
+      "n_decisions": 4
+    },
+    {
+      "ref_id": "ref-08",
+      "n_decisions": 3
+    },
+    {
+      "ref_id": "ref-09",
+      "n_decisions": 5
+    },
+    {
+      "ref_id": "ref-10",
+      "n_decisions": 4
+    },
+    {
+      "ref_id": "ref-11",
+      "n_decisions": 4
+    },
+    {
+      "ref_id": "ref-12",
+      "n_decisions": 3
+    },
+    {
+      "ref_id": "ref-13",
+      "n_decisions": 11
+    }
+  ],
+  "n_refs_with_cliffhanger": 2,
+  "scene_cut_density_per_min": {
+    "median": 10.29,
+    "min": 1.62,
+    "max": 33.17
+  },
+  "role_distribution_cumulative": {
+    "hook_framing_question": 7,
+    "hook_other": 31,
+    "setup_unclassified": 111,
+    "consequence_setup": 1,
+    "decision_question": 32,
+    "cliffhanger_outro": 35,
+    "consequence_narration": 12,
+    "decision_setup": 3,
+    "cliffhanger": 4,
+    "hook_character_threat": 1
+  }
+}

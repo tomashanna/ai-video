@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+#countdown-slam {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #060606;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.3) 3px,
+    rgba(0,0,0,0.3) 4px
+  );
+  pointer-events: none;
+  z-index: 900;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 65% 55% at 50% 50%, transparent 0%, rgba(0,0,0,0.88) 100%);
+  pointer-events: none;
+  z-index: 890;
+}
+
+.digit {
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-weight: 400;
+  font-size: 440px;
+  line-height: 1;
+  color: #f2f2f2;
+  text-shadow: 0 0 80px rgba(255,255,255,0.3), 0 10px 60px rgba(0,0,0,0.9);
+  position: absolute;
+  top: calc(50% - 230px);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  user-select: none;
+}
+
+/* Full white flash on impact */
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 850;
+}
+
+/* Dark horizontal bars — VHS tracking glitch on slam */
+.glitch-bar {
+  position: absolute;
+  left: 0; right: 0;
+  height: 18px;
+  background: rgba(0,0,0,0.85);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 800;
+}
+#gb1 { top: calc(50% - 9px + 120px); }
+#gb2 { top: calc(50% - 9px - 140px); }
+
+.go-text {
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-size: 220px;
+  letter-spacing: 24px;
+  color: #f2f2f2;
+  text-shadow: 0 0 60px rgba(255,255,255,0.5);
+  position: absolute;
+  top: calc(50% - 120px);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  user-select: none;
+}
+
+/* Film scratch */
+.scratch {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent 5%, rgba(255,255,255,0.7) 20%, rgba(255,255,255,0.4) 60%, transparent 95%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 800;
+}
+#sc1 { left: 242px; }
+</style>
+</head>
+<body>
+<div id="countdown-slam" data-composition-id="countdown-slam" data-width="1080" data-height="1920" data-start="0">
+  <div class="vignette"></div>
+
+  <div class="glitch-bar" id="gb1"></div>
+  <div class="glitch-bar" id="gb2"></div>
+  <div class="scratch" id="sc1"></div>
+
+  <div class="digit" id="d3">3</div>
+  <div class="digit" id="d2">2</div>
+  <div class="digit" id="d1">1</div>
+  <div class="go-text" id="go">RUN</div>
+
+  <div class="flash" id="flash"></div>
+  <div class="scanlines"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// Global flicker
+tl.to("#countdown-slam", { opacity: 0.85, duration: 0.04, ease: "none" }, 0.45);
+tl.to("#countdown-slam", { opacity: 1,    duration: 0.04, ease: "none" }, 0.49);
+tl.to("#countdown-slam", { opacity: 0.9,  duration: 0.03, ease: "none" }, 2.18);
+tl.to("#countdown-slam", { opacity: 1,    duration: 0.04, ease: "none" }, 2.21);
+
+// Film scratch
+tl.to("#sc1", { opacity: 0.75, duration: 0.06, ease: "none" }, 0.65);
+tl.to("#sc1", { opacity: 0,    duration: 0.05, ease: "none" }, 0.71);
+
+function slam(dId, t) {
+  // Fall from top
+  tl.fromTo(dId, { y: -700, opacity: 1 }, { y: 0, opacity: 1, duration: 0.20, ease: "power4.in" }, t);
+  // Squish
+  tl.to(dId, { scaleY: 0.76, scaleX: 1.16, duration: 0.07, ease: "power2.out" }, t + 0.20);
+  // Rebound
+  tl.to(dId, { scaleY: 1.06, scaleX: 0.97, duration: 0.10, ease: "power2.out" }, t + 0.27);
+  // Settle
+  tl.to(dId, { scaleY: 1, scaleX: 1, duration: 0.10, ease: "sine.inOut" }, t + 0.37);
+  // White impact flash
+  tl.to("#flash", { opacity: 0.75, duration: 0.04, ease: "none" }, t + 0.20);
+  tl.to("#flash", { opacity: 0,    duration: 0.18, ease: "power3.out", overwrite: "auto" }, t + 0.24);
+  // VHS tracking bars glitch
+  tl.to("#gb1", { opacity: 1, duration: 0.04, ease: "none" }, t + 0.20);
+  tl.to("#gb1", { opacity: 0, duration: 0.12, ease: "power2.out", overwrite: "auto" }, t + 0.24);
+  tl.to("#gb2", { opacity: 0.7, duration: 0.04, ease: "none" }, t + 0.22);
+  tl.to("#gb2", { opacity: 0,   duration: 0.1,  ease: "power2.out", overwrite: "auto" }, t + 0.26);
+  // Exit: slam back up
+  tl.to(dId, { y: -700, opacity: 0, duration: 0.17, ease: "power4.in" }, t + 0.80);
+}
+
+slam("#d3", 0.12);
+slam("#d2", 1.12);
+slam("#d1", 2.12);
+
+// GO — contracts in from large scale
+tl.fromTo("#go", { scale: 3.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "power4.out" }, 3.12);
+// Final white flash
+tl.to("#flash", { opacity: 0.5, duration: 0.04, ease: "none" }, 3.12);
+tl.to("#flash", { opacity: 0,   duration: 0.25, ease: "power2.out" }, 3.16);
+tl.to("#go", { opacity: 0, duration: 0.32, ease: "power2.in" }, 3.85);
+
+window.__timelines["countdown-slam"] = tl;
+</script>
+</body>
+</html>

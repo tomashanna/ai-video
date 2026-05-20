@@ -1,0 +1,470 @@
+# AUDITOR-PROTOCOL.md — rol auditor independiente (3er terminal)
+
+> **Status**: AUTORIDAD CANÓNICA del rol AUDITOR. Pareja del `HANDOFF-PROTOCOL.md` (arq↔ing).
+> **Versión**: 1.0 (creada 2026-05-17 tras gap detectado en CP1 matadero-banquete audit — auditor delegaba verificación de PAUTA-MASTER al arquitecto en vez de leerla directo, rompiendo independencia de juicio).
+
+---
+
+## 0. Quién es el auditor + por qué existe
+
+El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e ingeniero, en su **propio terminal** sin contexto compartido con ninguno de los otros dos. Verifica handoffs del ingeniero **contra autoridad canónica directa** — no contra self-audit del arquitecto ni del ingeniero.
+
+**Por qué existe** (validado caso pueblo-fantasma-desierto v2 + cabina-14):
+- Gemini holístico scores son inflados (9.9 con video real 7/10)
+- El arquitecto puede aprobar SPEC con gaps que él mismo no detecta por sesgo de creator
+- El ingeniero puede self-audit con compliance superficial
+- Sin tercer ojo independiente leyendo PAUTA-MASTER + INGENIERO-PAUTA + ref-XX **directo**, los bugs se filtran al render
+
+**Metáfora**: arquitecto = arquitecto del edificio. Ingeniero = constructor. Auditor = inspector municipal con copia propia del código de construcción — no le pregunta al arquitecto si cumple.
+
+---
+
+## 1. ⛔ Lectura obligatoria PRE-AUDIT — sin delegar
+
+**Regla nº1 del auditor**: leer las fuentes primarias **directamente** en cada audit. Si una autoridad está citada en el handoff del ingeniero, eso NO te exime de leerla.
+
+### 1.1 Lectura universal (todos los CP)
+
+```
+1. SPEC completo: creative-specs/<id>.yaml v actual — TODAS las secciones, no solo las
+   "relevantes a este CP". Cross-coherence se rompe por gaps lejanos del CP.
+2. ⭐ PAUTA-MASTER del formato — autoridad creativa empírica del arquitecto
+3. ⭐ INGENIERO-PAUTA-MASTER del formato — autoridad técnica empírica del ingeniero
+4. ⭐ ref-XX canónico primario aplicable (definido en SPEC.cliffhanger.ref_canonical_anchor)
+5. video-log.md del formato — rotación pattern + learnings previos
+6. CLAUDE.md hard rules #1-#21
+7. Memorias relevantes al CP (ver § 3 por checkpoint)
+8. Active session state (memoria) — contexto de sprints en flight
+9. El handoff del ingeniero completo (CP[N]-handoff[-vN].md)
+```
+
+### 1.2 Lectura específica por CP
+
+| CP | Adicional al universal § 1.1 |
+|----|------------------------------|
+| CP1 Anchors | MODEL-BENCHMARK.md § character anchors + memoria `prompt_quality_no_vague` + `ai-video-production/IMAGE-VARIETY.md` |
+| CP2 Script | `SCRIPT-WRITING-GUIDE.md` + INGENIERO-PAUTA § pace WPM + memorias `feedback_si_elegiste_framing` + `feedback_narration_coherence` + `feedback_narrative_simplicity` |
+| CP3 Shot images | `CHARACTER-CONSISTENCY.md` + `IMAGE-VARIETY.md` + memoria `feedback_visual_matches_narration` |
+| CP4 Animation | `video-animation/ANIMATION-LAYER.md` + `MODEL-BENCHMARK.md` § animation + memoria `animation_30s_rule` |
+| CP5 Render | INGENIERO-PAUTA § completo (UI safe zones + LUFS + cuts/min) + `AUDIO-MASTERING.md` + `COLOR-GRADING.md` + `PACING-MARKERS.md` + `pre-render-gate/SKILL.md` 21 Q |
+
+**Si el SPEC referencia un ref-XX que no leíste todavía**, lo leés completo antes de auditar. NO basta con scan.
+
+---
+
+## 2. Cuándo se activa el auditor
+
+| Trigger | Audit? |
+|---------|--------|
+| Ingeniero entrega `CP[N]-handoff.md` con arquitecto GO | ✅ SÍ |
+| Ingeniero entrega `CP[N]-handoff-vN.md` con fixes aplicados | ✅ SÍ (re-audit focused) |
+| Arquitecto entrega `creative-specs/<id>.yaml` aprobado por user | ✅ SÍ (auditar SPEC mismo vs PAUTA-MASTER + D14-D22 — el arquitecto puede haber pasado D14-D22 con compliance superficial) |
+| Pre-render-gate (20 Q técnicas) corrió Y pasó | ✅ SÍ — auditor agrega validation creativa final |
+| Render draft listo | ✅ SÍ — `audit-against-referent.py` ≥85% + verificación visual |
+
+**NO se activa** cuando: el ingeniero corre self-audit sin entregar handoff formal, fixes triviales engineer-domain (typos, paths).
+
+---
+
+## 3. Qué audita (checklist obligatorio por CP)
+
+### CP1 — Reference Anchors
+
+1. ✅ **Visual de anchors generados** vs `SPEC.reference_anchors[].visual_anchor_prompt` línea por línea
+2. ✅ **Engineer-expanded prompts** drift check vs SPEC + memoria `prompt_quality_no_vague`
+3. ✅ **Hard rule #20** premium prompt 5-block structure (subject + camera + lighting + atmosphere físico + style)
+4. ✅ **Hard rule #19** ingeniero NO cita nuestras producciones como autoridad
+5. ✅ **Model selection** Pro/Flash 3.1 per MODEL-BENCHMARK § 2.2 character anchor row
+6. ✅ **Cross-anchor consistency** (paletas dual, props/wardrobe que se repiten entre anchors)
+7. ✅ **Cost estimate** vs MODEL-BENCHMARK pricing actual
+8. ✅ **Pre-batch checks** existentes (smoke test API + venv + quota antes de cascada $1+)
+
+### CP2 — Script + Captions Whisper
+
+1. ✅ **Pace WPM** per INGENIERO-PAUTA § 1.1 banda canónica
+2. ✅ **"Si elegiste X" framing** en TODAS las consequence narrations Slot E (memoria `feedback_si_elegiste_framing`)
+3. ✅ **Visual matches narration LITERAL** (memoria `feedback_visual_matches_narration`)
+4. ✅ **Narration coherence** sujeto+verbo (memoria `feedback_narration_coherence`)
+5. ✅ **Slot E simplicity** 1 frase personaje + 1 frase decisión (memoria `feedback_narrative_simplicity`)
+6. ✅ **POV first-person** en TODOS los shots (memoria `feedback_first_person_pov`)
+7. ⭐ **M7 ACOUSTIC PROGRAMMATIC VERIFICATION (BLOQUEANTE — añadido 2026-05-18 post CP2 matadero pace fail)**:
+   - M7.1 Run canonical `measure_F1.py` methodology on TTS Whisper output:
+     ```python
+     total_words = sum(len(s['text'].strip().split()) for s in segs)
+     speak_time = sum(s['end'] - s['start'] for s in segs)
+     wpm_total = total_words / speak_time * 60
+     ```
+   - M7.2 Compare `wpm_total` vs canonical bands (`referent-analysis/F1-INGENIERO-MEASUREMENTS.json` aggregated_F1):
+     - p25 floor: 152.71
+     - median: 164.91
+     - p75: 179.84
+   - M7.3 **Per-speaker breakdown** via `manifest.json` (narrator vs character voices) — pace puede ser diferente per speaker
+   - M7.4 **Verdicts gating**:
+     - WPM ≥p25: ✅ PASS
+     - WPM <p25 cualquiera (overall O per-speaker): 🔴 FAIL BLOQUEANTE — NO emit 🟢 ni 🟡 ni Path A acceptance
+   - M7.5 Si specific speaker <p25 (ej. matarife con effects chain compounding): flag re-process per speaker (NO flat global atempo)
+   - M7.6 User listen test = sanity check OPTIONAL post-programmatic verification, NO substitute
+   - ⭐ **M7.6.5 PER-SEGMENT WPM canonical check (BLOQUEANTE — añadido 2026-05-19 PM post matadero iter 6 user catch GAP #21)**:
+     Hard Rule #19 EXPANSION 2026-05-18 codified per-SPEAKER WPM check. PERO intra-speaker per-SEGMENT variance NO audited. Engineer puede aplicar atempo per-speaker uniform PERO over-tempo individual segments para fit duration windows = pace asymmetry user perceives.
+     
+     **M7.6.5.1 Per-segment WPM computation**:
+     ```python
+     for seg in captions:
+         words = len(seg['whisper_text'].split())
+         duration = seg['end'] - seg['start']
+         wpm_seg = words / duration * 60
+         # Check vs canonical band [p25, p75]
+         if wpm_seg < canonical_p25 or wpm_seg > canonical_p75:
+             flag_outlier(seg, wpm_seg)
+     ```
+     
+     **M7.6.5.2 Verdicts gating**:
+     - All segments ∈ canonical band [152, 180] → ✅ PASS
+     - 1 segment >50% over canonical_p75 → 🔴 FAIL bloqueante (user perceptual catches this asymmetry)
+     - 1-2 segments marginal (≤20% over/under band) → 🟡 NB (review acceptable depending on segment role: hook/climax/cliffhanger may justify slight deviation)
+     - Overall avg PASS pero segments outlier → 🔴 FAIL — overall band check INSUFFICIENT
+     
+     **M7.6.5.3 Per-segment role considerations** (acceptable variations):
+     - Climax staccato peak (e.g., "Caes." 1-word segment): WPM artificial high acceptable (NB only)
+     - Cliffhanger soft delivery: WPM slightly slow acceptable (NB only)
+     - Normal narration segments: STRICT canonical band [152, 180]
+     - **Decision setup segments**: STRICT canonical (these set up countdown timing — over-tempo confuses viewer)
+     - **Hook framing question**: STRICT canonical (CRITICAL — first impression retention)
+     
+     **Caso disparador matadero iter 6**: caption[0] narrator framing "Decidí con quién pasar la noche: matarife... o cocinera." = 9 words / 1.98s = 272.7 WPM (65% over canonical p75=180). Overall avg 178 WPM passed band because other narrator segments compensated slower. User perceptual caught segment-level outlier: "el inicio nose porque va mas rápido que lo demas".
+     
+     **Fix codified forward**:
+     - INGENIERO-PAUTA § 1.X: atempo uniform per-speaker REQUIRED, NO per-segment over-tempo to fit duration windows
+     - If narration too long for window → extend window OR cut narration text, NEVER atempo individual segment
+     - Phase 1 script `measure-canonical-decision-ui-pacing.py` enhancement: include per-segment WPM aggregation + p25/p75 intra-speaker variance bands
+   - ⭐ **M7.7 AUDIBILITY + INTELLIGIBILITY CHECK (BLOQUEANTE — añadido 2026-05-18 post matarife inaudible fail)**:
+     - M7.7.1 Volume measurement per segment (ffmpeg volumedetect): mean_volume ∈ [-30, -16 dB] band typical broadcast canonical
+     - M7.7.2 **Intelligibility verification VIA Whisper re-transcribe**: re-run Whisper sobre processed TTS output, NO original raw. Compare transcript words vs SPEC text. Intelligibility ratio = matching_words / spec_words.
+       - Ratio ≥0.90 → ✅ PASS (audio entendible post-FX)
+       - Ratio <0.90 → 🟡 **APPLY M7.7.5 semantic equivalence refinement BEFORE FAIL verdict**
+     - M7.7.3 Crítico para speakers con effects chain (matarife pitch shift + LPF + reverb): verificar LPF cutoff preserva consonants (>3000Hz typical) + reverb wet level NO drown dry signal
+     - M7.7.4 User listen test post-programmatic = required confirmation cuando effects chain heavy (no opcional)
+     - ⭐ **M7.7.5 SEMANTIC EQUIVALENCE METHODOLOGY REFINEMENT (added 2026-05-18 post matadero Path 2a SoX brittle Whisper case)**:
+       Whisper methodology can be brittle a single-letter substitutions o digit normalization. Antes de FAIL verdict, apply semantic equivalence rules:
+       
+       **Rule A — Digit normalization equivalence**:
+       - "Veinte" ↔ "20" (Whisper digit transcribe) = MATCH ✓
+       - "Una" ↔ "1", "dos" ↔ "2", etc. (Spanish numerals 1-30) = MATCH
+       - Spanish 5:40 = "cinco cuarenta" o "5:40" = MATCH
+       
+       **Rule B — Phonetic neighborhood equivalence (single consonant substitution)**:
+       Phonemes minimal-pair substitutions usually NO afectan intelligibility (user hearing recognizes word despite Whisper transcription error):
+       - g ↔ k ("ganchos" ↔ "canchos") = MATCH if same syllable structure
+       - b ↔ v ("vienes" ↔ "bienes") = MATCH
+       - s ↔ z (Latin Spanish dialect) = MATCH
+       - Other consonant pairs phonetically similar = MATCH (case-by-case judgment)
+       
+       Rule C — Plurals/articles minor variations:
+       - "Los ganchos" ↔ "ganchos" (article dropped) = partial match (proportional ratio)
+       
+       Rule D — User listen test perceptual ground truth precedence:
+       Si user listen test PASS (perceptual) BUT Whisper ratio <0.90 via single-substitution brittleness → **perceptual ground truth wins**. Codify result as ✅ PASS with NB flag "Whisper methodology brittle, perceptual confirmed".
+       
+       **Caso disparador matadero CP2 Path 2a SoX**: matarife_count "Veinte minutos" → Whisper "20 minutos" (digit normalization, NOT intelligibility fail) + matarife_rule "ganchos" → "canchos" (g/k phonetic neighborhood, user perception "está bien"). Strict M7.7 = 1/3 PASS. With M7.7.5 refinement = 3/3 PASS. **Perceptual ground truth (user listen) confirms.**
+     - **Caso disparador matadero CP2 post-Oxley 2026-05-18**: matarife mean_volume HIGH (-21 dB) measured M7.1 PASS, PERO user listen "no se escucha nada" porque LPF 2000Hz cortó consonants + aecho out_gain 0.3 drown dry signal → speech unintelligible aunque audible. M7.7 catches this: Whisper re-transcribe processed audio falla word-match vs SPEC.
+   - **Rationale**: programmatic acoustic verification es AUTOMATABLE via Whisper + canonical script. NO human-in-loop. Phase 5 automation requires this. **Caso disparador matadero CP2 v1**: Path A approved sin acoustic verification, user listen test post-hoc reveló "MUUUY lentos" — empirical refutation (125-143 WPM vs canon 165 median). **Caso disparador CP2 v3 post-Oxley**: M7 PASS pero matarife inaudible perception — M7.7 audibility/intelligibility expansion codified.
+
+### CP3 — Shot Images
+
+1. ✅ **Character consistency** cross-shots (face structure + wardrobe + signature features)
+2. ✅ **Variantes -a/-b/-c** en shots >4s con TIPOS de plano distintos (CLAUDE.md hard rule #5)
+   - 2.1 ⭐ **Cross-validate variant composition NOT just intra-shot, ALSO vs adjacent base shots** (caso disparador matadero shot_07-a vs shot_08 absorption_pov 2026-05-18). Si variant duplica composition de adjacent base shot en narrative sequence → 🔴 FAIL redundant pick
+   - 2.2 Architect Q-picks deben validar: ¿variant composition distinct vs (a) other variants same shot AND (b) adjacent base shots n-1, n+1?
+3. ✅ **Paleta dual** intent ejecutada per shot tag (narrative warm vs choice cool)
+4. ✅ **Setup elements del twist** con timing 2.5-3.5s, NO detail shots <1s
+5. ⭐ **Background ambient creature/object animated per shot** (added 2026-05-20 GAP #23). Per shot SPEC must declare `setting_ambient_creature_or_object` non-empty. Examples: rat scurrying, shark swimming, flame flickering, dust particles dancing, character breath visible. Without animated background element → scene feels DEAD = anti-canonical (refs 100% have ≥1).
+6. ⭐ **Atmospheric motions ≥3 per shot** (added 2026-05-20 GAP #26). Per shot SPEC must declare `atmospheric_motions_count ≥3`. Categories: smoke, vapor, dust, light_flicker, water_drip, insect_motion, fluid_drip, character_breath. Without ≥3 simultaneous = setting less "alive" than canonical.
+7. ⭐ **Character active gesture per shot** (added 2026-05-20 GAP #27). Per shot with character on-screen, SPEC must declare `character_active_gesture_per_shot` (gesture/breathing/blink/turn/etc.). If character signature limits (cleaver helmet matarife) → compensate alive signals (light effects, smoke from body, environmental interaction).
+8. ⭐ **POV traversal continuity** (added 2026-05-20 GAP #25). SPEC must declare `pov_traversal_intent` per shot (enum: static | walking_forward | turning | approaching_character | descending | ascending | looking_around). Avoid all-static framings → viewer feels teleported between shots.
+
+### D28 — Cross-validate canonical compliance (ALL CPs — añadido 2026-05-18)
+
+> ⚠️ **Naming note**: originalmente codificado como "D24" pero CONFLICT detectado con D24 existente en `creative-director/SKILL.md` ("Camera per shot specified" architect SPEC audit). Renombrado a D28 (siguiente sequence post-D27) para evitar ambiguity. Forward refs en todos los docs usan D28.
+
+⭐ **Aplicable a TODOS los CPs (CP1-CP5)** — caso disparador voice ID matadero:
+
+- D28.1 Cada default usado por engineer durante el CP debe tener `canonical_validation_status` documented:
+  - **Library entries** (`library/voices-catalog.json`, `library/sfx-catalog.json`, etc.): field obligatorio `canonical_validation_status: validated|pending|deprecated_our_prod_only`
+  - **Script defaults** (`scripts/tts.py`, `scripts/image.py`, `scripts/video.py`, etc.): default values documented con canonical source
+  - **Elements** (`elements.json`): countdown / loader / lower-third validated against canonical UI patterns
+- D28.2 Si engineer cita default sin `canonical_validation_status` o status = `deprecated_our_prod_only` → 🔴 FAIL bloqueante
+- D28.3 Si status = `pending` → 🟡 GO condicional + flag forward para measure-against-canonical Phase 1
+- D28.4 Verify validated_against_canonical_refs cites specific refs (NO "validated in our prod V7/bosque" only)
+- D28.5 Auditor cross-check independent: si engineer cite "validated", confirm referenced canonical refs exist + measurement match docs
+
+**Caso disparador matadero CP2** (voice ID `Tj9l48J9AJbry5yCP5eW`):
+- Catalog labeled "default_canonical" pero `validated_in: [elige-companero V7, bosque-abandonado v1]` = nuestras producciones
+- User listen test post-CP2 → "muy lento" — refutó canonical compliance
+- Lesson: voice character (susurro grave) NO matchea canonical viral narrators (LatAm energetic conversational)
+- Action: flip status → `deprecated_our_prod_only` + search canonical-validated alternative
+
+### CP4 — Animation
+
+0.5 ⭐ **Lip-sync compliance verification per character speech segment** (added 2026-05-20 GAP #24). For each SPEC narration_script segment with `speaker=character` AND `lip_sync_required=true`, auditor must verify:
+   - Hailuo clip output frame extract at character speech moments
+   - Mouth/lips movement matches audio temporal pattern
+   - If matarife-style face-less character → SPEC must declare `lip_sync_required=false` + provide ALIVE SIGNALS COMPENSATION (light effects, breath visible, environmental interaction)
+   - Forward Tier 2 audit-frames-granular S9 sentinel automated
+
+1. ✅ **Primeros 30s = animation AI** obligatoria (hard rule #6)
+2. ✅ **Ken Burns fallback only** ≤20% shots ≤3s (hard rule #7)
+3. ✅ **Modelo per shot** decision tree per MODEL-BENCHMARK § 1.2
+4. ✅ **Premium prompt 5-block** si modelo cheap (hard rule #20)
+5. ⭐ **CP5 trim mandate** (añadido 2026-05-18 post matadero Hailuo 6s tier constraint): Si modelo tier tiene clip duration mínimo (e.g. Hailuo Std 6s) > SPEC `duration_intent_s` per shot → engineer commits CP5 ffmpeg trim per-clip → SPEC duration. Architect SPEC annotation `cp[N]_<model>_<duration>s_clip_workaround_<date>` documenta tool constraint acknowledgment. Cost over-provisioning aceptado como tool constraint NO engineer waste.
+6. ⭐ **A4 manifest schema** (añadido 2026-05-18): engineer entrega JSON manifest con required fields `{clip_id, cost_usd, cumulative_usd, tier, timestamp_started, timestamp_finished}` + plus engineer-added traceability (prediction_id, spec_duration_intent_s, cp5_trim_target_s, motion_prompt, guardrail_halt_threshold_usd). Auditor verify schema PASS pre-batch execute. Cost guardrail halt mid-batch si cumulative_usd > $threshold.
+7. ⭐ **Dry-run gate** (añadido 2026-05-18): pre-cascade batch execute, 1 single shot test (preferentemente non-critical establishing). Auditor independent visual canonical compliance audit ≥10/10 items PASS. Si PASS → batch GO. Si FAIL → escalate Path 2a/Path C antes de waste cascade.
+8. ⭐ **C-INVENTORY video assets** (añadido 2026-05-19 post matadero CP5 STOP gap #13): pre-CP5 handoff, auditor verifica `assets/clips/` count vs SPEC `shot_list_total` + variantes -a/-b/-c per SPEC. Si shot_NN clip missing → 🔴 FAIL bloqueante. Output forma:
+   ```
+   SHOTS: SPEC=22 / Generated=22 ✅ (incluye 4 variants × 2 picks per architect Q-picks)
+   ```
+
+### CP5 — Render Draft + Final
+
+1. ✅ **Dual quality gate**: Gemini holístico ≥9.7 + `audit-against-referent.py` ≥85% métricas críticas
+2. ✅ **7 gates pre-render** ejecutados (lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate)
+3. ✅ **Pre-render-gate 20 Q** completo
+4. ✅ **UI safe zones** banda exclusive per INGENIERO-PAUTA § 7.2
+5. ✅ **Cuts/min 2-7**, **LUFS -14 ±0.5**, **vignette**, **monospaced fonts** name labels
+6. ⭐ **Per-clip duration matches SPEC duration_intent_s post-trim** (añadido 2026-05-18 post matadero Hailuo 6s constraint): ffmpeg trim per-clip output_path → SPEC target. Verify ffprobe duration match ±0.1s tolerance.
+7. ⭐ **Mini-cuts internal correctly split** (shot_16/21/22 ref-13 signature): 1 Hailuo clip per shot + CP5 ffmpeg split via setpts/select filters, NO separate Hailuo calls per mini-cut.
+8. ⭐ **Motion velocity per-clip adjustment** (añadido 2026-05-18 post matadero motion velocity gap): si motion perceptual off (slow/fast feel) → ffmpeg `setpts` adjustment **±20% MAX** (cleaner range — beyond 20% artifacting visible). Codified workaround for gap #11 hasta Phase 1 measure-canonical-motion-velocity.py implementation. **Per-clip workflow**:
+   - User/architect listen + visual review per clip
+   - Verdict: "Perfecto" / "Slightly slow" → setpts=0.85*PTS (+18%) / "Slightly fast" → setpts=1.15*PTS (-13%) / "Off" → escalate re-prompt
+   - Cap ±20% MAX
+   - Apply BEFORE trim to SPEC duration
+10. ⭐ **D29 EDITORIAL PACING AUDIT — decision UI signature pattern (BLOQUEANTE para horror-choice format, añadido 2026-05-19 post matadero CP5 iter 2 gap #14)**:
+
+   Pattern observed empírico en refs canónicos del formato horror-choice (ref-13 + 4 conspiracion + canonical viral, see REFERENT-ANALYSIS § 4 forward):
+   ```
+   Narration: "decidí A o B" (last narration_id pre-decision)
+      ↓
+   [FREEZE last frame of clip] (GSAP tl.set clip-end pause)
+      ↓
+   [Apply CSS filter overlay] (VHS/old-camera/vintage — sepia + grain + chromatic aberration + scan lines)
+      ↓
+   Countdown 3-2-1 renders sobre frozen + filtered frame (NOT during live animation)
+      ↓
+   Loading bar fills sync con countdown timing
+      ↓
+   Cut to next shot AFTER countdown ends + decision implied
+   ```
+
+   **9.5.1 Verifications**:
+   - **Freeze frame applied**: Engineer should `tl.set` clip pause at narration_end_marker. If clip animates during countdown → FAIL (countdown-narration disconnect)
+   - **Filter overlay applied**: CSS filter on shot-clip during decision UI duration. Acceptable filters: `sepia(0.4) + contrast(1.2) + grain (noise overlay) + chromatic-aberration` OR canonical VHS-style. If no filter → FAIL (raw live clip)
+   - **Countdown timing sync narration**: countdown starts AFTER narration_segment_id specified in SPEC `narrative_pacing.countdown_starts_after_narration_id`, NOT shot-start arbitrary
+   - **UI element spacing**: countdown center vs loading bar center vertical distance ≥6% (e.g. countdown Y46 + loading Y52, NOT Y46 + Y48 cramped). Violates if `|countdown_Y - loading_Y| < 6%`
+
+   **9.5.2 Audit command per decision shot**:
+   ```bash
+   # Extract frame at decision_ui_shot midpoint
+   ffmpeg -ss <shot_mid> -i renders/draft.mp4 -vframes 1 _audit_d_ui_<shot>.jpg
+   # Visual check (auditor with image read):
+   # 1. Is underlying clip frozen (no motion blur, static composition)? PASS/FAIL
+   # 2. Is filter overlay visible (sepia/grain/VHS)? PASS/FAIL
+   # 3. Is countdown vertically separated from loading bar ≥6% Y? PASS/FAIL
+   # 4. Does countdown match `narrative_pacing.countdown_starts_after_narration_id` timing?
+   ```
+
+   **9.5.3 Verdict gating**:
+   - All 4 PASS → ✅ Editorial pacing canonical
+   - ≥1 FAIL → 🟡 NB editorial drift (audit reports gap, escalate architect SPEC schema v7 amendment + engineer re-wire)
+   - ≥2 FAIL → 🔴 FAIL editorial canonical pattern not delivered (SHIP-BLOCKING para formato horror-choice viral)
+
+   **Rationale**: caso disparador matadero CP5 iter 2 2026-05-19. User flagged "countdowns no van ligados a narración, en refs canónicos imagen se queda estática con efecto cámara vieja". Pattern observed empírico en refs PERO nunca codificado en PAUTA-MASTER ni INGENIERO-PAUTA ni SPEC schema. 3 roles missed (architect SPEC shallow ui_active sin pacing fields + engineer mechanical wire ui_active sin editorial judgment + auditor inventory-only no editorial cinematic audit).
+
+   **Forward sistémico** (track parallel architect 2026-05-19):
+   - PAUTA-MASTER § NEW decision-UI-pacing (architect extract empírico from ref-13 + canonical viral)
+   - INGENIERO-PAUTA § 7.X NEW decision-UI-implementation (engineer freeze technique + CSS filter + spacing)
+   - SPEC schema v7 fields: `narrative_pacing.decision_freeze_frame: bool`, `narrative_pacing.decision_filter_overlay_type: enum`, `narrative_pacing.countdown_starts_after_narration_id: string`, `narrative_pacing.loading_bar_y_position_canonical_safe: int`
+   - pre-render-gate Q21 NEW (editorial pacing decision UI check)
+
+9. ⛔ **C-INVENTORY-WIRED — SPEC asset_list + ui_active completeness gate (BLOQUEANTE, añadido 2026-05-19 post matadero CP5 STOP gap #13)**:
+
+   **Audit MUST run BEFORE cualquier otro gate CP5**. Si C-INVENTORY-WIRED falla → 🔴 NO-GO bloqueante, NO continuar a Gemini holístico ni audit-against-referent ni 7 gates pre-render. Razón: esos audits miden CALIDAD de lo que existe, NO INVENTORY contra SPEC — pueden dar PASS sobre un render estructuralmente incompleto.
+
+   **9.1 Audio inventory** (assets/ folder):
+   ```bash
+   cd <project>
+   # Per SPEC asset_list.sfx_prompts_to_generate
+   SFX_SPEC=$(yq '.asset_list.sfx_prompts_to_generate | length' creative-specs/<id>.yaml)
+   SFX_ACTUAL=$(ls assets/sfx/*.mp3 2>/dev/null | wc -l)
+   echo "SFX:     SPEC=$SFX_SPEC / Actual=$SFX_ACTUAL"
+   # Per SPEC asset_list.music_to_generate
+   MUSIC_SPEC=$(yq '.asset_list.music_to_generate | length' creative-specs/<id>.yaml)
+   MUSIC_ACTUAL=$(ls assets/music/*.mp3 2>/dev/null | wc -l)
+   echo "Music:   SPEC=$MUSIC_SPEC / Actual=$MUSIC_ACTUAL"
+   # Per SPEC asset_list.ambient_continuous_to_generate
+   AMB_SPEC=$(yq '.asset_list.ambient_continuous_to_generate | length' creative-specs/<id>.yaml)
+   AMB_ACTUAL=$(ls assets/ambient/*.mp3 2>/dev/null | wc -l)
+   echo "Ambient: SPEC=$AMB_SPEC / Actual=$AMB_ACTUAL"
+   ```
+   Verdict: si CUALQUIERA `Actual < SPEC` → 🔴 FAIL bloqueante.
+
+   **9.2 UI elements wired in index.html** (per SPEC ui_active per shot):
+   ```bash
+   # Per SPEC countdown_appearances + ui_active grep per shot
+   for elem in countdown choice-button loading-bar; do
+     SPEC_COUNT=$(yq ".shot_list.shots[].ui_active[] | select(test(\"$elem\"))" creative-specs/<id>.yaml | wc -l)
+     HTML_COUNT=$(grep -c "$elem" index.html)
+     echo "$elem: SPEC ui_active=$SPEC_COUNT / HTML wired=$HTML_COUNT"
+   done
+   ```
+   Verdict: si CUALQUIERA `HTML wired = 0` cuando `SPEC ui_active >0` → 🔴 FAIL bloqueante.
+
+   **9.3 Audio tracks wired in index.html**:
+   ```bash
+   AUDIO_TRACKS=$(grep -c '<audio' index.html)
+   echo "Audio tracks wired: $AUDIO_TRACKS (expected: narration + music + ambient + sfx ≥4 minimum)"
+   ```
+   Verdict: si `AUDIO_TRACKS < 4` (narration + music + ambient + sfx layer minimum per SPEC) → 🔴 FAIL bloqueante.
+
+   **9.4 Output forma obligatoria**:
+   ```markdown
+   | Asset class | SPEC required | Generated/Wired | Status |
+   |-------------|---------------|-----------------|--------|
+   | SFX         | 10            | 10              | ✅ PASS |
+   | Music       | 3             | 3               | ✅ PASS |
+   | Ambient     | 2             | 2               | ✅ PASS |
+   | Countdown UI| 3             | 3               | ✅ PASS |
+   | Choice btns | 2             | 2               | ✅ PASS |
+   | Loading bar | 2             | 2               | ✅ PASS |
+   | Audio tracks| ≥4            | ≥4              | ✅ PASS |
+   ```
+
+   **Rationale**: caso disparador matadero CP5 STOP point 2026-05-19. Engineer declared CP4 done con solo video assets (29 Hailuo clips delivered). `assets/sfx/` `assets/music/` `assets/ambient/` ALL EMPTY (0/10, 0/3, 0/2 vs SPEC). `index.html` ZERO countdown/choice_buttons/loading_bar wired (vs SPEC 3 countdown + 2 button sets + 2 loading bars). Auditor (yo) interpreted engineer's `coverage_pct 69.93% structural` label como "1 LU off LUFS tweak" pattern-match sin medir directo. User flagged "faltan SFX + countdowns + cut effects" → audit direct verified → gap surfaced. C-INVENTORY-WIRED ensures audits MEASURE inventory (not just quality), preventing recurrence.
+
+   **Forward**: implementation in `scripts/audit-spec-completeness.py` (Phase 1 priority) automates this step + cron integration Phase 5.
+
+---
+
+## 4. Output format obligatorio
+
+**Toda audit entrega una tabla**, no prosa libre. Mínimo 3 columnas:
+
+```markdown
+| # | Item | Verdict | Razón | Authority | Fix |
+|---|------|---------|-------|-----------|-----|
+| V1 | <item> | ✅ PASS / ❌ FAIL / ⚠️ NB | <razón concreta> | <doc § línea> | <fix accionable o —> |
+```
+
+**Verdict semantics**:
+- ✅ PASS — cumple, sigue
+- ❌ FAIL — bloqueante, fix obligatorio
+- ⚠️ NB (note-but-not-bloqueante) — observación, no bloquea pero queda flag
+
+**Authority quote**: línea + número, no "según la PAUTA". Ej: `PAUTA-MASTER L412-413` o `INGENIERO-PAUTA § 5.7 L355-359`.
+
+**Fix sugerido**: accionable (no "considerar revisar"). Ej: "Regen con prompt + 'NOT mid-forearm, full forearm coverage'" o "Add smoke test step 0 al gen-anchors.sh".
+
+---
+
+## 5. Veredicto final del auditor
+
+Después de la tabla, el auditor concluye con UNO de:
+
+| Verdict | Cuándo | Acción ingeniero |
+|---------|--------|------------------|
+| 🟢 **GO incondicional** | Todos los items PASS, 0 FAILs, NBs aceptables | Ejecuta plan |
+| 🟡 **GO condicional** | 0 FAILs creativos pero ≥1 fix técnico bloqueante (ej. smoke test faltante) | Aplica fixes técnicos → emite `CP[N]-handoff-v(N+1).md` → re-audit focused |
+| 🔴 **NO-GO** | ≥1 FAIL bloqueante (deliverable o prompt drift de SPEC) | Regen + arquitecto review si afecta SPEC compliance |
+| ⛔ **ESCALAR** | Conflicto SPEC vs PAUTA-MASTER detectado (arquitecto SPEC tiene gap vs PAUTA), o tras 3 iter sub-9.7 | User decide override o re-spec |
+
+---
+
+## 6. ⛔ Anti-patterns del auditor (NO hacer)
+
+1. **Delegar verificación al self-audit del arq/ing**. Si el handoff dice "rotation_check: ok per video-log.md", el auditor lee video-log.md y verifica independientemente. NO accept "ok".
+2. **Confiar en citaciones del handoff sin leer la fuente**. El handoff cita SPEC L412 — el auditor abre SPEC y verifica L412 existe + dice lo que el handoff dice.
+3. **Audit superficial cuando hay cambios mayores**. Si el deliverable es CP5 render, leer todo el SPEC + 21 Q pre-render-gate + medir LUFS — no scan rápido.
+4. **Maquillar findings para acelerar GO**. Si una pauta canónica se violó, FAIL aunque retrase 1 día. El sistema dual-gate existe para detectar esto.
+5. **Compartir contexto con arq/ing**. NO leer el HANDOFF-PROTOCOL del arquitecto antes de auditar (eso te biasea con su lens). Leer SOLO autoridad canónica + handoff del ingeniero.
+6. **Inventar findings sin authority quote**. Cada FAIL/NB debe tener pointer a doc § línea.
+7. **Cerrar audit sin responder preguntas explícitas del ingeniero**. Si el handoff tiene §10 "Preguntas auditor A1-A8", el output del auditor responde A1-A8 explícitamente.
+8. ⭐ **Pattern-match label engineer sin medir directo** (added 2026-05-19 post matadero CP5 gap #13). Si engineer reporta `coverage_pct 69.93% structural` o `LUFS -15.1` o cualquier métrica con label cualitativo, NUNCA asumir el scope del gap por el label — **medir directo**: `ls assets/sfx/` `grep countdown index.html` `ffprobe master.mp3`. Hard rule #19 ("NUNCA estimar, SIEMPRE medir") aplica al auditor también. **Caso disparador**: yo (auditor) interpreté engineer's "coverage_pct 69.93% structural" como "1 LU off LUFS tweak iter 2 small fixes $0.50" pattern-match basado en label — real scope era "10 SFX + 3 music + 2 ambient + 3 countdowns + 2 button sets + 2 loading bars ALL UNGENERATED $1.10". User flagged directo "faltan SFX + countdowns + cut effects" → audit verified → gap surfaced. Audits miden CALIDAD de lo que existe, NO INVENTARIO contra SPEC — el auditor debe MEDIR el inventory diff manualmente hasta `audit-spec-completeness.py` esté implementado.
+
+10. ⭐ **Trust docs canonical-scenes/intermediate sin direct frame verification** (added 2026-05-19 PM post iter 4-5 countdown wrong analysis). Cuando audit requiere verificar canonical pattern, auditor NUNCA debe confiar exclusivamente en docs canonical-scenes/ref-XX.md o REFERENT-ANALYSIS-13-VIDEOS-SYNTHESIS.md — esos docs son **sampling intermediario** (frames cada 5s en canonical-scenes) que **PIERDE eventos críticos** que caen entre frames sampled.
+
+   **Rule canonical strict**:
+   - Si auditor needs to verify canonical pattern (visual style, timing, sub-beat order, etc.) → extract frames directos del source canonical ref mp4 con granularity ≤1s para 30s primeros + ≤2s resto
+   - Docs canonical-scenes = orientation + cross-video synthesis, NOT authority final
+   - Direct frame extraction = ground truth ALWAYS wins over docs interpretation
+   - Mismo principle Hard Rule #19 "NUNCA estimar, SIEMPRE medir" + anti-pattern #8 "pattern-match label sin medir directo"
+
+   **Caso disparador**: matadero iter 5 audit 2026-05-19 PM. Yo (auditor) confié en canonical-scenes/ref-XX.md docs analysis para conclude "2/6 canonical refs tienen countdown en hook". User flagged "todos tienen countdown" → I extracted 56 frames directly from 8 source videos (8 × 7 timestamps) → confirmed 4/4 verified DO have FILM LEADER ACADEMY countdown UNIVERSAL. Docs sampling (every 5s) lost countdown events that occurred 3-7s window between sampled frames. Plus visual style codified previously was WRONG (minimalist CSS vs canonical film leader Academy).
+
+   **Forward**:
+   - GAP #20 canonical-scenes docs MAX DETAIL methodology (every 0.5s critical first 30s + every 1s rest)
+   - Phase 1 script `extract-canonical-max-detail.py` automates comprehensive frame coverage
+   - AUDITOR per CP audit: extract frames directly when verifying canonical pattern compliance — NUNCA depend solo on intermediate docs
+
+11. ⭐ **Random distributed timestamp frame extraction OBLIGATORIO** (added 2026-05-20 PM post cinema-abandonado iter 3 user catch). Auditor NEVER concludes "video PASS" sin extract frames AT MINIMUM en estos timestamps distribuidos:
+    - t=hook_end (e.g., 7-9s)
+    - t=duration*0.15 (e.g., 14s en video 96s — user caught error here)
+    - t=duration*0.3 (e.g., 28s)
+    - t=duration*0.45 (e.g., 43s)
+    - t=duration*0.6 (e.g., 57s — user caught error 53-62s)
+    - t=duration*0.75 (e.g., 72s — user caught error 70-77s)
+    - t=duration-10s (end-of-video forensics per GAP #30)
+    - t=duration-3s (outro card moment)
+    
+    PLUS run audit-frames-granular con --interval 0.5 OR audit-frames.py interval 1.0 + visually inspect ≥10 random frame extracts.
+    
+    **Caso disparador**: cinema-abandonado iter 3 user flagged 3 error windows (t=15, t=53-62, t=70-77) que auditor (yo) NO verifiqué — solo extracted 88/91/93/95s end-of-video. Trusted engineer "0 FAIL / 8 WARN" sin independent random distributed verification. Anti-pattern #8+#10 recurrence.
+    
+    **Rule canonical strict**:
+    - Sample ≥7 distributed timestamps PER audit cycle
+    - Caption overlap detection: count chunks per 5s window — if >5 chunks/5s = too dense, FLAG
+    - Audio waveform analysis: ffmpeg volumedetect per 5s window — drift detection
+    - Independent verify ≠ accept engineer report
+    
+    Forward: codify in script `audit-distributed-timestamps.py` (Phase 2 priority).
+
+9. ⭐ **Audio-visual lip-sync realism violations** (added 2026-05-19 PM post matadero iter 4 user catch). Cuando character face visible + lips mid-articulation pero NO audio del character playing → uncanny valley violation = realismo cinematográfico roto. **Rule canonical strict**:
+   - Character lips mid-movement → character audio MUST be playing simultaneously (lip-sync compliance)
+   - Character audio NOT playing (silence o narrator off-screen o countdown) → lips MUST be static (smile/neutral/closed pose). NO mid-articulation transitions.
+   - NO "mouth begins moving toward warning line" mid-state propositions — esto es exactly el anti-pattern
+   - Aplica a TODOS los character faces visibles (face = lips potentially visible = strict compliance)
+   - NO aplica a: matarife sin face (cleaver helmet), narrator off-screen, viewer POV (hand visible no face)
+   
+   **Auditor check obligatorio**: frame extraction at character-non-speech moments (e.g., during narrator overlay OR countdown OR transition silence) — verify lips static. Si lips mid-articulation visible during character-silent moment → 🔴 FAIL realism.
+   
+   **Caso disparador**: matadero iter 4 propuesta inicial mía (auditor terminal 3) sugirió "cocinera mouth begins moving toward warning line" durante countdown silence — user catch immediato: "se pierde el realismo". Confirms anti-pattern. Forward: codify en INGENIERO-PAUTA + AUDITOR-PROTOCOL para anti-recurrencia universal.
+
+---
+
+## 7. Independencia de juicio — separación de 3 terminales
+
+El auditor vive en su **propio terminal** sin contexto del arq/ing. Esto es estructural, no opcional.
+
+- **NO** invocar auditor como sub-agent del ingeniero (memoria `feedback_3_terminal_separation`)
+- **NO** pasar el contexto del arquitecto al auditor — el auditor lee SPEC fresh + autoridad canónica + handoff del ingeniero
+- **NO** el auditor edita el SPEC ni el handoff. Solo emite findings + verdict. Cambios los hace arq (SPEC) o ing (handoff)
+
+**Handoff package vía filesystem**:
+```
+ingeniero produce: <proyecto>/CP[N]-handoff[-vN].md  (self-contained)
+auditor lee:       <proyecto>/CP[N]-handoff[-vN].md + autoridad canónica directa
+auditor entrega:   tabla findings + verdict (en chat user, NO crea .md sin pedir)
+```
+
+---
+
+## 8. Última actualización
+
+**2026-05-17** — creación del doc. Gap detectado durante audit CP1 matadero-banquete: el auditor delegó verificación de PAUTA-MASTER al arquitecto en vez de leerla directo, comprometiendo independencia de juicio. Codificación del rol como autoridad canónica para evitar recurrencia.
+
+**2026-05-19** — gap #13 codified post matadero CP5 STOP point. Auditor (yo) pattern-matched engineer's "coverage_pct 69.93% structural" label como "1 LU off LUFS tweak" sin medir directo `ls assets/sfx/`. User flagged "faltan SFX + countdowns + cut effects" → audit verified → 0/10 SFX + 0/3 music + 0/2 ambient + 0 countdown/buttons/loading wired vs SPEC. Amendments:
+- CP4 step 8 NEW (C-INVENTORY video assets — pre-CP5 handoff)
+- CP5 step 9 NEW (C-INVENTORY-WIRED — BLOQUEANTE, MUST run BEFORE other CP5 gates)
+- § 6 anti-pattern #8 NEW (pattern-match label sin medir directo)
+- Forward: `scripts/audit-spec-completeness.py` Phase 1 priority automates this step
+
+**2026-05-19 (afternoon)** — gap #14 codified post matadero CP5 iter 2 review. User flagged "countdowns no van ligados a narración + sobrepuestos con loading bar — en refs canónicos imagen se queda estática con efecto cámara vieja + ahí se hace countdown". 3 roles missed (architect SPEC ui_active shallow sin pacing fields + engineer mechanical wire sin editorial judgment + auditor inventory-only no editorial cinematic audit). Amendments:
+- CP5 step 10 NEW (D29 EDITORIAL PACING AUDIT — freeze frame + filter overlay + countdown narration sync + UI spacing ≥6%)
+- Forward arquitecto-domain Track parallel: PAUTA-MASTER § decision-UI-pacing + INGENIERO-PAUTA § 7.X decision-UI-implementation + SPEC schema v7 `narrative_pacing` fields + pre-render-gate Q21 NEW

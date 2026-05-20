@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+#loader-radial {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #060606;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 64px;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.3) 3px,
+    rgba(0,0,0,0.3) 4px
+  );
+  pointer-events: none;
+  z-index: 900;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 68% 58% at 50% 50%, transparent 0%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+  z-index: 890;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  opacity: 0;
+  z-index: 1;
+}
+
+.ring-svg {
+  width: 600px;
+  height: 600px;
+  filter: drop-shadow(0 0 16px rgba(255,255,255,0.4));
+}
+
+.ring-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.pct-number {
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-weight: 400;
+  font-size: 130px;
+  color: #f0f0f0;
+  line-height: 1;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(255,255,255,0.4);
+  opacity: 0;
+}
+
+.pct-unit {
+  font-family: 'Bebas Neue', 'Impact', sans-serif;
+  font-weight: 400;
+  font-size: 44px;
+  color: rgba(200,200,200,0.7);
+  letter-spacing: 2px;
+}
+
+.label {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 40px;
+  letter-spacing: 16px;
+  color: rgba(200,200,200,0.7);
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Orbital dot on ring */
+.orbit-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  box-shadow: 0 0 14px rgba(255,255,255,0.9);
+  top: 33px;
+  left: 293px;
+  opacity: 0;
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 850;
+}
+</style>
+</head>
+<body>
+<div id="loader-radial" data-composition-id="loader-radial" data-width="1080" data-height="1920" data-start="0">
+  <div class="vignette"></div>
+
+  <div class="ring-wrap" id="ring-wrap">
+    <svg class="ring-svg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <!-- Track ring -->
+      <circle cx="300" cy="300" r="260"
+        fill="none"
+        stroke="rgba(255,255,255,0.12)"
+        stroke-width="14"/>
+      <!-- Progress ring — circumference 2π×260 ≈ 1634 -->
+      <circle id="ring-fill" cx="300" cy="300" r="260"
+        fill="none"
+        stroke="#e8e8e8"
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-dasharray="1634"
+        stroke-dashoffset="1634"
+        transform="rotate(-90 300 300)"/>
+      <!-- Outer decorative ring (thin) -->
+      <circle cx="300" cy="300" r="285"
+        fill="none"
+        stroke="rgba(255,255,255,0.06)"
+        stroke-width="1"/>
+    </svg>
+    <div class="ring-center">
+      <div class="pct-number" id="pct-num">0<span class="pct-unit">%</span></div>
+    </div>
+    <div class="orbit-dot" id="orbit-dot"></div>
+  </div>
+
+  <div class="label" id="label">LOADING</div>
+
+  <div class="flash" id="flash"></div>
+  <div class="scanlines"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+// Flicker
+tl.to("#loader-radial", { opacity: 0.84, duration: 0.04, ease: "none" }, 0.55);
+tl.to("#loader-radial", { opacity: 1,    duration: 0.05, ease: "none", overwrite: "auto" }, 0.59);
+tl.to("#loader-radial", { opacity: 0.88, duration: 0.03, ease: "none" }, 2.22);
+tl.to("#loader-radial", { opacity: 1,    duration: 0.04, ease: "none" }, 2.25);
+
+// Entrance
+tl.fromTo("#ring-wrap", { scale: 0.88, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.48, ease: "power3.out" }, 0.15);
+tl.fromTo("#pct-num",   { opacity: 0 }, { opacity: 1, duration: 0.32, ease: "power2.out" }, 0.42);
+tl.fromTo("#label",     { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38, ease: "power3.out" }, 0.48);
+tl.fromTo("#orbit-dot", { opacity: 0 }, { opacity: 1, duration: 0.28, ease: "power2.out" }, 0.55);
+
+// Progress
+const pctState = { val: 0 };
+const pctNumEl = document.getElementById("pct-num");
+tl.to(pctState, {
+  val: 100,
+  duration: 2.4,
+  ease: "power1.inOut",
+  onUpdate: function() {
+    pctNumEl.innerHTML = Math.round(pctState.val) + '<span class="pct-unit">%</span>';
+  }
+}, 0.52);
+tl.to("#ring-fill", { strokeDashoffset: 0, duration: 2.4, ease: "power1.inOut" }, 0.52);
+// transformOrigin: ring center (300,300) relative to dot top-left (293,33) = (7px, 267px)
+tl.to("#orbit-dot", { rotation: 360, transformOrigin: "7px 267px", duration: 2.4, ease: "power1.inOut" }, 0.52);
+
+// Fill complete — fade everything out cleanly
+tl.to(["#ring-wrap", "#label"], { opacity: 0, duration: 0.5, ease: "power2.in" }, 3.0);
+
+window.__timelines["loader-radial"] = tl;
+</script>
+</body>
+</html>
