@@ -1,0 +1,30 @@
+{
+  "id": "black-screen-0.3s",
+  "type": "transition",
+  "category": "narrative-pause",
+  "duration_s": 0.3,
+  "description": "Brief full-black insert between clips. Acts as a breath — narrative comma. Lets the prior beat land before the next begins. Audio can continue (bed) or fully dip.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.3 -i \"color=c=black:s=1080x1920:r=30\" -f lavfi -t 0.3 -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" -filter_complex \"[0:v][2:v][1:v]concat=n=3:v=1:a=0[v];[0:a][3:a][1:a]concat=n=3:v=0:a=1[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "Option A (full silence — narrative weight): anullsrc 0.3s replaces audio entirely. Option B (bed continues): omit anullsrc segment, concat only video; clip_a audio tail + clip_b audio head play across the black with natural fade.",
+  "audio_recipe_bed_continues": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.3 -i \"color=c=black:s=1080x1920:r=30\" -filter_complex \"[0:v][2:v][1:v]concat=n=3:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1,apad=pad_dur=0.3[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "audio_sting_path": null,
+  "audio_sting_volume": null,
+  "use_cases": [
+    "After a reveal — let viewer process before next beat",
+    "Between H4 (escalation) and H5 (climax) for breath",
+    "Before a hard cliffhanger setup",
+    "Replacing a cut where pacing demands a comma"
+  ],
+  "avoid_for": [
+    "Hot pacing windows (first 30s of reel — kills retention)",
+    "More than 1-2 per reel — overuse turns into dead air",
+    "Climax peak (use light-flash-impact)"
+  ],
+  "hyperframes_alternative": "GSAP: 0.3s gap between clipA end and clipB start, with a full-screen black div z-index 99 opacity 1.0. Audio bed continues underneath via library/ambient track.",
+  "canonical_validation_status": "validated",
+  "validated_against_canonical_refs": ["ref-02", "ref-06"],
+  "validated_notes": "Found in 4/10 F1 referents as narrative breath, always 0.2-0.4s, never >0.5s. Hard rule: in short-form, max 2x per reel."
+}

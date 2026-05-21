@@ -1,0 +1,33 @@
+{
+  "id": "light-flash-impact",
+  "type": "transition",
+  "category": "climax-impact",
+  "duration_s": 0.2,
+  "description": "Quick white-flash impact between clips. Reads as 'sudden shock' or 'reality snap'. Pairs with sharp flash SFX. Reserved for climax peaks — overuse destroys impact.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.2 -i \"color=c=white:s=1080x1920:r=30\" -i library/sfx/impacts/flash-sharp.mp3 -filter_complex \"[0:v]fade=t=out:st={fadeout_start}:d=0.06:color=white[a_out];[1:v]fade=t=in:st=0:d=0.06:color=white[b_in];[a_out][2:v][b_in]concat=n=3:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1[base];[3:a]adelay={flash_start_ms}|{flash_start_ms},volume=0.65[flash];[base][flash]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "fadeout_start": "Set = duration(clip_a) - 0.06. Last 60ms of clip_a fades to white.",
+    "flash_start_ms": "Set = (duration(clip_a) * 1000) - 20. Flash SFX peak aligns with white frame.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "flash-sharp.mp3 (~0.15s) at volume 0.65 — within hard rule #9 band (flash impacts 0.55-0.65). Peak aligned to white frame. No fade — natural attack/decay.",
+  "audio_sting_path": "../../../../library/sfx/impacts/flash-sharp.mp3",
+  "audio_sting_volume": 0.65,
+  "use_cases": [
+    "Climax peak — moment of revelation / impact",
+    "Plot-twist reveal cut (3 conditions hard rule #12)",
+    "H5/H6 transition in horror-choice (the 'snap' before consequence)",
+    "Hard mental break — reality glitches"
+  ],
+  "avoid_for": [
+    "Inter-beat transitions (use hard-cut-with-whoosh)",
+    "More than 1-2x per reel — loses impact through repetition",
+    "Soft narrative moments / quiet beats",
+    "Photosensitive considerations: never >2 flashes within 1 second (epilepsy safety)"
+  ],
+  "hyperframes_alternative": "GSAP: full-screen white div z-index 999, tween opacity 0→1→0 over 0.12s, scheduled at impact beat. flash-sharp.mp3 scheduled at same t with volume 0.65.",
+  "safety_notes": "Photosensitive epilepsy: keep flash <0.15s total, never repeat <1s apart, never >3x per reel.",
+  "canonical_validation_status": "validated",
+  "validated_against_canonical_refs": ["ref-03", "ref-05", "ref-08"],
+  "validated_notes": "Used 1-2x per reel at climax in 5/10 F1 canonicals. Volume 0.65 is upper band of hard rule #9 (0.55-0.65 for flash impacts) — intentional, this is meant to peak."
+}

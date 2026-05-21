@@ -1,0 +1,30 @@
+{
+  "id": "fade-to-black-1.0s",
+  "type": "transition",
+  "category": "outro",
+  "duration_s": 1.0,
+  "description": "Final clip fades to full black over 1.0s with audio fading in parallel. Canonical outro / cliffhanger close. Reads as 'end of chapter' — sets up next-video tease.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -filter_complex \"[0:v]fade=t=out:st={fade_start}:d=1.0:color=black[v];[0:a]afade=t=out:st={fade_start}:d=1.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "fade_start": "Set = duration(clip_a) - 1.0. Last second of the clip fades simultaneously video + audio.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "afade=t=out:d=1.0 in parallel with video fade. Music/ambient bed must also taper — if scheduled separately in HyperFrames, add explicit afade out on those tracks too.",
+  "audio_sting_path": null,
+  "audio_sting_volume": null,
+  "use_cases": [
+    "Final outro of reel before cliffhanger card",
+    "End of horror-choice video: 'Una noche en paz' card setup",
+    "Long-form chapter close",
+    "Transition into static outro card / CTA"
+  ],
+  "avoid_for": [
+    "Inter-scene transitions mid-video (use black-screen-0.3s)",
+    "Reels <60s where airtime is precious — 1.0s of fade is 1.7% of total",
+    "Energetic format outros (use light-flash-impact + cut to card)"
+  ],
+  "hyperframes_alternative": "GSAP: tl.to('.final-scene', {opacity:0, duration:1.0}, 'tOutro').to('#audio-bed', {volume:0, duration:1.0}, 'tOutro'). Black background body color provides the destination.",
+  "canonical_validation_status": "validated",
+  "validated_against_canonical_refs": ["ref-01", "ref-04", "ref-07", "ref-10"],
+  "validated_notes": "Universal outro pattern — 9/10 F1 referents end with 0.8-1.2s fade to black before final card. Audio fade MUST be parallel; orphaned audio tail breaks immersion."
+}

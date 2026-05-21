@@ -1,0 +1,31 @@
+{
+  "id": "projector-cue-cinema",
+  "type": "transition",
+  "category": "cinema-specific",
+  "duration_s": 1.0,
+  "description": "Cinema-diegetic transition emulating a 35mm projector reel-change cue dot — brief flicker + warm bloom + characteristic projector buzz. Native to cinema-abandonado-style settings.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/projector-cue.mp3 -filter_complex \"[0:v]fade=t=out:st={fadeout_start}:d=0.4:color=white,eq=brightness=0.05:saturation=1.20[a_out];[1:v]fade=t=in:st=0:d=0.4:color=white[b_in];[a_out][b_in]xfade=transition=fade:duration=0.6:offset=0.4[v];[0:a][1:a]acrossfade=d=1.0[base];[2:a]adelay={cue_start_ms}|{cue_start_ms},volume=0.45[cue];[base][cue]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "fadeout_start": "Set = duration(clip_a) - 1.0",
+    "cue_start_ms": "Set = (duration(clip_a) * 1000) - 500. Projector cue lands across the seam, lingering into clip_b.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "projector-cue.mp3 (1.0s buzz/click) at volume 0.45 layered over a 1.0s crossfade of base audio. The buzz tails into clip_b establishing diegetic projection.",
+  "audio_sting_path": "audio-stings/projector-cue.mp3",
+  "audio_sting_volume": 0.45,
+  "use_cases": [
+    "cinema-abandonado scene changes (reel-to-reel)",
+    "Drive-in / vintage cinema settings",
+    "Diegetic transition into 'projected footage'",
+    "Period horror with film-stock aesthetic"
+  ],
+  "avoid_for": [
+    "Non-cinema genres (anachronistic, breaks immersion)",
+    "Reels with cuts/min target >5 (1.0s is too heavy)",
+    "Outdoor / modern digital settings"
+  ],
+  "hyperframes_alternative": "GSAP: white-bloom div opacity 0→1→0 over 1.0s, eq filter on .scene-image tweening saturation up briefly. projector-cue.mp3 scheduled at scene change t.",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": ["cinema-abandonado internal use (NOT canonical authority — see hard rule #19)"],
+  "validated_notes": "Built from cinema-abandonado/sfx/projection_film_transition.mp3 (1.0s). Not validated against F1 canonical referents (no cinema sub-genre in F1 set). Use with manual QA + Gemini holistic review per video."
+}

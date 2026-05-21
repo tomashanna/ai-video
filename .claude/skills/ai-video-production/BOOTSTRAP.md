@@ -87,13 +87,18 @@ Desde la raíz del proyecto nuevo:
 ```bash
 SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
 
-# Scripts de producción (general) — incluye los 6 gates obligatorios:
+# Scripts de producción (general) — incluye los 6 gates obligatorios + Phase 2 per-clip atomic (2026-05-20):
 #   - tts.py, image.py, sfx.py, captions.py, video.py (generación)
 #   - audit-spec-completeness.py (⛔ gate 0 PRIORIDAD ABSOLUTA — SPEC inventory diff, added 2026-05-19)
 #   - audit-narrative.py (gate 2 — visibilidad <1s, z-index, orphans)
 #   - render-lock.py    (gate 3 — coordinación entre agentes)
 #   - audit-frames.py   (gate 4 — Gemini Vision frame-by-frame)
-#   - qa-gate.py        (gate 5 — bloquea sub-9.7 pre-animation)
+#   - audit-frames-granular.py (gate 5 — sentinel patterns: audio-visual mismatch, dup text, AVU sync, caption Y canonical)
+#   - qa-gate.py        (gate 6 — bloquea sub-9.7 pre-animation)
+#   ⭐ NEW Phase 2 per-clip atomic (2026-05-20, Hard Rule #23):
+#   - build_clip_atomic.py        (steps 2-5 atomic builder per clip: TTS + SFX + ambient + mix + mux + caption sidecar)
+#   - quality_gate_per_clip.py    (Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate)
+#   - gemini_midexec_vision.py    (mid-execution Gemini Vision hook per clip ANTES de concat = 10x más barato detectar bugs)
 cp "$SKILL_DIR/scripts/"*.py scripts/
 
 # Templates de proyecto genéricos
@@ -105,12 +110,12 @@ cp "$SKILL_DIR/hyperframes.json-TEMPLATE" hyperframes.json
 
 **Verificación post-copy** — confirmar que TODOS los scripts del flow están presentes:
 ```bash
-for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py; do
+for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py; do
   [ -f scripts/$script ] && echo "✓ scripts/$script" || echo "✗ MISSING scripts/$script"
 done
 ```
 
-Si falta alguno → re-correr el `cp` desde `$SKILL_DIR`. Los 5 scripts marcados ⭐ (audit-spec-completeness, audit-narrative, render-lock, audit-frames, qa-gate) son **gates bloqueantes** del workflow — sin ellos, el agente no puede llegar al stop point pre-animation.
+Si falta alguno → re-correr el `cp` desde `$SKILL_DIR`. Los scripts marcados ⭐ (audit-spec-completeness, audit-narrative, render-lock, audit-frames, audit-frames-granular, qa-gate) son **gates bloqueantes** del workflow — sin ellos, el agente no puede llegar al stop point pre-animation. Los 3 scripts NEW Phase 2 per-clip atomic (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) son **MANDATORY para video #3+** per Hard Rule #23 — sin ellos, el ingeniero cae back a legacy global master pipeline.
 
 Si vas a producir un video del formato horror-choice, copiar también los templates específicos del formato:
 

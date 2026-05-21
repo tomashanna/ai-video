@@ -921,6 +921,265 @@ Post Phase 1 forward — verify per character on-screen shot: motion vectors inc
 
 ---
 
+## 8.10 PER-CLIP ATOMIC ASSEMBLY IMPLEMENTATION (NEW 2026-05-20 — Phase 2 forward, Hard Rule #23)
+
+> **Engineering implementation** del refactor architecture descripto en `ai-video-production/PIPELINE.md § 13`. Esta sección es la guía operacional del INGENIERO. Aplica a horror-choice × reel forward (video #3+).
+
+### 8.10.1 Architectural rationale (por qué refactor)
+
+User architectural insight 2026-05-20 (memory `feedback_per_clip_atomic_assembly`): **"en vez de hacer todo el audio de una vez, se hace el audio por clip y luego que todos los clips estan listos con el audio y todo se juntan"**.
+
+Eliminates **7/8 bug classes recurrentes** que el ingeniero combatía iter tras iter:
+
+| Bug class | Caso disparador horror-choice | Causa raíz (global master) |
+|-----------|-------------------------------|-----------------------------|
+| Sync drift end-of-timeline | matadero iter 1 "QUE DAS CENA" | Master.mp3 acumula +0.5s drift por timeline largo |
+| Caption fragmentation | cinema iter 1 "ELICHE" | Whisper sobre master fragmenta tokens en boundaries |
+| Same-Y caption overlap | matadero iter 5 D1+D2 | Captions sobre timeline global no ven contexto per-clip |
+| Audio/clip boundary mismatch | matadero iter 7 GSAP offsets | Master boundaries no align con clip cuts |
+| SFX context-blind | recurring 8 videos | SFX sobre timeline global ignora qué pasa en cada clip |
+| AVU GSAP compose-time fragility | matadero iter 3-4 countdown | AVU armado en HTML/GSAP (compose-time) vs pre-rendered atomic |
+| Cumulative timeline error | universal >60s videos | Drift compounds linealmente con duración |
+
+Single bug class NO eliminada: cross-clip music ducking (sigue siendo layer post-concat — gestionada en step 10 del pipeline).
+
+### 8.10.2 Per-clip workflow steps (operacional para INGENIERO)
+
+```bash
+# Per shot (repeat N veces, paralelizable):
+
+# Step 1: Animate (CP4 existente — sin cambios)
+.venv/bin/python scripts/video.py -i assets/anchors/shot_NN.png -p "<motion prompt>" \
+  -o assets/clips/shot_NN.mp4 --duration <Ws>
+
+# Steps 2-5: Atomic builder (combo TTS + SFX + ambient + mix + mux + caption sidecar)
+.venv/bin/python scripts/build_clip_atomic.py \
+  --shot-id shot_NN \
+  --spec creative-specs/<id>.yaml \
+  --clip-video assets/clips/shot_NN.mp4 \
+  --voice-id <VOICE_ID> \
+  --output-dir assets/atomic/
+# Outputs:
+#   assets/atomic/shot_NN_with_audio.mp4
+#   assets/atomic/shot_NN_captions.json
+#   assets/atomic/shot_NN_audio_breakdown.json (TTS + SFX + ambient mix log)
+
+# Step 6: Quality Gate Agent (per-clip verdict)
+.venv/bin/python scripts/quality_gate_per_clip.py \
+  --clip assets/atomic/shot_NN_with_audio.mp4 \
+  --captions assets/atomic/shot_NN_captions.json \
+  --spec creative-specs/<id>.yaml \
+  --shot-id shot_NN \
+  --output handoffs/CP5-clip-NN-gate-verdict.md
+# Exit 0 = ≥9.0 PASS (proceed step 7)
+# Exit 1 = 7.0-8.9 ITERATE (engineer re-builds clip, max 3 iter)
+# Exit 2 = <7.0 ESCALATE (architect re-spec required)
+
+# Step 7: Mid-execution Gemini Vision hook (catches bugs ANTES de concat)
+.venv/bin/python scripts/gemini_midexec_vision.py \
+  --clip assets/atomic/shot_NN_with_audio.mp4 \
+  --captions assets/atomic/shot_NN_captions.json \
+  --spec creative-specs/<id>.yaml \
+  --shot-id shot_NN \
+  --output audits/shot_NN_gemini.json
+
+# After ALL clips PASS steps 6+7, assemble cross-clip layers:
+
+# Step 8: Concat
+bash scripts/concat-clips-with-audio.sh assets/atomic/ assembled.mp4
+
+# Step 9: Effects library between clips
+.venv/bin/python scripts/apply-effects-between-clips.py \
+  --input assembled.mp4 \
+  --spec creative-specs/<id>.yaml \
+  --output assembled_with_transitions.mp4
+
+# Steps 10-12: Cross-clip music + ambient + LUTs
+.venv/bin/python scripts/apply-cross-clip-music.py \
+  --input assembled_with_transitions.mp4 \
+  --spec creative-specs/<id>.yaml \
+  --output assembled_final.mp4
+
+# Step 13: Final render + global audit
+# (existing 7 pre-render gates + Gemini holístico ≥9.7 + audit-against-referent ≥85%)
+```
+
+### 8.10.3 Audio mix per-clip (NOT global)
+
+El INGENIERO realiza el mix **dentro del clip atomic**, NO sobre timeline global. Esto:
+
+- Elimina cumulative drift (mix matemática per ventana corta = sin compounding error)
+- Permite SFX context-aware (el script ve qué pasa en ESTE shot, no infiere desde timeline global)
+- Caption sidecar JSON generated per clip = Whisper local sobre ventana de pocos segundos = más preciso
+
+#### Mix volumes per-clip (canónicos, IGUAL que global pero aplicados localmente)
+
+| Track | Volume per clip | Notas |
+|-------|-----------------|-------|
+| Narración | 1.0 | LUFS target -16 LUFS per clip (cross-clip mastering -14 LUFS lo achieva post-concat) |
+| Ambient local | 0.10-0.18 | Slice de cross-clip ambient para boundaries smooth |
+| SFX eventos | 0.20-0.35 | Context-aware al shot |
+| Flash impacts | 0.55-0.65 | Solo si SPEC declara flash en este shot |
+| Música | **NO en clip atomic** | Música = cross-clip layer (step 10 post-concat) para ducking automático contínuo |
+
+**Regla**: música NUNCA va dentro del clip atomic. Va como cross-clip layer post-concat. Razón: necesita seguir secciones (hook/dilemmas/outro) y ducking automático cross-clip.
+
+### 8.10.4 Caption sidecar JSON per-clip schema
+
+`build_clip_atomic.py` genera `shot_NN_captions.json`:
+
+```json
+{
+  "shot_id": "shot_03",
+  "clip_duration_s": 4.2,
+  "tts_source_text": "Si elegiste a Hugo... cuidado con sus pasos.",
+  "whisper_segments": [
+    {
+      "start_s": 0.12,
+      "end_s": 1.85,
+      "text": "Si elegiste a Hugo",
+      "class": "narration",
+      "y_position_canonical": 540
+    },
+    {
+      "start_s": 1.95,
+      "end_s": 4.10,
+      "text": "cuidado con sus pasos",
+      "class": "narration",
+      "y_position_canonical": 540
+    }
+  ],
+  "canonical_validation": {
+    "y_position_in_band": true,
+    "stroke_drop_shadow_applied": true,
+    "monospaced_for_names": "N/A (no name in this clip)"
+  }
+}
+```
+
+**Ventajas**:
+- Sidecar = data-driven, no compile-time GSAP hardcoding
+- Quality Gate Agent lee sidecar para audit caption Y position canonical (banda 540-820px)
+- Mid-execution Gemini Vision verifica match captions vs audio per shot
+
+### 8.10.5 AVU overlay integration per clip
+
+AVUs (Audio-Visual Units pre-rendered, ver § 7.11) integran **dentro del clip atomic** cuando aplica:
+
+```bash
+# Step 4 alternativo cuando shot incluye AVU (countdown 3-2-1, decision freeze, hook transition, outro card):
+
+.venv/bin/python scripts/build_clip_atomic.py \
+  --shot-id shot_01 \
+  --clip-video assets/clips/shot_01.mp4 \
+  --avu-overlay ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4 \
+  --avu-start-s 5.0 \
+  --avu-end-s 8.0 \
+  --voice-id <VOICE_ID> \
+  --output-dir assets/atomic/
+```
+
+**Key**: AVU mp4 (audio + visual bundled) overlay ON the clip atomic mp4 = single self-contained mp4 con audio + AVU + base visual. NO GSAP compose-time hack. **Elimina bug class #6** (AVU GSAP timing fragility — caso matadero iter 3-4).
+
+### 8.10.6 Effects library between clips — usage examples
+
+Entre clips (post-concat, step 9), el INGENIERO aplica transitions per SPEC `transitions[]` array:
+
+```yaml
+# SPEC schema v10 declares per clip-boundary transition:
+transitions:
+  - between: [shot_01, shot_02]
+    effect: white-flash-0.1s
+    reason: "pre-twist impact (hook → dilemma 1)"
+  - between: [shot_02, shot_03]
+    effect: hard-cut
+    reason: "default pacing, cuts/min target 4.2"
+  - between: [shot_06, shot_07]
+    effect: glitch-0.2s
+    reason: "plot twist reveal at H4"
+  - between: [shot_N-1, shot_N]
+    effect: dip-to-black-0.4s
+    reason: "outro card entrance"
+```
+
+```bash
+.venv/bin/python scripts/apply-effects-between-clips.py \
+  --input assembled.mp4 \
+  --spec creative-specs/<id>.yaml \
+  --output assembled_with_transitions.mp4
+```
+
+**Anti-pattern eliminado**: GSAP white-flash hardcoded sobre timeline global con `tl.set(...) → tl.to(...)` (caso bug "flash reaparece al seek"). Ahora flash AVU bundled en transition mp4 entre clips = atomic, no GSAP fragility.
+
+### 8.10.7 Mid-execution Gemini Vision hooks invocation
+
+Invocados **per clip** después de Quality Gate PASS, ANTES de concat:
+
+| Cuándo | Trigger | Output |
+|--------|---------|--------|
+| Per clip atomic PASS (step 6) | Quality Gate exit 0 | `audits/shot_NN_gemini.json` |
+| Pre-concat checkpoint | All clips PASS individually | `audits/pre-concat-summary.md` |
+| Post-concat pre-effects | After step 8 concat | `audits/post-concat-fullvideo.json` |
+| Post-final (existing) | Step 13 final render | Existing 7 gates (sin cambios) |
+
+**Por qué mid-execution**: caso matadero iter 7 — caption fragmentation D1+D2 detectada en final render = re-build TODOS los clips. Con mid-execution hook = detectado per clip = solo re-build shot_NN (10x más barato).
+
+```bash
+# Per clip:
+.venv/bin/python scripts/gemini_midexec_vision.py \
+  --clip assets/atomic/shot_NN_with_audio.mp4 \
+  --captions assets/atomic/shot_NN_captions.json \
+  --spec creative-specs/<id>.yaml \
+  --shot-id shot_NN \
+  --output audits/shot_NN_gemini.json
+```
+
+**5 dimensions auditadas per clip**:
+1. UI overlap (caption Y vs canonical band 540-820px)
+2. Frames negros (visibility <1s per HyperFrames gotchas)
+3. AVU detect (si SPEC declara AVU en clip, verificar presencia)
+4. Character consistency vs anchor (compare frame medio del clip vs `assets/anchors/<character>.png`)
+5. Caption text match TTS source (verifica Whisper no fragmentó tokens)
+
+Exit 0 = OK proceed concat. Exit 1 = issue → fix antes de concat.
+
+### 8.10.8 Quality Gate Agent verdict thresholds
+
+| Score | Verdict | Acción ingeniero |
+|-------|---------|-------------------|
+| **≥9.0** | 🟢 PASS | Proceed to step 7 Gemini Vision mid-exec |
+| **8.0-8.9** | 🟡 ITERATE (minor) | Re-build clip con fixes localizados (max 3 iter per clip) |
+| **7.0-7.9** | 🟠 ITERATE (mayor) | Re-build clip con re-spec menor — consultar SPEC |
+| **<7.0** | 🔴 ESCALATE | STOP. Architect re-spec del shot (no fix engineering puede salvar) |
+| **Tras 3 iter sub-9.0** | ⛔ ESCALATE forzado | NO opcional. Handoff `escalate-clip-NN.md` al arquitecto. |
+
+**Cap global**: si >30% de clips llegan a ESCALATE → STOP video, request architect full re-spec. No engineering hack puede compensar SPEC defectuoso a esa escala.
+
+### 8.10.9 Reusable shot-with-audio assets
+
+Ventaja secundaria: clips atomic (shot_NN_with_audio.mp4) son **reusables across videos**:
+
+- Outro card AVU + audio bundled → reusable en TODOS los videos del formato
+- Hook countdown 3-2-1 (film leader academy) → reusable
+- Decision freeze UI + ticks → reusable
+- "Una noche en paz" cliffhanger card → reusable
+
+Estos viven en `ai-video-production/templates/avu-library/` con manifest declaring duration, resolution, audio_bundled status, canonical_validation_status.
+
+### 8.10.10 Compliance verification (pre-render-gate Q26 NEW)
+
+Pre-render-gate gana Q26 NEW 2026-05-20:
+
+**Q26**: Video assembly used per-clip atomic strategy (NOT global master.mp3 legacy)?
+- Verify: `assets/atomic/shot_NN_with_audio.mp4` files exist per shot
+- Verify: NO `assets/master.mp3` ni `assets/master-90s.mp3` in project
+- Verify: SPEC `assembly_strategy: per_clip_atomic` declared
+- **Y → PASS, N → 🔴 FAIL ship-blocking** (video #3+ MUST use per-clip atomic per Hard Rule #23)
+
+Exception: matadero + cinema-abandonado legacy projects exempted (in-flight grandfather clause).
+
+---
+
 ## 9. CÓMO MEDIR MÉTRICAS NO DOCUMENTADAS ACÁ
 
 ### Scripts disponibles
@@ -1267,5 +1526,1057 @@ phase_1_forward:
   - "Build full AVU library remaining 3 templates (decision-freeze + hook-transition + outro-card)"
   - "Run extract-canonical-max-detail.py regenerate canonical-scenes docs MAX DETAIL"
   - "Build measure-canonical-decision-ui-pacing.py + audio cue levels script"
+```
+
+
+---
+
+## § 8.11 — PER-SECTION MUSIC LAYERS RULE (NEW 2026-05-21 — comparative analysis cinema vs canonical refs)
+
+> **Authority**: `PAUTA-MASTER § 25` (Music layers 3 mandatory creative authority) + Gemini Vision comparative analysis 2026-05-21 (cinema 1 layer "minimal" vs canonical 3 layers).
+> **Trigger**: cinema-abandonado iter 1-6 shipped with 1-layer music — Gemini said "audio does 60% of the work" (warning, not compliment). Forward: 3 layers mandatory.
+
+### 8.11.1 The 3 mandatory layers
+
+| Layer | Continuity | Volume (canonical horror) | Frequency band | Source |
+|---|---|---|---|---|
+| **1. Drone** | Continuous 80-100% | 0.05-0.13 (peak 0.13 in horror sections) | 40-200 Hz dominant | ElevenLabs SFX "subharmonic horror tonal pad" or curated library file |
+| **2. Ambient** | Per-section (changes with setting beat) | 0.10-0.18 | 200-2000 Hz | ElevenLabs SFX setting-specific (e.g. "projector reel mechanism + dust hum", "mine drip echo + wind") |
+| **3. Accent** | Event-driven (countdown ticks, dilemma locks, climax peaks) | 0.20-0.35 (impacts 0.55-0.65) | Wide-spectrum | ElevenLabs SFX or `effects-library/audio-stings/*.mp3` |
+
+### 8.11.2 ffmpeg recipe for layer mixing
+
+```bash
+# Inputs:
+#   $DRONE = path to layer 1 (looped to video duration)
+#   $AMBIENT_HOOK, $AMBIENT_DIL1, $AMBIENT_DIL2, $AMBIENT_OUTRO = layer 2 per section
+#   $NARR = narration .wav (master)
+#   $ACCENTS = composite of accent SFX already timeline-placed
+#   $VIDEO = render base mp4 (visual only)
+#   $DURATION = total video duration in seconds
+
+# Step 1: Loop drone to full video duration
+ffmpeg -y -stream_loop -1 -i "$DRONE" -t "$DURATION" -c:a aac -b:a 192k drone_full.aac
+
+# Step 2: Concatenate ambient per-section with crossfades
+ffmpeg -y \
+  -i "$AMBIENT_HOOK" -i "$AMBIENT_DIL1" -i "$AMBIENT_DIL2" -i "$AMBIENT_OUTRO" \
+  -filter_complex "[0:a][1:a]acrossfade=d=0.5[a01];[a01][2:a]acrossfade=d=0.5[a012];[a012][3:a]acrossfade=d=0.5[aout]" \
+  -map "[aout]" -c:a aac -b:a 192k ambient_full.aac
+
+# Step 3: Three-layer mix with ducking under narrator
+ffmpeg -y \
+  -i drone_full.aac \
+  -i ambient_full.aac \
+  -i "$ACCENTS" \
+  -i "$NARR" \
+  -filter_complex "
+    [0:a]volume=0.13[drone];
+    [1:a]volume=0.15[ambient];
+    [2:a]volume=0.30[accent];
+    [3:a]volume=1.0[narr];
+    [drone][narr]sidechaincompress=threshold=0.05:ratio=4:attack=20:release=400[drone_ducked];
+    [ambient][narr]sidechaincompress=threshold=0.05:ratio=3:attack=30:release=500[amb_ducked];
+    [drone_ducked][amb_ducked][accent][narr]amix=inputs=4:duration=longest:normalize=0[mix];
+    [mix]loudnorm=I=-14:LRA=11:TP=-1.5[out]
+  " \
+  -map "[out]" -c:a aac -b:a 256k audio_3layer.aac
+
+# Step 4: Mux with video
+ffmpeg -y -i "$VIDEO" -i audio_3layer.aac -c:v copy -c:a copy -shortest renders/draft_3layer.mp4
+```
+
+**Key points**:
+- `sidechaincompress` ducks drone + ambient by ~3-6 dB when narrator speaking (mix priority per PAUTA § 25.3).
+- Accents stay on (intentional cut-through during narration).
+- Final `loudnorm` to -14 LUFS (Hard Rule #4 + INGENIERO § 2.1).
+
+### 8.11.3 Mix volumes table per layer type
+
+| Layer | Hook (0-9s) | Dilemma (15-80%) | Climax beat | Decision UI (countdown) | Outro/cliffhanger |
+|---|---|---|---|---|---|
+| Drone | 0.10 | 0.13 | 0.13 | 0.13 | 0.08 |
+| Ambient | 0.12 | 0.15-0.18 | 0.10 (give space) | 0.10 | 0.12 |
+| Accent | n/a (or 1 cue) | 0.20-0.30 per dilemma lock | 0.55-0.65 (flash impact) | 0.30-0.40 per tick | 0.20 fade-out |
+
+**Default fallback** if architect SPEC doesn't specify section-by-section: drone=0.13, ambient=0.15, accent=0.30 with `loudnorm` post-mix.
+
+### 8.11.4 Validation post-mix
+
+```bash
+# Verify 3-layer presence via spectrogram analysis
+ffmpeg -i renders/draft_3layer.mp4 -lavfi showspectrumpic=s=1920x1080:mode=combined spectrogram.png
+# Visual check: 3 distinct horizontal bands (40-200 / 200-2000 / 2000+ Hz) present 60%+ of timeline width
+# OR use audit-audio.py extension (Phase 2 forward)
+```
+
+### 8.11.5 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_4_videos_2026_05_21"
+validated_against_canonical_refs:
+  - "Ref-2 cockpit 3-layer → 10/10 audio (canonical gold standard per Gemini Vision)"
+  - "Ref-1 mina 3-layer → 9/10 audio"
+  - "cinema-abandonado iter 6 1-layer minimal → 9/10 (narrator-carried, risky)"
+validation_methodology: "Gemini Vision audio dimension comparative + 3-layer presence inspection"
+validated_at: 2026-05-21
+phase_2_forward:
+  - "Build audit-audio.py extension: spectrogram-based 3-layer detection threshold"
+  - "Add ElevenLabs SFX prompts library/sfx-catalog.json: drone-horror-subharmonic + ambient-cinema-projector + accent-canonical pack"
+```
+
+---
+
+## § 8.12 — PACING MARKERS PER SHOT (NEW 2026-05-21 — comparative analysis cinema cuts/min vs canonical band)
+
+> **Authority**: `PAUTA-MASTER § 23` (Cuts/min canonical band 18-22 creative authority) + Gemini Vision comparative analysis 2026-05-21.
+> **Trigger**: cinema-abandonado iter 1-6 shipped at 12 cuts/min — below canonical Gemini-perceived band 18-22. Forward: engineer builds per-shot durations to support architect's pace target.
+
+### 8.12.1 Per-shot duration target math
+
+For target **Gemini-perceived cuts/min = 18-22** (architect's PAUTA § 23 band):
+
+```
+total_perceived_cuts = (cuts_per_min_target) × (duration_min)
+
+Example: 90s reel @ 20 cuts/min → 30 perceived cuts total
+Example: 75s reel @ 18 cuts/min → 22 perceived cuts total
+Example: 95s reel @ 22 cuts/min → 34 perceived cuts total
+```
+
+**Perceived cuts include**:
+- Primary shot changes (1 per shot entry in SPEC `shot_list[]`)
+- Variant inserts within shots >4s (-a, -b, -c per Hard Rule #5)
+- Reaction shot inserts (hand-close-up, eye-close-up, setting detail)
+- Effects library transitions counted as cuts: `hard-cut-with-whoosh`, `light-flash-impact`, `glitch-transition`
+- NOT counted: `cross-fade-0.5s`, `cross-fade-1.0s`, `fade-to-black-1.0s` (perceived as continuous)
+
+### 8.12.2 Per-shot duration build process
+
+**Step 1 — Compute target cuts**:
+```python
+# After receiving SPEC from architect
+total_duration_s = spec['video']['total_duration_s']
+target_cuts_per_min_low = 18
+target_cuts_per_min_high = 22
+target_cuts_low = int(target_cuts_per_min_low * total_duration_s / 60)
+target_cuts_high = int(target_cuts_per_min_high * total_duration_s / 60)
+print(f"Target perceived cuts: {target_cuts_low}-{target_cuts_high}")
+```
+
+**Step 2 — Count SPEC declared cuts**:
+```python
+declared_shots = len(spec['shot_list'])
+declared_variants = sum(len(s.get('variants', [])) for s in spec['shot_list'])
+declared_reaction_inserts = sum(len(s.get('reaction_inserts', [])) for s in spec['shot_list'])
+declared_cuts = declared_shots + declared_variants + declared_reaction_inserts
+print(f"SPEC declares: {declared_cuts} perceived cuts")
+```
+
+**Step 3 — Gap check + escalation**:
+```python
+if declared_cuts < target_cuts_low:
+    print(f"⚠️ SPEC short by {target_cuts_low - declared_cuts} cuts. Escalate to architect:")
+    print(f"   Request mini-cuts via variants OR reaction inserts OR counterfactual quick-flashes")
+    # DO NOT improvise mini-cuts as engineer (violates "engineer doesn't decide creative")
+elif declared_cuts > target_cuts_high + 5:
+    print(f"⚠️ SPEC over by {declared_cuts - target_cuts_high} cuts. Check pace doesn't fragment narrative.")
+else:
+    print(f"✅ SPEC within band. Proceed to per-clip duration build.")
+```
+
+**Step 4 — Per-clip duration assignment**:
+```python
+# Allocate duration per shot to total
+remaining_duration = total_duration_s
+remaining_shots = declared_shots
+
+for shot in spec['shot_list']:
+    if shot.get('fixed_duration_s'):  # architect locked in (countdown, cliffhanger, etc.)
+        duration = shot['fixed_duration_s']
+    else:
+        # Default = remaining / remaining_shots, clamped per shot type
+        default = remaining_duration / remaining_shots
+        # Clamp by shot type:
+        if shot['type'] == 'hook_intro':
+            duration = min(default, 9.0)  # canonical hook ≤9s
+        elif shot['type'] == 'dilemma_reaction':
+            duration = min(default, 4.0)  # canonical dilemma beats ≤4s
+        elif shot['type'] == 'climax_peak':
+            duration = min(default, 6.0)
+        else:
+            duration = default
+    shot['computed_duration_s'] = duration
+    remaining_duration -= duration
+    remaining_shots -= 1
+```
+
+### 8.12.3 Mini-cuts catalog (engineer's quick toolkit when architect approves)
+
+When architect adds mini-cuts to SPEC, engineer implements:
+
+| Mini-cut type | Duration | Implementation | When used |
+|---|---|---|---|
+| Variant insert -a/-b/-c | 1.5-2.5s | Different camera angle of same beat (wide → close-up → detail) | Shots >4s primary |
+| Reaction shot | 1.0-2.0s | Character POV / hand close-up / object detail | Between dialogue beats |
+| Counterfactual quick-flash | 0.5-1.0s | Brief insert of alternate path during main path | Hints stakes (post PAUTA § 24) |
+| Setting micro-detail | 0.8-1.5s | Architectural close-up (clock, projector, doorknob) | Establishes time/place |
+| POV hand insert | 0.5-1.2s | First-person hand reaching/touching | First-person POV per memory `first_person_pov` |
+
+### 8.12.4 Effects library transitions counted as cuts (per § 8.13 NEW)
+
+When using `effects-library/transitions/`:
+- `hard-cut-with-whoosh` = +1 cut
+- `light-flash-impact` = +1 cut (use max 1-2 per reel per existing library README)
+- `glitch-transition` = +1 cut
+- `static-noise-transition` = +1 cut
+- `projector-cue-cinema` = +1 cut
+- `cross-fade-0.5s` = 0 cuts (perceived continuous)
+- `cross-fade-1.0s` = 0 cuts (perceived continuous)
+- `fade-to-black-1.0s` = 0 cuts (outro continuous)
+- `black-screen-0.3s` = +0.5 cut (perceived as breath, ambiguous)
+- `film-burn-transition` = +1 cut
+
+### 8.12.5 Canonical validation status
+
+```yaml
+canonical_validation_status: "pending_full_canonical_gemini_pass"
+validated_against_canonical_refs:
+  - "Ref-1 mina 21 cuts/min (Gemini Vision 2026-05-21)"
+  - "Ref-2 cockpit 13 cuts/min modulated (Gemini Vision 2026-05-21)"
+  - "Ref-3 metro 28 cuts/min (Gemini Vision 2026-05-21)"
+  - "cinema-abandonado 12 cuts/min BELOW band (Gemini Vision 2026-05-21)"
+validation_methodology: "Gemini Vision direct cuts/min report — 4 videos"
+validated_at: 2026-05-21
+caveat: "Gemini-perceived band 18-22 NOT same as INGENIERO § 3.1 de-clustered band 2.75-5. Reconciliation in PAUTA § 23.3."
+phase_2_forward:
+  - "Gemini Vision pass on remaining 7 F1 refs to confirm band"
+  - "Triangulate Gemini-perceived vs de-clustered metric ratio"
+```
+
+---
+
+## § 8.13 — EFFECTS LIBRARY USAGE TABLE (NEW 2026-05-21 — Phase 2 forward usage rules)
+
+> **Authority**: `ai-video-production/templates/effects-library/README.md` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
+> **Trigger**: cinema-abandonado iter 1-6 used only hard cuts + zoom transitions — Gemini editing dimension 8/10 (predictable). Canonical refs use varied transitions per beat type.
+
+### 8.13.1 When to use which transition (by beat type)
+
+| Beat type | Recommended transition | Effects lib file | Why |
+|---|---|---|---|
+| **Within-scene beat connection** (same character, same setting, time-continuous) | `cross-fade-0.5s` | `cross-fade-0.5s.json` | Invisible blend, preserves continuity |
+| **Within-scene time jump** (later same day, memory dissolve) | `cross-fade-1.0s` | `cross-fade-1.0s.json` | Slow deliberate, reads as "later" |
+| **Scene change default workhorse** | `hard-cut-with-whoosh` | `hard-cut-with-whoosh.json` | Preserves cuts/min target, audio sting | 
+| **Hook countdown impact** | `hard-cut-with-whoosh` (or AVU bundled per § 7.11.5) | `hard-cut-with-whoosh.json` | High-energy entry to body |
+| **Decision UI / choice freeze** | `black-screen-0.3s` + freeze frame | `black-screen-0.3s.json` | Lets choice land |
+| **Decision lock-in (countdown ends, path commits)** | `light-flash-impact` | `light-flash-impact.json` | White flash + sharp SFX (high impact, USE SPARINGLY) |
+| **Climax peak / plot twist reveal** | `light-flash-impact` | `light-flash-impact.json` | MAX 1-2× per reel per library README |
+| **Counterfactual quick-flash insert** (per PAUTA § 24) | `glitch-transition` or `static-noise-transition` | `glitch-transition.json` / `static-noise-transition.json` | Signals "what if" alternate reality |
+| **Cinema-genre scene change** | `projector-cue-cinema` | `projector-cue-cinema.json` | Diegetic, reel-change feel (use when setting = cinema/theater) |
+| **Cinema flashback / memory bloom** | `film-burn-transition` | `film-burn-transition.json` | Warm orange consumes frame |
+| **Outro before cliffhanger card** | `fade-to-black-1.0s` | `fade-to-black-1.0s.json` | Universal close pattern (9/10 canonicals per library README) |
+| **Narrative comma / pause / breath** | `black-screen-0.3s` | `black-screen-0.3s.json` | Brief black insert, lets beat land |
+
+### 8.13.2 Transition variety rule per reel
+
+**Minimum variety target** (avoid cinema iter 1-6 anti-pattern of hard-cut + zoom only):
+
+| Reel section | Min different transition types | Note |
+|---|---|---|
+| Hook | 1 (default = `hard-cut-with-whoosh` to body) | Hook = continuous shot per INGENIERO § 3.2 |
+| Body (dilemmas) | **3 different types** | E.g. `hard-cut-with-whoosh` + `cross-fade-0.5s` + `light-flash-impact` (sparingly) |
+| Climax | 1-2 (e.g. `light-flash-impact` + `cross-fade-1.0s` post-climax) | High impact, then breathe |
+| Outro | 1 (`fade-to-black-1.0s`) | Canonical close |
+
+**Total target**: ≥4 distinct transition types per ~90s reel. Cinema iter 1-6 used 2 (hard cuts + zooms) → fell short.
+
+### 8.13.3 Implementation per SPEC field
+
+Architect SPEC v10 forward will include:
+```yaml
+shot_list:
+  - shot_id: shot_02
+    type: dilemma_lock_in
+    transition_out:
+      effect: "light_flash_impact"
+      effects_library_ref: "effects-library/transitions/light-flash-impact.json"
+      duration_s: 0.2
+      sting_audio: "effects-library/audio-stings/whoosh-warm.mp3"
+```
+
+Until v10 lands, engineer reads SPEC `shot_list[].transition_out.effect` field if present, else defaults to `hard-cut-with-whoosh` for scene changes + `cross-fade-0.5s` for within-scene beats.
+
+### 8.13.4 Cost analysis
+
+Effects library transitions are **procedural ffmpeg recipes** (Hairloss for free):
+- Audio stings are already in `audio-stings/` (no ElevenLabs spend).
+- ffmpeg render = ~2-5% added render time per transition.
+- **Total cost: $0 per video** (purely engineering effort).
+
+### 8.13.5 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_partial_via_library_README_canonical_refs"
+validated_against_canonical_refs:
+  - "fade-to-black-1.0s: 9/10 canonical refs use for outro (per library README)"
+  - "hard-cut-with-whoosh: matches canonical refs Ref-1 + Ref-3 hard-cut dominant style (Gemini Vision 2026-05-21)"
+  - "light-flash-impact: canonical refs use for plot twist reveals (per existing library doc)"
+  - "cinema-abandonado iter 1-6: USED ONLY hard cuts + zooms (anti-pattern variety <2)"
+validation_methodology: "Effects library README canonical claims + 4-video comparative Gemini analysis"
+validated_at: 2026-05-21
+phase_2_forward:
+  - "Build transition_out SPEC schema field v10 mandatory per shot"
+  - "Gemini Vision transition variety count on F1 refs to confirm ≥4 distinct/reel canonical"
+```
+
+---
+
+## § 8.14 — ANCHOR STRICT MODE ALL SHOTS POLICY (NEW 2026-05-21 — comparative analysis character consistency)
+
+> **Authority**: comparative analysis cinema-abandonado character consistency 7/10 vs canonical Ref-2 9/10 — Ref-2 won character dimension via strict anchor consistency across all shots, cinema used STRICT only on hero shots.
+> **Trigger**: cinema iter 1-6 — character Salvador "morphing of facial features between scenes" per Gemini direct quote. Loss attributable to non-strict anchors on non-hero shots.
+
+### 8.14.1 Rule
+
+**ALL anchors in shot_list[] generate with STRICT mode** (Nano Banana / Midjourney --cref + sref, or equivalent character-lock mode per model). NOT just hero shots (hook + climax + cliffhanger). Forward: every shot's character anchor goes through STRICT validation pass.
+
+### 8.14.2 Why
+
+Empirical comparison character consistency dimension:
+
+| Video | Character consistency score | Mechanism | Gemini quote |
+|-------|---|---|---|
+| **Ref-2 cockpit (Victor/Axel)** | **9/10** ⭐ | STRICT anchors all shots | *"Victor's skeletal texture, hat, and facial structure remain identical across cockpit, tarmac, and exterior shots"* |
+| Ref-1 mina (Bruno/Pablo) | 6/10 | Likely STRICT hero only | *"Bruno's facial structure shifts significantly... by 0:50, his skin becomes heavily wrinkled"* |
+| Ref-3 metro (Nano/Teresa) | 6/10 | Likely STRICT hero only | *"Nano Banano's overalls and head shape shift slightly between shots (AI hallucination)"* |
+| **cinema-abandonado (ours)** | **7/10** ⚠ | STRICT hero only | *"Salvador's face shifts slightly between the lobby and the projection room (stitches change density)"* |
+
+**Mechanism**: Ref-2's 9/10 character consistency directly contributed to its 9.0/10 overall score (the highest of the 4 comparison). Cinema's 7/10 character consistency directly contributed to its 8.6/10 (second-highest, gap = 0.4 points). STRICT mode on non-hero shots was the marginal cost that bought the gap.
+
+### 8.14.3 Implementation per shot
+
+```python
+# Per shot in SPEC shot_list[]:
+for shot in spec['shot_list']:
+    # Previously: STRICT only on hero shots
+    # OLD: if shot['hero']: strict = True
+    
+    # NEW POLICY: STRICT on ALL shots
+    strict = True
+    
+    # Generate anchor with STRICT mode
+    if model == 'nano-banana':
+        flags = ['--cref', shot['character_anchor_url'], '--sref', shot['style_anchor_url'], '--cw', '100']
+    elif model == 'midjourney':
+        flags = ['--cref', shot['character_anchor_url'], '--cw', '100', '--sref', shot['style_anchor_url']]
+    elif model == 'flux-character':
+        flags = ['--character-lock-mode', 'strict']
+    # Submit + audit per shot
+```
+
+### 8.14.4 Cost impact (forward) — UPDATED 2026-05-21 PM post enterprise free clarification
+
+⚠️ **COST RESET 2026-05-21 PM**: User confirmed Gemini + ElevenLabs API keys = enterprise = $0 cost. Previous cost projections OBSOLETE for Gemini-based work.
+
+| Item | Old projection (paid) | NEW reality (enterprise) | Delta |
+|---|---|---|---|
+| Nano Banana image generation per video (anchors + shots all STRICT) | ~$2.90-3.80 | **$0** | -$2.90-3.80 |
+| Gemini Vision validation per shot | ~$1.00-1.20 | **$0** | -$1.00-1.20 |
+| **Total added cost per video** | — | **$0** (was ~$1.10-1.70) | — |
+
+**NEW trade**: $0 added cost for STRICT all shots policy → there is NO reason NOT to use STRICT on every shot. This becomes default canonical.
+
+**ONE caveat**: enterprise rate limits might constrain volume. If Gemini API quotas hit, fall back to selective STRICT. But assume unlimited for now.
+
+### 8.14.5 Validation per shot
+
+```bash
+# Per shot anchor:
+.venv/bin/python scripts/validate-anchor-strict.py \
+  --anchor-target assets/anchors/character_<name>_strict.png \
+  --shot-render assets/shots/<shot_id>.png \
+  --threshold 0.85
+# Returns face-similarity score via Gemini Vision. <0.85 → regen with stricter prompt + sref reinforcement.
+```
+
+### 8.14.6 When to relax (escape hatch)
+
+STRICT all-shots is policy default. Engineer can request architect approval to relax IF:
+- Character is **occluded** (back-of-head, silhouette, hidden by setting)
+- Character is **distant background** (small in frame, body language only matters)
+- Character is in **deliberate transformation beat** (architectural design choice — e.g. "Salvador's stitches loosen" climax)
+
+In those cases SPEC `shot_list[].anchor_strict: false` declared explicitly + architect approval gate.
+
+### 8.14.7 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_4_videos_2026_05_21_qualitative"
+validated_against_canonical_refs:
+  - "Ref-2 cockpit STRICT all shots → 9/10 character consistency (canonical gold)"
+  - "cinema-abandonado STRICT hero only → 7/10 character consistency (anti-pattern)"
+  - "Ref-1 mina + Ref-3 metro likely STRICT hero only → 6/10 character consistency"
+validation_methodology: "Gemini Vision character dimension comparative + reverse-engineering from consistency scores"
+validated_at: 2026-05-21
+caveat: "Canonical refs anchor-mode policy not directly observable from output, inferred from consistency outcomes"
+phase_2_forward:
+  - "Build validate-anchor-strict.py script + integrate per CP3 (shot images checkpoint)"
+  - "Measure cost delta in real production: target ~+$1.10-1.70/video"
+  - "Track character consistency Gemini dimension score improvement target ≥8/10 per Hard Rule #23 outcome"
+```
+
+---
+
+## § 8.15 — HAILUO PRO 1080P ESCALATION POLICY (NEW 2026-05-21 — comparative analysis AI artifacts hero shots)
+
+> **Authority**: comparative analysis cinema visual artifact score 7/10 vs canonical Ref-2 8/10 — cinema's lower score driven by visible rubbery hands (0:31, 1:05) + floaty walk (0:49). Hailuo Std produced these artifacts; Pro 1080p would have produced better fidelity on those specific shot types.
+> **Trigger**: cinema iter 1-6 — Gemini "Significant AI 'melting' on the hands... Salvador's walk at 0:49 is a bit 'floaty,' lacking weight or foot-planting."
+
+### 8.15.1 Escalation rule per shot type
+
+| Shot type | Std vs Pro default | Rationale |
+|---|---|---|
+| **HERO shots** — hook + climax peak + cliffhanger reveal | **DEFAULT Hailuo Pro 1080p** | Highest viewer attention, frame-by-frame inspection likely |
+| **Walking / full-body action shots** | **DEFAULT Hailuo Pro 1080p** | Std model floaty-walk failure mode (cinema 0:49 case) |
+| **Hand-close-up shots** | **DEFAULT Hailuo Pro 1080p** | Std model "melting fingers" failure mode (cinema 0:31, 1:05 cases) |
+| **Lip-sync close-up dialogue shots** | **DEFAULT Hailuo Pro 1080p** | Lip-sync precision matters more at close range |
+| **Animal / creature with anatomy** | **DEFAULT Hailuo Pro 1080p** | Std model anatomical drift |
+| Reaction inserts (hand-close, eye-close, setting detail) | Std (cheaper, fast, brief) | <2s duration, viewer doesn't inspect |
+| Background ambient shots | Std (cheaper) | Low attention area |
+| Setting establishing shots (no characters) | Std (cheaper) | Architectural / environmental, lower bar |
+| Variant -a/-b/-c micro-inserts | Std (cheaper) | Brief, supports primary shot |
+
+### 8.15.2 Cost impact (forward) — UPDATED 2026-05-21 PM new cost model
+
+⚠️ **COST RESET 2026-05-21**: Replicate is now the ONLY paid vendor for video #3+. Gemini + ElevenLabs API = enterprise FREE.
+
+**Per-tier Replicate pricing (CURRENT)**:
+
+| Tier | Cost per 6s clip | Use case |
+|---|---|---|
+| Hailuo Std 768p | ~$0.27 ($0.045/s) | Default for non-hero shots |
+| Hailuo Pro 1080p | ~$0.60 ($0.10/s) | DEFAULT hero + walking + hand-close-up |
+| Kling 2.5 Pro | ~$0.45 ($0.075/s) | Alternative if Hailuo Pro fails |
+| Veo 3.1 Standard | ~$2.40 ($0.40/s) retail | Premium — **POTENTIALLY FREE if enterprise covers Veo** (verify) |
+
+**Per video typical shot count requiring Pro escalation**:
+- Hero shots: 3 (hook + climax + cliffhanger)
+- Walking shots: ~1-2
+- Hand-close-ups: ~1-2 (per dilemma)
+- Lip-sync close-ups: ~1-2 (per character speaking on-screen)
+- **Total escalation: ~5-7 shots × Pro $0.60 = ~$3-4.20/video** (Replicate)
+
+**Full video #3 Replicate cost estimate**:
+- 5-6 shots Pro: $3-3.60
+- 16-17 shots Std: $4.32
+- Hedra lip-sync: $1.50 (optional but recommended)
+- **Total Replicate per video: ~$8-9** (vs old $14-16 model)
+
+**ENTERPRISE FREE (no cost)**:
+- Gemini Nano Banana image gen
+- Gemini Vision audits (calibrated v4 + audit-frames-granular)
+- ElevenLabs TTS + SFX + music + voice cloning
+- Whisper (always local)
+
+### 8.15.3 Implementation per shot
+
+```python
+# In SPEC shot_list[] for each shot:
+def select_model_tier(shot):
+    hero_types = {'hook', 'climax_peak', 'cliffhanger_reveal'}
+    pro_motion_types = {'walking', 'full_body_action', 'hand_close_up', 'lip_sync_close_up', 'creature_with_anatomy'}
+    
+    if shot['type'] in hero_types or shot.get('hero', False):
+        return 'hailuo_pro_1080p'
+    if shot['motion_type'] in pro_motion_types:
+        return 'hailuo_pro_1080p'
+    if shot.get('force_pro', False):  # architect override
+        return 'hailuo_pro_1080p'
+    return 'hailuo_std'
+
+# Submit to Replicate:
+model_id = 'minimax/hailuo-02-pro' if tier == 'hailuo_pro_1080p' else 'minimax/hailuo-02-standard'
+# (model IDs per video-director/MODEL-BENCHMARK.md — verify current at runtime)
+```
+
+### 8.15.4 SPEC v10 schema field
+
+Architect SPEC v10 forward will include:
+```yaml
+shot_list:
+  - shot_id: shot_03_hands_close_ticket
+    motion_type: "hand_close_up"
+    model_tier_override: null  # null = auto-select per § 8.15.1 table
+    # OR explicit:
+    # model_tier_override: "hailuo_pro_1080p"  # force Pro
+```
+
+Until v10 lands, engineer applies decision table from § 8.15.1 deterministically per shot.
+
+### 8.15.5 Validation post-render
+
+Per shot rendered via Hailuo Pro:
+```bash
+# Visual artifact check via Gemini Vision per shot
+.venv/bin/python scripts/audit-frames-granular.py \
+  --video assets/clips/shot_03_hands_close.mp4 \
+  --check rubbery_hands,floaty_walk,anatomical_drift \
+  --threshold strict
+# If still artifacts despite Pro → escalate to architect (consider hero treatment, different model, regen)
+```
+
+### 8.15.6 Cross-ref MODEL-BENCHMARK.md
+
+Verify current Hailuo Pro 1080p availability + pricing + reliability:
+- `video-director/MODEL-BENCHMARK.md § 1.1 Image-to-video tier` (refresh every 60 days per memory `reference_model_benchmark`)
+
+### 8.15.7 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_via_failure_mode_analysis_2026_05_21"
+validated_against_canonical_refs:
+  - "cinema-abandonado Hailuo Std hands 0:31 + 1:05 + walk 0:49 → visual 7/10 (anti-pattern)"
+  - "Ref-2 cockpit visual 8/10 likely Pro tier or equivalent (Luma/Runway Gen-2 per Gemini guess)"
+  - "Ref-1 mina + Ref-3 metro visual 5/10 likely Std tier (consistent with hands artifacts present)"
+validation_methodology: "Gemini Vision artifact identification + model tier reverse-engineering from quality outcomes"
+validated_at: 2026-05-21
+caveat: "Canonical refs exact model tier not observable from output, inferred from visual fidelity outcomes"
+phase_2_forward:
+  - "Build SPEC v10 schema model_tier_override field"
+  - "Measure visual dimension delta in real production: target ≥8/10 visual per Hard Rule #23 outcome"
+  - "Track cost delta target: ~+$3-4.20/video Pro escalation"
+  - "Refresh MODEL-BENCHMARK.md if Hailuo Pro pricing/availability changes"
+```
+
+
+---
+
+## § 8.16 — EXECUTION CONTINUITY IMPLEMENTATION (NEW 2026-05-21 PM late — GAP #40 codification)
+
+> **Authority**: GAP #40 EXECUTION CONTINUITY identified as PRIMARY gap own production → canonical via user articulation 2026-05-21 PM + calibrated Gemini v4 validation (matadero exec dim 4.8/10 vs Ref-A 10/10).
+> **The single biggest factor separating 7.85 → 9.9+ perceptual**.
+
+### 8.16.1 Rule
+
+Every shot's animation prompt MUST encode motion bridging to next shot. Specifically per shot in shot_list[]:
+
+```yaml
+shot_list:
+  - shot_id: shot_03_walking_corridor
+    motion_bridge_intent:  # NEW field
+      from_previous: "continuing walk forward from shot_02 same speed"
+      to_next: "POV approaches doorway visible in frame"
+    pov_traversal: "walking_forward"  # enum
+    audio_layer_continuity: ["drone_base", "footsteps_continuous", "ambient_corridor"]
+    visual_style_lut: "warm_industrial_cool_v2"  # same LUT as previous + next
+```
+
+### 8.16.2 Four sub-criteria per cut transition
+
+| Sub-criterion | Implementation | Penalty if missing |
+|---|---|---|
+| **1. POV motion bridge** | Hailuo prompt: "POV walking forward at constant 0.5m/s pace OR descending at gravity OR rotating head left" | Cut feels teleport |
+| **2. Audio bridge** | At least 1 sound layer (drone OR ambient OR foley) continues without cutoff at edit point | Silence at cut = jarring |
+| **3. Visual style consistent** | Same color LUT + grading + lighting style applied shot N and N+1 | Style jump = uncanny |
+| **4. Kinetic momentum** | Shot N+1 first frame velocity ≈ shot N last frame velocity (smooth motion continuity) | Sudden stop = jarring |
+
+### 8.16.3 Implementation Hailuo prompt template (for motion bridge shots)
+
+```python
+def build_motion_bridge_prompt(shot):
+    """Generate Hailuo prompt encoding motion bridge intent."""
+    base = shot['description']
+    bridge_from = shot.get('motion_bridge_intent', {}).get('from_previous', '')
+    bridge_to = shot.get('motion_bridge_intent', {}).get('to_next', '')
+    pov_motion = shot.get('pov_traversal', 'static')
+    
+    motion_clause_map = {
+        'walking_forward': 'POV camera moving forward at steady walking pace (0.5 m/s), camera at human eye level, slight bob from footsteps',
+        'descending': 'POV camera descending smoothly (0.3 m/s downward), gravity-influenced motion',
+        'ascending': 'POV camera rising upward (0.3 m/s), counter-gravity motion',
+        'approaching_character': 'POV moving toward character in frame, getting closer each second',
+        'turning_left': 'POV camera rotating left 30 degrees over 2 seconds, smooth rotation',
+        'turning_right': 'POV camera rotating right 30 degrees over 2 seconds, smooth rotation',
+        'static_with_micro_bob': 'POV camera stationary with subtle natural breathing micro-bob',
+    }
+    motion_clause = motion_clause_map.get(pov_motion, '')
+    
+    prompt = f"""{base}
+
+CAMERA / POV: {motion_clause}
+
+CONTINUITY:
+- From previous shot: {bridge_from}
+- Leading to next shot: {bridge_to}
+- Camera speed/motion should be CONSISTENT with adjacent shots, no abrupt stops or jumps.
+"""
+    return prompt
+```
+
+### 8.16.4 Audio bridge implementation
+
+Per cross-clip music layer (PIPELINE.md § 13.7.5 Layer 3 — cross-clip continuous):
+- `drone_base` layer plays 0-duration_s continuously → bridges all cuts
+- `ambient_room_continuous` layer plays per-section continuously → bridges within section
+- Specific event SFX (Layer 1 per-clip diegetic) may end at clip boundary but background layers MUST sustain
+
+### 8.16.5 Visual style consistency
+
+```python
+# Same LUT applied across multi-shot section:
+# Section "narrative_pre_decision" shots 1-6: LUT "warm_industrial"
+# Section "decision_moment" shots 7-9: LUT transition "warm_industrial → cool_decision"
+# Section "consequence_pathA" shots 10-15: LUT "cool_horror"
+
+# At cut between shots: LUT MUST be SAME within section.
+# At section boundary (rare): transition LUT explicit + audible cue marker.
+```
+
+### 8.16.6 Validation per cut transition
+
+```bash
+# Per cut, run continuity verification
+.venv/bin/python scripts/audit-execution-continuity.py \
+  --clip-prev assets/clips/shot_03.mp4 \
+  --clip-next assets/clips/shot_04.mp4 \
+  --check pov_motion_continuity,audio_layer_continuity,lut_consistency,kinetic_momentum
+# Exit 0 = continuity ✓ / Exit 1 = teleport detected = FAIL
+```
+
+(Script to build Phase 3 priority — currently use manual frame extraction + visual review)
+
+### 8.16.7 SPEC v10 schema fields needed (architect to codify)
+
+```yaml
+shot_list:
+  - shot_id: <id>
+    motion_bridge_intent:
+      from_previous: <string description>
+      to_next: <string description>
+    pov_traversal: <enum: walking_forward | descending | ascending | approaching_character | turning_left | turning_right | static_with_micro_bob>
+    audio_layer_continuity: [<list of layer_ids that must NOT cut at boundary>]
+    visual_style_lut: <lut_id reference>
+    
+# Plus per-section:
+narrative_sections:
+  - section_id: pre_decision
+    shot_ids: [shot_01..shot_06]
+    audio_layer_continuity_within_section: [drone_base, ambient_corridor]
+    visual_style_lut: warm_industrial
+```
+
+### 8.16.8 Cost impact
+
+- Hailuo prompts more verbose (~100-200 chars added per shot): $0 (no per-token charge on Replicate Hailuo)
+- Cross-clip music layer (Layer 3 PIPELINE § 13.7.5): no additional cost, just additional ElevenLabs compose_music call which is enterprise FREE
+- Validation script: $0 (local ffmpeg + librosa)
+- Estimated cost impact: **$0**
+
+This is a PROCESS amendment, not a cost addition.
+
+### 8.16.9 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_via_calibrated_gemini_v4_2026_05_21"
+validated_against_canonical_refs:
+  - "Ref-A cave (Felipe+Enzo) Gemini v4 exec dim 10/10 → user 10/10"
+  - "Ref-1 mina (Bruno+Pablo) Gemini v4 exec dim 10/10 → user 9.9/10"
+  - "matadero v1 Gemini v4 exec dim 4.8/10 → user 7.9 (anti-pattern teleport-cuts)"
+  - "cinema-abandonado v2 Gemini v4 exec dim 5.5/10 → user 7.8 (anti-pattern)"
+validation_methodology: "Calibrated Gemini v4 EXECUTION CONTINUITY dimension 30% weight + manual cut-by-cut analysis"
+validated_at: 2026-05-21
+phase_3_forward:
+  - "Build audit-execution-continuity.py automated check script"
+  - "Validate motion_bridge_intent + pov_traversal + audio_layer_continuity fields work in SPEC v10"
+  - "Test on video #3 first ship with calibrated Gemini v4 — confirm exec dim ≥9 achievable"
+```
+
+---
+
+## § 8.17 — LIP-SYNC INTEGRATION (Veo 3.1 DEFAULT — enterprise free) — Phase 3 forward 2026-05-21
+
+> **Authority**: Phase 3 priority post Phase 2 architectural refactor + cost model reset 2026-05-21. Lip-sync precision was the 1/8 remaining bug class not eliminated by Phase 2.
+> **🎯 CRITICAL UPDATE 2026-05-21 PM late**: User confirmed Gemini Enterprise (Business Edition) includes Veo 3.1 as capacity (replaces Veo 3.0). Lip-sync via Veo 3.1 = **$0 cost**. Hedra demoted to fallback.
+
+### 8.17.1 When to use lip-sync
+
+Lip-sync model required when:
+- Character speaks on-screen (face visible + audio character speech)
+- Without lip-sync: uncanny mismatch between lip motion + audio → realismo broken
+- Anti-pattern #9 AUDITOR-PROTOCOL: "Audio-visual lip-sync realism violations"
+
+Per video, typical shots requiring lip-sync:
+- Hook character intro (if dyad speaks): ~2 shots × ~3s each = 6s
+- Decision moment narrator/character dialogue: ~3 shots × ~4s = 12s
+- Climax confrontation character speech: ~2 shots × ~4s = 8s
+- **Total typical: ~25-30s of lip-sync per video**
+
+### 8.17.2 Vendor options
+
+**Option A — Hedra Character-3 (Replicate, $0.05/s)**:
+- **Best in class** specialist 9.5/10 lipsync quality (per MODEL-BENCHMARK.md.bak.sprint-combinado-8)
+- Audio-driven: input audio + character photo → lip-synced video output
+- Drop-in: insert into Hailuo animation pipeline as character-talking shots
+- Cost: $0.05/s × 30s = **$1.50/video**
+- Validated by Hedra Studio + Replicate
+- API: api.hedra.com (feb 2026 launch) OR atlabs.ai third-party OR Replicate hosted
+
+**Option B — Veo 3.1 (Gemini, ENTERPRISE FREE confirmed 2026-05-21 PM)** ⭐⭐ DEFAULT:
+- Native audio + lip-sync in single generation (no separate step)
+- Generates ENTIRE scene visual + audio + lip-sync end-to-end
+- Quality: 9/10 video-driven
+- Cost: **$0** (Gemini Enterprise Business Edition includes Veo 3.1 as capacity, NOT add-on)
+- ✅ Verified user 2026-05-21: "Veo 3.1 reemplazó a Veo 3.0 dentro del plan Gemini Enterprise (Business Edition) como capacidad incluida"
+- 4K + native 9:16 vertical (perfect for IG Reel)
+- API endpoint: Gemini API (same auth as Vision, separate model id for veo3)
+- ⚠️ Caveats forward to verify:
+  - Enterprise quotas / rate limits per month — unknown
+  - NSFW filter — Veo 3.1 historically rejects horror gore content; may need to soften prompts OR fallback to Hedra
+  - Generation time slower than Hailuo (~minutes per clip vs seconds)
+- API: Gemini API via gemini-3-flash-preview or veo3 endpoint
+
+**Option C — Sync.so (Replicate, $0.10-0.30/s)**:
+- Post-process — needs existing video + audio → outputs lip-synced version
+- Quality: 7/10
+- ⛔ Skip — Hedra strictly better quality at lower cost
+
+**Option D — ElevenLabs**:
+- No video lip-sync product. Only audio generation.
+- Can pair with Hedra/Veo as audio source.
+- Not a standalone lip-sync option.
+
+### 8.17.3 Recommendation for video #3 — UPDATED 2026-05-21 PM late (user clarification Veo = generator)
+
+**NEW DEFAULT: Veo 3.1 via Gemini Enterprise API** ⭐⭐:
+- $0 cost (enterprise confirmed — Veo is GENERATOR, generates whole character-speaking shot end-to-end)
+- Native audio + lip-sync + visual in single generation call
+- Quality 9/10 video-driven
+- 4K + native 9:16 vertical
+- **Reframes lip-sync workflow**: NO separate "animate then lip-sync" pipeline. Veo generates the speaking shot WHOLE.
+- Replaces Hailuo + Hedra for character-speaking shots specifically
+- ⚠️ Test on 1 sample shot BEFORE committing entire video #3 to Veo (NSFW filter + quotas + quality validation)
+
+**FALLBACK 1: Hailuo Pro + character anchor (no lip-sync)**:
+- If Veo rejects shot content (NSFW gore filter), use Hailuo Pro to generate the visual
+- Then either:
+  - Accept slightly stiff lip-sync (Hailuo doesn't sync to audio explicitly)
+  - OR add Hedra post-process for lip-sync on the still-character composition
+
+**FALLBACK 2: Hedra Character-3 via Replicate**:
+- $1.50/video cost (only when Veo rejects content AND we need precise lip-sync)
+- 9.5/10 specialist quality
+- Drop-in compatible with per-clip atomic pipeline
+- Use case narrowed: character-speaking shots Veo rejected for NSFW reasons
+
+### 8.17.4 Integration workflow (per-clip atomic compatible)
+
+Per character-talking shot:
+
+```bash
+# Step 1: Generate character anchor with mouth-closed pose (Gemini Nano Banana STRICT) — FREE
+.venv/bin/python scripts/image.py \
+  --prompt "character_<name> talking head, mouth closed neutral, looking at camera, [setting]" \
+  --strict \
+  --output assets/anchors/character_<name>_talking_anchor.png
+
+# Step 2: Generate character TTS audio for this shot (ElevenLabs) — FREE
+.venv/bin/python scripts/tts.py \
+  --voice <voice_id> --text "<dialog>" \
+  --output assets/tts/shot_<id>_dialog.mp3
+
+# Step 3: Hedra lip-sync animation (Replicate $0.05/s × shot_duration)
+.venv/bin/python scripts/lip-sync-hedra.py \
+  --image assets/anchors/character_<name>_talking_anchor.png \
+  --audio assets/tts/shot_<id>_dialog.mp3 \
+  --output assets/clips/shot_<id>_lipsynced.mp4 \
+  --duration <shot_duration_s>
+# Replicate model: hedra/character-3 (verify current endpoint)
+
+# Step 4: Build atomic clip (per-clip atomic pipeline)
+.venv/bin/python scripts/build_clip_atomic.py \
+  --visual assets/clips/shot_<id>_lipsynced.mp4 \
+  --audio-overrides "tts:assets/tts/shot_<id>_dialog.mp3" \
+  --shot-id shot_<id>
+```
+
+### 8.17.5 Validation
+
+```bash
+# Per lip-sync shot:
+.venv/bin/python scripts/gemini_midexec_vision.py \
+  --hook atomic_post \
+  --clip assets/clips-atomic/shot_<id>_atomic.mp4 \
+  --captions assets/clips-atomic/shot_<id>_captions.json \
+  --spec ../creative-specs/<id>.yaml \
+  --shot-id shot_<id>
+# Gemini Vision checks lip-sync alignment + caption sync + audio quality
+```
+
+### 8.17.6 Cost summary
+
+| Item | Hedra default | Veo 3.1 enterprise free | Veo 3.1 retail |
+|---|---|---|---|
+| Lip-sync cost per video | $1.50 | $0 | $12 |
+| Quality | 9.5/10 | 9/10 | 9/10 |
+| Integration effort | Drop-in compatible | Native | Native |
+| **Default recommendation** | ✅ DEFAULT | Use IF enterprise confirmed | Skip — too expensive |
+
+### 8.17.7 Build script TODO
+
+`scripts/lip-sync-hedra.py` — to build forward Phase 3 first video that uses lip-sync. Currently Hedra integration via Replicate is straightforward (similar to Hailuo call pattern).
+
+### 8.17.8 Canonical validation status
+
+```yaml
+canonical_validation_status: "pending_video_3_first_use"
+validated_against_canonical_refs:
+  - "MODEL-BENCHMARK.md.bak.sprint-combinado-8 historical Hedra Character-3 9.5/10 specialist score"
+  - "Refs canónicos lip-sync no validated empirically per-video — pending video #3 first use Hedra"
+validation_methodology: "Industry benchmark + pending production validation"
+validated_at: 2026-05-21
+phase_3_forward:
+  - "Build lip-sync-hedra.py script Replicate integration"
+  - "Test on video #3 character-talking shots"
+  - "Compare Hedra output quality vs Veo 3.1 if enterprise covers"
+  - "Measure user perceptual delta with vs without lip-sync"
+```
+
+
+---
+
+## § 8.18 — VEO 3.1 PRIMARY MODEL STRATEGY (enterprise free) — NEW 2026-05-21 PM late
+
+> **Authority**: User confirmed 2026-05-21 PM "Veo 3.1 reemplazó a Veo 3.0 dentro del plan Gemini Enterprise (Business Edition) como capacidad incluida — no es un add-on aparte".
+> **Implication**: Veo 3.1 = $0 cost via existing Gemini API key. Potentially replaces large portions of Replicate Hailuo spend.
+
+### 8.18.0 ⚠️ API ROUTE CLARIFICATION (2026-05-21 PM late — user clarification)
+
+**Veo 3.1 is a Google DeepMind model. Access route MATTERS for cost**:
+
+| Route | Cost | Use |
+|-------|------|-----|
+| **Gemini API direct** (model `veo-3.1`) | **$0 ENTERPRISE** ✅ | DEFAULT — use this route |
+| Replicate hosted Veo | Charged separately (NOT enterprise) | ❌ DO NOT use Veo via Replicate |
+| Google AI Studio direct | Same enterprise key | Acceptable alternate |
+
+**Implementation**: same `google-genai` Python library we use for Vision audits, just with `veo-3.1` model id. Same `GEMINI_API_KEY` env var.
+
+**NEVER call Veo via Replicate** — that's a paid separate vendor host (no enterprise benefit). Always Gemini API endpoint.
+
+### 8.18.0.1 Veo USE CASE — GENERATOR not DUBBER (user clarification 2026-05-21)
+
+**Veo 3.1 is for GENERATING scenes from scratch, NOT post-process visual dubbing on existing video.**
+
+User's distinction (from Google docs):
+> "Elige Veo 3.1 si tu objetivo es crear contenido desde cero — short film, ad clip, cinematic scene donde personaje inventado dice diálogo unos segundos hiperrealistamente."
+> "Sync Labs o HeyGen si ya tienes video grabado y solo necesitas traducir/cambiar audio sin volver a grabar."
+
+**Tool taxonomy CLARIFIED**:
+
+| Tool | Use case | Our pipeline forward |
+|------|----------|---------------------|
+| **Veo 3.1** (Gemini API enterprise) | GENERATE scene (visual + audio + lip-sync) from prompts + character anchor image | ✅ PRIMARY for character-speaking shots — generate whole shot end-to-end |
+| Hailuo Std/Pro (Replicate) | GENERATE scene (visual only, no audio) from prompts + character anchor | ✅ For non-character shots OR Veo-rejected NSFW shots |
+| Hedra Character-3 (Replicate) | Still photo → talking-head animation with audio sync | ⚠️ DEMOTED — Veo replaces this use case at $0 |
+| Sync Labs / HeyGen | DUB existing real-life video to new audio (visual dub) | ❌ NOT our use case — we generate from scratch always |
+
+**Translated to architectural decision per shot type**:
+
+| Shot type | Primary tool | Fallback |
+|---|---|---|
+| Character speaking on-screen | **Veo 3.1** (generates whole shot incl. lip-sync) | Hailuo + Hedra if Veo NSFW reject |
+| Character moving without speaking | Veo 3.1 OR Hailuo Pro (both fine) | n/a |
+| POV traversal (no character on-screen) | Veo 3.1 OR Hailuo Std | n/a |
+| Atmospheric / setting establishing | Veo 3.1 OR Hailuo Std | n/a |
+| Gore / explicit horror content | **Hailuo Std/Pro** (Veo will reject NSFW) | n/a (Hailuo is the path) |
+
+### 8.18.1 Veo 3.1 capabilities summary
+
+| Feature | Veo 3.1 enterprise |
+|---|---|
+| Cost | **$0** (enterprise included) |
+| Quality | 9/10 cinematic (premium tier — above Hailuo Pro) |
+| Native audio in clip | ✅ YES (no separate TTS for character shots) |
+| Native lip-sync | ✅ YES (no Hedra needed) |
+| Resolution | 4K |
+| Aspect ratio | Native 9:16 (perfect IG Reel) |
+| Multi-image refs / ingredients-to-video | ✅ YES |
+| Generation time | ~minutes per clip (slower than Hailuo seconds) |
+| NSFW handling | ⚠️ Historically rejects horror gore (per MODEL-BENCHMARK) |
+| API endpoint | Gemini API (model id veo3 / veo-3-1) |
+
+### 8.18.2 Decision tree per shot — Veo 3.1 vs Hailuo
+
+```
+Per shot in shot_list[]:
+  ┌─────────────────────────────────────────────────────┐
+  │ 1. Is this shot's content acceptable to Veo filter? │
+  │    (NO explicit gore, NO extreme body horror)       │
+  └───────────┬───────────────────────┬─────────────────┘
+              │ YES                    │ NO (gore/horror)
+              ▼                        ▼
+  ┌──────────────────────┐  ┌──────────────────────────┐
+  │ 2. Has Veo enterprise │  │ Use Hailuo Std/Pro       │
+  │    quota remaining?   │  │ (NSFW-friendly)          │
+  └──────┬──────┬─────────┘  └──────────────────────────┘
+         │ YES   │ NO
+         ▼       ▼
+  ┌──────────┐  ┌────────────────────────┐
+  │ DEFAULT  │  │ Fallback Hailuo Pro    │
+  │ Veo 3.1  │  │ (quota exhausted)      │
+  └──────────┘  └────────────────────────┘
+
+When uncertain → test on 1 sample shot first.
+```
+
+### 8.18.3 Cost model with Veo 3.1 primary
+
+**Scenario A — Veo unlimited enterprise, all shots Veo**:
+- All 22 shots × $0 (Veo) = **$0** Replicate spend
+- Plus all Gemini + ElevenLabs FREE
+- **Total video #3 cost: ~$0** (operational only)
+
+**Scenario B — Veo for safe shots + Hailuo for gore shots** (REALISTIC):
+- ~70% shots Veo-safe (15-16 shots × $0) = $0
+- ~30% shots gore/horror → Hailuo Pro (6-7 shots × $0.60) = $3.60-4.20
+- Lip-sync FREE via Veo for character shots
+- **Total video #3 cost: ~$4** (Replicate Hailuo for gore shots only)
+
+**Scenario C — Veo quota limited, hero shots only** (CONSERVATIVE):
+- Hero shots (3) + lip-sync shots (3) via Veo = 6 × $0 = $0
+- Rest (16) via Hailuo Std + 6 Pro escalation = $4.32 + $3.60 = $7.92
+- **Total video #3 cost: ~$8** (was $9 with Hedra)
+
+**Scenario D — Veo fails NSFW + content very horror-heavy**:
+- All animation via Hailuo Std/Pro = $5-8
+- Lip-sync via Hedra = $1.50
+- **Total video #3 cost: ~$7-10**
+
+### 8.18.4 NSFW filter risk mitigation
+
+Per MODEL-BENCHMARK.md.bak.sprint-combinado-8: **"Veo 3.1, Sora 2, Midjourney, Ideogram, Runway, Imagen rechazan NSFW/horror gore."**
+
+Strategy: prompt softening + content abstraction:
+- "Cleaver-headed butcher with severed meat" → "tall industrial figure with helmet, abstract industrial setting"
+- "Mouth devouring viewer" → "approaching shadow with abstract organic forms"
+- "Blood and viscera" → "dark substance and atmospheric elements"
+- "Gore explicit" → "horror-suggestive, atmospheric"
+
+**Test methodology before video #3 commits**:
+1. Pick 3 sample SPEC shot prompts (1 safe, 1 borderline, 1 horror)
+2. Submit to Veo 3.1 + Hailuo Pro parallel
+3. Compare outputs + check Veo accepts/rejects
+4. If Veo rejects → soften prompt OR use Hailuo fallback
+5. Document which shot types Veo accepts → architect can design SPEC v10 around constraints
+
+### 8.18.5 Test bench (recommended before video #3 commits to Veo)
+
+```bash
+# Sample 1: SAFE shot (cinematic POV walking)
+.venv/bin/python scripts/veo3.py \
+  --prompt "POV first-person walking through abandoned cinema corridor, dim warm lights, peeling wallpaper, dust particles in air, cinematic style" \
+  --duration 6 \
+  --aspect 9:16 \
+  --output assets/test/veo_safe.mp4
+
+# Sample 2: BORDERLINE shot (uncanny character)
+.venv/bin/python scripts/veo3.py \
+  --prompt "tall thin uncanny figure standing in dark hallway, slight tilt of head toward camera, ambient horror atmosphere, no explicit content" \
+  --duration 6 \
+  --aspect 9:16 \
+  --output assets/test/veo_borderline.mp4
+
+# Sample 3: HORROR shot (gore-adjacent)
+.venv/bin/python scripts/veo3.py \
+  --prompt "matarife character with industrial helmet, abstract industrial setting, dim ambient lights" \
+  --duration 6 \
+  --aspect 9:16 \
+  --output assets/test/veo_horror.mp4
+
+# Plus Hailuo parallel for comparison:
+# (similar prompts via existing scripts/video.py)
+```
+
+**Decision matrix from test**:
+- Both Veo + Hailuo accept all 3 → architect can use Veo as primary for ALL shots
+- Veo accepts 1-2, Hailuo accepts all 3 → use Veo selectively, Hailuo fallback
+- Veo rejects most → demote to lip-sync-only, Hailuo primary
+
+### 8.18.6 Architectural changes if Veo 3.1 becomes primary
+
+**Pipeline simplification**:
+- Skip separate TTS for character-speaking shots (Veo bundles audio)
+- Skip Hedra lip-sync calls (Veo handles natively)
+- Skip part of audio mix complexity (Veo audio bundled in clip)
+
+**Workflow per Veo-character-shot**:
+```bash
+# Single call generates visual + audio + lip-sync
+.venv/bin/python scripts/veo3.py \
+  --prompt "character_<name>_anchor.png + dialog text + setting + motion" \
+  --dialog "<exact spoken text>" \
+  --duration <shot_duration_s> \
+  --aspect 9:16 \
+  --output assets/clips/shot_<id>_veo.mp4
+
+# Then drop into per-clip atomic builder (Veo audio already bundled):
+.venv/bin/python scripts/build_clip_atomic.py \
+  --visual assets/clips/shot_<id>_veo.mp4 \
+  --audio-source bundled \
+  --shot-id shot_<id>
+```
+
+**For non-character shots (POV traversal, atmospheric)**:
+- Veo OR Hailuo per § 8.18.2 decision tree
+- Veo audio bundled (foley, ambient) OR Hailuo + separate ElevenLabs audio
+
+### 8.18.7 Quotas / rate limits to monitor
+
+Gemini Enterprise Veo 3.1 quotas unknown until production use. Monitor:
+- Daily / monthly generation cap
+- Concurrent generation limit
+- Generation time per clip (latency)
+- Re-tries on filter rejection
+
+If quota hit → fallback Hailuo + Hedra (still $5-9/video Replicate).
+
+### 8.18.8 Canonical validation status — UPDATED 2026-05-21 PM late post test bench
+
+```yaml
+canonical_validation_status: "validated_test_bench_2026_05_21"
+validated_against:
+  - "Veo 3.1 SAFE shot (POV library corridor) → PASS 78s gen, 720x1280, AAC native audio"
+  - "Veo 3.1 BORDERLINE shot (uncanny figure hallway) → PASS 64s gen, native audio"
+  - "Veo 3.1 HORROR shot (industrial figure helmet abandoned) → PASS 80s gen, native audio"
+  - "Veo 3.1 CHARACTER SPEAKING shot (dialog) → PASS 64s gen + Whisper verified 'Elige bien, no hay vuelta atrás' matches prompt"
+  - "All 4 test outputs: h264+AAC, 6.0s duration, 9:16 native 720x1280, audio bundled"
+validation_methodology: "Test bench 4 prompts spanning safe/borderline/horror/dialog + ffprobe stream verification + Whisper dialog match"
+validated_at: 2026-05-21
+test_outputs:
+  - "/tmp/veo_test_safe.mp4"
+  - "/tmp/veo_bench_borderline.mp4"
+  - "/tmp/veo_bench_horror.mp4"
+  - "/tmp/veo_bench_speaking.mp4"
+build_outputs:
+  - "scripts/veo3.py production-ready (3-tier preview/fast/lite + httpx download + auth follow-redirects)"
+scenarios_resolved:
+  - "Scenario A — Veo accepts ALL horror content tested. Default forward."
+  - "Cost video #3 forward: ~$0 if Veo for all shots OR ~$4 mixed Hailuo for gore-specific"
+quotas_observed:
+  - "No quota errors during 4 sequential calls"
+  - "Production sequential 22 shots × ~70s = ~25 min wall-clock"
+  - "Possibly parallelizable (concurrent operations not yet tested)"
+findings_critical:
+  - "Veo 3.1 generates VISUAL + AUDIO + LIP-SYNC native end-to-end in single call"
+  - "Whisper-verified dialog match: prompt 'Elige bien, no hay vuelta atras' → Veo output speech 'El lige bien, no hay vuelta atrás'"
+  - "Native AAC audio bundled in mp4 output"
+  - "4K available, current test 720x1280 baseline"
+phase_3_forward:
+  - "Test Veo 3.1 with character_anchor image_ref (image-to-video with character)"
+  - "Test concurrent parallel generations (Files API rate limit unknown)"
+  - "Compare quality side-by-side Veo vs Hailuo Pro for same prompt"
+  - "Test motion_bridge_intent in Veo prompts (POV walking forward continuous between shots)"
+  - "Architect SPEC v10 needs `model_tier_override: veo_3_1` field per shot"
 ```
 

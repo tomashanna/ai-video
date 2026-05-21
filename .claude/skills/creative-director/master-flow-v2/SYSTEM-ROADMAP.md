@@ -3,38 +3,49 @@
 > **Audience**: tu equipo (creator team) — onboarding rápido al sistema multi-agent video production.
 > **Purpose**: enable visualization of how the system actually works → identify improvements + redundancies pre-investment.
 > **Output**: this doc (structured markdown) + Excalidraw-ready diagram spec § 11.
-> **Last validated**: 2026-05-19 post matadero v1 FINAL ship (8-iter campaign, 22 gaps codified).
+> **Last validated**: 2026-05-21 post Phase 2 architectural refactor COMPLETE (per-clip atomic + Quality Gate Agent + effects library).
+> **Previous milestone**: 2026-05-19 matadero v1 FINAL ship (8-iter campaign, 22 gaps codified) + 2026-05-20 cinema-abandonado v2 (6-iter, 11 NEW gaps).
 
 ---
 
 ## 1. Executive summary (1-min read)
 
 ```
-SISTEMA = 3 agents (LLM) + 1 user + 4 niveles de docs
-GOAL    = Producir videos horror-choice ≥9.7 Gemini quality automatizado
-TOOLS   = ElevenLabs (audio) + Replicate Hailuo (video) + Gemini Vision (audit)
+SISTEMA = 3 LLM agents + 1 automated agent + 1 user + 5 niveles de docs
+GOAL    = Producir videos horror-choice ≥9.7 Gemini + ≥85% empirical audit automatizado
+TOOLS   = ElevenLabs (audio) + Replicate Hailuo (video) + Gemini Vision (audit + image)
           + HyperFrames (compose) + Whisper (transcribe) + ffmpeg (everything)
 
-3 AGENTS:
+3 LLM AGENTS:
   🏛️ ARCHITECT (terminal 2)  — DESIGNS what + story + characters + script + intent
   🛠️ ENGINEER (terminal 1)   — EXECUTES the SPEC: assets gen + audio + compose + render
   🔍 AUDITOR (terminal 3)    — VERIFIES handoffs independently against canonical authority
 
+⭐ 1 AUTOMATED AGENT (Phase 2 NEW 2026-05-20):
+  🤖 QUALITY GATE AGENT      — Per-clip automated QA (Gemini Vision + sentinels + verdict)
+                              Runs PER ATOMIC CLIP before assembly. Catches bugs at granular
+                              level vs current "auditor reviews POST-render"
+
 1 USER (👤): perceptual ground truth (Rule D PRECEDENCE) + final PUBLISH approval
 
-4 LAYERS:
-  NIVEL 0 — Universal AI principles (Hard Rules CLAUDE.md)
-  NIVEL 1 — Multi-agent protocols (TEAM-PROTOCOL + AUDITOR-PROTOCOL + HANDOFF-PROTOCOL)
-  NIVEL 2 — Video production universal (ai-video-production/* scripts + docs)
+5 LAYERS:
+  NIVEL 0 — Universal AI principles (Hard Rules CLAUDE.md, now 23 rules)
+  NIVEL 1 — Multi-agent protocols (TEAM + AUDITOR + HANDOFF)
+  NIVEL 2 — Video production universal (ai-video-production/* + Phase 2 scripts + effects-library)
   NIVEL 3 — Format-specific (horror-choice-format/* PAUTA + INGENIERO-PAUTA)
   NIVEL 4 — Per-video SPEC (creative-specs/<id>.yaml)
 
 ITER PATTERN:
-  Architect SPEC → Engineer execute → Auditor verify → User perceptual → PUBLISH
-  (loop until ≥9.7 Gemini + audit-against-ref + user approval)
+  Architect SPEC → Engineer execute PER CLIP → Quality Gate per-clip verdict →
+  Auditor cross-verify → User perceptual → PUBLISH
+  (loop ≥9.7 Gemini + audit-against-ref + user approval)
 ```
 
-**Matadero v1 milestone (2026-05-19)**: first video shipped through complete system. 8 iter campaign, 22 gaps codified anti-recurrencia. Video #2 forward heredando expects 1-2 iter.
+**Milestones**:
+- **2026-05-19 matadero v1** — first video shipped (8 iter, 22 gaps codified)
+- **2026-05-20 cinema-abandonado v2** — 2nd video (6 iter = -25%, $14.29 vs $15.56)
+- **2026-05-20 Phase 2 refactor COMPLETE** — per-clip atomic assembly + Quality Gate Agent + mid-exec Gemini Vision + 10-transition effects library. Eliminates 7/8 recurring bug classes structurally. MANDATORY video #3+ per Hard Rule #23.
+- **Forward video #3 estimate**: 1-3 iter, ~$15-16 budget, lip-sync precision = only remaining bug class (Phase 3 Hedra deferred).
 
 ---
 
@@ -106,13 +117,22 @@ ITER PATTERN:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.2 Why 3 agents (not 2)
+### 2.2 Why 3 LLM agents (+ 1 automated) — evolution timeline
 
 **Before 2026-05-17**: 2-role system (architect + engineer). Risk: engineer self-audit + Gemini holistic scores inflated (matadero CP5 v1 = 9.0 holistic con 0/10 SFX wired = critical gap missed).
 
 **Post 2026-05-17**: AUDITOR added as 3rd independent role. Verifies engineer claims via DIRECT measurement (not pattern-match labels — anti-pattern #8). User-flagged structural gaps that 2-role system missed get codified into AUDITOR-PROTOCOL forward.
 
 **Validated by matadero**: 8 iter campaign, 22 gaps codified. Without auditor independent verification, ~12 of those gaps would have shipped undetected.
+
+**Post 2026-05-20 Phase 2**: ⭐ **QUALITY GATE AGENT** added as 4th role (automated, not LLM). Spawned PER CLIP atomic post-build. Runs Gemini Vision + sentinels + caption schema + audio waveform analysis. Returns 🟢/🟡/🔴 verdict per clip BEFORE assembly. If 🔴 → halt + regen ONE clip (NOT full iter cycle).
+
+**Why 4th role exists**:
+- Auditor (LLM) reviews POST-render = retroactive (expensive if bug found after full assembly).
+- Quality Gate Agent (automated) reviews PER ATOMIC CLIP = preventive (cheap regen one clip).
+- Matadero + cinema-abandonado both shipped with bugs auditor only caught POST-render. Phase 2 = catch at clip-build time.
+
+**Cost-benefit Phase 2**: ~$0.10 per clip × 22 clips = $2.20/video Quality Gate cost. Saves $5-15/iter avoided = 100-700% ROI per bug caught early.
 
 ### 2.3 Layer architecture (4 niveles)
 
@@ -140,10 +160,18 @@ ITER PATTERN:
 │ NIVEL 2 — Video production universal (format-agnostic)              │
 │   .claude/skills/ai-video-production/                               │
 │   • BOOTSTRAP.md (new project setup)                                │
-│   • PIPELINE.md (CP1-CP5 flow)                                      │
+│   • PIPELINE.md (CP1-CP5 flow + § 13 NEW per-clip atomic Phase 2)   │
 │   • SFX-PIPELINE.md / CAPTIONS.md / AUDIO-MASTERING.md / etc.       │
-│   • templates/scripts/* (10 production + audit scripts)             │
-│   • templates/avu-library/ (AVU pre-rendered clips)                 │
+│   • templates/scripts/* (13 scripts: 10 audit + 3 Phase 2 NEW)      │
+│     ⭐ Phase 2 NEW 2026-05-20:                                       │
+│       - build_clip_atomic.py (per-clip mux pipeline)                │
+│       - quality_gate_per_clip.py (4th role automated)               │
+│       - gemini_midexec_vision.py (4 mid-exec hooks)                 │
+│   • templates/avu-library/ (4 AVU pre-rendered clips)               │
+│   • templates/effects-library/ ⭐ NEW Phase 2                        │
+│     - 10 transitions JSON specs (cross-fade/film-burn/glitch/etc)   │
+│     - caption-burn-template.css (3 canonical classes)               │
+│     - 3 audio stings (whoosh + drone + projector-cue)               │
 └─────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -811,6 +839,272 @@ Tools to use:
 
 ---
 
+### 11.7 ⭐ Per-clip atomic assembly diagram (Phase 2 — 2026-05-20)
+
+**Purpose**: visualize how Phase 2 architecture eliminates 7/8 recurring edit bug classes structurally. This diagram is the **key value-add** for video #3+ ship quality vs matadero/cinema legacy.
+
+```
+═══════════════════════════════════════════════════════════════════════════
+LEGACY PIPELINE (matadero + cinema-abandonado) — BUG-PRONE
+═══════════════════════════════════════════════════════════════════════════
+
+[Horizontal flow, RED arrows showing where bugs accumulate]
+
+  Clip_01.mp4 ─┐
+  Clip_02.mp4 ─┤
+  Clip_03.mp4 ─┤───► ffmpeg concat ────► [global master.mp3 90s+] ──┐
+  ...          ─┤                              ↑                     │
+  Clip_22.mp4 ─┘                              [TTS + SFX + music]    │
+                                               [mixed cumulatively]   ▼
+                                                              ┌──────────────┐
+                                                              │ Final render │
+                                                              └──────┬───────┘
+                                                                     │
+                                                                     ▼
+                                                          🔴 BUG-PRONE OUTPUT:
+                                                            ├ End-of-timeline drift
+                                                            ├ Caption fragments
+                                                            ├ Same-Y overlap
+                                                            ├ Audio/clip mismatch
+                                                            ├ SFX context-blind
+                                                            ├ AVU GSAP offsets
+                                                            └ Cumulative timeline error
+
+  Bug detection: ONLY post-render Gemini audit (retroactive).
+  Cost to fix: $5-15/iter cycle (full re-render).
+
+
+═══════════════════════════════════════════════════════════════════════════
+PHASE 2 PIPELINE (mandatory video #3+) — STRUCTURALLY EXEMPT
+═══════════════════════════════════════════════════════════════════════════
+
+[Vertical flow, GREEN per-clip atomic units]
+
+  FOR EACH SHOT_NN:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  1. Hailuo animate → shot_NN.mp4 (visual only)                  │
+  │                                                                 │
+  │  2. ⚡ GEMINI VISION hook (mid-execution)                       │
+  │     • Verify visual matches SPEC scene_context                  │
+  │     • Score: visual_match, character_consistency,               │
+  │       atmospheric_motions, composition, literal_action_match    │
+  │     • If <7 → flag regen ONE shot ($0.27 vs full iter)          │
+  │                                                                 │
+  │  3. build_clip_atomic.py:                                       │
+  │     ├ TTS narration for THIS window                             │
+  │     ├ SFX events for this shot                                  │
+  │     ├ Local ambient slice                                       │
+  │     ├ Optional AVU overlay (countdown/decision-freeze/outro)    │
+  │     ├ ffmpeg mux audio + video → shot_NN_atomic.mp4             │
+  │     └ Caption sidecar JSON (scope-limited)                      │
+  │                                                                 │
+  │  4. ⭐ QUALITY GATE AGENT (4th role automated):                 │
+  │     ├ Gemini Vision per-clip (3 frames)                         │
+  │     ├ Caption schema validation (no None, no overlap, ≥1.5s)    │
+  │     ├ Audio waveform (LUFS ±0.5, no clipping)                   │
+  │     ├ Sync verify (Whisper similarity ≥0.6)                     │
+  │     ├ Sentinels (S1 ghost-speaker, S2 dup text, S6 AVU)         │
+  │     └ Verdict: 🟢 PASS / 🟡 NB / 🔴 FAIL                         │
+  │                                                                 │
+  │     If 🔴 → halt assembly, regen ONE clip (NOT full iter)       │
+  └─────────────────────────────────────────────────────────────────┘
+                                  ↓
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  ASSEMBLY:                                                      │
+  │                                                                 │
+  │  ffmpeg concat:                                                 │
+  │   shot_01_atomic + effect_01 + shot_02_atomic + effect_02 +     │
+  │   ... + outro_atomic                                            │
+  │                                                                 │
+  │  Effects library (10 transitions):                              │
+  │   cross-fade-0.5s, hard-cut-whoosh, film-burn, static-noise,    │
+  │   black-screen, fade-to-black, light-flash, projector-cue,      │
+  │   glitch-transition, cross-fade-1.0s                            │
+  │                                                                 │
+  │  + cross-clip music continuous layer (separate track)           │
+  │  + cross-clip ambient continuous layer (separate track)         │
+  │  + color grading LUTs cross-section                             │
+  │                                                                 │
+  │  ⚡ GEMINI VISION transition_post hook (verify continuity)      │
+  └─────────────────────────────────────────────────────────────────┘
+                                  ↓
+                          ┌──────────────┐
+                          │ Final render │
+                          └──────┬───────┘
+                                 │
+                                 ▼
+                  🟢 STRUCTURALLY BUG-EXEMPT OUTPUT:
+                    ├ Per-clip sync verified independent
+                    ├ Captions scope-limited per clip (no fragmentation)
+                    ├ Audio mux atomic (no drift)
+                    ├ SFX explicit per shot (no context blindness)
+                    ├ AVU bundled atomic (no GSAP cross-clip offset)
+                    ├ Quality Gate Agent verdict per-clip pre-assembly
+                    └ Mid-exec Gemini catches regen-able bugs early
+
+  Bug detection: PER-CLIP atomic + transition_post + post-render.
+  Cost: $2.20/video Gemini Vision integration; regen ONE clip = $0.27 vs $5-15/iter.
+```
+
+#### Why per-clip atomic ELIMINATES 7/8 bug classes (structural reasoning)
+
+| Bug class current legacy | Why it happens | Why per-clip eliminates |
+|--------------------------|----------------|-------------------------|
+| End-of-timeline sync drift | Global master.mp3 = TTS+SFX+music mixed cumulatively across 90s. Each offset compounds. | Per-clip mux = audio scope ends WITH clip. No compounding across timeline. |
+| Caption fragmentation (Whisper over-segment) | Whisper applied to 90s global = 60-70 chunks default. | Per-clip Whisper applied to 4-6s = 2-4 chunks max. Schema validation per clip. |
+| Same-Y caption overlap (cross-class) | All captions overlay same Y plane on global timeline. | Per-clip caption sidecar = scope-limited. Validation per clip catches Y overlap immediately. |
+| Audio/clip mismatch boundaries | Master.mp3 has TTS at 14.5s. Clip boundary at 14.0s. Mismatch hidden until full render. | Audio bundled WITH visual mux. Boundary IS clip end. Cannot mismatch by construction. |
+| SFX context-blind reuse | SFX library global pool, engineer picks without scene context. | Per-clip explicit SFX selection per shot's `who_does_what` context. Reuse DENY list cross-setting. |
+| AVU GSAP timing offsets | AVU HTML+GSAP relies on `data-start` timestamps on global timeline. | AVU MP4 bundled atomic in clip mux. No cross-clip GSAP timing dependency. |
+| Cumulative timeline error | 90s+ timeline with 22+ shots, 30+ audio events, 20+ captions. Compounding. | Each clip 4-6s scope. No compounding by definition. |
+
+**Only remaining bug class** (1/8): **Lip-sync precision**. Phase 2 cannot fix because Hailuo first-frame conditioning is the source. **Phase 3 forward** (Hedra/Sync.so ~$3/video, user deferred 2026-05-20).
+
+#### Excalidraw diagram spec § 11.7
+
+Visual elements:
+- **2 large vertical columns side-by-side**: "LEGACY (red border)" vs "PHASE 2 (green border)"
+- **Per clip atomic** depicted as **stacked rounded rectangles** color-coded (visual=blue, audio=orange, captions=yellow, AVU=purple, Quality Gate=green-tick)
+- **Effects between clips** depicted as **diamond shapes** between clips (cross-fade icon, whoosh icon, light-flash icon)
+- **Cross-clip music layer** depicted as **continuous wavy line** running ACROSS all clips at bottom
+- **Gemini Vision hooks** depicted as **yellow stars ⭐** at hailuo_post, tts_post, atomic_post, transition_post positions
+- **Quality Gate Agent** depicted as **green checkmark box** AFTER each clip atomic build
+- **Bug detection markers**: red ✗ on left column (post-hoc only), green ✓ on right column (per-clip + post-hoc)
+- **Cost annotations**: "$5-15/iter" on legacy bugs, "$0.27 regen 1 clip" on Phase 2
+
+Suggested layout:
+```
+[Title banner top]: "PER-CLIP ATOMIC ASSEMBLY — Phase 2 (2026-05-20)"
+[Left column]: LEGACY pipeline (red)
+[Right column]: PHASE 2 pipeline (green)
+[Bottom annotation table]: 7 bug classes + structural reasoning
+```
+
+#### 🆕 Excalidraw § 11.7.b — 3 AUDIO LAYERS diagram (added 2026-05-21 post user Q&A)
+
+> **Gap fill**: Original § 11.7 NO mostraba claramente las 3 capas de audio + cross-clip music workflow + transition_post audio audit. User exposed 3 gaps Q1+Q2+Q3 → esta sub-spec cierra ambigüedad.
+
+Visual elements (separate diagram):
+
+```
+[Horizontal flow with 3 stacked audio swimlanes]:
+
+═══════════════════════════════════════════════════════════════════════
+TITLE: "AUDIO ARCHITECTURE — 3 layers per scope"
+═══════════════════════════════════════════════════════════════════════
+
+[Top row: VISUAL flow]
+   clip_01.mp4  ──[effect_01]── clip_02.mp4  ──[effect_02]── clip_03.mp4  ──...
+   
+[Middle row 1: LAYER 1 AUDIO PER-CLIP (orange, bundled in clip mp4)]
+   ┌─────────────┐           ┌─────────────┐           ┌─────────────┐
+   │TTS+SFX+AVU  │           │TTS+SFX+AVU  │           │TTS+SFX+AVU  │
+   │diegetic     │           │diegetic     │           │diegetic     │
+   └─────────────┘           └─────────────┘           └─────────────┘
+   [Audit per clip: Quality Gate Agent ✓]
+
+[Middle row 2: LAYER 2 AUDIO EFFECT TRANSITIONS (purple diamond between clips)]
+                  ◆whoosh◆                  ◆flash◆
+                  in effect mp4              in effect mp4
+                  non-diegetic              non-diegetic
+   [Audit Q22 NEW: audit-effects-audio.py post-concat ✓]
+
+[Bottom row: LAYER 3 CROSS-CLIP CONTINUOUS (wavy lines running across)]
+   ≈≈≈ drone_base 0-88s ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+        ≈≈≈ accent_drama 50-88s ≈≈≈≈≈≈≈≈
+   ~~~ ambient_room 0-88s ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   [Audit Q23 NEW: audit-music-layers.py post-concat ✓]
+
+[Bottom annotation box]:
+   "Scope decision rule:
+    • Diegetic (in scene)       → LAYER 1
+    • Editorial transition cue  → LAYER 2
+    • Global music+ambient      → LAYER 3"
+
+[Side panel — Color coding]:
+   • Orange = clip-atomic audio (Layer 1)
+   • Purple = effect transition audio (Layer 2)
+   • Cyan wave = cross-clip music (Layer 3)
+   • Green tick = Quality Gate verdict per-clip
+   • Yellow stars ⭐ = Gemini Vision audit hooks
+
+[Side panel — transition_post hook NEW audio dimensions]:
+   visual_continuity (existing)
+   + audio_continuity (NEW Whisper sliding window)
+   + music_layer_continuity (NEW librosa RMS verify)
+   + effect_audio_volume_match (NEW ±3dB tolerance)
+   + sfx_no_bleed (NEW Layer 1 length matches clip mp4)
+
+[Cost annotation]:
+   "+$0.05 per transition × 10 = +$0.50 per video for full audio cross-clip audit"
+```
+
+**Suggested layout**: place § 11.7.b diagram BELOW main § 11.7 column comparison. Connects the dots visually for team — they see the per-clip column AND understand how audio layers interact across clips.
+
+#### 🆕 Excalidraw § 11.8 — AUTONOMOUS FACTORY architecture (added 2026-05-21 PM late)
+
+> **Source**: full plan in `<repo-root>/AUTONOMOUS-FACTORY-ROADMAP.md`
+> **Status**: AWAITING video #3 validation gate. Build only IF video #3 perceptual ≥9.0.
+
+Visual elements for team Excalidraw:
+
+```
+═══════════════════════════════════════════════════════════════════════
+TITLE: "AUTONOMOUS VIDEO FACTORY — 3 videos/día con manual publish anti-ban"
+═══════════════════════════════════════════════════════════════════════
+
+[Top row: USER DASHBOARD — blue rectangle]
+   • Input queue (theme + pattern + setting)
+   • Monitor in-flight + costs + scores
+   • 3 HUMAN CHECKPOINTS marked with ⭐ stars
+   
+[Center: ORCHESTRATOR.py — large blue box]
+   • Scheduled trigger 3x/día
+   • State machine PENDING → SPEC_GEN → CP1-5 → AUDITED → READY
+   • Failure recovery patterns
+   
+[Below orchestrator — 3 agent boxes side-by-side]:
+   🏛️ ARCHITECT (purple)     🛠️ ENGINEER (green)     🔍 AUDITOR (orange)
+   Claude API + PAUTA         Claude API + Phase 2    Claude API + calib v4
+   
+[Below agents — 4th automated agent]:
+   ⭐ Quality Gate Agent (teal) — per-clip operates autonomously
+   
+[Below QG agent — model tier]:
+   Veo 3.1 (yellow, FREE Gemini API) | Hailuo Replicate (red, $0.27-0.60)
+   
+[Bottom of pipeline — output queue gray]:
+   Filesystem /renders/ready/<video>.mp4
+   + caption_draft.txt + hashtags.txt + first_frame.jpg
+   
+[FINAL stage — USER MANUAL PUBLISH (blue with anti-ban warning)]:
+   ⚠️ USER → manually opens IG → posts at organic time
+   NEVER programmatic publish — IG ban risk
+
+[Side annotations]:
+   • Human checkpoints star markers: SPEC approval, HUMAN-CHECKLIST, publish
+   • Cost annotation: $4 per video × 90/mo = $360/mo Replicate
+   • Time annotation: 10-15 min user time per video (manual publish included)
+   
+[Decision gate marker top-right]:
+   "Build factory ONLY IF video #3 perceptual ≥9.0
+    (validation gate per Phase 4 evolution roadmap)"
+```
+
+**Color coding** (consistent with prior diagrams):
+- Orchestrator: BLUE (#3B82F6)
+- Architect agent: PURPLE (#6B46C1)
+- Engineer agent: GREEN (#10B981)
+- Auditor agent: ORANGE (#F59E0B)
+- Quality Gate Agent: TEAL (#14B8A6) — 4th role
+- Veo 3.1: YELLOW (#EAB308) — enterprise FREE
+- Hailuo Replicate: RED (#EF4444) — paid
+- Filesystem state: GRAY (#6B7280)
+- HUMAN CHECKPOINTS: ⭐ STARS with big yellow color
+- ANTI-BAN warning on manual publish: RED with caution icon
+
+---
+
 ## 12. Quick reference cards
 
 ### 12.1 For new agent onboarding
@@ -868,12 +1162,33 @@ Approvals at:
 ## 13. Forward evolution roadmap
 
 ```
-Phase 0 (DONE): Matadero v1 FINAL ship — system validated
-Phase 1 (NEXT): Phase 1 priority scripts + AVU library expansion
-Phase 2:        Video #2-5 horror-choice (system convergence proof)
-Phase 3:        Tutorial/B2B/Documentary formats (cross-format validation)
-Phase 4:        JSON schemas + machine-readable canonical authority
-Phase 5:        Orchestrator (1-terminal auto-coordinate 3 agents) — user perceptual review only
+Phase 0 (DONE 2026-05-19): Matadero v1 FINAL ship — 3-agent system validated
+Phase 1 (DONE 2026-05-20): Priority scripts + AVU library + Track B canonical bands
+Phase 2 (DONE 2026-05-20): ⭐ Per-clip atomic assembly + Quality Gate Agent (4th role) +
+                            10-transition effects library + mid-exec Gemini Vision hooks.
+                            Eliminates 7/8 recurring bug classes. MANDATORY video #3+.
+Phase 3 (DONE 2026-05-21): Calibrated Gemini v4 (mean abs Δ 0.14) + EXECUTION CONTINUITY
+                            dimension primary 30% weight + GAP #40 codified + cost model
+                            reset Gemini+EL enterprise FREE + Veo 3.1 enterprise validated
+                            (4 test bench PASS incl. character speech native lip-sync).
+                            Production ready: veo3.py + audit-gemini-calibrated.py.
+Phase 4 (NEXT — video #3): First video on full Phase 2 + Phase 3 stack. VALIDATION GATE
+                            for autonomous factory greenlight. Required outcomes:
+                              - Perceptual ≥9.0
+                              - Gemini calibrated v4 ≥9.0
+                              - EXECUTION CONTINUITY dim ≥8.5
+                              - Iter count ≤3
+                              - Cost ≤$9
+                            If validated → Phase 5 autonomous factory.
+                            If NOT → iterate amendments + retest video #4 manual.
+Phase 5 (CONDITIONAL — autonomous factory): Build orchestrator + 3-agent autonomous
+                            pipeline + monitoring + manual-publish queue. Goal: 3 videos/día.
+                            See AUTONOMOUS-FACTORY-ROADMAP.md for full plan + Excalidraw spec.
+                            KEY CONSTRAINT: NEVER auto-publish (IG ban risk). User stays
+                            in loop for SPEC approval + HUMAN-CHECKLIST + manual publish.
+Phase 6:        Tutorial/B2B/Documentary formats (cross-format validation).
+Phase 7:        JSON schemas + machine-readable canonical authority.
+Phase 8:        Engagement-loop integration (auto-respond DMs, comment monitoring).
 ```
 
 ---

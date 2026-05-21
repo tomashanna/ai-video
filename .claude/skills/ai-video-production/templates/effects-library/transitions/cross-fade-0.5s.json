@@ -1,0 +1,30 @@
+{
+  "id": "cross-fade-0.5s",
+  "type": "transition",
+  "category": "soft-blend",
+  "duration_s": 0.5,
+  "description": "Soft crossfade between two clips. Half-second blend reads as 'invisible' to viewer — used for connecting beats inside the same emotional unit.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=0.5:offset={offset_clip_a_minus_0.5}[v];[0:a][1:a]acrossfade=d=0.5[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "offset_clip_a_minus_0.5": "Set offset = duration(clip_a) - 0.5 (overlap window starts here)",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "afade out 0.5s on clip_a (last 0.5s) + afade in 0.5s on clip_b (first 0.5s). acrossfade=d=0.5 handles both simultaneously.",
+  "audio_sting_path": null,
+  "audio_sting_volume": null,
+  "use_cases": [
+    "Between narrative beats inside the same scene",
+    "Image variants A→B→C of the same shot",
+    "Subtle cut when no emotional rupture intended",
+    "Connecting two motion AI clips that share continuity"
+  ],
+  "avoid_for": [
+    "Scene changes with hard emotional shift (use hard-cut-with-whoosh)",
+    "Climax / impact moments (use light-flash-impact)",
+    "Cliffhanger outro (use fade-to-black-1.0s)"
+  ],
+  "hyperframes_alternative": "GSAP timeline: tl.to(clipA, {opacity:0, duration:0.5}, 'tBeat').to(clipB, {opacity:1, duration:0.5}, 'tBeat'). Use when transitions must be rendered inline in HyperFrames composition rather than pre-baked ffmpeg.",
+  "canonical_validation_status": "validated",
+  "validated_against_canonical_refs": ["ref-01", "ref-04", "ref-07"],
+  "validated_notes": "Crossfades 0.4-0.6s observed in 6/10 F1 canonical referents as inter-beat connector. Always paired with subtle audio acrossfade — never video-only."
+}

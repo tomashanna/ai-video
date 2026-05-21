@@ -284,6 +284,54 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
    - SPEC schema v7 fields: `narrative_pacing.decision_freeze_frame: bool`, `narrative_pacing.decision_filter_overlay_type: enum`, `narrative_pacing.countdown_starts_after_narration_id: string`, `narrative_pacing.loading_bar_y_position_canonical_safe: int`
    - pre-render-gate Q21 NEW (editorial pacing decision UI check)
 
+11. ⭐ **PER-CLIP ATOMIC AUDIT (NEW Phase 2 — 2026-05-21 added post cinema-abandonado vs canonical comparative analysis)**:
+
+   **Applies to**: video #3+ MANDATORY per CLAUDE.md Hard Rule #23. Cinema-abandonado + matadero = legacy global grandfather.
+
+   **Per-clip auditor checklist**:
+   For each `assets/clips-atomic/shot_NN_atomic.mp4` (output of `build_clip_atomic.py`):
+
+   - ✅ **A1 — Quality Gate Agent verdict 🟢 PASS** (`scripts/quality_gate_per_clip.py` exit code 0)
+   - ✅ **A2 — Mid-exec Gemini Vision hailuo_post hook passed** (per shot, exit 0 = no regen flagged)
+   - ✅ **A3 — Caption sidecar JSON schema valid**:
+     - All `start_abs_s` + `end_abs_s` non-None
+     - No same-Y overlap within clip window
+     - Chunks ≥1.5s (no Whisper over-segment)
+     - No voseo (per `feedback_spanish_neutral`)
+   - ✅ **A4 — Audio mux atomic** (ffprobe verify clip duration matches audio duration ±0.1s)
+   - ✅ **A5 — LUFS per-clip in band -14 ±1.5 LU** (intentional pre-master, final master at concat layer)
+   - ✅ **A6 — TTS+visual sync per-clip** (Whisper re-transcribe similarity ≥0.6 vs SPEC `text_canonical`)
+   - ✅ **A7 — Effects between clips selected per beat type** (per INGENIERO-PAUTA § 8.13 transitions table)
+
+   **Per-clip audit method**:
+   ```bash
+   # Per shot_NN
+   .venv/bin/python scripts/quality_gate_per_clip.py \
+     --clip assets/clips-atomic/shot_NN_atomic.mp4 \
+     --captions assets/clips-atomic/shot_NN_captions.json \
+     --spec ../creative-specs/<id>.yaml \
+     --shot-id shot_NN \
+     --enable-gemini  # ⭐ MANDATORY for hero shots (hook + climax + cliffhanger)
+   # Exit 0 → 🟢 PASS this clip
+   # Exit 1 → 🟡 NB review human-eye
+   # Exit 2 → 🔴 FAIL halt + regen ONE clip (NOT full iter)
+   ```
+
+   **Aggregate verdict**:
+   - All clips 🟢 → ✅ CP5 atomic phase PASS, continue to assembly
+   - ≥1 🔴 → halt assembly, regen that ONE clip via Hailuo (cost ~$0.27 vs full iter $5-15)
+   - 2+ 🟡 across clips → audit human-eye specific clips, decide PASS or 🔴
+
+   **Rationale**: caso disparador cinema-abandonado iter 5 user catch 4 bugs (caption flicker 14s/53s + Ken Burns 68s + narrative 73-83s) que auditor (yo) NO detecté en POST-render audit. Phase 2 per-clip atomic + Quality Gate Agent = catch at clip-build time vs post-render = $0.27 regen ONE clip vs $5-15 full iter. Eliminates 7/8 bug classes structurally.
+
+   **Forward references**:
+   - `ai-video-production/PIPELINE.md § 13` per-clip atomic specification
+   - `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 8.10-8.15` implementation
+   - `CLAUDE.md Hard Rule #23` per-clip atomic canonical forward
+   - Memory `feedback_per_clip_atomic_assembly`
+
+---
+
 9. ⛔ **C-INVENTORY-WIRED — SPEC asset_list + ui_active completeness gate (BLOQUEANTE, añadido 2026-05-19 post matadero CP5 STOP gap #13)**:
 
    **Audit MUST run BEFORE cualquier otro gate CP5**. Si C-INVENTORY-WIRED falla → 🔴 NO-GO bloqueante, NO continuar a Gemini holístico ni audit-against-referent ni 7 gates pre-render. Razón: esos audits miden CALIDAD de lo que existe, NO INVENTORY contra SPEC — pueden dar PASS sobre un render estructuralmente incompleto.
@@ -425,6 +473,48 @@ Después de la tabla, el auditor concluye con UNO de:
     
     Forward: codify in script `audit-distributed-timestamps.py` (Phase 2 priority).
 
+12. ⭐ **Trust Gemini holistic SCORE single-source (added 2026-05-21 post cinema-abandonado comparative analysis)**. Gemini holistic SCORES con ≥1 punto de inflación vs user perceptual ground truth (caso cinema-abandonado v2 = Gemini 8.6 holistic; user perceived "el peor"). Auditor NEVER concludes "video ship-ready" basado SOLO en Gemini holistic score.
+
+   **Rule canonical strict**:
+   - Holistic Gemini score ≥9.7 = NECESARIA pero NO SUFICIENTE (gate a)
+   - `audit-against-referent.py` empirical bands ≥85% = NECESARIA (gate b)
+   - Comparative analysis vs ≥3 canonical refs Gemini per-dimension = SI hay user perceptual concern
+   - Dimensional comparison: si cualquier dimensión nuestra <2 below average ref → flag improvement opportunity even with holistic ≥9.7
+   - User perceptual = ground truth final (Rule D PRECEDENCE)
+
+   **Caso disparador**: cinema-abandonado v2 iter 6 Gemini 8.6/10 holistic vs Ref-2 9.0/10 (canonical cockpit). User: "el nuestro es el peor". Per-dimension audit revealed:
+   - cuts/min cinema=12 vs canonical 13-22 (-30%)
+   - music layers cinema=1 vs canonical 3 (-66%)
+   - character consistency cinema=7/10 vs canonical 9/10 (-2pts)
+   - visual artifacts cinema=7/10 vs canonical 8/10 (-1pt)
+   
+   Holistic Gemini didn't surface these because it scored "atmosphere 9/10" + "narrative 9/10" high. Per-dimension empirical comparison surfaced them.
+
+   **Auditor check obligatorio post-CP5 render**:
+   - Run Gemini holistic (current standard)
+   - Run `audit-against-referent.py` empirical (current standard)
+   - PLUS run comparative Gemini Vision on ≥3 canonical refs same prompt → dimensional table
+   - If any dimension below canonical average by ≥2pts → flag improvement opportunity (even if overall ≥9.7)
+
+   Forward: codify in script `audit-comparative-vs-canonical.py` automates this step.
+
+13. ⭐ **Editing variety blindness — "cuts/min vs canonical" gap** (added 2026-05-21 post cinema-abandonado comparative analysis). Auditor verifies cuts/min vs INGENIERO-PAUTA band, but didn't verify TRANSITION VARIETY (hard cuts vs cross-fade vs film-burn vs light-flash etc.).
+
+   **Rule canonical strict**:
+   - Empirical refs use ≥3 transition types per video (hard cut + at least 2 others)
+   - Cinema-abandonado used hard cuts only (Gemini comparative noted "Hard cuts and some zooms")
+   - Per Phase 2 effects library (10 transitions) → engineer SHOULD use variety, not only hard cuts
+   - Auditor check: ffprobe transition timestamps + visual inspect cross-fade vs hard cut frequency
+
+   **Caso disparador**: cinema-abandonado iter 1-6 used hard cuts + zooms exclusively. Canonical refs used hard cuts + black-screen + cross-fade + flash. Effects library was missing forward Phase 2 — added 2026-05-20.
+
+   **Auditor check obligatorio post-CP5**:
+   - Inspect ≥5 transition timestamps via ffmpeg frame extraction
+   - Count unique transition types used
+   - If <3 unique types → 🟡 NB editorial variety thin
+
+   Forward: codify in script `audit-transition-variety.py` automates this step.
+
 9. ⭐ **Audio-visual lip-sync realism violations** (added 2026-05-19 PM post matadero iter 4 user catch). Cuando character face visible + lips mid-articulation pero NO audio del character playing → uncanny valley violation = realismo cinematográfico roto. **Rule canonical strict**:
    - Character lips mid-movement → character audio MUST be playing simultaneously (lip-sync compliance)
    - Character audio NOT playing (silence o narrator off-screen o countdown) → lips MUST be static (smile/neutral/closed pose). NO mid-articulation transitions.
@@ -467,4 +557,10 @@ auditor entrega:   tabla findings + verdict (en chat user, NO crea .md sin pedir
 
 **2026-05-19 (afternoon)** — gap #14 codified post matadero CP5 iter 2 review. User flagged "countdowns no van ligados a narración + sobrepuestos con loading bar — en refs canónicos imagen se queda estática con efecto cámara vieja + ahí se hace countdown". 3 roles missed (architect SPEC ui_active shallow sin pacing fields + engineer mechanical wire sin editorial judgment + auditor inventory-only no editorial cinematic audit). Amendments:
 - CP5 step 10 NEW (D29 EDITORIAL PACING AUDIT — freeze frame + filter overlay + countdown narration sync + UI spacing ≥6%)
+
+**2026-05-21** — Phase 2 architectural amendments post cinema-abandonado comparative analysis. User flagged "el nuestro es el peor" vs canonical refs. Comparative Gemini Vision analysis (4 videos) revealed cinema-abandonado weak vs canonical in: cuts/min (12 vs 13-22), music layers (1 vs 3), character consistency (7 vs 9), visual artifacts (7 vs 8), transition variety (hard cuts only vs ≥3 types). Phase 2 architectural refactor completed 2026-05-20 (per-clip atomic + Quality Gate Agent + effects library) eliminates 7/8 bug classes structurally. Amendments:
+- CP5 step 11 NEW (PER-CLIP ATOMIC AUDIT — Quality Gate Agent verdict per shot + mid-exec Gemini Vision + caption sidecar schema + audio mux atomic + effects between clips per beat type)
+- § 6 anti-pattern #12 NEW (Trust Gemini holistic SCORE single-source — must add comparative analysis vs canonical refs)
+- § 6 anti-pattern #13 NEW (Editing variety blindness — verify transition variety not just cuts/min)
+- Forward: `scripts/audit-comparative-vs-canonical.py` + `scripts/audit-transition-variety.py` Phase 3 priority automation
 - Forward arquitecto-domain Track parallel: PAUTA-MASTER § decision-UI-pacing + INGENIERO-PAUTA § 7.X decision-UI-implementation + SPEC schema v7 `narrative_pacing` fields + pre-render-gate Q21 NEW

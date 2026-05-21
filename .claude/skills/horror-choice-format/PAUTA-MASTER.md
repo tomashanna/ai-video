@@ -1085,6 +1085,315 @@ validated_at: 2026-05-20
 
 ---
 
+## § 23 — Cuts/min canonical band 18-22 (post 2026-05-21 — comparative analysis cinema-abandonado vs 3 canonical refs)
+
+> **Authority**: Gemini Vision comparative analysis 2026-05-21 (4 videos: cinema-abandonado v2 iter 6 + ref-1 mina Bruno/Pablo + ref-2 cockpit Victor/Axel + ref-3 metro Nano/Teresa).
+> **Trigger**: user intuition "el nuestro es el peor" + cinema Gemini score 8.6/10 vs canonical Ref-2 9.0/10.
+
+### 23.1 Rule
+
+**Cuts/min target band canonical = 18-22 cuts/min (per-minute raw count, Gemini-perceived).** Cinema-abandonado shipped at **12 cuts/min** — below canonical band — and Gemini flagged "slower, more atmospheric pace than brainrot... professional but predictable" with editing dimension scored only 8/10 (the predictable cutting hides AI artifacts less effectively + reduces dopamine cadence).
+
+### 23.2 Why
+
+Empirical comparison (Gemini Vision 2026-05-21):
+
+| Video | Cuts/min (Gemini raw perceived) | Visual artifact score | Overall |
+|-------|-----|-----|-----|
+| **cinema-abandonado (ours)** | **12** | 7/10 | 8.6/10 |
+| Ref-1 mina (Bruno/Pablo) | 21 | 5/10 | 7.6/10 |
+| Ref-2 cockpit (Victor/Axel) | 13 (modulated — slow dialogue, fast crashes) | 8/10 | 9.0/10 |
+| Ref-3 metro (Nano/Teresa) | 28 | 5/10 | 7.45/10 |
+
+**Canonical mid-band: 18-22 cuts/min**. Ref-3 at 28 is upper bound (works only because the visuals are weakest and cuts hide artifacts — Gemini: "doesn't allow the viewer to look at AI artifacts for too long, smart choice"). Ref-2 at 13 is lower bound (works only because character consistency is 9/10 + audio is 10/10 — the only canonical with high enough fidelity to sustain slow pacing).
+
+**Mechanism**: higher cuts/min = more dopamine ticks + faster Gemini-perceived energy + lingers less on AI artifacts (hands, foot-planting, wrinkle drift). Our cinema at 12 cuts/min stayed on Salvador's rubbery hands long enough for Gemini to call them out twice (0:31 + 1:05).
+
+### 23.3 Reconciliation with existing § 3.1 INGENIERO-PAUTA (1-9 de-clustered)
+
+⚠️ **Methodological note**: existing `INGENIERO-PAUTA-MASTER § 3.1` reports **de-clustered cuts/min 1-9 (sweet spot 2.75-5)** measured via librosa+ffprobe scene detector on n=10 F1 refs. The new band **18-22** comes from **Gemini Vision perceived raw cuts** on 4 videos (cinema + 3 refs). These are NOT contradictory measurements — they are TWO DIFFERENT METRICS:
+
+- **De-clustered cuts/min (1-9)** = perceptually independent shot changes, flash bursts collapsed into 1 cut. Engineering metric for time-between-cuts pacing.
+- **Gemini perceived cuts/min (18-22)** = raw cut events including micro-cuts + flash bursts + zoom transitions counted as cuts. Viewer-perceived edit energy.
+
+**Architect uses § 23 band (Gemini-perceived 18-22)** for "does this video FEEL canonical energy". **Engineer uses INGENIERO § 3.1 (de-clustered 2.75-5)** for time-between-cuts pacing math. Phase 2 forward: run Gemini Vision on F1 refs to triangulate true Gemini-perceived band; for now treat 18-22 as architect target derived from 3 canonical Gemini analyses.
+
+### 23.4 How to apply
+
+**Architect (SPEC design)**:
+- Shot list MUST account for canonical pace. For a ~85-90s reel, target **~26-33 perceived cuts total** (18-22 cuts/min × 1.5min).
+- If dilemma section drags (cinema iter 6 issue: "projection room segment drags slightly" — Gemini direct quote), add mini-cuts via:
+  - Reaction inserts (hand-close-up + eye-close-up + setting detail) between primary shots
+  - Variant -a/-b/-c within shots >4s (already mandated Hard Rule #5)
+  - Counterfactual quick-flashes (0.5-1.0s inserts that hint alternate path)
+- Modulation OK across sections: slow dialogue beats can have ~10-13 cuts/min IF compensated by fast climax/crash beats at ~25-30 cuts/min (Ref-2 strategy at total 13).
+
+**Engineer (implementation)**:
+- Build per-clip duration to support architect's cuts/min target. If SPEC declares 28 shots in 90s, that's ~18.6 cuts/min — within band. Below 18/min → push back to architect for SPEC mini-cuts (variant inserts, reaction shots).
+- Use INGENIERO § 8.12 NEW (pacing markers per shot — added this sprint) to plan per-shot duration.
+- Effects library `light-flash-impact.json` + `hard-cut-with-whoosh.json` count as cuts. Use per INGENIERO § 8.13 NEW (effects library usage table).
+
+**Auditor (verification per CP)**:
+- **CP2 (script)**: count shot_list[] entries → expected cuts ≥18/min × duration_s ÷ 60. If < band → 🟡 NB findings: "SPEC declares N shots = M cuts/min < canonical 18 band. Recommend architect add mini-cuts or reaction inserts."
+- **CP5 (render draft)**: run `ffprobe -i renders/draft.mp4 -show_packets | grep "flags=K"` + Gemini Vision cuts/min query → cross-check ≥18.
+
+### 23.5 Caso disparador
+
+**cinema-abandonado iter 1-6 2026-05-20** — shipped at 12 cuts/min. Gemini editing dimension: "slower, more atmospheric pace... professional but predictable... the projection room segment drags slightly." Visual artifact dimension dropped to 7/10 because slow pace allowed viewer to inspect rubbery hands (0:31, 1:05) + floaty walk (0:49). Forward fix: target 18-22 band, dropping into 12 cuts/min costs ~0.4-0.6 Gemini holístico points.
+
+### 23.6 Forward effort
+
+- Architect: shot_list[] size sanity check during SPEC writing (~5 min).
+- Engineer: build per-clip duration to math (~10 min more per SPEC).
+- Auditor: cuts/min check at CP2 + CP5 (~3 min added per CP).
+- Cost: $0 (no extra API spend).
+
+### 23.7 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_7_videos_2026_05_21"
+validated_against_canonical_refs:
+  - "ref-1 mina (Bruno/Pablo) Gemini Vision 2026-05-21 → 21 cuts/min"
+  - "ref-2 cockpit (Victor/Axel) Gemini Vision 2026-05-21 → 13 cuts/min modulated"
+  - "ref-3 metro (Nano/Teresa) Gemini Vision 2026-05-21 → 28 cuts/min"
+  - "Ref-NEW-A backrooms cave (Felipe/Enzo) Gemini Vision 2026-05-21 → 15.5 cuts/min"
+  - "Ref-NEW-B backrooms tower (Tulio/Daniel) Gemini Vision 2026-05-21 → 14 cuts/min"
+  - "Ref-NEW-C backrooms Louvre (Dylan/Leo) Gemini Vision 2026-05-21 → 19 cuts/min"
+  - "cinema-abandonado v2 iter 6 (ours) Gemini Vision 2026-05-21 → 12 cuts/min (BELOW BAND)"
+validation_methodology: "Gemini Vision direct cuts/min report — 7 videos comparative analysis"
+validated_at: 2026-05-21
+phase_2_forward:
+  - "Run Gemini Vision cuts/min query on remaining F1 refs to confirm/refine"
+  - "Triangulate Gemini-perceived vs de-clustered metric — derive ratio"
+```
+
+### 23.8 ⭐ REFINEMENT 2026-05-21 (post 3 new backrooms refs ingested)
+
+**Original § 23.1 band 18-22 was TOO NARROW** based on n=3 refs. Refined with n=7:
+
+| Video | Cuts/min | Score | Notes |
+|-------|:---:|:---:|---|
+| Ref-2 cockpit | 13 modulated | 9.0/10 | Lower bound (high char consistency compensates) |
+| Ref-NEW-B tower | 14 | 6.6/10 | Mid-low (slow modulation works if visual depth) |
+| Ref-NEW-A cave | 15.5 | 6.9/10 | Lower-mid |
+| Ref-NEW-C Louvre | 19 | 7.9/10 | Mid-band (canonical sweet spot) |
+| Ref-1 mina | 21 | 7.6/10 | Mid-upper |
+| Ref-3 metro | 28 | 7.45/10 | Upper bound (hides weak visuals) |
+| **cinema (ours)** | **12** | 8.6/10 | BELOW BAND |
+
+**Refined canonical band**: **14-22 cuts/min** (broader than original 18-22). Cinema-abandonado 12 is still BELOW band. Sweet spot for video #3 forward: **18-21 cuts/min** (Ref-NEW-C + Ref-1 zone).
+
+**Modulation principle clarified**: cuts/min total NOT enough — must also modulate across sections:
+- Dialogue/setup beats: 10-13 cuts/min OK
+- Climax/decision beats: 25-30 cuts/min mandatory
+- Average across video: 14-22 canonical band
+
+---
+
+## § 24 — Counterfactual placement BEFORE choice (post 2026-05-21 — comparative analysis cinema vs Ref-2 cockpit)
+
+> **Authority**: Gemini Vision comparative analysis 2026-05-21 (Ref-2 cockpit Victor/Axel scored 10/10 narrative comprehension — single perfect score across the 4 videos).
+> **Trigger**: cinema iter 1-6 placed counterfactual AFTER both paths shown → Gemini scored narrative 9/10 (not 10/10) + flagged structure ambiguity implicitly.
+
+### 24.1 Rule
+
+**Counterfactual ("Si hubieras elegido X") MUST appear BEFORE the main path resolves OR show both paths sequentially. NEVER appear AFTER both paths fully shown.** The canonical pattern (Ref-2): counterfactual at 0:06 (immediately after choice locks in) → raises stakes for remaining path. Cinema-abandonado pattern (AFTER both paths): viewer already saw both endings, counterfactual feels redundant.
+
+### 24.2 Why
+
+Empirical comparison narrative scores:
+
+| Video | Counterfactual placement | Narrative score |
+|-------|------|------|
+| **Ref-2 cockpit (Victor/Axel)** | **BEFORE choice resolves (0:06)** | **10/10** ⭐ |
+| Ref-1 mina (Bruno/Pablo) | Pablo path shown at end (alternate) | 9/10 |
+| Ref-3 metro (Nano/Teresa) | Twin endings (Teresa reveal at end) | 9/10 |
+| **cinema-abandonado (ours)** | **AFTER both paths fully shown** | **9/10** ⚠ |
+
+Gemini direct quote on Ref-2: *"The 'If you had chosen Axel' segment (0:06) provides a necessary contrast that raises the stakes for the 'Victor' path"* — this is the only counterfactual placement that earned 10/10 narrative comprehension. The mechanism: BEFORE = sets emotional contrast + raises tension. AFTER = retrospective explanation, viewer already invested.
+
+Gemini on cinema (AFTER): *"The 'Si hubieras elegido a Nico' (If you had chosen Nico) section at 1:15 provides satisfying closure for the viewer's curiosity"* — note word "closure" not "stakes". Closure = ending. Stakes = ongoing. AFTER placement provides closure but NOT tension lift.
+
+### 24.3 Canonical placements catalog (canonical refs 8/8 + comparative 4)
+
+| Placement type | Example refs | Effect | Recommended? |
+|---|---|---|---|
+| **BEFORE choice resolves** (after countdown, before "Si elegiste X" path) | Ref-2 cockpit | Raises stakes, contrasts paths, viewer feels "what if" actively | ✅ **CANONICAL — preferred** |
+| **PARALLEL alternation** (cut between paths every beat) | Some F1 refs | Maintains tension across both | ✅ Acceptable variant |
+| **GOOD path AT END** (good alternate path shown last as relief) | Ref-1 mina + various canonical | Provides emotional release after bad path | ✅ Acceptable variant |
+| **AFTER both paths fully shown** (counterfactual as closure) | cinema-abandonado iter 1-6 (ours) | Redundant — viewer already saw, becomes "explanation" | ⛔ **ANTI-PATTERN** |
+
+### 24.4 How to apply
+
+**Architect (SPEC design)**:
+- SPEC `narrative_structure.counterfactual_placement` field MUST be one of: `before_choice_resolves` | `parallel_alternation` | `good_path_at_end` | (NEVER `after_both_paths_shown`).
+- If "Si hubieras elegido X" beat declared, MUST appear earlier than 80% timeline OR woven into path resolution (not isolated outro).
+- Counterfactual narration: 5-8s ideal duration, must precede main path climax to function as stakes-lift.
+
+**Engineer (implementation)**:
+- Read SPEC `narrative_structure.counterfactual_placement` field — if absent or `after_both_paths_shown` → ESCALATE to architect, do not improvise placement.
+- Compose HyperFrames timeline with counterfactual visual+narration at architect-declared timestamp. Default if canonical (`before_choice_resolves`): timestamp ~12-20% of total duration.
+
+**Auditor (verification per CP)**:
+- **CP2 (script)**: parse SPEC for `counterfactual_placement` field. If = `after_both_paths_shown` or absent → 🔴 FAIL — "anti-pattern per PAUTA § 24". Escalate to architect.
+- **CP5 (render)**: cross-check render timestamp of counterfactual beat — must be at or before architect-declared position.
+
+### 24.5 Caso disparador
+
+**cinema-abandonado iter 1-6 2026-05-20** — counterfactual "Si hubieras elegido a Nico" placed at 1:15 (78% of 96s total) AFTER full Salvador path resolved AND film-sewn-into-lips climax shown. Gemini called it "closure" not "stakes lift". Lost 1 point on narrative dimension vs Ref-2's 10/10. Forward fix: SPEC v10 add `counterfactual_placement` field (separate task) — for now codify as PAUTA rule.
+
+### 24.6 Forward effort
+
+- Architect: 1-line SPEC field check per video (~1 min).
+- Engineer: respect SPEC field, no extra effort.
+- Auditor: 1-question check per CP2 (~30 sec).
+- Cost: $0.
+
+### 24.7 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_7_videos_2026_05_21"
+validated_against_canonical_refs:
+  - "Ref-2 cockpit (Victor/Axel) BEFORE placement → 10/10 narrative"
+  - "cinema-abandonado AFTER both shown placement → 9/10 narrative"
+  - "Ref-1 mina good-path-at-end → 9/10 (acceptable variant)"
+  - "Ref-3 metro twin endings → 9/10 (acceptable variant)"
+  - "Ref-NEW-A backrooms cave Felipe/Enzo twin/good ending → 8/10 narrative (6.9/10 overall)"
+  - "Ref-NEW-B backrooms tower Tulio/Daniel happy alt ending 1:21 → 9/10 narrative"
+  - "Ref-NEW-C backrooms Louvre Dylan/Leo twin ending 1:11 → 9/10 narrative (7.9/10 overall)"
+validation_methodology: "Gemini Vision narrative dimension scoring 7 videos comparative"
+validated_at: 2026-05-21
+phase_2_forward:
+  - "Run Gemini Vision narrative dimension on remaining 5 F1 refs to confirm canonical placements catalog"
+  - "Add SPEC v10 schema field narrative_structure.counterfactual_placement enum"
+```
+
+### 24.8 ⭐ REFINEMENT 2026-05-21 (post 3 new backrooms refs ingested)
+
+**Original § 24.1 rule was too strict**: stated "AFTER both paths fully shown" = ANTI-PATTERN. New data refutes partially:
+
+- **Ref-NEW-A** (backrooms cave) — twin/good ending shown at end, scored **8/10 narrative**
+- **Ref-NEW-B** (backrooms tower) — happy alternative ending at 1:21 AFTER bad path, scored **9/10 narrative**
+- **Ref-NEW-C** (backrooms Louvre) — twin ending structure 1:11 AFTER main path, scored **9/10 narrative** + **7.9/10 overall**
+
+**Refined rule**:
+
+| Placement | Score canonical | Recommended? |
+|-----------|:---:|---|
+| BEFORE choice resolves (Ref-2) | 10/10 | ✅ **CANONICAL preferred** (raises stakes) |
+| Twin ending / good alternate at end (Ref-NEW-B + Ref-NEW-C) | 9/10 | ✅ **Acceptable variant** when good ending feels "relief" not "closure" |
+| Good path AT END (Ref-1) | 9/10 | ✅ Acceptable variant |
+| Parallel alternation | 9/10 | ✅ Acceptable variant |
+| AFTER both paths shown as "satisfying closure" (cinema-abandonado iter 1-6) | 9/10 narrative BUT user perceptual confusion | ⚠️ **CONDITIONAL anti-pattern** — works IF framed as relief/contrast, fails IF framed as redundant retrospective explanation |
+
+**Architecture insight**: the differentiator is NOT placement timestamp, but **emotional framing**:
+- Twin ending as "relief from horror" (good path shown softly contrasting bad horror) → canonical
+- Counterfactual as "what could have been" retrospective explanation → anti-pattern (cinema-abandonado pattern)
+
+**Updated SPEC schema v10 field**:
+```yaml
+narrative_structure:
+  counterfactual_placement: "before_choice_resolves" | "twin_ending_good_alternate" | 
+                           "good_path_at_end" | "parallel_alternation" |
+                           "after_both_paths_retrospective_DEPRECATED"
+  emotional_framing: "stakes_lift" | "relief_contrast" | "retrospective_closure"
+  # Recommended combos:
+  # before_choice_resolves + stakes_lift → 10/10 canonical
+  # twin_ending_good_alternate + relief_contrast → 9/10 canonical variant
+  # after_both_paths + retrospective_closure → ⚠️ avoid (cinema-abandonado pattern)
+```
+
+---
+
+## § 25 — Music layers 3 mandatory (post 2026-05-21 — comparative analysis cinema audio depth vs canonical refs)
+
+> **Authority**: Gemini Vision comparative analysis 2026-05-21 (audio dimension scores: cinema 9/10 vs canonical refs 9-10/10, despite cinema scoring lower overall).
+> **Trigger**: cinema iter 1-6 used "minimal music" (1 layer) per Gemini quote — refs use 3 layers (drone + ambient + accent).
+
+### 25.1 Rule
+
+**Music score MUST consist of 3 simultaneous layers minimum**:
+1. **Drone (continuous)** — low-frequency tonal bed, persistent 80-100% of video duration.
+2. **Ambient (scene-specific)** — texture that changes per setting/section (mine drip, cockpit hum, projector hum, train rumble).
+3. **Accent (event-driven)** — punctual cues on dilemma beats, countdown ticks, climax peaks, transitions.
+
+Cinema-abandonado shipped with effectively 1 layer ("minimal, allowing the voice to dominate" per Gemini). Even with that minimal mix, audio dimension scored 9/10 because narrator + sparse SFX carried the work. BUT canonical refs scoring 9-10/10 ALL show 3-layer depth per Gemini direct quotes.
+
+### 25.2 Why
+
+Empirical comparison sound-design dimension:
+
+| Video | Music layers (Gemini-perceived) | Audio score |
+|-------|---|---|
+| **Ref-2 cockpit** | **3 layers** ("Deep layering; the 'click' of the seatbelt and the 'suction' of the cabin door opening add significant immersion") | **10/10** ⭐ |
+| Ref-1 mina | 3 layers ("Layered. You can hear ambient mine dripping beneath the music") | 9/10 |
+| Ref-3 metro | 3 layers (train hum + music + dialogue), but generic stock library | 7/10 |
+| **cinema-abandonado (ours)** | **1 layer "minimal"** + sparse SFX | **9/10** (narrator carried it — risky) |
+
+Gemini on cinema audio: *"The audio does 60% of the work in sustaining the horror"* — that's a flag, not a compliment. When audio carries 60% of horror, you're a) compensating for visual weakness, b) over-relying on narrator, c) lacking sound-design depth that would lift overall score.
+
+Gemini on Ref-2 (the 9.0/10 winner): *"This is the strongest dimension; the audio design carries the 'horror' weight more than the visuals"* — note "design" not "narrator". Sound-design depth (3 layers) > narrator volume.
+
+### 25.3 The 3 layers — canonical definitions
+
+| Layer | Continuity | Volume range | Purpose | Examples |
+|---|---|---|---|---|
+| **1. Drone** | Continuous 80-100% video | 0.05-0.13 (canonical horror = 0.13) | Tonal bed, sets harmonic mood. Low-frequency (40-200 Hz dominant). | Subharmonic drone, tonal pad, sustained note + reverb tail |
+| **2. Ambient** | Per-section (changes with setting) | 0.10-0.18 | Setting-specific texture, sells location. Mid-frequency (200-2000 Hz). | Mine drip + wind, cockpit hum + engine, projector flicker + reel hum |
+| **3. Accent** | Event-driven (dilemma beats, countdown, climax) | 0.20-0.35 (flash impacts 0.55-0.65) | Punctuation, signals decision moments + tension lifts | Heartbeat tick, low whoosh, glass-break, mechanical click, music stab |
+
+**Mix priority** when narrator speaking: drone + ambient duck -3 to -6 dB. Accent stays on (cuts through narration intentionally).
+
+### 25.4 How to apply
+
+**Architect (SPEC design)**:
+- SPEC `audio_design.music_layers` field MUST declare 3 layers per scene:
+  ```yaml
+  audio_design:
+    music_layers:
+      drone: { genre: "subharmonic horror tonal pad", duration_continuous: true }
+      ambient: { per_section: { hook: "projector room flicker hum", dilemma_1: "ticket booth low rumble", ... } }
+      accent: [ "heartbeat on countdown", "metallic scrape on choice lock", "scissors snip on climax" ]
+  ```
+- For cinema-genre specific: drone = "projector subharmonic", ambient = "reel mechanism + dust hum", accent = "scissors / film snap / cue marks".
+
+**Engineer (implementation)**:
+- See INGENIERO § 8.11 NEW (per-section music layers RULE — added this sprint) for ffmpeg recipe + mix volumes table.
+
+**Auditor (verification per CP)**:
+- **CP4 (audio)**: open render in DAW or spectrogram. Verify 3 distinct frequency bands present (40-200 / 200-2000 / 2000+) at minimum 60% of timeline. Run `audit-audio.py` (extends Phase 2) — flag if <3 layers detected.
+- **CP5 (final)**: Gemini Vision audio dimension query — must mention "layered" or "3 layers" explicitly OR risk repeat of cinema "audio does 60% of work" warning.
+
+### 25.5 Caso disparador
+
+**cinema-abandonado iter 1-6 2026-05-20** — Gemini: *"Music is minimal, allowing the voice to dominate."* Score 9/10 audio achieved only because narrator + sparse SFX were good. Lost 1 point implicit on missing 3-layer depth. The slim margin (9 vs 10) is what kept overall at 8.6 vs Ref-2's 9.0. Forward fix: 3 layers mandatory.
+
+### 25.6 Forward effort
+
+- Architect: SPEC `audio_design.music_layers` field per video (~5 min).
+- Engineer: 3 ElevenLabs SFX calls + ffmpeg layered mix (~15-25 min added per video) — see INGENIERO § 8.11 NEW.
+- Auditor: spectrogram + Gemini check (~5 min added CP4 + CP5).
+- Cost: +3 ElevenLabs music/SFX calls per video ≈ $0.30-0.60.
+
+### 25.7 Canonical validation status
+
+```yaml
+canonical_validation_status: "validated_4_videos_2026_05_21"
+validated_against_canonical_refs:
+  - "Ref-2 cockpit 3-layer → 10/10 audio (canonical gold standard)"
+  - "Ref-1 mina 3-layer → 9/10 audio"
+  - "Ref-3 metro 3-layer (generic stock) → 7/10 audio"
+  - "cinema-abandonado 1-layer minimal → 9/10 audio (risky, narrator-carried)"
+validation_methodology: "Gemini Vision audio dimension comparative + layer count via direct quote inspection"
+validated_at: 2026-05-21
+phase_2_forward:
+  - "Run Gemini Vision audio dimension on remaining 7 F1 refs to confirm 3-layer canonical"
+  - "Build audit-audio.py extension: spectrogram-based layer count detection (3 freq bands threshold)"
+  - "Codify drone/ambient/accent ElevenLabs SFX prompts in library/sfx-catalog.json per genre"
+```
+
+---
+
 ## ⚠️ CONSOLIDATION PASS SCHEDULED — post video #2 (added 2026-05-20)
 
 PAUTA-MASTER ha crecido orgánicamente post-matadero a través de codifications incrementales: § 17 rotación + § 18 decision-UI-pacing + § 19 AVU + § 20 setting alive + § 21 character alive + § 22 POV traversal. **18 gaps codified** post matadero v1 SHIP across 5 NIVEL cascade.

@@ -1,0 +1,30 @@
+{
+  "id": "cross-fade-1.0s",
+  "type": "transition",
+  "category": "soft-blend",
+  "duration_s": 1.0,
+  "description": "Longer crossfade. Reads as 'time passing' or 'memory dissolve'. Heavier than 0.5s — viewer notices the blend.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=1.0:offset={offset_clip_a_minus_1.0}[v];[0:a][1:a]acrossfade=d=1.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "offset_clip_a_minus_1.0": "Set offset = duration(clip_a) - 1.0",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "acrossfade=d=1.0. Audio bed transitions slowly — works best when ambient/music continues across both clips.",
+  "audio_sting_path": null,
+  "audio_sting_volume": null,
+  "use_cases": [
+    "Time jump within same location (day → night)",
+    "Memory/flashback dissolve",
+    "Slow narrative reveal — protagonist drifting awareness",
+    "Cinema-feel scene change with continuity bed"
+  ],
+  "avoid_for": [
+    "Short-form pacing (reel <90s) — too slow for retention",
+    "Adjacent beats with high cuts/min target (2-7 hard rule)",
+    "Climax / hard impact moments"
+  ],
+  "hyperframes_alternative": "GSAP timeline with duration:1.0 on both opacity tweens.",
+  "canonical_validation_status": "validated",
+  "validated_against_canonical_refs": ["ref-03 (long-form pacing)", "ref-09"],
+  "validated_notes": "Used sparingly in canonical referents — only 2/10 used 1.0s crossfades, always for explicit time/memory shift, never for ordinary beat connection. Avoid as default; explicit narrative intent required."
+}

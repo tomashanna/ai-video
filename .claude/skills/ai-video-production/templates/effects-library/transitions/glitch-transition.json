@@ -1,0 +1,34 @@
+{
+  "id": "glitch-transition",
+  "type": "transition",
+  "category": "digital-horror",
+  "duration_s": 0.3,
+  "description": "RGB-split + horizontal pixel shift + brief noise burst between clips. Digital horror aesthetic — 'the simulation is glitching'. More aggressive than static-noise-transition (which is purely analog VHS noise).",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v]split=3[r][g][b];[r]lutrgb=g=0:b=0,setpts=PTS-STARTPTS[r_only];[g]lutrgb=r=0:b=0,setpts=PTS-STARTPTS[g_only];[b]lutrgb=r=0:g=0,setpts=PTS-STARTPTS[b_only];[r_only][g_only]blend=all_mode=addition[rg];[rg][b_only]blend=all_mode=addition[rgb_full];[0:v][rgb_full]xfade=transition=hlslice:duration=0.3:offset={glitch_start}[v_pre];[v_pre][1:v]xfade=transition=fade:duration=0.05:offset={glitch_end}[v];[0:a][1:a]acrossfade=d=0.3[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_recipe_simplified": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=hlslice:duration=0.3:offset={glitch_start}[v];[0:a][1:a]acrossfade=d=0.3[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "glitch_start": "Set = duration(clip_a) - 0.3",
+    "glitch_end": "Set = duration(clip_a) - 0.05",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "acrossfade 0.3s on base + optional bit-crushed glitch SFX (drone-tension.mp3 with chorus + bitcrush effect) at volume 0.40, peak at glitch_start + 0.1s.",
+  "audio_sting_path": "audio-stings/drone-tension.mp3",
+  "audio_sting_volume": 0.40,
+  "audio_processing_hint": "For full glitch effect, pre-process drone-tension.mp3 with ffmpeg -af 'chorus=0.7:0.9:55:0.4:0.25:2,aresample=8000,aresample=44100' to bitcrush.",
+  "use_cases": [
+    "Digital horror / cyberpunk settings",
+    "Reality break in simulation/AI/found-footage context",
+    "Liminal-space transition with 'something is broken' cue",
+    "Memory corruption with technological flavor (vs. VHS = analog)"
+  ],
+  "avoid_for": [
+    "Period horror / pre-digital settings",
+    "Cinema-abandonado (use projector-cue-cinema)",
+    "More than 2x per reel — exhausts impact",
+    "Soft narrative moments"
+  ],
+  "hyperframes_alternative": "CSS+GSAP: tween `filter:hue-rotate(0deg) → hue-rotate(45deg)` + `transform:translate(0,0) → translate(8px,-4px)` over 0.3s; or use canvas RGB-channel split with requestAnimationFrame.",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": ["N/A — digital-horror sub-genre not in F1 set"],
+  "validated_notes": "Use simplified recipe (hlslice xfade) as default — full RGB-split filtergraph is heavier compute and only worth it on flagship climax cuts. Manual QA per video."
+}

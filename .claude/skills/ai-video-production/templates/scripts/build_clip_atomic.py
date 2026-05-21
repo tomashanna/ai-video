@@ -1,0 +1,796 @@
+#!/usr/bin/env python3
+"""
+build_clip_atomic.py — Per-clip atomic assembly pipeline (Phase 2 architectural refactor).
+
+Builds self-contained AVU per clip: visual + audio (TTS + SFX + optional AVU overlay) +
+caption sidecar JSON + manifest. Eliminates end-of-timeline sync drift bug class by
+making each shot an atomic unit that can be verified independently before concat.
+
+References:
+  - memory feedback_per_clip_atomic_assembly (architectural insight 2026-05-20)
+  - INGENIERO-PAUTA-MASTER § 9 mix levels (volumes canónicos)
+  - Hard Rule #9: narration 1.0, music 0.05-0.18, SFX events 0.20-0.35, flash 0.55-0.65
+
+Methodology per clip:
+  1. Read SPEC creative-specs/<id>.yaml + extract shot_NN metadata
+  2. Load Hailuo clip (visual only): assets/clips/shot_NN.mp4
+  3. Resolve TTS segments aligned to shot's timestamp window (per spec narration_script + manifest)
+  4. Resolve SFX events whose timestamps fall within shot window
+  5. Compose per-clip audio mix (ffmpeg amix with adelay per source)
+  6. Mux video + composed audio → shot_NN_atomic.mp4
+  7. Optional: overlay AVU asset (countdown / decision-freeze / outro)
+  8. Generate caption sidecar JSON for this clip's window (relative timing)
+  9. Generate manifest JSON with audit metadata (duration, LUFS, peaks)
+
+Usage:
+  # single shot
+  python build_clip_atomic.py \\
+    --spec ../creative-specs/cinema-abandonado.yaml \\
+    --shot-id shot_01_hook \\
+    --output-dir assets/clips-atomic/
+
+  # batch all shots in SPEC
+  python build_clip_atomic.py \\
+    --spec ../creative-specs/cinema-abandonado.yaml \\
+    --batch \\
+    --output-dir assets/clips-atomic/
+
+  # with AVU overlay (hook countdown LAST 3s)
+  python build_clip_atomic.py \\
+    --spec ../creative-specs/cinema-abandonado.yaml \\
+    --shot-id shot_01_hook \\
+    --avu countdown \\
+    --output-dir assets/clips-atomic/
+
+Outputs per shot:
+  <output-dir>/<shot_id>_atomic.mp4      (self-contained video+audio)
+  <output-dir>/<shot_id>_captions.json   (sidecar with relative timing)
+  <output-dir>/<shot_id>_manifest.json   (audit metadata)
+"""
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+try:
+    import yaml
+except ImportError:
+    print("ERROR: PyYAML not installed. Run: pip install pyyaml", file=sys.stderr)
+    sys.exit(1)
+
+
+# ----------------------------------------------------------------------------
+# Canonical mix levels (Hard Rule #9 + INGENIERO-PAUTA-MASTER § 9)
+# ----------------------------------------------------------------------------
+MIX_NARRATION_DEFAULT = 1.0
+MIX_SFX_EVENT_DEFAULT = 0.28          # within 0.20-0.35 band
+MIX_FLASH_IMPACT_DEFAULT = 0.60       # within 0.55-0.65 band
+MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14 # within 0.10-0.18 band
+
+# LUFS target (Instagram Reels standard)
+LUFS_TARGET = -14.0
+LUFS_TOLERANCE = 1.5  # ±1.5 dB acceptable per-clip (final master tightens to ±0.5)
+
+
+# ----------------------------------------------------------------------------
+# ffmpeg / ffprobe helpers
+# ----------------------------------------------------------------------------
+def run(cmd: list[str], capture: bool = False, check: bool = True) -> subprocess.CompletedProcess:
+    """Run shell command, raise on error."""
+    if capture:
+        return subprocess.run(cmd, capture_output=True, text=True, check=check)
+    return subprocess.run(cmd, check=check)
+
+
+def ffprobe_duration(path: Path) -> float:
+    """Return media duration in seconds."""
+    if not path.exists():
+        raise FileNotFoundError(f"ffprobe target missing: {path}")
+    cmd = [
+        "ffprobe", "-v", "error",
+        "-show_entries", "format=duration",
+        "-of", "csv=p=0",
+        str(path),
+    ]
+    result = run(cmd, capture=True)
+    return float(result.stdout.strip())
+
+
+def ffprobe_lufs(path: Path) -> float | None:
+    """Measure integrated LUFS of audio in media file. Returns None if cannot measure."""
+    cmd = [
+        "ffmpeg", "-hide_banner", "-i", str(path),
+        "-af", "loudnorm=I=-14:TP=-1:LRA=11:print_format=json",
+        "-f", "null", "-",
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        stderr = result.stderr
+        # Extract JSON block at end of stderr
+        match = re.search(r"\{[^{}]*\"input_i\"[^{}]*\}", stderr, re.DOTALL)
+        if not match:
+            return None
+        data = json.loads(match.group(0))
+        return float(data.get("input_i", "0"))
+    except Exception:
+        return None
+
+
+def ffprobe_peak_db(path: Path) -> float | None:
+    """Measure peak dBFS of audio in media. Returns None if cannot measure."""
+    cmd = [
+        "ffmpeg", "-hide_banner", "-i", str(path),
+        "-af", "volumedetect",
+        "-f", "null", "-",
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        match = re.search(r"max_volume:\s*(-?[\d.]+)\s*dB", result.stderr)
+        if match:
+            return float(match.group(1))
+    except Exception:
+        pass
+    return None
+
+
+# ----------------------------------------------------------------------------
+# SPEC loaders
+# ----------------------------------------------------------------------------
+def load_spec(spec_path: Path) -> dict[str, Any]:
+    """Load creative-specs/<id>.yaml."""
+    if not spec_path.exists():
+        raise FileNotFoundError(f"SPEC not found: {spec_path}")
+    with open(spec_path) as f:
+        return yaml.safe_load(f)
+
+
+def find_shot(spec: dict, shot_id: str) -> dict | None:
+    """Return shot dict matching shot_id (or first prefix match)."""
+    shots = spec.get("shot_list", [])
+    for shot in shots:
+        if shot.get("id") == shot_id:
+            return shot
+    # Try prefix match (e.g. "shot_01" matches "shot_01_hook")
+    for shot in shots:
+        if shot.get("id", "").startswith(shot_id):
+            return shot
+    return None
+
+
+def parse_timestamp_intent(shot: dict) -> tuple[float, float]:
+    """Extract (start_s, end_s) from shot timestamp_intent like '0-9s'."""
+    raw = shot.get("timestamp_intent", "")
+    match = re.match(r"([\d.]+)\s*-\s*([\d.]+)", str(raw))
+    if not match:
+        # fallback: duration_intent_s + assume start at 0
+        dur = shot.get("duration_intent_s", 0)
+        return (0.0, float(dur))
+    return (float(match.group(1)), float(match.group(2)))
+
+
+def resolve_narration_segments(spec: dict, shot_start: float, shot_end: float) -> list[dict]:
+    """Return narration segments whose timestamp_intent_s overlaps [shot_start, shot_end]."""
+    segments = spec.get("narration_script", {}).get("segments", [])
+    out = []
+    for seg in segments:
+        ts = seg.get("timestamp_intent_s")
+        if not (isinstance(ts, list) and len(ts) == 2):
+            continue
+        seg_start, seg_end = float(ts[0]), float(ts[1])
+        # overlap test
+        if seg_end <= shot_start or seg_start >= shot_end:
+            continue
+        out.append({
+            "id": seg.get("id"),
+            "speaker": seg.get("speaker", "narrator"),
+            "text": seg.get("text_canonical", ""),
+            "global_start_s": seg_start,
+            "global_end_s": seg_end,
+            "local_start_s": max(0.0, seg_start - shot_start),
+            "local_end_s": min(shot_end - shot_start, seg_end - shot_start),
+        })
+    return out
+
+
+def resolve_sfx_events(sfx_events: list[dict], shot_start: float, shot_end: float) -> list[dict]:
+    """Return SFX events whose start_s falls within shot window."""
+    out = []
+    for ev in sfx_events:
+        start_s = float(ev.get("start_s", 0))
+        if shot_start <= start_s < shot_end:
+            new_ev = dict(ev)
+            new_ev["local_start_s"] = start_s - shot_start
+            out.append(new_ev)
+    return out
+
+
+# ----------------------------------------------------------------------------
+# Asset resolvers
+# ----------------------------------------------------------------------------
+def find_clip_visual(project_root: Path, shot_id: str) -> Path | None:
+    """Look for assets/clips/<shot_id>.mp4 — prefer variant-less, fallback to -a."""
+    clips_dir = project_root / "assets" / "clips"
+    candidates = [
+        clips_dir / f"{shot_id}.mp4",
+        clips_dir / f"{shot_id}-a.mp4",
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    # any file starting with shot_id
+    if clips_dir.exists():
+        matches = sorted(clips_dir.glob(f"{shot_id}*.mp4"))
+        # filter out iter backups
+        matches = [m for m in matches if "iter" not in m.stem and "backup" not in m.stem]
+        if matches:
+            return matches[0]
+    return None
+
+
+def find_tts_segment(project_root: Path, segment_id: str) -> Path | None:
+    """Look for assets/tts/<segment_id>.mp3."""
+    tts_dir = project_root / "assets" / "tts"
+    candidate = tts_dir / f"{segment_id}.mp3"
+    return candidate if candidate.exists() else None
+
+
+def find_sfx_asset(project_root: Path, base_root: Path, sfx_path: str) -> Path | None:
+    """Resolve SFX asset — supports project-relative AND base-relative (library/) paths."""
+    if sfx_path.startswith("library/"):
+        candidate = base_root / sfx_path
+    elif "/" in sfx_path:
+        # e.g. 'cinema-abandonado/assets/sfx/foo.mp3'
+        candidate = base_root / sfx_path
+        if not candidate.exists():
+            # try as project-relative
+            candidate = project_root / sfx_path
+    else:
+        candidate = project_root / "assets" / "sfx" / sfx_path
+    return candidate if candidate.exists() else None
+
+
+def find_avu_asset(base_root: Path, avu_type: str) -> Path | None:
+    """Look up AVU template by type."""
+    avu_dir = base_root / ".claude/skills/ai-video-production/templates/avu-library"
+    mapping = {
+        "countdown": "countdown-3-2-1-film-leader-with-ticks.mp4",
+        "decision-freeze": "decision-freeze-with-tick-3-2-1.mp4",
+        "decision_freeze": "decision-freeze-with-tick-3-2-1.mp4",
+        "hook-transition": "hook-transition-warm-whoosh.mp4",
+        "outro": "outro-card-template.mp4",
+        "outro-card": "outro-card-template.mp4",
+    }
+    fname = mapping.get(avu_type)
+    if not fname:
+        return None
+    candidate = avu_dir / fname
+    return candidate if candidate.exists() else None
+
+
+# ----------------------------------------------------------------------------
+# Audio composition
+# ----------------------------------------------------------------------------
+def build_audio_mix_filter(
+    inputs: list[dict],
+    total_duration_s: float,
+) -> tuple[list[str], str]:
+    """
+    Build ffmpeg -filter_complex graph for mixing N audio inputs at given offsets+volumes.
+
+    `inputs` is a list of:
+      {"path": Path, "offset_s": float, "volume": float, "label": str}
+
+    Returns (ffmpeg_input_args, filter_complex_str, output_label).
+    """
+    if not inputs:
+        return [], ""
+
+    input_args = []
+    filter_parts = []
+    mix_labels = []
+
+    for idx, src in enumerate(inputs):
+        input_args.extend(["-i", str(src["path"])])
+        offset_ms = int(round(src["offset_s"] * 1000))
+        vol = src["volume"]
+        in_label = f"{idx + 1}:a"  # input #(idx+1) since input 0 is video
+        out_label = f"a{idx}"
+        # adelay applies offset, volume scales amplitude, asetpts maintains timing
+        filter_parts.append(
+            f"[{in_label}]adelay={offset_ms}|{offset_ms},volume={vol}[{out_label}]"
+        )
+        mix_labels.append(f"[{out_label}]")
+
+    # amix N inputs, normalize=0 keeps absolute volumes
+    n = len(mix_labels)
+    filter_parts.append(
+        f"{''.join(mix_labels)}amix=inputs={n}:duration=longest:normalize=0[amix]"
+    )
+    # trim final to shot duration + light fade-out to avoid clicks
+    fade_start = max(0.0, total_duration_s - 0.05)
+    filter_parts.append(
+        f"[amix]atrim=duration={total_duration_s},"
+        f"afade=t=out:st={fade_start:.3f}:d=0.05[aout]"
+    )
+
+    return input_args, ";".join(filter_parts)
+
+
+def compose_atomic_audio_video(
+    visual_path: Path,
+    audio_sources: list[dict],
+    shot_duration_s: float,
+    output_path: Path,
+) -> None:
+    """
+    Mux visual + composed audio mix into atomic clip.
+    If no audio sources: copy visual + silent track of shot_duration_s.
+    """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if not audio_sources:
+        # Silent track
+        cmd = [
+            "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
+            "-i", str(visual_path),
+            "-f", "lavfi", "-t", f"{shot_duration_s}",
+            "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+            "-map", "0:v", "-map", "1:a",
+            "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+            "-shortest",
+            str(output_path),
+        ]
+        run(cmd)
+        return
+
+    input_args, filter_complex = build_audio_mix_filter(audio_sources, shot_duration_s)
+
+    cmd = [
+        "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
+        "-i", str(visual_path),
+        *input_args,
+        "-filter_complex", filter_complex,
+        "-map", "0:v", "-map", "[aout]",
+        "-c:v", "copy",
+        "-c:a", "aac", "-b:a", "192k",
+        "-ar", "48000",
+        str(output_path),
+    ]
+    run(cmd)
+
+
+def overlay_avu(
+    base_clip: Path,
+    avu_path: Path,
+    inject_at_local_s: float,
+    output_path: Path,
+) -> None:
+    """
+    Overlay AVU video on top of base_clip starting at inject_at_local_s.
+    AVU audio is mixed in (preserves base audio).
+    """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    offset_ms = int(round(inject_at_local_s * 1000))
+    # filter:
+    #   - [1:v]setpts shifts AVU start
+    #   - overlay enables AVU only after inject_at_local_s
+    #   - [1:a] adelay shifts AVU audio
+    #   - amix mixes base audio + AVU audio
+    fc = (
+        f"[1:v]setpts=PTS-STARTPTS+{inject_at_local_s}/TB[avuv];"
+        f"[0:v][avuv]overlay=enable='gte(t,{inject_at_local_s})':eof_action=pass[vout];"
+        f"[1:a]adelay={offset_ms}|{offset_ms}[avua];"
+        f"[0:a][avua]amix=inputs=2:duration=first:normalize=0[aout]"
+    )
+
+    cmd = [
+        "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
+        "-i", str(base_clip),
+        "-i", str(avu_path),
+        "-filter_complex", fc,
+        "-map", "[vout]", "-map", "[aout]",
+        "-c:v", "libx264", "-preset", "fast", "-crf", "18",
+        "-c:a", "aac", "-b:a", "192k",
+        str(output_path),
+    ]
+    run(cmd)
+
+
+# ----------------------------------------------------------------------------
+# Captions sidecar
+# ----------------------------------------------------------------------------
+def build_caption_sidecar(
+    shot_id: str,
+    shot_start_s: float,
+    shot_end_s: float,
+    narration_segments: list[dict],
+) -> dict:
+    """
+    Build captions sidecar JSON for this clip's window with RELATIVE timing.
+
+    Output schema:
+      { "shot_id": ..., "duration_s": ..., "global_window": [...],
+        "captions": [ { id, text, speaker, local_start_s, local_end_s, global_start_s, global_end_s } ] }
+    """
+    captions = []
+    for seg in narration_segments:
+        captions.append({
+            "id": seg["id"],
+            "speaker": seg["speaker"],
+            "text": seg["text"],
+            "local_start_s": round(seg["local_start_s"], 3),
+            "local_end_s": round(seg["local_end_s"], 3),
+            "global_start_s": round(seg["global_start_s"], 3),
+            "global_end_s": round(seg["global_end_s"], 3),
+        })
+    return {
+        "shot_id": shot_id,
+        "duration_s": round(shot_end_s - shot_start_s, 3),
+        "global_window_s": [round(shot_start_s, 3), round(shot_end_s, 3)],
+        "captions": captions,
+        "format_version": "atomic_v1",
+        "notes": "Local timing is relative to shot start. Global timing is the original SPEC absolute timeline.",
+    }
+
+
+# ----------------------------------------------------------------------------
+# Manifest (audit metadata)
+# ----------------------------------------------------------------------------
+def build_manifest(
+    shot_id: str,
+    spec_intent_duration_s: float,
+    actual_duration_s: float,
+    audio_sources: list[dict],
+    narration_segments: list[dict],
+    sfx_events: list[dict],
+    output_path: Path,
+    avu_used: str | None,
+) -> dict:
+    """Build per-clip manifest with audit metadata."""
+    lufs = ffprobe_lufs(output_path)
+    peak_db = ffprobe_peak_db(output_path)
+
+    duration_delta = actual_duration_s - spec_intent_duration_s
+    duration_ok = abs(duration_delta) < 0.5
+
+    lufs_ok = lufs is not None and abs(lufs - LUFS_TARGET) <= LUFS_TOLERANCE
+    peak_ok = peak_db is None or peak_db <= -0.5
+
+    return {
+        "shot_id": shot_id,
+        "format_version": "atomic_v1",
+        "spec_intent_duration_s": round(spec_intent_duration_s, 3),
+        "actual_duration_s": round(actual_duration_s, 3),
+        "duration_delta_s": round(duration_delta, 3),
+        "duration_ok": duration_ok,
+        "audio": {
+            "sources_count": len(audio_sources),
+            "narration_segments": [s["id"] for s in narration_segments],
+            "sfx_events_count": len(sfx_events),
+            "lufs_integrated": lufs,
+            "lufs_target": LUFS_TARGET,
+            "lufs_in_band": lufs_ok,
+            "peak_db": peak_db,
+            "peak_ok": peak_ok,
+        },
+        "avu_overlay": avu_used,
+        "audit_status": "PASS" if (duration_ok and lufs_ok and peak_ok) else "REVIEW",
+    }
+
+
+# ----------------------------------------------------------------------------
+# Main build per-shot
+# ----------------------------------------------------------------------------
+def build_clip_atomic(
+    spec: dict,
+    spec_path: Path,
+    shot_id: str,
+    project_root: Path,
+    base_root: Path,
+    output_dir: Path,
+    sfx_events: list[dict],
+    avu_type: str | None = None,
+    avu_inject_s: float | None = None,
+    quiet: bool = False,
+) -> dict:
+    """Build a single atomic clip. Returns the manifest dict."""
+    shot = find_shot(spec, shot_id)
+    if not shot:
+        raise ValueError(f"shot_id '{shot_id}' not found in SPEC")
+
+    shot_id = shot["id"]  # normalize to full id (prefix match resolution)
+    shot_start, shot_end = parse_timestamp_intent(shot)
+    shot_dur = shot_end - shot_start
+
+    if not quiet:
+        print(f"\n▶ Building atomic clip: {shot_id}")
+        print(f"  Window:     [{shot_start:.2f}s, {shot_end:.2f}s] = {shot_dur:.2f}s")
+
+    # 1. Visual
+    visual = find_clip_visual(project_root, shot_id)
+    if not visual:
+        raise FileNotFoundError(f"Visual clip not found: assets/clips/{shot_id}.mp4")
+    if not quiet:
+        print(f"  Visual:     {visual.relative_to(base_root)}")
+
+    # 2. Narration segments
+    narration_segments = resolve_narration_segments(spec, shot_start, shot_end)
+    audio_sources = []
+    for seg in narration_segments:
+        tts_path = find_tts_segment(project_root, seg["id"])
+        if tts_path:
+            audio_sources.append({
+                "path": tts_path,
+                "offset_s": seg["local_start_s"],
+                "volume": MIX_NARRATION_DEFAULT,
+                "label": f"tts_{seg['id']}",
+            })
+            if not quiet:
+                print(f"  TTS:        +{seg['local_start_s']:.2f}s  {seg['id']}.mp3 @ {MIX_NARRATION_DEFAULT}")
+        else:
+            if not quiet:
+                print(f"  TTS MISSING: {seg['id']}.mp3 — skipping")
+
+    # 3. SFX events in window
+    shot_sfx = resolve_sfx_events(sfx_events, shot_start, shot_end)
+    for ev in shot_sfx:
+        sfx_path_str = ev["path"]
+        sfx_asset = find_sfx_asset(project_root, base_root, sfx_path_str)
+        if sfx_asset:
+            audio_sources.append({
+                "path": sfx_asset,
+                "offset_s": ev["local_start_s"],
+                "volume": ev.get("volume", MIX_SFX_EVENT_DEFAULT),
+                "label": f"sfx_{Path(sfx_path_str).stem}",
+            })
+            if not quiet:
+                print(f"  SFX:        +{ev['local_start_s']:.2f}s  {Path(sfx_path_str).name} @ {ev.get('volume', MIX_SFX_EVENT_DEFAULT)}")
+        else:
+            if not quiet:
+                print(f"  SFX MISSING: {sfx_path_str} — skipping")
+
+    # 4. Compose atomic mp4
+    atomic_path = output_dir / f"{shot_id}_atomic.mp4"
+    compose_atomic_audio_video(visual, audio_sources, shot_dur, atomic_path)
+
+    # 5. Optional AVU overlay (re-encodes with overlay+mix)
+    avu_used = None
+    if avu_type:
+        avu_asset = find_avu_asset(base_root, avu_type)
+        if not avu_asset:
+            print(f"  WARN: AVU type '{avu_type}' not found in avu-library — skipping overlay", file=sys.stderr)
+        else:
+            inject_at = avu_inject_s if avu_inject_s is not None else max(0.0, shot_dur - ffprobe_duration(avu_asset))
+            tmp_path = output_dir / f"{shot_id}_atomic_pre_avu.mp4"
+            atomic_path.rename(tmp_path)
+            overlay_avu(tmp_path, avu_asset, inject_at, atomic_path)
+            tmp_path.unlink()
+            avu_used = avu_type
+            if not quiet:
+                print(f"  AVU:        +{inject_at:.2f}s  {avu_asset.name}")
+
+    actual_dur = ffprobe_duration(atomic_path)
+
+    # 6. Captions sidecar
+    captions = build_caption_sidecar(shot_id, shot_start, shot_end, narration_segments)
+    captions_path = output_dir / f"{shot_id}_captions.json"
+    with open(captions_path, "w") as f:
+        json.dump(captions, f, indent=2, ensure_ascii=False)
+
+    # 7. Manifest with audit
+    manifest = build_manifest(
+        shot_id=shot_id,
+        spec_intent_duration_s=shot_dur,
+        actual_duration_s=actual_dur,
+        audio_sources=audio_sources,
+        narration_segments=narration_segments,
+        sfx_events=shot_sfx,
+        output_path=atomic_path,
+        avu_used=avu_used,
+    )
+    manifest_path = output_dir / f"{shot_id}_manifest.json"
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False)
+
+    if not quiet:
+        status_glyph = "✓" if manifest["audit_status"] == "PASS" else "⚠"
+        print(f"  {status_glyph} Atomic:   {atomic_path.relative_to(base_root)}  ({actual_dur:.2f}s, LUFS={manifest['audio']['lufs_integrated']})")
+
+    return manifest
+
+
+# ----------------------------------------------------------------------------
+# SFX event loader — pluggable
+# ----------------------------------------------------------------------------
+def load_sfx_events_from_pythonfile(py_path: Path) -> list[dict]:
+    """
+    Load SFX_EVENTS from a Python file (e.g. project's cp5-audio-master.py).
+    Expects module-level SFX_EVENTS list of (path, start_s, volume) tuples.
+    """
+    if not py_path.exists():
+        return []
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("sfx_events_module", py_path)
+    if not spec or not spec.loader:
+        return []
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as e:
+        print(f"WARN: failed to load SFX events from {py_path}: {e}", file=sys.stderr)
+        return []
+    raw = getattr(module, "SFX_EVENTS", [])
+    out = []
+    for entry in raw:
+        if isinstance(entry, (list, tuple)) and len(entry) >= 3:
+            out.append({"path": entry[0], "start_s": float(entry[1]), "volume": float(entry[2])})
+        elif isinstance(entry, dict):
+            out.append({
+                "path": entry.get("path") or entry.get("out") or "",
+                "start_s": float(entry.get("start_s", 0)),
+                "volume": float(entry.get("volume", MIX_SFX_EVENT_DEFAULT)),
+            })
+    return out
+
+
+def load_sfx_events_from_json(json_path: Path) -> list[dict]:
+    """Load SFX events from JSON: [{"path": ..., "start_s": ..., "volume": ...}, ...]"""
+    if not json_path.exists():
+        return []
+    with open(json_path) as f:
+        raw = json.load(f)
+    if not isinstance(raw, list):
+        return []
+    out = []
+    for entry in raw:
+        if isinstance(entry, dict) and "path" in entry and "start_s" in entry:
+            out.append({
+                "path": entry["path"],
+                "start_s": float(entry["start_s"]),
+                "volume": float(entry.get("volume", MIX_SFX_EVENT_DEFAULT)),
+            })
+    return out
+
+
+# ----------------------------------------------------------------------------
+# CLI
+# ----------------------------------------------------------------------------
+def main():
+    parser = argparse.ArgumentParser(
+        description="Build per-clip atomic AVU (visual + audio + captions + manifest).",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
+    )
+    parser.add_argument("--spec", type=Path, required=True,
+                        help="Path to creative-specs/<id>.yaml")
+    parser.add_argument("--shot-id", type=str,
+                        help="Single shot to build (e.g. shot_01_hook). Mutually exclusive with --batch.")
+    parser.add_argument("--batch", action="store_true",
+                        help="Build all shots in SPEC.")
+    parser.add_argument("--output-dir", type=Path, required=True,
+                        help="Output directory for atomic clips (e.g. assets/clips-atomic/)")
+    parser.add_argument("--project-root", type=Path, default=None,
+                        help="Project root (defaults to parent of output-dir).")
+    parser.add_argument("--base-root", type=Path, default=Path("<repo-root>"),
+                        help="Base repo root (used to resolve library/ + base-relative paths).")
+    parser.add_argument("--sfx-events", type=Path, default=None,
+                        help="SFX events source: .py file (extract SFX_EVENTS list) OR .json file. "
+                             "If omitted, will try <project_root>/scripts/cp5-audio-master.py.")
+    parser.add_argument("--avu", type=str, default=None,
+                        choices=["countdown", "decision-freeze", "hook-transition", "outro-card", "outro"],
+                        help="Optional AVU overlay type (single-shot mode only).")
+    parser.add_argument("--avu-inject-s", type=float, default=None,
+                        help="Override AVU inject offset (local time). Defaults to end-aligned.")
+    parser.add_argument("--quiet", action="store_true",
+                        help="Suppress per-shot progress output.")
+    args = parser.parse_args()
+
+    if not args.batch and not args.shot_id:
+        parser.error("Must specify either --shot-id <id> or --batch")
+    if args.batch and args.shot_id:
+        parser.error("--batch and --shot-id are mutually exclusive")
+    if args.batch and args.avu:
+        parser.error("--avu only supported in single-shot mode (batch infers AVU per shot from SPEC)")
+
+    # Resolve roots
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    project_root = (args.project_root or output_dir.parent).resolve()
+    base_root = args.base_root.resolve()
+
+    # Load SPEC
+    spec = load_spec(args.spec.resolve())
+
+    # Load SFX events
+    sfx_events = []
+    if args.sfx_events:
+        if args.sfx_events.suffix == ".py":
+            sfx_events = load_sfx_events_from_pythonfile(args.sfx_events.resolve())
+        elif args.sfx_events.suffix == ".json":
+            sfx_events = load_sfx_events_from_json(args.sfx_events.resolve())
+    else:
+        # Try project default
+        default_py = project_root / "scripts" / "cp5-audio-master.py"
+        if default_py.exists():
+            sfx_events = load_sfx_events_from_pythonfile(default_py)
+            if not args.quiet and sfx_events:
+                print(f"ℹ Loaded {len(sfx_events)} SFX events from {default_py.relative_to(base_root)}")
+
+    # Build
+    if args.shot_id:
+        manifest = build_clip_atomic(
+            spec=spec,
+            spec_path=args.spec,
+            shot_id=args.shot_id,
+            project_root=project_root,
+            base_root=base_root,
+            output_dir=output_dir,
+            sfx_events=sfx_events,
+            avu_type=args.avu,
+            avu_inject_s=args.avu_inject_s,
+            quiet=args.quiet,
+        )
+        print(f"\n{'✓ PASS' if manifest['audit_status'] == 'PASS' else '⚠ REVIEW'} — {manifest['shot_id']}")
+        return 0 if manifest["audit_status"] == "PASS" else 1
+
+    # Batch
+    shots = spec.get("shot_list", [])
+    if not shots:
+        print("ERROR: SPEC has no shot_list", file=sys.stderr)
+        return 2
+
+    summaries = []
+    failed = []
+    for shot in shots:
+        sid = shot.get("id")
+        try:
+            m = build_clip_atomic(
+                spec=spec,
+                spec_path=args.spec,
+                shot_id=sid,
+                project_root=project_root,
+                base_root=base_root,
+                output_dir=output_dir,
+                sfx_events=sfx_events,
+                avu_type=None,
+                avu_inject_s=None,
+                quiet=args.quiet,
+            )
+            summaries.append(m)
+            if m["audit_status"] != "PASS":
+                failed.append(sid)
+        except Exception as e:
+            print(f"\n✗ FAILED to build {sid}: {e}", file=sys.stderr)
+            failed.append(sid)
+
+    # Batch summary manifest
+    batch_path = output_dir / "_batch_manifest.json"
+    with open(batch_path, "w") as f:
+        json.dump({
+            "spec": str(args.spec),
+            "total_shots": len(shots),
+            "built": len(summaries),
+            "passed": sum(1 for s in summaries if s["audit_status"] == "PASS"),
+            "review": sum(1 for s in summaries if s["audit_status"] != "PASS"),
+            "failed": failed,
+            "shots": summaries,
+        }, f, indent=2, ensure_ascii=False)
+
+    print(f"\n══════════════════════════════════════════════════════════════")
+    print(f"  Batch summary: {len(summaries)}/{len(shots)} built")
+    print(f"  PASS: {sum(1 for s in summaries if s['audit_status'] == 'PASS')}")
+    print(f"  REVIEW: {sum(1 for s in summaries if s['audit_status'] != 'PASS')}")
+    print(f"  FAILED: {len(failed)}")
+    print(f"  Manifest: {batch_path.relative_to(base_root)}")
+    print(f"══════════════════════════════════════════════════════════════")
+
+    return 0 if not failed else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
