@@ -1,0 +1,2065 @@
+# CREATIVE-SPEC cerro-aislado-v4.yaml — schema v11.3 (HYBRID + canonical refs linkage)
+# Architect emission 2026-05-22 — Propuesta C (Estación meteorológica) selected by Tomás
+# Pattern P2 (Supervivencia si manejás bien — twist relevo tipo ref-03)
+# Iván role-flip approved (PAUTA § 4 meta-storytelling, precedent Pablo/Axel/Rurik)
+#
+# v11.2 changes from v11.1 (2026-05-22 PM late):
+# - shot_16 visual_intent simplified per MODEL-BEHAVIOR-LOG entry 1 empirical finding.
+#   Gemini Image stability budget threshold ~3 prop elements for rare anatomy
+#   (polydactyly) preservation. Original shot_16 v11.1 had 5+ elements (ladder + clipboard
+#   + lamp + window + glove-removal action) and FAILED polydactyly 2/2 iter (3-5 fingers
+#   regression + hallucinations). v11.2 simplifies to 3 elements (Iván + clipboard +
+#   glove-removed-hand visible) preserving the reveal beat narrative via static
+#   post-action composition instead of multi-beat action sequence.
+# - No other shots affected. references_canonical[] unchanged.
+# - Engineer regen + auditor verify in flight 2026-05-22 PM late.
+#
+# v11.3 changes from v11.2 (2026-05-22 PM late late):
+# - shot_16 visual_intent re-designed per MODEL-BEHAVIOR-LOG entry 1 THIRD refinement
+#   (pose-coupling): Gemini --ref full anchor preserves polydactyl ONLY when shot hand
+#   pose MATCHES anchor hand pose. v11.2 had palm-DOWN resting → FAILED 2/2 iter.
+#   v11.3 redesigns shot_16 to palm-forward holding clipboard (MATCHES char_a_v1.png
+#   anchor pose = palm-forward raised spread).
+# - Stability budget ≤3 elements preserved (Iván + clipboard + bare 6-finger hand).
+# - Narrative function preserved: viewer SEES polydactyl visible on hand holding clipboard
+#   = the reveal beat (uncanny anatomy confirmed in context).
+# - Forward-engineering principle: SPEC designed AROUND known model limit, NOT reverse-
+#   engineering SPEC to fit accidental render. Conscious architect amendment with documented
+#   reason (NOT silent reformulation).
+#
+# v11.4 changes from v11.3 (2026-05-22 evening):
+# - shot_16 visual_intent re-amended per MODEL-BEHAVIOR-LOG entry 1 FOURTH refinement
+#   (pose-coupling = EXACT-MATCH coupling, not abstract). v11.3 palm-forward HOLDING
+#   clipboard pose failed polydactyly even with abstract pose match because:
+#   (a) bare/gloved asymmetry vs anchor (both same state in anchor), AND
+#   (b) holding-object state vs anchor empty state.
+# - v11.4 re-designs shot_16 to EXACTLY match the v2 stop-gesture canonical render
+#   that preserves polydactyly: Iván seated, BOTH hands raised palm-forward, both
+#   wearing fingerless gloves, NO clipboard held, 6-finger visible on both hands.
+# - Narration narrator_consequence_b_dawn amended to fit the gesture: drops "clipboard
+#   sobre la mesa" reference (clipboard removed from composition), reframes to
+#   "muestra sus manos / 6 dedos / no es trampa" for the P2 twist reveal.
+# - Path A executed (forward-engineering with documented reason). NOT silent
+#   reformulation. Pattern_class instance #3 — codification trigger at 5+.
+# - Narration re-TTS required (engineer scope post amend). Master narration concat +
+#   captions regenerate accordingly.
+
+schema_version: "v11.5"
+schema_revised: "2026-05-22 evening"
+schema_purpose: "HYBRID architecture canonical V4+ — per-clip atomic captions burned + Layer 3 cross-clip + HyperFrames UI overlay + Script A/B enforcement integration + canonical refs structural linkage + shot_16 simplified per MODEL-BEHAVIOR-LOG entry 1 stability budget + shot_16 v11.3 pose-coupling forward-engineering + shot_16 v11.4 exact-match pose-coupling Path A narration-fit-render"
+
+# ═══════════════════════════════════════════════════════════════
+# 1. PROJECT METADATA
+# ═══════════════════════════════════════════════════════════════
+
+project:
+  project_id: "cerro-aislado-v4"
+  format: "horror-choice"
+  delivery: "reel"
+  pattern: "P2"
+  pattern_rotation_check: "previous: cinema-abandonado=P3, matadero=P6, parque-acuatico=P6/P9 hybrid → V4 next-MUST-differ. P2 unused recent (last P2-like was mina v15 P4-adjacent). P2 valid per video-log § Próximo video."
+  setting: "Estación meteorológica de alta montaña a 4200m, turno noche con relevo programado 7AM. Tormenta de nieve exterior, caseta de chapa con interior madera+instrumentos análogos, ventana congelada, lámpara queroseno + radio HF crujiente. Paleta dual cool-blue + amber-lamp. Aislamiento radical (nadie en 40km)."
+  total_duration_s_intent: 90
+  channel: "@elige_tucompanero"
+  language: "Spanish neutral"
+
+# ═══════════════════════════════════════════════════════════════
+# 1.5 ⭐⭐ REFERENCES CANONICAL (v11.1 mandatory ≥5/8 linkage)
+# ═══════════════════════════════════════════════════════════════
+
+references_canonical:
+  - ref_id: "ref-03"
+    informs:
+      - "narrative_structure.pattern_id"
+      - "narrative_structure.slot_d_malo_dialogue_pattern"
+      - "narrative_structure.cliffhanger_archetype"
+      - "narrative_structure.consequence_b_twist_reveal"
+      - "shot_list.shot_18.bruno_relevo_blueprint"
+    why_relevant: "Bruno mina P1+P2 con twist relevo en outro es el blueprint directo — Iván meteorólogo serio = Bruno minero serio. Si NO sales al techo / esperas, llega cambio de turno y Iván dice 'fin del turno, bajemos'. Body horror específico al setting (caída precipicio nevado vs caída pozo mina). Outro counterfactual Paz perdida cozy (Renato + café + cartas vs Pablo + pan + cartas)."
+
+  - ref_id: "ref-10"
+    informs:
+      - "narrative_structure.slot_g.sensory_elements"
+      - "narrative_sections.cliffhanger_outro.visual_style_lut"
+      - "shot_list.outro.dawn_palette_shift"
+      - "narrative_sections.consequence_path_b.dawn_transition"
+    why_relevant: "Outro sala-control café+cartas+pizza + paleta shift industrial→dawn es modelo directo para nuestro outro cocinita+mate+cartas + paleta shift snow-blue→amber-dawn. Resolution simple 'Llega el amanecer. Sales con vida' = nuestro relevo 7AM."
+
+  - ref_id: "ref-06"
+    informs:
+      - "scene_context.confined_space_ratio"
+      - "narrative_structure.slot_a_atrapamiento_isolation"
+      - "editing_targets.target_cuts_per_min"
+      - "narrative_structure.hook_setting_warning_premise"
+    why_relevant: "90% en coche carretera rural = nuestro 90% en caseta meteorológica. Atrapamiento por aislamiento radical es la misma mecánica Slot A. Hook 4s confined-space tension. Susurro amenazante del malo aparente en Slot B (Axel apaga faros susurro = Iván cadencia operativa monótona)."
+
+  - ref_id: "ref-08"
+    informs:
+      - "narrative_structure.cliffhanger_archetype_variant"
+      - "shot_list.outro.cozy_laboral_pattern"
+      - "narrative_structure.bueno_aparente_dialogue_in_hook"
+    why_relevant: "Outro acuario laboral cozy (limpieza cristales + café medusas + comida caliente + relevo) es cognado validado de outro laboral montaña — variant P1+P3 laboral cozy ya canónico. Bueno aparente habla en hook (Hugo 'No me elijas') = licencia para Renato susurrando 'Espera adentro'."
+
+  - ref_id: "ref-11"
+    informs:
+      - "characters.char_a.recurring_role_inversion"
+      - "editing_targets.target_cuts_per_min"
+      - "audio_direction.pacing_contemplativo"
+      - "narrative_structure.silence_intentional_threat"
+    why_relevant: "Iván en ref-11 era malo ritual moneda; acá invertido a malo aparente trabajador P2 — segundo meta-flip post Pablo (ref-03 bueno → ref-08 malo) / Axel (ref-06 malo → ref-09 bueno) / Rurik. Cuts/min atypical low de ref-11 matchea pacing montaña contemplativo (low-cuts band canonical 14-18 vs flooding 20-28 climax)."
+
+  # Refs NOT used (declared reason):
+  # - ref-09 (cockpit pattern P9 — diferente arc, NO twist relevo)
+  # - ref-12 (outro emocional Teresa hijo — NO laboral cozy paradigm)
+  # - ref-13 (P6 hedonismo trampa — overused recently + diferente arc)
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ASSEMBLY STRATEGY (v11 HYBRID canonical V4+)
+# ═══════════════════════════════════════════════════════════════
+
+assembly_strategy: "per_clip_atomic_hybrid"
+
+# ═══════════════════════════════════════════════════════════════
+# 3. HYBRID LAYERS DECLARATION
+# ═══════════════════════════════════════════════════════════════
+
+hybrid_layers:
+  layer_1_per_clip_atomic:
+    description: "Per-shot mp4 with visual + clip-scoped audio + captions BURNED into frame data"
+    captions_source: "whisper_from_clip_audio"
+    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    audio_bundled_per_clip:
+      - "narrator_segments_within_this_clip"
+      - "character_dialog_within_this_clip"
+      - "diegetic_sfx_within_this_clip"
+      - "clip_scoped_ambient_short"
+    output_path_convention: "cerro-aislado-v4/assets/clips-atomic/shot_NN_<descriptor>_atomic.mp4"
+    manifest_path_convention: "cerro-aislado-v4/assets/clips-atomic/shot_NN_<descriptor>_manifest.yaml"
+
+  layer_2_effects_between_clips:
+    description: "Transitions + stings + cross-fade + flash + glitch applied AT shot boundaries"
+    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/"
+    transition_variety_min: 3
+    non_diegetic_sfx_placement: "effect_layer"
+
+  layer_3_cross_clip_continuous:
+    description: "Audio layers that MUST NOT cut at shot boundaries — overlaid POST-concat with sidechain duck"
+    layers:
+      - "narrator_master_continuous"
+      - "music_drone_base_cold"
+      - "ambient_caseta_continuous"
+      - "ambient_wind_exterior_low"
+    sidechain_target_db: -6
+    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+
+  layer_4_hyperframes_ui_overlay:
+    description: "Countdown clips + decision UI + outro card + watermark via HyperFrames timeline.main"
+    elements:
+      - "countdown_3_2_1_hook"
+      - "decision_freeze_d1"
+      - "outro_card_cliffhanger"
+      - "watermark_handle_persistent"
+
+# ═══════════════════════════════════════════════════════════════
+# 4. CHARACTERS
+# ═══════════════════════════════════════════════════════════════
+
+characters:
+  - character_id: "char_a"
+    name: "Iván"
+    name_validation:
+      is_real_invented_name: true
+      blacklist_check_passed: true
+      canonical_8_refs_pattern: "real_first_name"
+      role_inversion_note: "Iván aparece en ref-11 como malo ritual moneda. Acá invertido a malo aparente P2 trabajador — segundo meta-flip canonical post Pablo (bueno ref-03 → malo ref-08) y Axel (malo ref-06 → bueno ref-09). PAUTA § 4 meta-storytelling device validated."
+    role: "malo_aparente"
+    archetype: "P2 — trabajador serio que aparenta amenaza por contexto + cadencia monótona, pero NO es trampa pura"
+    visual_signature: |
+      Tall thin meteorologist on night shift. Head abnormally elongated VERTICALLY under
+      thick wool beanie (cap pulled low), sunken orbital sockets with NO visible eyelashes
+      or eyebrows, gaunt face with weather-burned cheeks. Wears heavy navy thermal parka
+      (worn at elbows), gloved hands with one extra finger per hand (subtle uncanny detail —
+      6 fingers total instead of 5). Voice low monotone cadence. Stares forward without blinking.
+      Carries clipboard with handwritten weather data.
+      Atomic features: (1) elongated vertical skull under beanie (2) lashless sunken sockets
+      (3) 6-fingered gloves (4) navy thermal parka worn (5) gaunt weather-burned cheeks (6) clipboard.
+    voice_id_canonical: "2gPFXx8pN3Avh27Dw5Ma"  # Oxley Evil Character — validated canonical post matadero CP2 2026-05-18
+    anchor_image_id: "char_a_v1"
+
+  - character_id: "char_b"
+    name: "Renato"
+    name_validation:
+      is_real_invented_name: true
+      blacklist_check_passed: true
+      canonical_8_refs_pattern: "real_first_name"
+    role: "bueno_aparente"
+    archetype: "Bueno aparente cozy worker — joven técnico de radio, ofrece refugio + dialogue de advertencia"
+    visual_signature: |
+      Young radio technician early 20s. Bright RED puffy parka (vivid contrast vs Iván's
+      navy + snow blue), round wire-frame glasses ALWAYS fogged (visual signature — viewer
+      sees fog patterns), nervous friendly demeanor. Slight build, animated hands.
+      Holds steaming thermos of black coffee in both hands almost continuously.
+      Black knit cap pulled to eyebrows, exposed dark curly hair at neck.
+      Atomic features: (1) bright RED puffy parka (2) round wire glasses fogged (3) thermos
+      with steam (4) animated friendly hands (5) dark curly hair (6) black knit cap.
+    voice_id_canonical: "Iz0qFF5PGG8vpHduEMN2"  # Vicente — energetic natural ~168 WPM, fits friendly young worker
+    anchor_image_id: "char_b_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 5. NARRATIVE STRUCTURE
+# ═══════════════════════════════════════════════════════════════
+
+narrative_structure:
+  counterfactual_placement: "good_path_at_end"   # P2 canonical (ref-03 + ref-10 + ref-08) — twist reveal POST-decision
+  emotional_framing: "relief_contrast"            # amanecer rosa post-tormenta vs horror nevado
+  cliffhanger_archetype: "paz_laboral_cozy_variant_montaña"
+
+  canonical_constraints:
+    no_retrospective_counterfactual: true
+    si_elegiste_framing_required: true
+    visual_matches_narration_literal: true
+    first_person_pov_locked: true
+
+  pattern_id: "P2"
+  slot_d_malo_dialogue_pattern: "Iván habla en frases cortas operativas autoritarias (≤5 palabras): 'Subamos al techo.' / 'Recalibrá el anemómetro.' / 'Fin del turno.' (PAUTA § 10 cumple max 5 palabras)"
+  consequence_b_twist_reveal: "Si esperás (path B), Iván resulta meteorólogo serio cumpliendo protocolo. Amanecer + llega camioneta naranja del relevo a las 7AM. Iván dice 'Fin del turno, bajemos.' — twist sin verbalizar (igual ref-03 Bruno)."
+  silence_intentional_threat: "Slot B (8-25s) Iván habla cadencia operativa monótona, pero Renato susurra en respuesta 'Espera adentro' creando contraste — ref-08 Hugo dialogue precedente + ref-11 silencio threat."
+  hook_setting_warning_premise: "Caption hook 'NADIE EN 40KM' rojo glow — establece aislamiento radical Slot A (ref-06 confined-space premise informa)."
+  bueno_aparente_dialogue_in_hook: "Renato susurra 'No salgas con él' al hook (licencia ref-08 Hugo 'No me elijas')"
+  confined_space_ratio: "85% del video adentro de la caseta meteorológica (cognado ref-06 90% en coche). 15% exterior tormenta (escena consequence A path) + amanecer (consequence B)."
+  slot_a_atrapamiento_isolation: "Caseta 4x4m chapa + tormenta exterior (whiteout) + radio HF cruje sin señal estable + 40km al pueblo más cercano. Atrapamiento radical canonical Slot A."
+
+  hook_sub_beats:
+    - beat_id: "name_labels_intro"
+      timestamp_intent_s: [0.0, 2.0]
+      content: "Name labels IVÁN + RENATO monospaced font, Y 11.5% canonical"
+    - beat_id: "caption_setting_warning"
+      timestamp_intent_s: [2.0, 4.0]
+      content: "Caption 'NADIE EN 40KM' rojo glow Y 62%, establece aislamiento radical"
+    - beat_id: "push_in_micro_motion"
+      timestamp_intent_s: [4.0, 5.5]
+      content: "POV slow push-in toward dyad standing in caseta interior — feedback_hook_continuity_no_zoom_cut compliance"
+    - beat_id: "countdown_3_2_1"
+      timestamp_intent_s: [5.5, 8.0]
+      content: "Film Leader Academy countdown AVU clip (LAST per GAP #18)"
+      avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+
+# ═══════════════════════════════════════════════════════════════
+# 6. NARRATIVE SECTIONS (group cross-shot audio + LUT continuity)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_sections:
+  - section_id: "hook"
+    shot_ids: ["shot_01", "shot_02"]
+    audio_layer_continuity_within_section: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+
+  - section_id: "setup_pre_decision"
+    shot_ids: ["shot_03", "shot_04", "shot_05", "shot_06", "shot_07"]
+    audio_layer_continuity_within_section: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+
+  - section_id: "decision_1"
+    shot_ids: ["shot_08"]
+    audio_layer_continuity_within_section: ["music_drone_base_cold", "ambient_caseta_continuous"]
+    visual_style_lut: "cool_blue_montaña_v1_freeze_filter"
+
+  - section_id: "consequence_path_a"
+    shot_ids: ["shot_09", "shot_10", "shot_11", "shot_12", "shot_13"]
+    audio_layer_continuity_within_section: ["music_drone_base_cold", "ambient_wind_exterior_blizzard_HIGH", "accent_climax_horror"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+
+  - section_id: "consequence_path_b"
+    shot_ids: ["shot_14", "shot_15", "shot_16", "shot_17", "shot_18"]
+    audio_layer_continuity_within_section: ["music_drone_base_warm_transition", "ambient_caseta_continuous", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    dawn_transition: "Paleta shift mid-section snow-blue → amber-dawn (ref-10 modelo + ref-03 modelo)"
+
+  - section_id: "cliffhanger_outro"
+    shot_ids: ["shot_19", "shot_20"]
+    audio_layer_continuity_within_section: ["music_acoustic_outro_warm", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 7. MUSIC LAYERS (cross-clip continuous Layer 3 explicit)
+# ═══════════════════════════════════════════════════════════════
+
+music_continuous_layers:
+  - layer_id: "music_drone_base_cold"
+    scope: "cross_clip_continuous"
+    sections: [{from: 0, to: 65, intent: "cold mountain tension low-freq sustained"}]
+    eleven_labs_prompt: "low industrial drone, sub-bass sustained, cold atmospheric horror ambient, no melody, slow swells, distant howling wind texture, eerie meteorological"
+    compose_strategy: "single_continuous_65s"
+    target_lufs_pre_mix: -27
+    sidechain_duck_target: true
+
+  - layer_id: "ambient_caseta_continuous"
+    scope: "cross_clip_continuous"
+    sections: [{from: 0, to: 70, intent: "interior caseta ambience — kerosene lamp hum + radio HF static crackle"}]
+    eleven_labs_prompt: "old wooden cabin interior, kerosene lamp soft hum, distant radio HF static crackle, faint wood creaks, no music, atmospheric texture"
+    compose_strategy: "loop_15s_stretched"
+    target_lufs_pre_mix: -30
+
+  - layer_id: "ambient_wind_exterior_low"
+    scope: "cross_clip_continuous"
+    sections: [{from: 0, to: 50, intent: "exterior storm wind muffled through chapa walls"}]
+    eleven_labs_prompt: "blizzard wind muffled through metal walls, distant howl, snow whisper texture, no music"
+    compose_strategy: "single_50s_layered"
+    target_lufs_pre_mix: -32
+
+  - layer_id: "ambient_wind_exterior_blizzard_HIGH"
+    scope: "cross_clip_continuous"
+    sections: [{from: 40, to: 65, intent: "exterior storm full force — path A horror climax"}]
+    eleven_labs_prompt: "full blizzard wind, howling fury, ice particles, debris hitting metal, intense horror atmosphere"
+    compose_strategy: "single_25s"
+    target_lufs_pre_mix: -25
+
+  - layer_id: "accent_climax_horror"
+    scope: "clip_scoped_or_effect"
+    sections: [{from: 52, to: 60, intent: "rising tension climax — Iván push to precipicio"}]
+    eleven_labs_prompt: "dark cinematic strings rising, climax-buildup, sub-bass drop, no drums, horror climax"
+    compose_strategy: "single_8s"
+    target_lufs_pre_mix: -23
+
+  - layer_id: "music_drone_base_warm_transition"
+    scope: "cross_clip_continuous"
+    sections: [{from: 65, to: 80, intent: "transition cold→warm as path B resolves and dawn arrives"}]
+    eleven_labs_prompt: "warm sustained drone, gradual swell upward, hopeful undertone, no melody, transition from cold to warm"
+    compose_strategy: "single_15s_crossfade_in"
+    target_lufs_pre_mix: -27
+
+  - layer_id: "ambient_dawn_birds_low"
+    scope: "cross_clip_continuous"
+    sections: [{from: 70, to: 90, intent: "dawn birds + soft wind — cozy outro ambience"}]
+    eleven_labs_prompt: "high mountain dawn, distant bird calls (carpinteros), gentle breeze, soft snow settling, hopeful atmosphere"
+    compose_strategy: "single_20s"
+    target_lufs_pre_mix: -30
+
+  - layer_id: "music_acoustic_outro_warm"
+    scope: "cross_clip_continuous"
+    sections: [{from: 78, to: 90, intent: "acoustic guitar warm cozy outro"}]
+    eleven_labs_prompt: "acoustic guitar warm fingerpicking, gentle melody, no percussion, cozy cabin morning, peaceful"
+    compose_strategy: "single_12s_fade_in_out"
+    target_lufs_pre_mix: -24
+
+cross_clip_continuous_audio_layers:
+  layer_3_continuous:
+    - "music_drone_base_cold"
+    - "ambient_caseta_continuous"
+    - "ambient_wind_exterior_low"
+    - "ambient_wind_exterior_blizzard_HIGH"
+    - "music_drone_base_warm_transition"
+    - "ambient_dawn_birds_low"
+    - "music_acoustic_outro_warm"
+    - "narrator_master_continuous"
+  layer_1_clip_scoped:
+    - "character_dialog_within_clip"
+    - "diegetic_sfx_within_clip"
+    - "accent_climax_horror"
+
+# ═══════════════════════════════════════════════════════════════
+# 8. PACING + EDITING TARGETS
+# ═══════════════════════════════════════════════════════════════
+
+editing_targets:
+  target_cuts_per_min: [14, 22]
+  target_total_cuts: [21, 33]
+  transition_variety_min: 3
+  pacing_modulation:
+    hook: [10, 13]
+    setup_pre_decision: [14, 18]
+    decision_1: [10, 13]
+    consequence_path_a: [20, 28]
+    consequence_path_b: [14, 18]
+    cliffhanger_outro: [10, 14]
+  pacing_rationale: "Cuts modulation matchea ref-11 pacing contemplativo bandas low (montaña silenciosa) + ref-03 climax flooding en consequence A (Bruno taladro analog → Iván push precipicio). Outro low-cuts 10-14 ref-03/ref-10 cozy pattern."
+
+# ═══════════════════════════════════════════════════════════════
+# 9. NARRATION SCRIPT
+# ═══════════════════════════════════════════════════════════════
+
+narration_script:
+  - segment_id: "narrator_intro_hook"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Elige a tu compañero. Para sobrevivir esta noche."
+    timestamp_intent_s: [2.0, 5.5]
+    shot_id_anchor: "shot_01"
+    lip_sync_required: false
+
+  - segment_id: "narrator_setup_caseta"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Si eliges a Iván, estás en una estación meteorológica a cuatro mil doscientos metros."
+    timestamp_intent_s: [8.5, 13.0]
+    shot_id_anchor: "shot_03"
+    lip_sync_required: false
+
+  - segment_id: "narrator_setup_storm"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Turno noche, tormenta afuera, radio sin señal. Iván te ordena salir al techo a recalibrar el anemómetro."
+    timestamp_intent_s: [13.5, 19.5]
+    shot_id_anchor: "shot_04"
+    lip_sync_required: false
+
+  - segment_id: "ivan_command_techo"
+    speaker: "char_a"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Subamos al techo."
+    timestamp_intent_s: [19.8, 20.9]
+    shot_id_anchor: "shot_05"
+    lip_sync_required: true
+
+  - segment_id: "renato_whisper_warning"
+    speaker: "char_b"
+    voice_id: "Iz0qFF5PGG8vpHduEMN2"
+    text_canonical: "Espera adentro. Algo no anda bien."
+    timestamp_intent_s: [21.0, 23.0]
+    shot_id_anchor: "shot_06"
+    lip_sync_required: true
+
+  - segment_id: "narrator_decision_setup"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Ahora decides. Sales con Iván o esperas con Renato."
+    timestamp_intent_s: [23.5, 27.5]
+    shot_id_anchor: "shot_07"
+    lip_sync_required: false
+
+  - segment_id: "narrator_consequence_a_step"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Si eliges a Iván, sales al techo. La tormenta te golpea, no ves a un metro."
+    timestamp_intent_s: [32.0, 38.0]
+    shot_id_anchor: "shot_09"
+    lip_sync_required: false
+
+  - segment_id: "narrator_consequence_a_anemometro"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Iván señala el anemómetro y dice."
+    timestamp_intent_s: [38.5, 41.5]
+    shot_id_anchor: "shot_10"
+    lip_sync_required: false
+
+  - segment_id: "ivan_command_recalibra"
+    speaker: "char_a"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Recalíbralo. Inclínate al borde."
+    timestamp_intent_s: [41.6, 43.5]
+    shot_id_anchor: "shot_10"
+    lip_sync_required: true
+
+  - segment_id: "narrator_consequence_a_push"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Te inclinas. Iván te empuja al precipicio."
+    timestamp_intent_s: [44.0, 49.0]
+    shot_id_anchor: "shot_11"
+    lip_sync_required: false
+
+  - segment_id: "narrator_consequence_a_fall"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Caes ochocientos metros. La nieve te traga."
+    timestamp_intent_s: [49.5, 54.0]
+    shot_id_anchor: "shot_12"
+    lip_sync_required: false
+
+  - segment_id: "narrator_consequence_b_wait"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Si esperas adentro, Renato te sirve café. Iván sale solo al techo."
+    timestamp_intent_s: [56.5, 62.5]
+    shot_id_anchor: "shot_14"
+    lip_sync_required: false
+
+  - segment_id: "narrator_consequence_b_dawn"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Llega el amanecer. Iván baja del techo. Es solo un meteorólogo cumpliendo su turno."
+    timestamp_intent_s: [63.0, 69.0]
+    shot_id_anchor: "shot_16"
+    lip_sync_required: false
+
+  - segment_id: "ivan_command_fin_turno"
+    speaker: "char_a"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Fin del turno. Bajemos."
+    timestamp_intent_s: [69.5, 71.0]
+    shot_id_anchor: "shot_17"
+    lip_sync_required: true
+
+  - segment_id: "narrator_relevo_arrival"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "La camioneta naranja del relevo llega a las siete. Regresas con vida."
+    timestamp_intent_s: [71.5, 77.0]
+    shot_id_anchor: "shot_18"
+    lip_sync_required: false
+
+  - segment_id: "narrator_counterfactual_outro"
+    speaker: "narrator"
+    voice_id: "2gPFXx8pN3Avh27Dw5Ma"
+    text_canonical: "Si hubieras elegido a Renato, habrían jugado cartas toda la noche, tomado mate caliente y visto el amanecer rosa sobre las cumbres."
+    timestamp_intent_s: [78.5, 89.5]
+    shot_id_anchor: "shot_19"
+    lip_sync_required: false
+
+# ═══════════════════════════════════════════════════════════════
+# 10. ⭐⭐ SHOT LIST (v11.1 — all hybrid + Script A/B fields REQUIRED)
+# ═══════════════════════════════════════════════════════════════
+
+shot_list:
+
+  # ───────── SECTION HOOK (shots 01-02) ─────────
+
+  - shot_id: "shot_01"
+    section_id: "hook"
+    description: "POV first-person enters caseta meteorológica. Iván (left) + Renato (right) standing by analog instrument panel. Kerosene lamp glow + window with snow blizzard visible. Name labels appear."
+    duration_intent_s: 5.5
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Viewer enters caseta, sees both characters in static dyad pose. Iván stares forward without blinking, Renato holds steaming thermos and gives small nervous nod."
+      why_this_shot_exists: "Establish dyad + setting + uncanny premise + isolation warning"
+      camera_intent: "POV first-person, slight handheld micro-bob, looking forward at dyad ~3m away in caseta interior"
+    motion_bridge_intent:
+      from_previous: "N/A — first shot, establish camera at standstill"
+      to_next: "POV begins slow push-in continuing into shot_02"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Elige a tu compañero. Para sobrevivir esta noche."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV wide shot inside meteorological cabin interior at night. Wooden plank walls,
+      analog barometer + thermometer instruments on shelf left wall, kerosene lamp on
+      central table casting warm amber glow that competes with cold blue dominant from
+      frosted window (right). Iván stands center-left in navy thermal parka, head abnormally
+      elongated vertically under wool beanie, sunken lashless sockets staring forward
+      unblinking. Renato stands right in bright RED puffy parka, fogged round glasses,
+      holding steaming thermos. Window behind shows whiteout blizzard. Atmosphere static
+      uncanny. Dust + steam particles drift in lamp light. Name labels "IVÁN" + "RENATO"
+      monospaced over each.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 5
+      atmospheric_motions_list: ["lamp_flicker_kerosene", "steam_thermos_rising", "snow_blowing_window", "ivan_chest_breath_slow", "dust_particles_in_lamp_light"]
+    ui_active:
+      - element_id: "name_label_char_a"
+        timestamp_visible_s: [0.0, 4.0]
+        position: {y_pct: 11.5}
+        text: "IVÁN"
+        font: "monospaced"
+      - element_id: "name_label_char_b"
+        timestamp_visible_s: [0.0, 4.0]
+        position: {y_pct: 11.5}
+        text: "RENATO"
+        font: "monospaced"
+      - element_id: "caption_warning"
+        timestamp_visible_s: [2.0, 4.0]
+        position: {y_pct: 62}
+        text: "NADIE EN 40KM"
+        font: "drop_shadow_canonical"
+        color: "red_glow"
+
+  - shot_id: "shot_02"
+    section_id: "hook"
+    description: "POV push-in continues toward Iván close-up. Countdown 3-2-1 Film Leader Academy overlays."
+    duration_intent_s: 2.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "POV slow push-in toward Iván's face. Iván stares unblinking. Renato in soft focus background right."
+      why_this_shot_exists: "Hook countdown beat LAST per GAP #18 ordering + amplify Iván uncanny"
+      camera_intent: "POV slow push-in, target Iván face at 1.5m end position"
+    motion_bridge_intent:
+      from_previous: "Continues push-in initiated end of shot_01"
+      to_next: "Hard cut to wide caseta setup shot_03"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    narration_in_this_shot: null
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV close push-in toward Iván face. His elongated skull + sunken sockets dominate
+      frame. Background fades to soft focus blue with kerosene lamp warm bokeh. Iván
+      slowly blinks once (extreme uncanny — lashless lids). Snow particles continue
+      drifting in window background.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["push_in_camera", "ivan_slow_blink_once", "lamp_bokeh_flicker"]
+    ui_active:
+      - element_id: "countdown_avu_overlay"
+        timestamp_visible_s: [0.0, 2.5]
+        position: {y_pct: 46}
+        avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+
+  # ───────── SECTION SETUP PRE-DECISION (shots 03-07) ─────────
+
+  - shot_id: "shot_03"
+    section_id: "setup_pre_decision"
+    description: "Wide establishing caseta interior with analog instruments + window blizzard. Narrator introduces 4200m setting."
+    duration_intent_s: 4.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Viewer's POV scans caseta interior. Iván at instrument panel reading barometer, marking clipboard. Renato off-frame."
+      why_this_shot_exists: "Establish setting facts (altura + instrumentos + aislamiento)"
+      camera_intent: "POV slow pan left-to-right over caseta interior, ending on Iván at panel"
+    motion_bridge_intent:
+      from_previous: "Hard cut from hook close-up shot_02"
+      to_next: "POV continues into shot_04 with slight forward step"
+    pov_traversal: "turning_right"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "turning_right"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si eliges a Iván, estás en una estación meteorológica a cuatro mil doscientos metros."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Wide POV pan across caseta interior. Wooden walls plastered with USGS topo maps,
+      analog barometer + mercury thermometer + altimeter showing 4200m clearly visible.
+      Frost forming on inside corner of window. Iván at right end of panel reading
+      barometer, marking clipboard with mechanical precision. Cool blue dominant palette
+      with kerosene amber pocket on table.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["pov_pan_right", "ivan_clipboard_mark", "frost_creep_window", "lamp_flame_breathing"]
+    ui_active: []
+
+  - shot_id: "shot_04"
+    section_id: "setup_pre_decision"
+    description: "POV looking out window at blizzard whiteout. Radio crackles on table foreground."
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "POV stands near window looking out at full whiteout blizzard. Radio HF on table foreground crackles static. No characters visible."
+      why_this_shot_exists: "Establish exterior threat (tormenta) + comms isolation (radio sin señal)"
+      camera_intent: "POV static at window, slight handheld micro-bob, radio in lower-frame foreground"
+    motion_bridge_intent:
+      from_previous: "POV step forward from shot_03"
+      to_next: "POV turns back to room interior for shot_05"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.0
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Turno noche, tormenta afuera, radio sin señal. Iván te ordena salir al techo a recalibrar el anemómetro."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV at frosted caseta window. Outside: full whiteout blizzard, no visibility
+      beyond 1m, snow particles whip horizontally. Inside foreground: vintage HF radio
+      with twin dials, red transmit LED blinking, speaker grille emitting visible static
+      crackle. Window pane has ice flowers crystallizing. Cool blue palette dominant.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["snow_whip_horizontal", "radio_LED_blink", "ice_flower_creep", "window_glass_subtle_rattle"]
+    ui_active: []
+
+  - shot_id: "shot_05"
+    section_id: "setup_pre_decision"
+    description: "Medium shot Iván standing by door to roof access. He turns and gives command to viewer."
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Iván stands by reinforced metal door labeled 'TECHO'. Turns toward POV camera. Speaks command 'Subamos al techo.' with mechanical monotone."
+      why_this_shot_exists: "Slot D malo dialogue — Iván command (PAUTA § 10 max 5 palabras)"
+      camera_intent: "POV at room center, Iván medium frame, lip-sync required, eye-level"
+    motion_bridge_intent:
+      from_previous: "POV turn back from window shot_04"
+      to_next: "Cut to Renato whisper close-up shot_06"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: null
+    has_lip_sync_required: true
+    dialog_text: "Subamos al techo."
+    visual_intent: |
+      Medium shot Iván center-frame standing by reinforced metal door with stencil text
+      "TECHO" and ladder rungs leading up. Iván turns head slowly toward camera, sunken
+      lashless eyes stare directly into POV. Mouth opens with mechanical precision to
+      speak. Background: kerosene lamp warm glow contrasts cold blue door area. Subtle
+      micro-camera bob.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["ivan_head_turn", "ivan_mouth_speech", "lamp_flicker_amber"]
+    ui_active:
+      - element_id: "caption_dialog_ivan"
+        timestamp_visible_s: [0.5, 3.2]
+        position: {y_pct: 62}
+        text: "SUBAMOS AL TECHO"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_06"
+    section_id: "setup_pre_decision"
+    description: "Close-up Renato whisper warning to viewer. Steam from thermos fills foreground."
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "Renato leans close to POV, fogged glasses, whispers 'Espera adentro. Algo no anda bien.' while looking nervously toward Iván off-frame"
+      why_this_shot_exists: "Slot B bueno aparente dialogue (ref-08 Hugo precedent) + setup viewer dilemma — creates trust gap"
+      camera_intent: "POV close, Renato leaning toward camera, eye-level, thermos foreground bokeh"
+    motion_bridge_intent:
+      from_previous: "Cut from Iván shot_05"
+      to_next: "Cut to wide showing both for decision setup shot_07"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: null
+    has_lip_sync_required: true
+    dialog_text: "Espera adentro. Algo no anda bien."
+    visual_intent: |
+      Close-up POV: Renato leans in close, ~50cm from camera. Round glasses fully fogged
+      from breath + thermos steam. Bright red parka dominant frame. Dark curly hair visible
+      at neck. He whispers urgently, eyes darting nervously toward right edge of frame
+      (Iván direction off-screen). Thermos steam rises from lower-frame creating mystic
+      bokeh. Background blurred caseta interior cold blue.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["renato_lean_in", "renato_mouth_whisper", "thermos_steam_rising", "renato_eye_dart_right"]
+    ui_active:
+      - element_id: "caption_dialog_renato"
+        timestamp_visible_s: [0.3, 2.8]
+        position: {y_pct: 62}
+        text: "ESPERÁ ADENTRO"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_07"
+    section_id: "setup_pre_decision"
+    description: "Wide caseta both characters visible. POV viewer is between them, narrator delivers decision prompt."
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Iván at door waiting impatient. Renato by table holding thermos extended toward POV (offer). Viewer between them. Narrator asks decision."
+      why_this_shot_exists: "Pre-decision wide that prepares freeze frame for decision shot"
+      camera_intent: "POV centered between both characters, slight handheld micro-bob"
+    motion_bridge_intent:
+      from_previous: "Cut from Renato close-up shot_06"
+      to_next: "Freeze frame transition into shot_08 decision UI"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous", "ambient_wind_exterior_low"]
+    visual_style_lut: "cool_blue_montaña_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Ahora decides. Sales con Iván o esperas con Renato."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Wide POV between both characters. Iván left-side standing impatient at metal door
+      "TECHO", clipboard in hand, staring forward. Renato right-side at table holding
+      thermos extended toward viewer in welcoming gesture. Lamp center on table casts
+      warm pocket. Window background still whiteout. Cold-blue dominant with amber-warm
+      isolated to lamp area. Both characters visible simultaneously enabling viewer choice.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 5
+      atmospheric_motions_list: ["ivan_static_impatient", "renato_thermos_offer", "lamp_amber_glow", "window_snow_whip", "subtle_camera_handheld_bob"]
+    ui_active: []
+
+  # ───────── SECTION DECISION_1 (shot 08) ─────────
+
+  - shot_id: "shot_08"
+    section_id: "decision_1"
+    description: "Freeze frame VHS filter + countdown 3-2-1 + decision buttons IVÁN/RENATO + loading bar."
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Freeze of shot_07 frame applies VHS filter. Countdown 3-2-1 ticks. Loading bar fills. Buttons IVÁN/RENATO appear stacked."
+      why_this_shot_exists: "Decision UI canonical (per GAP #14): freeze frame + filter + countdown LAST + loading bar Y52"
+      camera_intent: "FROZEN frame from shot_07 — no camera motion"
+    motion_bridge_intent:
+      from_previous: "Freeze + VHS filter applied to shot_07 last frame"
+      to_next: "Branch to shot_09 (path A) OR shot_14 (path B) — engineer wires both"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_caseta_continuous"]
+    visual_style_lut: "cool_blue_montaña_v1_freeze_filter"
+    is_safe_for_veo: false
+    model_tier_override: "static_frozen"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: null
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frozen frame of shot_07 with VHS scanlines + chromatic aberration + grain filter
+      applied. Both characters visible static. Countdown overlay 3→2→1 center upper.
+      Buttons IVÁN (left, white) + RENATO (right, white) appear stacked. Loading bar
+      horizontal Y52 fills left-to-right over 3s.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 2
+      atmospheric_motions_list: ["vhs_scanlines_drift", "loading_bar_fill"]
+    ui_active:
+      - element_id: "countdown_321_decision"
+        timestamp_visible_s: [0.0, 2.4]
+        position: {y_pct: 46}
+        avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+      - element_id: "decision_button_ivan"
+        timestamp_visible_s: [0.3, 3.0]
+        position: {y_pct: 75}
+        text: "IVÁN"
+        font: "monospaced"
+        color: "white"
+      - element_id: "decision_button_renato"
+        timestamp_visible_s: [0.3, 3.0]
+        position: {y_pct: 82}
+        text: "RENATO"
+        font: "monospaced"
+        color: "white"
+      - element_id: "loading_bar_horizontal"
+        timestamp_visible_s: [0.3, 3.0]
+        position: {y_pct: 52}
+
+  # ───────── SECTION CONSEQUENCE PATH A (shots 09-13) ─────────
+
+  - shot_id: "shot_09"
+    section_id: "consequence_path_a"
+    description: "POV climbs metal ladder onto roof. Wind shock + whiteout immediate. Iván already on roof, silhouette."
+    duration_intent_s: 5.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "POV emerges from ladder hatch onto caseta roof. Immediate blizzard whiteout hit. Iván stands ~2m away as silhouette barely visible through snow."
+      why_this_shot_exists: "Path A entry — viewer chose Iván, transition outdoor + 'SI ELEGISTE IVÁN' framing first appearance"
+      camera_intent: "POV ascending then static, handheld violent micro-shake from wind"
+    motion_bridge_intent:
+      from_previous: "Hard cut from decision freeze shot_08 — viewer chose IVÁN"
+      to_next: "POV continues on roof in shot_10"
+    pov_traversal: "ascending"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_wind_exterior_blizzard_HIGH"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "ascending"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si eliges a Iván, sales al techo. La tormenta te golpea, no ves a un metro."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV emerging through ladder hatch onto rooftop. Immediate visual shock: whiteout
+      blizzard, visibility <1m, snow particles whip across frame horizontally at high
+      velocity. Iván silhouette barely visible 2m away, his navy parka outline cutting
+      through white wall. Camera handheld violent micro-shake from wind. Cold horror
+      blue palette with desaturated whites.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["pov_ascend_ladder", "snow_whip_horizontal_violent", "ivan_silhouette_emerging", "camera_wind_shake"]
+    ui_active:
+      - element_id: "caption_narration_si_elegiste"
+        timestamp_visible_s: [0.3, 5.5]
+        position: {y_pct: 62}
+        text: "SI ELEGISTE A IVÁN..."
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_10"
+    section_id: "consequence_path_a"
+    description: "Iván points at anemometer (3-cup rotating instrument). Speaks command 'Recalíbralo. Inclínate al borde.'"
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Iván stands beside roof-mounted anemometer (3 cup spinning). Points at instrument with gloved 6-finger hand. Mouth opens to speak."
+      why_this_shot_exists: "Slot D control instruction — diegetic object specific (anemómetro = mina equivalent of dynamite/alarm)"
+      camera_intent: "POV at Iván + anemometer medium shot, handheld micro-shake"
+    motion_bridge_intent:
+      from_previous: "POV step toward Iván from ladder shot_09"
+      to_next: "POV approaches edge in shot_11"
+    pov_traversal: "approaching_character"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_wind_exterior_blizzard_HIGH"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "approaching_character"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Iván señala el anemómetro y dice."
+    has_lip_sync_required: true
+    dialog_text: "Recalíbralo. Inclínate al borde."
+    visual_intent: |
+      Medium POV: Iván stands right of frame beside roof-mounted anemometer (metal pole
+      with 3 hemispherical cups spinning). His gloved hand points at the instrument —
+      visible 6 fingers on glove. Mouth opens to speak. Background: blizzard fog, edge
+      of roof barely visible on left. Iván's elongated head + lashless sockets clearly
+      in frame.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["anemometer_cups_spinning", "ivan_point_glove_6finger", "ivan_mouth_speech", "blizzard_fog_drift"]
+    ui_active:
+      - element_id: "caption_dialog_ivan_recalibra"
+        timestamp_visible_s: [1.6, 4.0]
+        position: {y_pct: 62}
+        text: "RECALIBRALO"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_11"
+    section_id: "consequence_path_a"
+    description: "POV leans over roof edge toward precipice. Iván's gloved hand reaches into frame."
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "POV leans forward + downward toward edge of roof revealing 800m vertical drop. Iván's 6-finger gloved hand enters frame from right pushing POV shoulder."
+      why_this_shot_exists: "Body horror Slot F specific to setting — push at precipicio (analog to ref-03 Bruno push to pozo)"
+      camera_intent: "POV tilt downward + slight push forward motion, vertigo emphasis"
+    motion_bridge_intent:
+      from_previous: "POV approached Iván + edge from shot_10"
+      to_next: "POV falls in shot_12"
+    pov_traversal: "descending"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_wind_exterior_blizzard_HIGH", "accent_climax_horror"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "descending"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Te inclinas. Iván te empuja al precipicio."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV tilts forward over roof edge revealing dizzying 800m vertical snow-cliff drop
+      below. Snow particles falling vertically into abyss. Iván's gloved 6-finger hand
+      enters frame from right edge pushing POV shoulder. Camera vertigo extreme.
+      Cool horror blue palette intensified.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["pov_tilt_downward_vertigo", "ivan_glove_push_shoulder", "snow_falling_into_abyss", "camera_imbalance_lean"]
+    ui_active:
+      - element_id: "caption_narration_empuja"
+        timestamp_visible_s: [0.5, 4.8]
+        position: {y_pct: 62}
+        text: "TE EMPUJA AL PRECIPICIO"
+        font: "drop_shadow_canonical"
+        color: "red"
+
+  - shot_id: "shot_12"
+    section_id: "consequence_path_a"
+    description: "POV freefall — sky/cliff inverting + snow rushing past + flash to white impact."
+    duration_intent_s: 4.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "POV in freefall through blizzard. Cliff wall rushes past. Snow particles ascending visually. End in white flash."
+      why_this_shot_exists: "Body horror Slot F climax — caída específica al setting (800m precipice)"
+      camera_intent: "POV freefall rotation, motion blur extreme, end on white flash"
+    motion_bridge_intent:
+      from_previous: "POV pushed in shot_11"
+      to_next: "Hard cut to black + transition card or directly to shot_14 wait branch"
+    pov_traversal: "descending"
+    audio_layer_continuity: ["music_drone_base_cold", "ambient_wind_exterior_blizzard_HIGH", "accent_climax_horror"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "descending"
+    hero: true
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.0
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Caes ochocientos metros. La nieve te traga."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV freefall. Cliff wall (granite + ice patches) rushes past upward. Snow particles
+      stream upward in frame from POV rotation. Sky inverts. Motion blur extreme.
+      Cool horror palette extreme desaturation. End on white flash + cut to black.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["pov_freefall_rotation", "cliff_wall_rush_past", "snow_stream_upward", "white_flash_end"]
+    ui_active:
+      - element_id: "caption_narration_caes"
+        timestamp_visible_s: [0.3, 4.0]
+        position: {y_pct: 62}
+        text: "OCHOCIENTOS METROS"
+        font: "drop_shadow_canonical"
+        color: "red"
+
+  - shot_id: "shot_13"
+    section_id: "consequence_path_a"
+    description: "Brief transition fade-to-black + rama B narrative re-entry indicator."
+    duration_intent_s: 1.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Fade to black + brief title card transitioning to rama B narrative for editorial separation"
+      why_this_shot_exists: "Beat separator between path A consequence + path B re-enter"
+      camera_intent: "Frozen black + title overlay"
+    motion_bridge_intent:
+      from_previous: "Continues white flash end shot_12"
+      to_next: "Hard cut to shot_14 starting path B"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_cold"]
+    visual_style_lut: "cool_horror_v1_blizzard"
+    is_safe_for_veo: false
+    model_tier_override: "static_frozen"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.0
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: null
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frozen black frame with brief subtle white text fade title "PERO SI HUBIERAS ESPERADO..." (Y 50%, monospaced, minimal). Transition pause beat.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 1
+      atmospheric_motions_list: ["text_fade_in_out_subtle"]
+    ui_active:
+      - element_id: "transition_title_card"
+        timestamp_visible_s: [0.3, 1.4]
+        position: {y_pct: 50}
+        text: "PERO SI HUBIERAS ESPERADO..."
+        font: "monospaced"
+        color: "white"
+
+  # ───────── SECTION CONSEQUENCE PATH B (shots 14-18) ─────────
+
+  - shot_id: "shot_14"
+    section_id: "consequence_path_b"
+    description: "POV inside caseta with Renato pouring coffee from thermos. Iván exits through TECHO door."
+    duration_intent_s: 6.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "POV sits at caseta table. Renato pours steaming coffee into mug for viewer. Iván exits through TECHO door (back to camera ascending ladder)."
+      why_this_shot_exists: "Path B entry — 'SI ESPERAS' framing + Renato cozy gesture establishes path B has safety"
+      camera_intent: "POV seated at table, slow pan from Renato pouring to Iván exiting door"
+    motion_bridge_intent:
+      from_previous: "Hard cut from transition shot_13 — path B branch begins"
+      to_next: "POV scans window in shot_15"
+    pov_traversal: "turning_left"
+    audio_layer_continuity: ["music_drone_base_warm_transition", "ambient_caseta_continuous"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "turning_left"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si esperas adentro, Renato te sirve café. Iván sale solo al techo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV at caseta table. Renato right-side pours steaming hot coffee from thermos
+      into ceramic mug for viewer. Friendly smile. Background left: Iván climbing
+      ladder through TECHO door, back to camera, navy parka silhouette ascending.
+      Palette begins shift cool-blue → amber-warm (lamp dominant now). Steam fills
+      mid-frame.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["renato_pour_coffee_steam", "ivan_ascend_ladder_back", "lamp_amber_dominant", "renato_smile_warm"]
+    ui_active:
+      - element_id: "caption_narration_si_esperas"
+        timestamp_visible_s: [0.3, 5.8]
+        position: {y_pct: 62}
+        text: "SI ESPERAS ADENTRO..."
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_15"
+    section_id: "consequence_path_b"
+    description: "POV looks out window — blizzard subsiding, faint dawn pink visible on horizon."
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "POV at window. Blizzard subsiding visibly. Pink/orange dawn light begins illuminating horizon over snow ridges."
+      why_this_shot_exists: "Visual time-pass marker — storm ends, dawn approaches (ref-10 dawn shift modeled)"
+      camera_intent: "POV at window, slight micro-bob, glass less frosted now"
+    motion_bridge_intent:
+      from_previous: "POV turns from Renato shot_14"
+      to_next: "Cut to Iván returning shot_16"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_warm_transition", "ambient_caseta_continuous", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.0
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: null
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV at window. Blizzard subsiding visibly — snow particles slowing. Pink + soft
+      orange dawn light illuminating distant snow ridges on horizon. Ice flowers on
+      glass thawing slightly. Palette warm dawn amber emerging dominant.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["blizzard_subsiding_slow", "dawn_light_emerging_pink", "ice_flowers_thawing_glass"]
+    ui_active: []
+
+  - shot_id: "shot_16"
+    section_id: "consequence_path_b"
+    description: "Iván seated at table inside caseta post-techo-descent. Both hands raised palm-forward toward viewer in fingerless gloves, 6-finger anatomy visible on both. Static reveal of uncanny biology — P2 twist confirmation."
+    duration_intent_s: 4.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Iván seated at table inside caseta post-techo-descent (snow on shoulders implies just-arrived). He raises BOTH hands palm-forward toward the camera/viewer in a still 'presenting' gesture. BOTH hands wear matching fingerless thermal gloves — the 6-finger anatomy is visible on BOTH hands (extra finger between pinky and ring per anchor). Iván's expression is calm/neutral, conveying 'I am what I am, not a threat' — the P2 twist reveal moment."
+      why_this_shot_exists: "Twist P2 setup — Iván returns safely, completed work, NOT a trap"
+      camera_intent: "POV from table view, Iván coming down ladder, medium-wide"
+    motion_bridge_intent:
+      from_previous: "POV pans from window shot_15"
+      to_next: "Cut to Iván close-up dialogue shot_17"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_warm_transition", "ambient_caseta_continuous", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Llega el amanecer. Iván baja del techo. Es solo un meteorólogo cumpliendo su turno."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Static reveal moment matching anchor pose EXACTLY. Iván seated at table inside caseta
+      interior, snow still melting on shoulders (implies just-descended from rooftop). He
+      raises BOTH HANDS palm-forward toward the camera/viewer in still 'presenting' gesture
+      (matches char_a_v1.png anchor pose exactly — both hands raised palm-forward spread).
+      BOTH hands wear matching fingerless dark navy thermal gloves. Six fingertips visibly
+      countable on BOTH hands (1 thumb + 5 non-thumb fingers per hand, extra between pinky
+      and ring). NO clipboard, NO held objects — anchor showed empty hands, shot keeps empty
+      hands for pose-coupling exact match. NO removed glove on table either (would add
+      element to stability budget). Iván's face calm/neutral, mouth flat, eyes either closed
+      or direct gaze. Dawn amber light from window catches face + both hands' fingertips.
+      Composition: Iván + both raised hands (2 elements — well under stability budget).
+      Hand pose: EXACT match anchor (per MODEL-BEHAVIOR-LOG entry 1 4th refinement).
+      The 'presenting' gesture conveys the P2 twist reveal: uncanny biology visible but he
+      is not a threat — just a worker returning from his shift.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["ivan_post_descent_seated", "both_hands_palm_forward_raised", "6_finger_reveal_both_hands", "dawn_amber_light"]
+    ui_active:
+      - element_id: "caption_narration_amanecer"
+        timestamp_visible_s: [0.5, 4.3]
+        position: {y_pct: 62}
+        text: "LLEGA EL AMANECER"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_17"
+    section_id: "consequence_path_b"
+    description: "Close-up Iván speaks 'Fin del turno. Bajemos.' — flat operational, twist reveals."
+    duration_intent_s: 2.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Iván close-up at table. Looks at POV with same monotone face, says 'Fin del turno. Bajemos.' — twist reveals he was just doing his job."
+      why_this_shot_exists: "Twist P2 reveal beat — same actor, same monotone, but recontextualized as 'just a worker' (ref-03 Bruno blueprint)"
+      camera_intent: "POV close on Iván, eye-level, lip-sync"
+    motion_bridge_intent:
+      from_previous: "Cut from shot_16 wide"
+      to_next: "Cut to wide caseta + camioneta arriving shot_18"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_drone_base_warm_transition", "ambient_caseta_continuous", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: null
+    has_lip_sync_required: true
+    dialog_text: "Fin del turno. Bajemos."
+    visual_intent: |
+      Close-up Iván at table. Same elongated skull, same lashless sockets, same monotone
+      face. He speaks 'Fin del turno. Bajemos.' Behind him window now glowing pink dawn
+      light. Warm amber palette envelops scene. Same character, recontextualized — he was
+      a worker, not a trap.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["ivan_mouth_speech_monotone", "dawn_light_warm_behind", "lamp_amber_competing"]
+    ui_active:
+      - element_id: "caption_dialog_ivan_fin"
+        timestamp_visible_s: [0.3, 2.3]
+        position: {y_pct: 62}
+        text: "FIN DEL TURNO"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_18"
+    section_id: "consequence_path_b"
+    description: "Wide exterior dawn — orange relief camioneta arrives via snow road. Iván + Renato + POV descend caseta."
+    duration_intent_s: 6.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov", "relevo_worker_minor"]
+      who_does_what: "Exterior wide dawn. Orange relevo camioneta (oxidized old Toyota 4WD) arrives via cleared snow road. New shift worker steps out. Iván + Renato + POV descend caseta stairs onto snowy platform."
+      why_this_shot_exists: "Resolution beat — relevo arrival 7AM confirms twist P2 + ref-03 Bruno blueprint precise"
+      camera_intent: "POV exterior wide, dawn pink sky, slight forward motion"
+    motion_bridge_intent:
+      from_previous: "Cut from Iván close-up shot_17"
+      to_next: "Cut to counterfactual outro shot_19"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["music_drone_base_warm_transition", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "La camioneta naranja del relevo llega a las siete. Regresas con vida."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Wide POV exterior dawn. Pink/orange/lavender sky over snow-covered cumbres.
+      Orange oxidized old Toyota 4WD pickup camioneta arrives via cleared snow road.
+      A relevo worker (anonymous, parka, helmet) steps out carrying clipboard.
+      Iván + Renato + POV stand on caseta platform descending stairs. Snow fresh
+      pristine. Mountain peaks majestic. Dawn warm amber dominant.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 5
+      atmospheric_motions_list: ["camioneta_arrive_snow_road", "relevo_worker_step_out", "dawn_pink_sky", "trio_descend_stairs", "fresh_snow_sparkle"]
+    ui_active:
+      - element_id: "caption_narration_camioneta"
+        timestamp_visible_s: [0.5, 5.5]
+        position: {y_pct: 62}
+        text: "REGRESAS CON VIDA"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  # ───────── SECTION CLIFFHANGER OUTRO (shots 19-20) ─────────
+
+  - shot_id: "shot_19"
+    section_id: "cliffhanger_outro"
+    description: "Counterfactual cozy — Renato + viewer playing cards at table with mate + dawn through window."
+    duration_intent_s: 8.0
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "Counterfactual scene of 'what would have been' had viewer chosen Renato. Renato sits across from POV at caseta table playing cards. Mate gourd + bombilla being shared. Dawn pink visible through window. Cozy laboral montaña."
+      why_this_shot_exists: "Cliffhanger Slot G — paz laboral cozy variant montaña (ref-10 + ref-08 cognado outros)"
+      camera_intent: "POV at table, slight micro-bob, Renato medium across"
+    motion_bridge_intent:
+      from_previous: "Cut from shot_18 exterior dawn"
+      to_next: "Cut to outro card shot_20"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_acoustic_outro_warm", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si hubieras elegido a Renato, habrían jugado cartas toda la noche, tomado mate caliente y visto el amanecer rosa sobre las cumbres."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV at caseta table cozy counterfactual. Renato smiling warmly across table,
+      fogged glasses cleared now, dealing playing cards onto wooden surface. Mate
+      gourd with metal bombilla center between them, steam rising. Plate with bread
+      + cheese cubes beside. Window background shows pink dawn over snow cumbres.
+      Kerosene lamp amber + dawn pink mix palette. Cozy contemplative atmosphere.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 5
+      atmospheric_motions_list: ["renato_deal_cards", "mate_steam_rising", "dawn_pink_window", "lamp_amber_warm", "renato_smile_warm"]
+    ui_active:
+      - element_id: "caption_narration_outro_counterfactual"
+        timestamp_visible_s: [1.0, 7.8]
+        position: {y_pct: 62}
+        text: "HABRÍAN JUGADO CARTAS TODA LA NOCHE"
+        font: "drop_shadow_canonical"
+        color: "white"
+
+  - shot_id: "shot_20"
+    section_id: "cliffhanger_outro"
+    description: "Wide cozy dawn — POV looks out window with Renato to sunrise + outro card overlay."
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "POV looks out window with Renato beside, watching pink dawn rise over cumbres. Outro card overlays with cliffhanger phrase."
+      why_this_shot_exists: "Final outro card — paz perdida emotional closure"
+      camera_intent: "POV at window with Renato beside, dawn breaking, static"
+    motion_bridge_intent:
+      from_previous: "Cut from shot_19 cozy table"
+      to_next: "N/A — end of video"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["music_acoustic_outro_warm", "ambient_dawn_birds_low"]
+    visual_style_lut: "warm_dawn_amber_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required:
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6
+      dim7_action_jaccard_min: 0.6
+    avu_overlay_clip: "outro-card-template.mp4"
+    narration_in_this_shot: null
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV at caseta window with Renato beside (right shoulder), both watching pink
+      dawn rise over snow cumbres. Steam from mate gourd lower-foreground. Soft warm
+      amber dominant. Outro card overlay text appears Y 50%.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["dawn_pink_rising_slow", "mate_steam_lower", "renato_calm_watch"]
+    ui_active:
+      - element_id: "outro_card_overlay"
+        timestamp_visible_s: [0.3, 2.8]
+        position: {y_pct: 50}
+        text: "ELIGE BIEN. UNA SOLA NOCHE."
+        font: "monospaced"
+        color: "white"
+
+# ═══════════════════════════════════════════════════════════════
+# 11. TRANSITIONS (Layer 2 effects between clips)
+# ═══════════════════════════════════════════════════════════════
+
+transitions:
+  - from_shot_id: "shot_01"
+    to_shot_id: "shot_02"
+    transition_type: "continuous_push_in_no_cut"
+    sting_audio: null
+    duration_s: 0.0
+    rationale: "Hook continuity NO zoom cut (feedback_hook_continuity_no_zoom_cut) — shots 01-02 are continuous push-in via Hailuo motion bridge"
+
+  - from_shot_id: "shot_02"
+    to_shot_id: "shot_03"
+    transition_type: "hard_cut_with_whoosh"
+    sting_audio: "whoosh-cold.mp3"
+    duration_s: 0.3
+    rationale: "Hook → setup beat, organic momentum + countdown end punctuation"
+
+  - from_shot_id: "shot_03"
+    to_shot_id: "shot_04"
+    transition_type: "cross_fade_0.4s"
+    sting_audio: null
+    duration_s: 0.4
+    rationale: "Establishing pan → window POV smooth"
+
+  - from_shot_id: "shot_04"
+    to_shot_id: "shot_05"
+    transition_type: "hard_cut"
+    sting_audio: "subtle_creak_door.mp3"
+    duration_s: 0.2
+    rationale: "Window → Iván door command, sharp focus shift"
+
+  - from_shot_id: "shot_05"
+    to_shot_id: "shot_06"
+    transition_type: "hard_cut"
+    sting_audio: null
+    duration_s: 0.0
+    rationale: "Iván dialog → Renato whisper, dialogue ping-pong"
+
+  - from_shot_id: "shot_06"
+    to_shot_id: "shot_07"
+    transition_type: "cross_fade_0.5s"
+    sting_audio: null
+    duration_s: 0.5
+    rationale: "Close whisper → wide pre-decision smooth"
+
+  - from_shot_id: "shot_07"
+    to_shot_id: "shot_08"
+    transition_type: "freeze_vhs_filter"
+    sting_audio: "vhs_glitch_in.mp3"
+    duration_s: 0.3
+    rationale: "Live → frozen decision UI, VHS overlay trigger"
+
+  - from_shot_id: "shot_08"
+    to_shot_id: "shot_09"
+    transition_type: "white_flash"
+    sting_audio: "wind_burst_in.mp3"
+    duration_s: 0.4
+    rationale: "Decision → consequence A interior→exterior shock"
+
+  - from_shot_id: "shot_09"
+    to_shot_id: "shot_10"
+    transition_type: "hard_cut"
+    sting_audio: null
+    duration_s: 0.0
+    rationale: "Path A continuity"
+
+  - from_shot_id: "shot_10"
+    to_shot_id: "shot_11"
+    transition_type: "hard_cut"
+    sting_audio: "tension_string_swell.mp3"
+    duration_s: 0.0
+    rationale: "Iván command → edge approach, climax building"
+
+  - from_shot_id: "shot_11"
+    to_shot_id: "shot_12"
+    transition_type: "match_cut_motion"
+    sting_audio: "scream_subtle.mp3"
+    duration_s: 0.2
+    rationale: "Push → freefall, motion continuity"
+
+  - from_shot_id: "shot_12"
+    to_shot_id: "shot_13"
+    transition_type: "white_flash_to_black"
+    sting_audio: "impact_thud.mp3"
+    duration_s: 0.4
+    rationale: "Freefall climax → black transition"
+
+  - from_shot_id: "shot_13"
+    to_shot_id: "shot_14"
+    transition_type: "fade_in_warm"
+    sting_audio: null
+    duration_s: 0.6
+    rationale: "Black title → path B warm cozy entry"
+
+  - from_shot_id: "shot_14"
+    to_shot_id: "shot_15"
+    transition_type: "cross_fade_0.5s"
+    sting_audio: null
+    duration_s: 0.5
+    rationale: "Renato cozy → window dawn smooth"
+
+  - from_shot_id: "shot_15"
+    to_shot_id: "shot_16"
+    transition_type: "hard_cut"
+    sting_audio: "ladder_descend_creak.mp3"
+    duration_s: 0.2
+    rationale: "Window → Iván returning"
+
+  - from_shot_id: "shot_16"
+    to_shot_id: "shot_17"
+    transition_type: "hard_cut"
+    sting_audio: null
+    duration_s: 0.0
+    rationale: "Wide → close Iván dialog"
+
+  - from_shot_id: "shot_17"
+    to_shot_id: "shot_18"
+    transition_type: "cross_fade_0.5s"
+    sting_audio: "engine_distant_approach.mp3"
+    duration_s: 0.5
+    rationale: "Close interior → wide exterior dawn"
+
+  - from_shot_id: "shot_18"
+    to_shot_id: "shot_19"
+    transition_type: "cross_fade_0.6s"
+    sting_audio: "guitar_pluck_warm.mp3"
+    duration_s: 0.6
+    rationale: "Exterior → counterfactual cozy transition with acoustic music intro"
+
+  - from_shot_id: "shot_19"
+    to_shot_id: "shot_20"
+    transition_type: "cross_fade_0.5s"
+    sting_audio: null
+    duration_s: 0.5
+    rationale: "Cozy table → window dawn final outro"
+
+# ═══════════════════════════════════════════════════════════════
+# 12. HYPERFRAMES UI OVERLAY (Layer 4)
+# ═══════════════════════════════════════════════════════════════
+
+hyperframes_ui_overlay:
+  countdown_3_2_1_hook:
+    enabled: true
+    timeline_position_s: [5.5, 8.0]
+    avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    z_index: 60
+
+  decision_freeze_d1:
+    enabled: true
+    timeline_position_s: [25.5, 28.5]
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "IVÁN", color: "white", y_pct: 75}
+      button_b: {text: "RENATO", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    z_index: 60
+
+  decision_freeze_d2:
+    enabled: false
+    timeline_position_s: null
+    avu_clip: null
+
+  outro_card_cliffhanger:
+    enabled: true
+    timeline_position_s: [86.0, 89.0]
+    avu_clip: "outro-card-template.mp4"
+    text_overlay: "ELIGE BIEN. UNA SOLA NOCHE."
+    z_index: 65
+
+  watermark_handle_persistent:
+    enabled: true
+    timeline_position_s: [0.0, 90.0]
+    text: "@elige_tucompanero"
+    position: {y_pct: 4, x_pct: 50, anchor: "top_center"}
+    z_index: 68
+
+# ═══════════════════════════════════════════════════════════════
+# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# ═══════════════════════════════════════════════════════════════
+
+asset_list:
+  sfx_prompts_to_generate:
+    - sfx_id: "kerosene_lamp_hum_loop"
+      prompt: "old kerosene lamp soft burn hum, low warm hiss, no music, loopable"
+      duration_s: 8.0
+      uses_shots: ["shot_01", "shot_03", "shot_05", "shot_14", "shot_16", "shot_17"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "radio_hf_static_crackle"
+      prompt: "vintage HF radio static crackle bursts, no voice, intermittent"
+      duration_s: 4.0
+      uses_shots: ["shot_04"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "blizzard_wind_violent_burst"
+      prompt: "blizzard wind violent burst, snow particles impact, no music"
+      duration_s: 3.0
+      uses_shots: ["shot_09", "shot_10", "shot_11"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "anemometer_cups_spin"
+      prompt: "metal anemometer cups spinning rapidly in wind, mechanical whir"
+      duration_s: 2.5
+      uses_shots: ["shot_10", "shot_11"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "freefall_wind_rush"
+      prompt: "freefall wind rush ear pressure, no music, intensifying"
+      duration_s: 4.0
+      uses_shots: ["shot_12"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "snow_impact_thud_muffled"
+      prompt: "muffled snow impact thud, deep low frequency, distant"
+      duration_s: 1.0
+      uses_shots: ["shot_12", "shot_13"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "coffee_pour_steam"
+      prompt: "hot coffee pouring into ceramic mug, gentle steam hiss"
+      duration_s: 2.0
+      uses_shots: ["shot_14"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "ladder_descend_creak"
+      prompt: "metal ladder rung descend creak, mechanical, snow boots"
+      duration_s: 1.5
+      uses_shots: ["shot_16"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "engine_distant_approach_diesel"
+      prompt: "old diesel pickup truck engine approaching distant, snowy road, no music"
+      duration_s: 4.0
+      uses_shots: ["shot_18"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "card_deal_wooden_table"
+      prompt: "playing cards dealing onto wooden table, soft cozy"
+      duration_s: 2.0
+      uses_shots: ["shot_19"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "mate_pour_bombilla_sip"
+      prompt: "mate gourd hot water pour + bombilla soft sip"
+      duration_s: 1.8
+      uses_shots: ["shot_19"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "vhs_glitch_in"
+      prompt: "VHS glitch chromatic aberration sting, short impact"
+      duration_s: 0.5
+      uses_shots: ["shot_08"]
+      layer_destination: "layer_2_effects"
+    - sfx_id: "whoosh_cold_transition"
+      prompt: "cold air whoosh transition sting, low frequency"
+      duration_s: 0.4
+      uses_shots: ["shot_02", "shot_03"]
+      layer_destination: "layer_2_effects"
+    - sfx_id: "wind_burst_in_white_flash"
+      prompt: "wind burst impact white flash transition, sharp"
+      duration_s: 0.4
+      uses_shots: ["shot_09"]
+      layer_destination: "layer_2_effects"
+    - sfx_id: "tension_string_swell"
+      prompt: "dark cinematic strings rising tension swell, short"
+      duration_s: 2.0
+      uses_shots: ["shot_11"]
+      layer_destination: "layer_2_effects"
+    - sfx_id: "guitar_pluck_warm_intro"
+      prompt: "acoustic guitar warm pluck intro single note, fingerpicked"
+      duration_s: 1.5
+      uses_shots: ["shot_19"]
+      layer_destination: "layer_2_effects"
+
+  music_to_generate:
+    - "music_drone_base_cold"
+    - "ambient_wind_exterior_blizzard_HIGH"
+    - "accent_climax_horror"
+    - "music_drone_base_warm_transition"
+    - "music_acoustic_outro_warm"
+
+  ambient_continuous_to_generate:
+    - "ambient_caseta_continuous"
+    - "ambient_wind_exterior_low"
+    - "ambient_dawn_birds_low"
+
+  anchors_to_generate:
+    - "char_a_v1"
+    - "char_b_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 14. CHANNEL IDENTITY
+# ═══════════════════════════════════════════════════════════════
+
+channel_signature:
+  watermark_handle: "@elige_tucompanero"
+  caption_style_canonical:
+    name_labels:
+      font: "monospaced"
+      position_y_pct: 11.5
+      color: "yellow_or_white"
+    narration_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "white"
+    warning_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "red"
+      prefix: "SI ELEGISTE {character}"
+  audio_signature:
+    target_lufs: -14
+    true_peak_max: -1
+    music_layers_min: 3
+  visual_signature:
+    aspect_ratio: "9:16"
+    resolution: "1080x1920"
+    frame_rate: 24
+
+# ═══════════════════════════════════════════════════════════════
+# 15. ENFORCEMENT SCRIPT INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+enforcement_integration:
+  script_a_build_clip_atomic:
+    invoked_per_shot: true
+    flag: "--bake-captions"
+    requires: ["clip_raw_mp4", "narration_segment_or_silence", "spec_text_canonical_optional"]
+    emits: ["clip_atomic_mp4", "manifest_yaml", "bake_report_json"]
+
+  script_b_audit_shot_spec_compliance:
+    invoked_per_shot_during_cp4_audit: true
+    dimensions_8: ["dim0_scope_creep", "dim1_narrator_vs_spec", "dim2_caption_vs_spec",
+                   "dim3_caption_vs_narrator_sync", "dim4_5_visual_vs_intent",
+                   "dim6_characters_vs_anchor", "dim7_action_vs_narration"]
+    halt_on_any_fail: true
+    regen_anchors_if_dim6_fails_cp1: true
+
+  script_c_orchestrator:
+    enforces_cp_by_cp: true
+    cost_cap_default_usd: 8.0
+    cost_alert_threshold_usd: 6.0
+    forbids_engineer_multi_cp_prompts: true
+    architectural_decisions_log: ".claude/skills/creative-director/master-flow-v2/ARCHITECTURAL-DECISIONS.md"
+
+# ═══════════════════════════════════════════════════════════════
+# 16. ARCHITECT ANNOTATIONS
+# ═══════════════════════════════════════════════════════════════
+
+architect_annotations:
+  - timestamp: "2026-05-22"
+    track: "FASE 0 user selection from 3-propuesta architect output"
+    note: |
+      User selected Propuesta C (Estación meteorológica de alta montaña) over A (submarina) + B (geriátrico).
+      Reasons cited: maximizes EXECUTION CONTINUITY ranking #1 test, P2 canon-rooted minimum noise,
+      paleta consistente dual cool-blue + amber-lamp, primer V4 hybrid architecture validation.
+      Iván role-flip approved per PAUTA § 4 meta-storytelling precedent (Pablo bueno ref-03 → malo ref-08,
+      Axel malo ref-06 → bueno ref-09, now Iván malo-ritual ref-11 → malo-aparente-trabajador-P2 here).
+
+  - timestamp: "2026-05-22"
+    track: "Pattern rotation validation"
+    note: |
+      P2 valid per video-log § Rotation: recent videos = cinema-abandonado P3, matadero P6, parque-acuatico P6/P9
+      hybrid. P2 unused recent (last P2-adjacent was mina v15 P4 paz perdida — different archetype). No violation
+      of "no repeat 2 consecutive videos" rule. P2 also matches user intent of "minimum noise, canon-rooted
+      twist relevo" — ref-03 Bruno blueprint precise.
+
+  - timestamp: "2026-05-22"
+    track: "Risk flags for auditor"
+    note: |
+      (1) Iván 6-finger glove uncanny detail — Hailuo may struggle reproducing extra finger consistently across
+      shots 01/02/05/07/10/16/17. Anchor CP1 must lock 6-finger visibly. Auditor should verify dim6 anchor
+      similarity ≥0.6 across all Iván shots.
+      (2) Anemómetro 3-cup specific instrument — Hailuo prompt must include exact term. Risk of model drifting
+      to generic weather-vane.
+      (3) Camioneta naranja relevo shot_18 — vehicle generation in snow exterior may be Hailuo-challenging.
+      Consider fallback to Ken Burns ONLY here if 3 regens fail (per Hard Rule #7).
+      (4) Dawn palette shift cross-clip (shot_14 onward) — Layer 3 LUT continuity must be applied consistently
+      via post-concat. Engineer to verify warm_dawn_amber_v1 LUT exists or generate.
+      (5) Mate gourd + bombilla shot_19 — specifically Argentine cultural element. Hailuo prompt: "mate gourd
+      hollow calabash + metal bombilla straw, steaming hot water, cozy Argentine cabin scene".
+
+  - timestamp: "2026-05-22"
+    track: "Counterfactual narration coverage check"
+    note: |
+      Narration script total estimated coverage: 70.5s narrated / 90s total = 78% (above ≥70% canonical threshold).
+      Avg block duration: 4.6s (above ≥4.5s canonical threshold). Sound fabric ≥99% via Layer 3 continuous
+      music + ambient. PAUTA § 13 outro 4-elements compliance: voice "Si hubieras elegido..." ✓ +
+      visual cozy contraste ✓ + detalle cotidiano (cartas + mate + pan/queso) ✓ + cierre imagen cálida
+      (amanecer rosa) ✓.
+
+  - timestamp: "2026-05-22 PM late"
+    track: "shot_16 simplification per MODEL-BEHAVIOR-LOG stability budget"
+    note: |
+      shot_16 visual_intent amended v11.1 → v11.2 to fit Gemini Image stability budget
+      threshold ~3 prop elements (empirical finding MODEL-BEHAVIOR-LOG entry 1 update
+      2026-05-22 PM late). Original SPEC had 5+ elements + multi-beat action sequence
+      (ladder descent + clipboard placement + glove removal + lamp + window) which
+      caused polydactyly regression 2/2 iter (3-5 fingers + hallucinations) at CP3.
+      Simplified to 3 elements (Iván + clipboard + bare-6-finger-hand visible) as
+      static post-action moment. Preserves narrative reveal beat (viewer SEES polydactyl
+      confirmation = P2 twist visual proof) without bloating shot count. Conscious
+      source-authority amendment by architect with documented reason — NOT silent
+      reformulation. References_canonical[] unaffected. CP4 animation may add motion
+      (Hailuo) re-introducing some action implication (glove resting near hand can suggest
+      just-removed via subtle motion).
+
+  - timestamp: "2026-05-22 PM late late"
+    track: "shot_16 v11.3 pose-coupling forward-engineering"
+    note: |
+      shot_16 visual_intent re-designed v11.2 → v11.3 per MODEL-BEHAVIOR-LOG entry 1 third
+      refinement (pose-coupling discovered 2026-05-22 PM late late). v11.2 palm-down resting
+      composition failed polydactyly 2/2 iter despite stability budget compliance + face+hand
+      co-located + neutral wording + explicit prompt reinforcement. Empirical root cause:
+      Gemini --ref full anchor is also pose-coupled — preserves polydactyl ONLY when shot
+      hand pose matches anchor pose (palm-forward raised). v11.3 redesigns to palm-forward
+      holding clipboard (matches anchor) while preserving 3-element stability budget +
+      narrative reveal beat (6-finger visible holding clipboard edge). Forward-engineering
+      principle: SPEC designed AROUND model limit with documented reason (NOT silent
+      reverse-engineering of SPEC to fit accidental render output). Validates emerging
+      pattern_class "spec_amend_with_source_authority_when_model_constrained" — instance 2
+      of N (instance 1 was v11.2 stability budget). Pattern threshold trigger 3-5 → codify
+      as Architect CP0 protocol structural rule. Pose-match SPEC field amendment deferred
+      to Sprint B (anchor_pose field + per-shot hand_pose field — would be v12 schema
+      forward).
+
+  - timestamp: "2026-05-22 evening"
+    track: "shot_16 v11.4 Path A — narration-fit-render forward-engineering"
+    note: |
+      shot_16 amended v11.3 → v11.4 per MODEL-BEHAVIOR-LOG entry 1 FOURTH refinement
+      (pose-coupling EXACT-MATCH). User chose Path A: accept v2 stop-gesture canonical
+      render (preserves polydactyly) + amend SPEC narration to fit. Drop clipboard from
+      composition (was element 2 in v11.3) — anchor showed empty hands, shot must keep
+      empty hands for pose-coupling exact match including object-holding state. Reframe
+      narrator_consequence_b_dawn from "deja el clipboard sobre la mesa" → "te muestra
+      sus manos: seis dedos. No es trampa." The 'presenting' gesture conveys P2 twist
+      reveal — uncanny biology visible but not threat. Forward-engineering principle:
+      SPEC designed to match working render constraint, NOT silent reverse-engineering.
+      Conscious architect amend with documented 4th-refinement reason. Pattern_class
+      "spec_amend_with_source_authority_when_model_constrained" instance #3 of N (1=stability
+      budget v11.2, 2=pose-coupling v11.3, 3=exact-match-pose v11.4). At 5+ → codify
+      Architect CP0 protocol structural rule. Engineer scope post-amend: re-TTS just
+      narrator_consequence_b_dawn segment + update master narration concat + regenerate
+      captions for that segment (~$0.04 cost, narrow scope).
+
+# ═══════════════════════════════════════════════════════════════
+# 17. ENGINEER NOTES
+# ═══════════════════════════════════════════════════════════════
+
+engineer_notes:
+  pipeline_strategy: "per_clip_atomic_hybrid"
+  primary_model_target: "hailuo_pro"
+  fallback_model: "hailuo_std"
+  lip_sync_strategy: "deferred_phase_3"
+  veo_quota_observations: "NOT enterprise free — billing confirmed (V3 parque-acuatico lesson). Avoid Veo V4 forward."
+  cost_estimate_total_usd: "6.5-7.5 (20 shots × hailuo_pro ~$0.30-0.40 each + TTS + SFX + music)"
+  cp_breakdown:
+    cp1_anchors: "2 anchors (char_a_v1 + char_b_v1) — strict 6-finger glove + fogged glasses respectively"
+    cp2_script: "15 narration segments + 4 character dialogue segments — Oxley narrator + Vicente Renato"
+    cp3_shot_images: "20 shot images generated per anchor + scene_context"
+    cp4_animation: "20 hailuo_pro animations + lip-sync deferred Phase 3"
+    cp5_render: "Per-clip atomic build + Layer 2 transitions + Layer 3 cross-clip music/ambient + Layer 4 UI overlay"
+  critical_engineering_risks:
+    - "shot_18 camioneta exterior — Hailuo vehicle generation risk, plan 3 regens before Ken Burns fallback"
+    - "Iván 6-finger consistency across 7 shots — anchor must lock this strictly"
+    - "Dawn LUT cross-clip transition shot_13→shot_14 → confirm warm_dawn_amber_v1 LUT generated CP4"
+    - "Anemómetro instrument specificity — prompt must include '3-cup spinning anemometer roof-mounted'"
+
+# ═══════════════════════════════════════════════════════════════
+# END SCHEMA v11.2 — cerro-aislado-v4
+# ═══════════════════════════════════════════════════════════════

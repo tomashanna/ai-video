@@ -1,0 +1,651 @@
+# CREATIVE-SPEC-TEMPLATE.yaml — v11.1 (HYBRID + canonical refs structural linkage — 2026-05-22)
+#
+# CHANGES v11 → v11.1 (codified post Tomás canonical-quality-gap question 2026-05-22 PM):
+# - NEW mandatory top-level field `references_canonical[]` (linkage between architect's
+#   canonical research and SPEC structured decisions — auditor SPEC-AUDIT verifies ≥5/8 coverage)
+# - Auditor charter codified in V4-LAUNCH-CHECKLIST Gate 5: SPEC-VS-CANONICAL-AUDIT.md
+#   mandatory output before CP1 advancement
+#
+# CHANGES v10 → v11 (codified per CLAUDE.md Hard Rule #25 + V4-LAUNCH-CHECKLIST Gate 3):
+#
+# v11 elevates the schema to canonical for HYBRID architecture (V4 forward) by codifying
+# the 3-layer + HyperFrames UI overlay model PLUS the enforcement-script integration
+# fields that Script A (build_clip_atomic --bake-captions) and Script B
+# (audit-shot-spec-compliance per-shot 8 dim) consume.
+#
+# 11 NEW or PROMOTED fields vs v10:
+#   1. assembly_strategy enum NEW canonical value: "per_clip_atomic_hybrid" (replaces "per_clip_atomic")
+#   2. hybrid_layers NEW top-level block (Layer 1 + Layer 2 + Layer 3 + UI overlay explicit)
+#   3. per-shot caption_burn_strategy NEW (Script A integration: whisper_from_clip_audio | spec_text_override_with_whisper_timing | pass_through_if_silent)
+#   4. per-shot anchor_consistency_strict NEW (Bryan-style strict — Script B dim 6 anchor_similarity ≥0.6 enforced)
+#   5. per-shot anchor_id_required NEW (which CP1 anchor file must match the visible character — Script B dim 6 input)
+#   6. per-shot script_b_compliance_targets NEW (per-shot Jaccard thresholds + scope_creep flag for Script B dim 0)
+#   7. cross_clip_continuous_audio_layers NEW (explicit separation: which audio is Layer 3 cross-clip vs which is Layer 1 clip-scoped)
+#   8. hyperframes_ui_overlay NEW block (countdown clips + decision UI + outro card timeline declared positions)
+#   9. counterfactual_placement PROMOTED to also appear in narrative_structure.canonical_constraints with enforced enum (Script B dim 0 scope creep check)
+#  10. characters[].name_validation NEW (gate: NEVER job descriptions, MUST be invented real names — feedback_character_real_names)
+#  11. motion_bridge_intent + pov_traversal + audio_layer_continuity + visual_style_lut + visual_intent + scene_context PROMOTED from optional v10 → REQUIRED v11 (every shot mandatory)
+#
+# Backward compat: v10 specs still readable. v11 ADDS required fields, so v10 → v11 migration
+# means filling these fields in (NOT a breaking schema change for parsing — only for the
+# AUDITOR who now enforces them).
+#
+# Validation: scripts/audit-spec-completeness.py validates v11 schema (asset_list + ui_active
+# + per-shot required fields). scripts/audit-shot-spec-compliance.py consumes per-shot fields.
+
+schema_version: "v11.1"
+schema_revised: "2026-05-22"
+schema_purpose: "HYBRID architecture canonical V4+ — per-clip atomic captions burned + Layer 3 cross-clip + HyperFrames UI overlay + Script A/B enforcement integration + canonical refs structural linkage"
+
+# ═══════════════════════════════════════════════════════════════
+# 1. PROJECT METADATA
+# ═══════════════════════════════════════════════════════════════
+
+project:
+  project_id: "<kebab-case-id>"          # ej: cabina-14, parque-acuatico-v4
+  format: "horror-choice"                 # genre per video-log rotation
+  delivery: "reel"                        # IG Reel 9:16 1080×1920 mp4
+  pattern: "P<N>"                         # P1-P10 archetype matrix
+  pattern_rotation_check: "previous: cinema-abandonado=P3, matadero=P6 → V4 next-must-differ from P3+P6"
+  setting: "<descriptive>"
+  total_duration_s_intent: 90             # canonical band 80-95s
+  channel: "@elige_tucompanero"           # NEVER @referent-a (canonical ref only)
+  language: "Spanish neutral"             # NUNCA voseo argentino — feedback_spanish_neutral
+
+# ═══════════════════════════════════════════════════════════════
+# 1.6 ⭐⭐ VIDEO CAPABILITIES (NEW PRE-4.G 2026-05-25 — Pattern 7 Capability Matrix)
+# ═══════════════════════════════════════════════════════════════
+# Codified Pattern 7 (PIPELINE.md §13.10): declare explícito qué paradigma + features
+# aplican al video. Validators + builds + tests leen este block ANTES de aplicar properties.
+# Si capability=false → property marked NOT_APPLICABLE (NOT failed).
+#
+# Defaults abajo = paradigma horror-choice canonical (V4 era).
+# Otros paradigmas (tutorial / B2B / compilation / mixed) overrride según necesidad.
+#
+# IF block ausente entirely → SPEC-AUDIT verdict HALT (Bug #9 escalation).
+
+video_capabilities:
+  # Source paradigm — origen de los clips
+  source_clips_origin: "ai_generated"      # ai_generated | pre_existing | mixed
+  has_ai_generated_clips: true              # true para horror-choice; false para compilation
+
+  # Audio paradigm
+  has_tts_narration: true                   # true para horror-choice; false para tutorial sin narración o B2B con voiceover humano
+  has_human_voiceover: false                # true para B2B con voz grabada; false para horror-choice AI TTS
+  audio_mix_target: "lufs_-14"              # lufs_-14 | spec_declared | preserve_source | none
+  has_sfx_layer: true                       # SFX dedicada layer (Rule #8 gating, PRE-4.H R2 2026-05-26). Default horror-choice. false para tutorial sin SFX.
+
+  # Visual paradigm — qué layers están activos
+  has_captions_baked: true                  # gating Hard Rule #25 caption invariance
+  has_layer_2_effects: true                 # gating §13.9.1 LAYER 2 xfade transitions
+  has_layer_3_music: true                   # gating §13.7.5 LAYER 3 cross-clip music
+  has_layer_4_ui: true                      # gating decision UI / countdown / outro card
+
+  # Format paradigm
+  format_type: "interactive_choice"         # interactive_choice | tutorial | b2b_commercial | compilation | other
+  duration_intent_s: 90                     # referenced en multiple places del SPEC
+  target_fps: 30                            # PRE-4.1 (2026-05-27): output fps target. Default 30 (horror-choice reel). Override per paradigm (e.g., 24 cinema). build-video-hybrid.py normaliza output final a este target. Ausente → assume 30 + WARNING (backward compat).
+  output_resolution: "1080x1920"            # PRE-4.1: WxH del render final per format (1080x1920 = IG reel vertical). Override per format (e.g., 1920x1080 landscape). Gate 4 valida output vs este valor.
+
+# ═══════════════════════════════════════════════════════════════
+# 1.5 ⭐⭐ REFERENCES CANONICAL (v11.1 NEW — mandatory linkage)
+# ═══════════════════════════════════════════════════════════════
+# Auditor SPEC-AUDIT verifies: ≥5/8 refs cited with substantive `informs` + `why_relevant`.
+# Charter codified in V4-LAUNCH-CHECKLIST Gate 5.
+# IF len(references_canonical) < 5 OR linkage shallow → SPEC-AUDIT verdict HALT, blocks CP1.
+# Each entry MUST cite a real canonical-scenes/ref-XX*.md and explain HOW it informs the SPEC.
+#
+# Example below is RETROACTIVE for cinema-abandonado V2 (NOT a recipe — illustrative only):
+
+references_canonical:
+  - ref_id: "ref-03"                              # canonical-scenes/ref-03-bruno-pablo-mina.md
+    informs:
+      - "narrative_structure.cliffhanger_archetype"  # field path inside this SPEC
+      - "characters.char_a.visual_signature"
+    why_relevant: "Pattern P9 con dyad bueno/malo aparente similar. Bruno uncanny look + Pablo helper-trap pattern informs char_a stitched-mouth visual + cliffhanger 'prision_emocional' archetype."
+
+  - ref_id: "ref-06"                              # canonical-scenes/ref-06-enzo-axel-carretera.md
+    informs:
+      - "narrative_structure.hook_sub_beats"
+      - "hyperframes_ui_overlay.countdown_3_2_1_hook"
+    why_relevant: "Hook 4-beat order canonical (name_labels → setting_warning → push_in → countdown last). ref-06 frame extraction validates countdown LAST not middle. Informs hook_sub_beats timeline ordering."
+
+  - ref_id: "ref-08"                              # canonical-scenes/ref-08-hugo-pablo-acuario.md
+    informs:
+      - "narrative_structure.counterfactual_placement"
+      - "characters.char_b"
+    why_relevant: "Pattern P3 'bueno_aparente Hugo speaks dialogue' refutes 'bueno_aparente always silent'. Informs char_b dialogue licensure + counterfactual twin_ending_good_alternate option."
+
+  - ref_id: "ref-10"                              # canonical-scenes/ref-10-rurik-enzo-fundicion.md
+    informs:
+      - "music_continuous_layers.drone_base"
+      - "narrative_sections.consequence_path_a.visual_style_lut"
+    why_relevant: "Industrial fundicion setting parallels cinema decay aesthetic. Drone base + cool_horror_v1 LUT applied to consequence sequences (cool palette over warm hook transition)."
+
+  - ref_id: "ref-13"                              # canonical-scenes/ref-13-* (mini-cuts signature)
+    informs:
+      - "editing_targets.target_cuts_per_min"
+      - "shot_list.shot_NN.mini_cuts_internal"
+    why_relevant: "Mini-cuts signature pattern (5-7 cuts per shot in cuts_flooding section) drives cuts_per_min into 18-22 canonical band. Without ref-13 reference cinema-abandonado V1 was 12 cuts/min (sub-canonical = GAP #34)."
+
+  # Refs NOT used (optional but recommended to declare reason):
+  # - ref-09 (cockpit setting too distant from cinema)
+  # - ref-11 (POV style mismatch — third-person variant)
+  # - ref-12 (covered indirectly via ref-13 mini-cuts signature)
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ASSEMBLY STRATEGY (v11 HYBRID canonical)
+# ═══════════════════════════════════════════════════════════════
+
+assembly_strategy: "per_clip_atomic_hybrid"   # ⭐ v11 canonical. Legacy values still accepted:
+                                              #   "per_clip_atomic" → v8/v9/v10 standalone
+                                              #   "global_master"   → cinema-abandonado/matadero only
+                                              # Hard Rule #25 mandates per_clip_atomic_hybrid V4+.
+
+# ═══════════════════════════════════════════════════════════════
+# 3. HYBRID LAYERS DECLARATION (v11 NEW — Hard Rule #25)
+# ═══════════════════════════════════════════════════════════════
+
+hybrid_layers:
+  layer_1_per_clip_atomic:
+    description: "Per-shot mp4 with visual + clip-scoped audio + captions BURNED into frame data"
+    captions_source: "whisper_from_clip_audio"   # canonical: caption-audio LOCKED at frame level, cannot drift
+    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    audio_bundled_per_clip:
+      - "narrator_segments_within_this_clip"     # if any narrator speech occurs in clip duration
+      - "character_dialog_within_this_clip"
+      - "diegetic_sfx_within_this_clip"
+      - "clip_scoped_ambient_short"              # ambient that does NOT span clip boundaries
+    output_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_atomic.mp4"
+    manifest_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_manifest.yaml"
+
+  layer_2_effects_between_clips:
+    description: "Transitions + stings + B&W TV static / cross-fade / flash applied AT shot boundaries"
+    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/transitions/"   # Capa A universal primitives (7). TIERED post-PRE-4.K — format sub-genre en <format>-format/effects-library/transitions/ (horror-choice: film-burn / projector-cue-cinema / static-noise). Principio "Disponibilidad ≠ Uso": ambos catálogos disponibles, este SPEC elige en shot_list[].transition_in/out. Caption styles → templates/caption-styles/caption-burn-template.css
+    transition_variety_min: 3                    # at least 3 unique transition types per video
+    non_diegetic_sfx_placement: "effect_layer"   # transition stings live HERE, not in clip audio
+
+  layer_3_cross_clip_continuous:
+    description: "Audio layers that MUST NOT cut at shot boundaries — overlaid POST-concat with sidechain duck"
+    layers:
+      - "narrator_master_continuous"             # full-video narrator track if multi-shot speech
+      - "music_drone_base"                       # continuous tension drone
+      - "ambient_continuous_environment"         # room tone / environmental wash
+    sidechain_target_db: -6                      # narrator ducks music by 6 dB during speech
+    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+
+  layer_4_hyperframes_ui_overlay:
+    description: "Countdown clips + decision UI + outro card composed via HyperFrames timeline.main"
+    elements:
+      - "countdown_3_2_1_hook"                   # if hook countdown applies
+      - "decision_freeze_d1"
+      - "decision_freeze_d2"                     # if 2-decision pattern
+      - "outro_card_cliffhanger"
+      - "watermark_handle_persistent"
+
+# ═══════════════════════════════════════════════════════════════
+# 4. CHARACTERS (real invented names + name_validation gate)
+# ═══════════════════════════════════════════════════════════════
+
+characters:
+  - character_id: "char_a"
+    name: "<RealName1>"                          # e.g., Bruno, Mateo, Felipe, Bryan, Damián, Lorenzo
+    name_validation:                             # ⭐ v11 NEW — feedback_character_real_names enforcement
+      is_real_invented_name: true                # MUST be true. Auditor rejects job descriptions.
+      blacklist_check_passed: true               # NEVER Proyector/Matarife/Cocinera/Acomodador
+      canonical_8_refs_pattern: "real_first_name"
+    role: "malo_aparente"                        # or bueno_aparente — dyad
+    archetype: "<P<N> dyad assignment>"
+    visual_signature: |
+      <detailed visual description for anchor generation — 6+ atomic visual features>
+      e.g., "tall thin uncanny figure, stitched mouth with thick dark twine,
+       sunken orbital sockets, lanky ectomorph body, weathered industrial vest,
+       grease-stained collar, asymmetric facial droop right side"
+    voice_id_canonical: "<elevenlabs voice id>"
+    anchor_image_id: "char_a_v1"                 # references assets/anchors/char_a_v1.png post-CP1
+
+  - character_id: "char_b"
+    name: "<RealName2>"
+    name_validation:
+      is_real_invented_name: true
+      blacklist_check_passed: true
+      canonical_8_refs_pattern: "real_first_name"
+    role: "bueno_aparente"
+    archetype: "<P<N> dyad partner>"
+    visual_signature: |
+      <detailed visual description>
+    voice_id_canonical: "<elevenlabs voice id>"
+    anchor_image_id: "char_b_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 5. NARRATIVE STRUCTURE (counterfactual + emotional framing)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_structure:
+  counterfactual_placement: "before_choice_resolves"   # ⭐ v11 ENFORCED enum:
+                                                       # before_choice_resolves          ← CANONICAL preferred
+                                                       # twin_ending_good_alternate      ← acceptable variant
+                                                       # good_path_at_end                ← acceptable variant
+                                                       # parallel_alternation            ← acceptable variant
+                                                       # after_both_paths_retrospective  ← ⛔ ANTI-PATTERN (Script B dim 0 REJECT)
+
+  emotional_framing: "stakes_lift"               # stakes_lift | relief_contrast | retrospective_closure
+                                                 # AVOID retrospective_closure unless paired with good ending visible
+
+  cliffhanger_archetype: "<archetype id>"        # e.g., bucle_eterno, prision_emocional, hedonismo_eterno
+
+  canonical_constraints:                         # ⭐ v11 NEW Script B dim 0 scope creep enforcement
+    no_retrospective_counterfactual: true
+    si_elegiste_framing_required: true           # feedback_si_elegiste_framing — Slot E captions prefixed
+    visual_matches_narration_literal: true       # feedback_visual_matches_narration — dim 4-5 + 7 check
+    first_person_pov_locked: true                # feedback_first_person_pov — POV mandatory
+
+  hook_sub_beats:                                # per PAUTA § 18 ordering canonical
+    - beat_id: "name_labels_intro"
+      timestamp_intent_s: [0.0, 2.0]
+      content: "Two character names appear with monospaced labels"
+    - beat_id: "caption_setting_warning"
+      timestamp_intent_s: [2.0, 4.0]
+      content: "Caption establishes setting + horror premise"
+    - beat_id: "push_in_micro_motion"
+      timestamp_intent_s: [4.0, 5.5]
+      content: "POV slow push-in toward dyad — feedback_hook_continuity_no_zoom_cut"
+    - beat_id: "countdown_3_2_1"                 # OPTIONAL — always LAST if present
+      timestamp_intent_s: [5.5, 8.5]
+      content: "Film Leader Academy style countdown via AVU clip"
+      avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+
+# ═══════════════════════════════════════════════════════════════
+# 6. NARRATIVE SECTIONS (grouping for cross-shot audio + LUT continuity)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_sections:
+  - section_id: "hook"
+    shot_ids: ["shot_01"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_room"]
+    visual_style_lut: "warm_industrial_v1"
+
+  - section_id: "setup_pre_decision"
+    shot_ids: ["shot_02", "shot_03", "shot_04", "shot_05"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_corridor"]
+    visual_style_lut: "warm_industrial_v1"
+
+  - section_id: "decision_1"
+    shot_ids: ["shot_06"]
+    audio_layer_continuity_within_section: ["drone_base"]
+    visual_style_lut: "warm_industrial_v1_freeze_filter"
+
+  - section_id: "consequence_path_a"
+    shot_ids: ["shot_07", "shot_08", "shot_09"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_consequence_a"]
+    visual_style_lut: "cool_horror_v1"
+
+  - section_id: "consequence_path_b"
+    shot_ids: ["shot_10", "shot_11"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_consequence_b"]
+    visual_style_lut: "warm_relief_v1"
+
+  - section_id: "cliffhanger_outro"
+    shot_ids: ["shot_12"]
+    audio_layer_continuity_within_section: ["drone_base", "outro_drone"]
+    visual_style_lut: "cool_horror_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 7. MUSIC LAYERS (cross-clip continuous Layer 3 explicit)
+# ═══════════════════════════════════════════════════════════════
+
+music_continuous_layers:
+  - layer_id: "drone_base"
+    scope: "cross_clip_continuous"               # ⭐ v11 NEW: explicit scope tag (Layer 3)
+    sections: [{from: 0, to: 90, intent: "tension low-freq sustained"}]
+    eleven_labs_prompt: "low industrial drone, deep bass sustained, no melody, slow atmospheric swells, dark cinematic horror ambient"
+    compose_strategy: "single_continuous_90s"
+    target_lufs_pre_mix: -27
+    sidechain_duck_target: true                   # duck under TTS speech segments
+
+  - layer_id: "ambient_corridor"
+    scope: "cross_clip_continuous"
+    sections: [{from: 8, to: 45, intent: "scene ambience pre-decision"}]
+    eleven_labs_prompt: "abandoned cinema corridor room tone, distant footsteps echo, subtle texture, no music"
+    compose_strategy: "loop_8s_stretched"
+    target_lufs_pre_mix: -30
+
+  - layer_id: "ambient_consequence_a"
+    scope: "cross_clip_continuous"
+    sections: [{from: 50, to: 75, intent: "horror consequence atmosphere"}]
+    eleven_labs_prompt: "deep horror ambient, eerie metallic resonance, distant rumble"
+    compose_strategy: "single_25s"
+    target_lufs_pre_mix: -28
+
+  - layer_id: "accent_climax"
+    scope: "clip_scoped_or_effect"                # ⭐ v11 NEW: short stinger, NOT cross-clip
+    sections: [{from: 60, to: 70, intent: "rising tension climax"}]
+    eleven_labs_prompt: "dark cinematic strings rising, climax-buildup, no drums"
+    compose_strategy: "single_10s"
+    target_lufs_pre_mix: -25
+
+  - layer_id: "outro_drone"
+    scope: "cross_clip_continuous"
+    sections: [{from: 80, to: 90, intent: "cliffhanger sustained final tension"}]
+    eleven_labs_prompt: "sustained low frequency hum, gradual fade, cliffhanger atmospheric"
+    compose_strategy: "single_10s_fade_in"
+    target_lufs_pre_mix: -27
+
+# ⭐ v11 NEW — explicit separation Layer 3 vs Layer 1
+cross_clip_continuous_audio_layers:
+  layer_3_continuous:
+    - "drone_base"
+    - "ambient_corridor"
+    - "ambient_consequence_a"
+    - "outro_drone"
+    - "narrator_master_continuous_if_multi_shot"
+  layer_1_clip_scoped:
+    - "character_dialog_within_clip"
+    - "diegetic_sfx_within_clip"
+    - "accent_climax"
+
+# ═══════════════════════════════════════════════════════════════
+# 8. PACING + EDITING TARGETS
+# ═══════════════════════════════════════════════════════════════
+
+editing_targets:
+  target_cuts_per_min: [14, 22]
+  target_total_cuts: [21, 33]
+  transition_variety_min: 3
+  pacing_modulation:
+    hook: [10, 13]
+    setup_pre_decision: [14, 18]
+    decision_1: [10, 13]
+    consequence_path_a: [20, 28]
+    consequence_path_b: [14, 18]
+    cliffhanger_outro: [10, 14]
+
+# ═══════════════════════════════════════════════════════════════
+# 9. NARRATION SCRIPT
+# ═══════════════════════════════════════════════════════════════
+
+narration_script:
+  - segment_id: "narrator_framing_question_intro"
+    speaker: "narrator"
+    voice_id: "<elevenlabs voice id>"
+    text_canonical: "Elige a tu compañero. Para sobrevivir esta noche."
+    timestamp_intent_s: [2.0, 5.0]
+    shot_id_anchor: "shot_01"
+    lip_sync_required: false
+
+  - segment_id: "char_a_warning_dialogue"
+    speaker: "char_a"
+    voice_id: "<voice_id>"
+    text_canonical: "No me elijas. Es una trampa."
+    timestamp_intent_s: [8.0, 10.5]
+    shot_id_anchor: "shot_02"
+    lip_sync_required: true
+
+  # ... etc per all narration segments
+
+# ═══════════════════════════════════════════════════════════════
+# 10. ⭐⭐ SHOT LIST (v11 — all hybrid + Script A/B fields REQUIRED)
+# ═══════════════════════════════════════════════════════════════
+
+shot_list:
+  - shot_id: "shot_01"
+    section_id: "hook"
+    description: "POV first-person in abandoned cinema lobby entrance, dim warm lights, dust particles, two uncanny figures (Bruno + Mateo) visible at end of hallway"
+    duration_intent_s: 8.0
+
+    # SCENE CONTEXT (REQUIRED v11 — Script B dim 6 + 7 input)
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Viewer enters lobby, characters slowly approach from distance"
+      why_this_shot_exists: "Establish dyad + setting + uncanny premise"
+      camera_intent: "POV first-person, slight handheld micro-bob, looking forward toward characters"
+
+    # ⭐⭐ EXECUTION CONTINUITY (REQUIRED v11)
+    motion_bridge_intent:
+      from_previous: "N/A — first shot, establish camera at standstill"
+      to_next: "POV begins slow forward push-in continuing into shot_02"
+    pov_traversal: "static_with_micro_bob"        # enum: walking_forward | descending | ascending | approaching_character | turning_left | turning_right | static_with_micro_bob
+    audio_layer_continuity: ["drone_base", "ambient_room"]
+    visual_style_lut: "warm_industrial_v1"
+
+    # MODEL TIER + ANCHOR (REQUIRED v11)
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"             # cinema-abandonado legacy stack canonical V4 default (NOT Veo billing surprise)
+    motion_type: "walking_forward"
+    hero: true
+
+    # ⭐ v11 NEW — BRYAN-STYLE STRICT CONSISTENCY (Script B dim 6)
+    anchor_consistency_strict: true               # REQUIRED v11 — feedback_character_real_names + GAP #42 Bryan inconsistency
+    anchor_id_required:                            # which CP1 anchor file MUST match visible character
+      char_a: "char_a_v1"
+      char_b: "char_b_v1"
+    anchor_similarity_threshold: 0.6              # Script B dim 6 enforced floor
+
+    # ⭐ v11 NEW — CAPTION BURN STRATEGY (Script A integration)
+    caption_burn_strategy: "whisper_from_clip_audio"   # canonical V4+. Other valid values:
+                                                       #   "spec_text_override_with_whisper_timing"
+                                                       #   "pass_through_if_silent" (no narrator in this shot)
+
+    # ⭐ v11 NEW — SCRIPT B COMPLIANCE TARGETS (per-shot auditor thresholds)
+    script_b_compliance_targets:
+      dim0_scope_creep_must_pass: true
+      dim1_narrator_jaccard_min: 0.7
+      dim2_caption_jaccard_min: 0.7
+      dim3_sync_offset_max_s: 1.5
+      dim4_5_visual_jaccard_min: 0.6
+      dim6_anchor_similarity_min: 0.6              # mirrors anchor_similarity_threshold
+      dim7_action_jaccard_min: 0.6
+
+    # AVU OVERLAY (if applicable)
+    avu_overlay_clip: null
+
+    # NARRATIVE (REQUIRED v11)
+    narration_in_this_shot: "Elige a tu compañero. Para sobrevivir esta noche."
+    has_lip_sync_required: false
+    dialog_text: null
+
+    # VISUAL DETAIL (REQUIRED v11)
+    visual_intent: |
+      Wide POV shot, dim warm orange tungsten lights flickering, peeling
+      maroon wallpaper, dust particles in light beams, two characters
+      Bruno (left, tall thin with stitched mouth) and Mateo (right, short
+      shadowy with lantern) standing at far end ~10m away. Atmospheric.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["light_flicker", "dust_particles", "character_breathing", "subtle_wind"]
+
+    # UI ELEMENTS ACTIVE
+    ui_active:
+      - element_id: "name_label_char_a"
+        timestamp_visible_s: [0.0, 4.0]
+        position: {y_pct: 11.5}
+        text: "BRUNO"
+        font: "monospaced"
+      - element_id: "name_label_char_b"
+        timestamp_visible_s: [0.0, 4.0]
+        position: {y_pct: 11.5}
+        text: "MATEO"
+        font: "monospaced"
+
+  # ... continue per all ~20-25 shots
+  # ⭐ EVERY shot v11 MUST have: scene_context + motion_bridge_intent + pov_traversal
+  # + audio_layer_continuity + visual_style_lut + anchor_consistency_strict + anchor_id_required
+  # + caption_burn_strategy + script_b_compliance_targets + narration_in_this_shot
+  # + visual_intent + visual_action_match.matches_literal
+
+# ═══════════════════════════════════════════════════════════════
+# 11. TRANSITIONS (Layer 2 effects between clips)
+# ═══════════════════════════════════════════════════════════════
+
+transitions:
+  - from_shot_id: "shot_01"
+    to_shot_id: "shot_02"
+    transition_type: "hard_cut_with_whoosh"
+    sting_audio: "whoosh-warm.mp3"
+    duration_s: 0.3
+    rationale: "Hook → setup transition, organic momentum continuation"
+
+  - from_shot_id: "shot_02"
+    to_shot_id: "shot_03"
+    transition_type: "cross_fade_0.5s"
+    duration_s: 0.5
+    rationale: "Dialogue beat → reaction beat, smooth"
+
+  # ... per all transitions
+
+# ═══════════════════════════════════════════════════════════════
+# 12. HYPERFRAMES UI OVERLAY (v11 NEW Layer 4)
+# ═══════════════════════════════════════════════════════════════
+
+hyperframes_ui_overlay:
+  countdown_3_2_1_hook:
+    enabled: true
+    timeline_position_s: [5.5, 8.5]
+    avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    z_index: 60
+
+  decision_freeze_d1:
+    enabled: true
+    timeline_position_s: [22.0, 25.0]
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "<CHAR_A_NAME>", color: "white", y_pct: 75}
+      button_b: {text: "<CHAR_B_NAME>", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 48, duration_s: 3.0}
+    z_index: 60
+
+  decision_freeze_d2:
+    enabled: false                                # only if 2-decision pattern
+    timeline_position_s: null
+    avu_clip: null
+
+  outro_card_cliffhanger:
+    enabled: true
+    timeline_position_s: [85.0, 90.0]
+    avu_clip: "outro-card-template.mp4"
+    text_overlay: "<cliffhanger phrase, 6-9 words>"
+    z_index: 65
+
+  watermark_handle_persistent:
+    enabled: true
+    timeline_position_s: [0.0, 90.0]
+    text: "@elige_tucompanero"
+    position: {y_pct: 4, x_pct: 50, anchor: "top_center"}
+    z_index: 68
+
+# ═══════════════════════════════════════════════════════════════
+# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# ═══════════════════════════════════════════════════════════════
+
+asset_list:
+  sfx_prompts_to_generate:
+    - sfx_id: "footsteps_lobby"
+      prompt: "single footstep on wooden floor, slight echo, dim ambient"
+      duration_s: 0.5
+      uses_shots: ["shot_01", "shot_02"]
+      layer_destination: "layer_1_clip_scoped"
+    - sfx_id: "bruno_breath_close"
+      prompt: "uncanny shallow breath, slight rasp, very close mic"
+      duration_s: 1.5
+      uses_shots: ["shot_02"]
+      layer_destination: "layer_1_clip_scoped"
+    # ... per all SFX events
+
+  music_to_generate:
+    - "drone_base"
+    - "ambient_corridor"
+    - "ambient_consequence_a"
+    - "accent_climax"
+    - "outro_drone"
+
+  ambient_continuous_to_generate:
+    - "drone_base"
+    - "ambient_corridor"
+
+  anchors_to_generate:                            # ⭐ v11 NEW — CP1 anchor inventory
+    - "char_a_v1"
+    - "char_b_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 14. CHANNEL IDENTITY
+# ═══════════════════════════════════════════════════════════════
+
+channel_signature:
+  watermark_handle: "@elige_tucompanero"
+  caption_style_canonical:
+    name_labels:
+      font: "monospaced"
+      position_y_pct: 11.5
+      color: "yellow_or_white"
+    narration_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "white"
+    warning_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "red"
+      prefix: "SI ELEGISTE {character}"
+  audio_signature:
+    target_lufs: -14
+    true_peak_max: -1
+    music_layers_min: 3
+  visual_signature:
+    aspect_ratio: "9:16"
+    resolution: "1080x1920"
+    frame_rate: 24
+
+# ═══════════════════════════════════════════════════════════════
+# 15. ENFORCEMENT SCRIPT INTEGRATION (v11 NEW)
+# ═══════════════════════════════════════════════════════════════
+
+enforcement_integration:
+  script_a_build_clip_atomic:
+    invoked_per_shot: true
+    flag: "--bake-captions"
+    requires: ["clip_raw_mp4", "narration_segment_or_silence", "spec_text_canonical_optional"]
+    emits: ["clip_atomic_mp4", "manifest_yaml", "bake_report_json"]
+
+  script_b_audit_shot_spec_compliance:
+    invoked_per_shot_during_cp4_audit: true
+    dimensions_8: ["dim0_scope_creep", "dim1_narrator_vs_spec", "dim2_caption_vs_spec",
+                   "dim3_caption_vs_narrator_sync", "dim4_5_visual_vs_intent",
+                   "dim6_characters_vs_anchor", "dim7_action_vs_narration"]
+    halt_on_any_fail: true                        # auditor blocks CP4 advancement
+    regen_anchors_if_dim6_fails_cp1: true         # Risk C user codified 2026-05-22
+
+  script_c_orchestrator:
+    enforces_cp_by_cp: true
+    cost_cap_default_usd: 8.0                     # v11 codified (raised from $5 per V4 user)
+    cost_alert_threshold_usd: 6.0
+    forbids_engineer_multi_cp_prompts: true       # anti-pattern #15
+    architectural_decisions_log: ".claude/skills/creative-director/master-flow-v2/ARCHITECTURAL-DECISIONS.md"
+
+# ═══════════════════════════════════════════════════════════════
+# 16. ARCHITECT ANNOTATIONS (in-flight tracking)
+# ═══════════════════════════════════════════════════════════════
+
+architect_annotations:
+  - timestamp: "2026-XX-XX"
+    track: "FASE 0 user interview"
+    note: "User confirmed pattern P<N> + setting + dyad. Counterfactual placement before_choice_resolves."
+
+  - timestamp: "2026-XX-XX"
+    track: "post-CP1 anchors"
+    note: "<as auditor + engineer iter feedback flows>"
+
+# ═══════════════════════════════════════════════════════════════
+# 17. ENGINEER NOTES
+# ═══════════════════════════════════════════════════════════════
+
+engineer_notes:
+  pipeline_strategy: "per_clip_atomic_hybrid"
+  primary_model_target: "hailuo_pro"              # cinema-abandonado legacy canonical V4
+  fallback_model: "hailuo_std"
+  lip_sync_strategy: "deferred_phase_3"           # Hedra/Sync.so deferred per user 2026-05-21
+  veo_quota_observations: "NOT enterprise free — billing confirmed. Avoid Veo V4 forward."
+
+# ═══════════════════════════════════════════════════════════════
+# END SCHEMA v11
+# ═══════════════════════════════════════════════════════════════

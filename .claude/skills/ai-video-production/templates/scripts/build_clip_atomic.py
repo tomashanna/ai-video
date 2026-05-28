@@ -50,9 +50,12 @@ Outputs per shot:
 
 import argparse
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -61,6 +64,9 @@ try:
 except ImportError:
     print("ERROR: PyYAML not installed. Run: pip install pyyaml", file=sys.stderr)
     sys.exit(1)
+
+# Whisper is imported lazily inside bake_captions_per_clip() so the rest of the
+# script keeps working when Whisper is not installed (e.g. legacy atomic builds).
 
 
 # ----------------------------------------------------------------------------
@@ -74,6 +80,60 @@ MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14 # within 0.10-0.18 band
 # LUFS target (Instagram Reels standard)
 LUFS_TARGET = -14.0
 LUFS_TOLERANCE = 1.5  # ±1.5 dB acceptable per-clip (final master tightens to ±0.5)
+
+
+# ----------------------------------------------------------------------------
+# Caption-burn canonical styling (Hard Rule #4 + CAPTIONS.md 3-class system)
+# ----------------------------------------------------------------------------
+# Y position: 62% of frame (canonical safe zone, IG Reel 9:16)
+CAPTION_Y_PERCENT = 0.62
+# Font size scaling: 80px base for short captions, 68px when word count > 8
+CAPTION_FONT_SIZE_SHORT = 80
+CAPTION_FONT_SIZE_LONG = 68
+CAPTION_LONG_WORD_THRESHOLD = 8
+# Drop shadow: ~2px black offset (per referent_validated_patterns)
+CAPTION_SHADOW_OFFSET_PX = 2
+# Class palette (BGR-less; ffmpeg drawtext takes 0xRRGGBB or named colors)
+CAPTION_COLOR_NARRATION = "white"
+CAPTION_COLOR_WARNING = "red"
+CAPTION_COLOR_NAME = "white"  # character-name label
+CAPTION_SHADOW_COLOR = "black"
+
+# Font file resolution — prefer monospaced for name-class, sans-serif for narration.
+# macOS-friendly defaults; can be overridden via style_overrides.
+DEFAULT_NARRATION_FONT_CANDIDATES = [
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    "/System/Library/Fonts/Helvetica.ttc",
+    "/Library/Fonts/Arial Bold.ttf",
+]
+DEFAULT_MONO_FONT_CANDIDATES = [
+    "/System/Library/Fonts/Menlo.ttc",
+    "/System/Library/Fonts/SFNSMono.ttf",
+    "/System/Library/Fonts/Courier.ttc",
+]
+
+
+def _resolve_font(candidates: list[str]) -> str | None:
+    for c in candidates:
+        if Path(c).exists():
+            return c
+    return None
+
+
+def _normalize_for_compare(text: str) -> set[str]:
+    """Lowercase + strip punctuation + return word set for overlap comparison."""
+    cleaned = re.sub(r"[^\w\sáéíóúñü]+", " ", text.lower(), flags=re.UNICODE)
+    tokens = [t for t in cleaned.split() if len(t) >= 2]
+    return set(tokens)
+
+
+def _token_overlap_ratio(a: str, b: str) -> float:
+    """Return |a ∩ b| / max(|a|, |b|) on token sets (case + punct insensitive)."""
+    sa = _normalize_for_compare(a)
+    sb = _normalize_for_compare(b)
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / max(len(sa), len(sb))
 
 
 # ----------------------------------------------------------------------------
@@ -484,6 +544,480 @@ def build_manifest(
 
 
 # ----------------------------------------------------------------------------
+# Caption baking (Whisper-derived timing + ffmpeg drawtext burn-in)
+# ----------------------------------------------------------------------------
+def _escape_drawtext(text: str) -> str:
+    """
+    Escape text for ffmpeg drawtext value enclosed in single quotes.
+    The drawtext arg is built as: text='...'. Inside single quotes ffmpeg only
+    needs ' and \\ escaped (and we additionally guard : and % which can be
+    interpreted in some ffmpeg builds when the value isn't quoted properly).
+    """
+    if text is None:
+        return ""
+    out = text
+    out = out.replace("\\", "\\\\")  # literal backslash
+    out = out.replace("'", r"\'")      # single quote
+    out = out.replace(":", r"\:")
+    out = out.replace("%", r"\%")
+    # Normalize whitespace and strip
+    out = " ".join(out.split())
+    return out
+
+
+def _whisper_transcribe(audio_path: Path, language: str = "es", model_name: str = "base") -> dict:
+    """
+    Transcribe audio with Whisper. Returns dict with 'text', 'segments', 'words'.
+    If audio is silent or has no speech, returns {'text': '', 'segments': [], 'words': []}.
+    """
+    import whisper  # lazy import
+
+    model = whisper.load_model(model_name)
+    result = model.transcribe(
+        str(audio_path),
+        language=language,
+        word_timestamps=True,
+        verbose=False,
+        fp16=False,
+        condition_on_previous_text=False,
+    )
+    segments = result.get("segments", []) or []
+    text = (result.get("text") or "").strip()
+
+    # Flatten word-level timestamps
+    words = []
+    for seg in segments:
+        for w in seg.get("words", []) or []:
+            tok = (w.get("word") or "").strip()
+            if not tok:
+                continue
+            words.append({
+                "word": tok,
+                "start": float(w.get("start", 0)),
+                "end": float(w.get("end", 0)),
+            })
+
+    return {"text": text, "segments": segments, "words": words}
+
+
+def _classify_caption(speaker: str | None, text: str) -> str:
+    """
+    Return one of: 'narration' | 'warning' | 'name'.
+    Heuristic:
+      - speaker looks like a proper name (single capitalized token) -> name
+      - text contains warning markers (exclamation density / shout words) -> warning
+      - else narration
+    """
+    if speaker:
+        s = speaker.strip()
+        # Common narrator labels
+        if s.lower() in {"narrator", "narrador", "voz", "voz en off"}:
+            return "narration"
+        # Single capitalized token of length 2..20 -> treat as character name label
+        if re.fullmatch(r"[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{1,19}", s):
+            return "name"
+    # Warning detection: 2+ exclamations or shout keywords
+    if text:
+        if text.count("!") + text.count("¡") >= 2:
+            return "warning"
+        if re.search(r"\b(corre|cuidado|peligro|huye|no\b)\b", text.lower()):
+            # Only flag as warning if text is short + exclamatory enough; soften default
+            if "!" in text or "¡" in text:
+                return "warning"
+    return "narration"
+
+
+def _build_caption_cues_from_whisper(
+    whisper_result: dict,
+    spec_text_override: str | None,
+    speaker: str | None,
+) -> list[dict]:
+    """
+    Return list of {start_s, end_s, text, class} cues.
+
+    Strategy:
+      - If spec_text_override provided AND whisper has at least one word: span the
+        SPEC text across [first_word_start, last_word_end] as ONE cue. Word-level
+        chunking from SPEC would require alignment that is outside scope.
+      - Else: chunk whisper segments naturally — one cue per segment (or word-group
+        of ~6 words for long segments).
+    """
+    segments = whisper_result.get("segments", []) or []
+    words = whisper_result.get("words", []) or []
+
+    if not segments and not words:
+        return []
+
+    if spec_text_override and words:
+        first = words[0]["start"]
+        last = words[-1]["end"]
+        return [{
+            "start_s": float(first),
+            "end_s": float(last),
+            "text": spec_text_override,
+            "class": _classify_caption(speaker, spec_text_override),
+        }]
+
+    if spec_text_override and segments and not words:
+        # No word timestamps; collapse all segments into single span
+        first = float(segments[0].get("start", 0))
+        last = float(segments[-1].get("end", first))
+        return [{
+            "start_s": first,
+            "end_s": last,
+            "text": spec_text_override,
+            "class": _classify_caption(speaker, spec_text_override),
+        }]
+
+    # Whisper raw: one cue per segment, but split very long segments into ~6-word chunks
+    cues = []
+    for seg in segments:
+        seg_text = (seg.get("text") or "").strip()
+        if not seg_text:
+            continue
+        seg_words = seg.get("words", []) or []
+        if len(seg_words) > 8:
+            # Chunk into groups of ~6 words
+            for i in range(0, len(seg_words), 6):
+                chunk = seg_words[i:i + 6]
+                if not chunk:
+                    continue
+                chunk_text = " ".join((w.get("word") or "").strip() for w in chunk).strip()
+                if not chunk_text:
+                    continue
+                cues.append({
+                    "start_s": float(chunk[0].get("start", 0)),
+                    "end_s": float(chunk[-1].get("end", 0)),
+                    "text": chunk_text,
+                    "class": _classify_caption(speaker, chunk_text),
+                })
+        else:
+            cues.append({
+                "start_s": float(seg.get("start", 0)),
+                "end_s": float(seg.get("end", 0)),
+                "text": seg_text,
+                "class": _classify_caption(speaker, seg_text),
+            })
+    return cues
+
+
+def _wrap_text_lines(text: str, max_chars_per_line: int = 22) -> list[str]:
+    """Break long text into multiple lines on word boundaries."""
+    words = text.split()
+    if not words:
+        return []
+    lines: list[str] = []
+    current: list[str] = []
+    for w in words:
+        candidate = " ".join(current + [w])
+        if len(candidate) <= max_chars_per_line or not current:
+            current.append(w)
+        else:
+            lines.append(" ".join(current))
+            current = [w]
+    if current:
+        lines.append(" ".join(current))
+    return lines
+
+
+def _drawtext_filters_for_cue(
+    cue: dict,
+    video_height: int,
+    video_width: int,
+    font_narration: str | None,
+    font_mono: str | None,
+) -> list[str]:
+    """
+    Build drawtext= filter expressions for a single cue.
+    Returns ONE expression per text line (auto-wrapped if needed).
+    Lines stack vertically around Y 62%.
+    """
+    text = cue["text"]
+    klass = cue.get("class", "narration")
+    words_count = len(text.split())
+    fontsize = CAPTION_FONT_SIZE_LONG if words_count > CAPTION_LONG_WORD_THRESHOLD else CAPTION_FONT_SIZE_SHORT
+
+    if klass == "name":
+        color = CAPTION_COLOR_NAME
+        fontfile = font_mono or font_narration
+    elif klass == "warning":
+        color = CAPTION_COLOR_WARNING
+        fontfile = font_narration
+    else:
+        color = CAPTION_COLOR_NARRATION
+        fontfile = font_narration
+
+    # Auto-wrap heuristic: for 1080-wide @ 80px ~22 chars/line; @ 68px ~26 chars/line.
+    max_chars = 22 if fontsize == CAPTION_FONT_SIZE_SHORT else 26
+    # Tighter wrap for narrower videos
+    if video_width and video_width < 1000:
+        max_chars = int(max_chars * video_width / 1080)
+
+    lines = _wrap_text_lines(text, max_chars_per_line=max_chars)
+    if not lines:
+        return []
+
+    # Vertical stacking: center the block of N lines around CAPTION_Y_PERCENT.
+    # Each line takes ~1.2 * fontsize px vertically.
+    line_height = int(round(fontsize * 1.2))
+    n = len(lines)
+    block_height = n * line_height
+    # Top of block:
+    top_offset = - block_height / 2
+
+    filters = []
+    for i, line in enumerate(lines):
+        escaped = _escape_drawtext(line)
+        # y = h*0.62 + (i - (n-1)/2) * line_height  -> centered around 62%
+        y_expr = f"h*{CAPTION_Y_PERCENT}+({i}-{(n - 1) / 2:.2f})*{line_height}"
+        parts = [
+            f"text='{escaped}'",
+            f"fontsize={fontsize}",
+            f"fontcolor={color}",
+            f"x=(w-text_w)/2",
+            f"y={y_expr}",
+            f"shadowcolor={CAPTION_SHADOW_COLOR}",
+            f"shadowx={CAPTION_SHADOW_OFFSET_PX}",
+            f"shadowy={CAPTION_SHADOW_OFFSET_PX}",
+            f"borderw=1",
+            f"bordercolor={CAPTION_SHADOW_COLOR}",
+            f"enable='between(t,{cue['start_s']:.3f},{cue['end_s']:.3f})'",
+        ]
+        if fontfile:
+            ff_escaped = fontfile.replace(":", r"\:").replace("'", r"\'")
+            parts.insert(1, f"fontfile='{ff_escaped}'")
+        filters.append("drawtext=" + ":".join(parts))
+    return filters
+
+
+def bake_captions_per_clip(
+    clip_path: Path,
+    spec_shot: dict,
+    output_path: Path,
+    style_overrides: dict | None = None,
+) -> dict:
+    """
+    Bake captions per clip from Whisper-derived timing + optional SPEC text override.
+
+    Methodology:
+      1. Extract audio from clip via ffmpeg (-vn -acodec libmp3lame).
+      2. Whisper transcribe with word_timestamps=True, model='base', language='es'.
+      3. If no speech detected -> copy clip unchanged.
+      4. If spec_shot has 'text_canonical' (or 'narration_canonical') -> use SPEC text with Whisper timing.
+      5. Else -> use Whisper text + Whisper timing.
+      6. Apply ffmpeg drawtext to burn captions into video frames per Hard Rule #4.
+      7. Preserve original audio (-c:a copy).
+
+    Args:
+      clip_path: source mp4 (must exist).
+      spec_shot: dict from SPEC.shot_list[N] OR minimal dict {'id', 'text_canonical', 'speaker'}.
+      output_path: destination mp4.
+      style_overrides: optional dict {'font_narration', 'font_mono', 'language', 'model_name',
+                                       'y_percent', 'force_class'}.
+
+    Returns: {'success': bool, 'captions_burned': int, 'no_speech_detected': bool,
+              'whisper_text': str, 'spec_text_used': bool, 'output_path': str,
+              'cues': [...], 'error': str | None}
+    """
+    style_overrides = style_overrides or {}
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    result = {
+        "success": False,
+        "captions_burned": 0,
+        "no_speech_detected": False,
+        "whisper_text": "",
+        "spec_text_used": False,
+        "sidecar_rejected": False,
+        "output_path": str(output_path),
+        "cues": [],
+        "error": None,
+    }
+
+    if not clip_path.exists():
+        result["error"] = f"clip not found: {clip_path}"
+        return result
+
+    # Detect whether clip has an audio stream
+    probe_audio = subprocess.run(
+        [
+            "ffprobe", "-v", "error",
+            "-select_streams", "a",
+            "-show_entries", "stream=codec_type",
+            "-of", "csv=p=0",
+            str(clip_path),
+        ],
+        capture_output=True, text=True, check=False,
+    )
+    has_audio_stream = bool(probe_audio.stdout.strip())
+
+    # Extract audio for Whisper. If no audio stream, we still produce a passthrough.
+    with tempfile.TemporaryDirectory() as td:
+        td_path = Path(td)
+        audio_path = td_path / "clip_audio.mp3"
+
+        if has_audio_stream:
+            try:
+                subprocess.run(
+                    [
+                        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+                        "-i", str(clip_path),
+                        "-vn", "-acodec", "libmp3lame", "-q:a", "2",
+                        str(audio_path),
+                    ],
+                    check=True, capture_output=True, text=True,
+                )
+            except subprocess.CalledProcessError as e:
+                result["error"] = f"ffmpeg audio extract failed: {e.stderr}"
+                return result
+        else:
+            # No audio stream → flag and passthrough
+            result["no_speech_detected"] = True
+
+        if has_audio_stream and audio_path.exists():
+            try:
+                whisper_res = _whisper_transcribe(
+                    audio_path,
+                    language=style_overrides.get("language", "es"),
+                    model_name=style_overrides.get("model_name", "base"),
+                )
+            except Exception as e:
+                result["error"] = f"whisper transcription failed: {e}"
+                return result
+
+            result["whisper_text"] = whisper_res["text"]
+            if not whisper_res["text"].strip():
+                result["no_speech_detected"] = True
+        else:
+            whisper_res = {"text": "", "segments": [], "words": []}
+
+        # If no speech detected → pass-through (deterministic copy)
+        if result["no_speech_detected"]:
+            try:
+                # Stream-copy to preserve quality + bit-exactness
+                subprocess.run(
+                    [
+                        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+                        "-i", str(clip_path),
+                        "-c", "copy",
+                        "-map", "0",
+                        str(output_path),
+                    ],
+                    check=True, capture_output=True, text=True,
+                )
+                result["success"] = True
+                return result
+            except subprocess.CalledProcessError as e:
+                # Fallback: shutil copy
+                try:
+                    shutil.copyfile(clip_path, output_path)
+                    result["success"] = True
+                    return result
+                except Exception as ee:
+                    result["error"] = f"passthrough failed: ffmpeg={e.stderr} shutil={ee}"
+                    return result
+
+        # SPEC text override resolution
+        spec_text = (
+            spec_shot.get("text_canonical")
+            or spec_shot.get("narration_canonical")
+            or spec_shot.get("text")
+        )
+        if isinstance(spec_text, dict):
+            spec_text = spec_text.get("text") or None
+        spec_text = (spec_text or "").strip() or None
+        speaker = spec_shot.get("speaker") or spec_shot.get("character") or None
+
+        # Sidecar-trust guard: if the SPEC text wildly diverges from Whisper text,
+        # reject the override and fall back to Whisper-derived text.
+        # Threshold: token-overlap ratio < 0.30 ⇒ untrusted.
+        # This is the adversarial safety net per task spec A2 + ADV-A.
+        sidecar_rejected = False
+        if spec_text and whisper_res.get("text"):
+            overlap = _token_overlap_ratio(spec_text, whisper_res["text"])
+            threshold = float(style_overrides.get("sidecar_similarity_threshold", 0.30))
+            if overlap < threshold:
+                sidecar_rejected = True
+                if not style_overrides.get("force_spec_text"):
+                    spec_text = None
+        result["sidecar_rejected"] = sidecar_rejected
+        result["spec_text_override_input"] = (
+            spec_shot.get("text_canonical")
+            or spec_shot.get("narration_canonical")
+            or spec_shot.get("text")
+        )
+
+        cues = _build_caption_cues_from_whisper(whisper_res, spec_text, speaker)
+        result["spec_text_used"] = bool(spec_text and cues)
+        result["cues"] = cues
+
+        if not cues:
+            # Edge: whisper had text but couldn't produce cues (shouldn't happen, but safe)
+            result["no_speech_detected"] = True
+            try:
+                subprocess.run(
+                    ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+                     "-i", str(clip_path), "-c", "copy", "-map", "0",
+                     str(output_path)],
+                    check=True, capture_output=True, text=True,
+                )
+                result["success"] = True
+                return result
+            except Exception as e:
+                result["error"] = f"empty-cues passthrough failed: {e}"
+                return result
+
+        # Probe video dimensions
+        probe_dims = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v",
+             "-show_entries", "stream=height,width", "-of", "csv=p=0", str(clip_path)],
+            capture_output=True, text=True, check=False,
+        )
+        video_height, video_width = 1920, 1080
+        try:
+            tok = probe_dims.stdout.strip().splitlines()[0].split(",")
+            # csv order: width,height
+            video_width = int(tok[0])
+            video_height = int(tok[1])
+        except (ValueError, IndexError):
+            pass
+
+        # Resolve fonts
+        font_narration = style_overrides.get("font_narration") or _resolve_font(DEFAULT_NARRATION_FONT_CANDIDATES)
+        font_mono = style_overrides.get("font_mono") or _resolve_font(DEFAULT_MONO_FONT_CANDIDATES)
+
+        # Build chained drawtext filters (multi-line per cue)
+        drawtext_filters: list[str] = []
+        for c in cues:
+            drawtext_filters.extend(
+                _drawtext_filters_for_cue(c, video_height, video_width, font_narration, font_mono)
+            )
+        vf = ",".join(drawtext_filters)
+
+        # Re-encode video w/ drawtext, copy audio
+        cmd = [
+            "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+            "-i", str(clip_path),
+            "-vf", vf,
+            "-c:v", "libx264",
+            "-preset", "medium",
+            "-crf", "18",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "copy",
+            "-map", "0:v:0", "-map", "0:a:0",
+            str(output_path),
+        ]
+        try:
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as e:
+            result["error"] = f"ffmpeg drawtext burn failed: {e.stderr[-800:] if e.stderr else 'unknown'}"
+            return result
+
+        result["captions_burned"] = len(cues)
+        result["success"] = True
+        return result
+
+
+# ----------------------------------------------------------------------------
 # Main build per-shot
 # ----------------------------------------------------------------------------
 def build_clip_atomic(
@@ -658,6 +1192,116 @@ def load_sfx_events_from_json(json_path: Path) -> list[dict]:
 
 
 # ----------------------------------------------------------------------------
+# Caption-bake CLI helper
+# ----------------------------------------------------------------------------
+def _run_bake_captions_cli(args) -> int:
+    """Implements --bake-captions invocation. Returns process exit code."""
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Resolve input clip
+    spec_shot: dict[str, Any] = {}
+    if args.input_clip:
+        input_clip = args.input_clip.resolve()
+        if not input_clip.exists():
+            print(f"ERROR: --input-clip not found: {input_clip}", file=sys.stderr)
+            return 2
+        # Optional sidecar
+        if args.sidecar and args.sidecar.exists():
+            try:
+                with open(args.sidecar) as f:
+                    sidecar_data = json.load(f)
+                # IMPORTANT (adversarial): the sidecar text is only used as a SPEC
+                # text override input. The caller is responsible for trust. The
+                # function below will still IGNORE this if Whisper finds different
+                # actual audio — that's the whole point of the contract: timing
+                # ALWAYS comes from Whisper. The text override is a hint, not a truth.
+                spec_shot = sidecar_data
+            except Exception as e:
+                print(f"WARN: failed to read sidecar {args.sidecar}: {e}", file=sys.stderr)
+        # Shot id default
+        if "id" not in spec_shot:
+            spec_shot["id"] = args.shot_id or input_clip.stem
+    else:
+        # SPEC-driven resolution
+        if not args.shot_id:
+            print("ERROR: --bake-captions requires --shot-id (or --input-clip).", file=sys.stderr)
+            return 2
+        spec = load_spec(args.spec.resolve())
+        shot = find_shot(spec, args.shot_id)
+        if not shot:
+            print(f"ERROR: shot_id '{args.shot_id}' not found in SPEC", file=sys.stderr)
+            return 2
+        spec_shot = dict(shot)
+        # Try to inherit narration text_canonical from narration_script if not on shot
+        if "text_canonical" not in spec_shot:
+            shot_start, shot_end = parse_timestamp_intent(shot)
+            segs = resolve_narration_segments(spec, shot_start, shot_end)
+            if segs:
+                spec_shot["text_canonical"] = segs[0]["text"]
+                spec_shot["speaker"] = segs[0]["speaker"]
+        project_root = (args.project_root or output_dir.parent).resolve()
+        clip = find_clip_visual(project_root, spec_shot["id"])
+        if not clip:
+            print(f"ERROR: visual clip not found for shot {spec_shot['id']}", file=sys.stderr)
+            return 2
+        input_clip = clip
+
+    # Output path
+    if args.output:
+        output_path = args.output.resolve()
+    else:
+        output_path = output_dir / f"{spec_shot.get('id', 'clip')}_captions_burned.mp4"
+
+    style_overrides = {
+        "language": args.bake_language,
+        "model_name": args.bake_model,
+    }
+
+    if not args.quiet:
+        print(f"\n▶ Baking captions: {input_clip.name} → {output_path.name}")
+        print(f"  SPEC text override: {'YES' if spec_shot.get('text_canonical') else 'no'}")
+        print(f"  Whisper model: {args.bake_model}  language: {args.bake_language}")
+
+    res = bake_captions_per_clip(
+        clip_path=input_clip,
+        spec_shot=spec_shot,
+        output_path=output_path,
+        style_overrides=style_overrides,
+    )
+
+    if not args.quiet:
+        print(f"  Whisper text:       {res['whisper_text'][:100]!r}")
+        print(f"  No speech detected: {res['no_speech_detected']}")
+        print(f"  SPEC text used:     {res['spec_text_used']}")
+        print(f"  Captions burned:    {res['captions_burned']}")
+        if res.get("error"):
+            print(f"  ERROR:              {res['error']}", file=sys.stderr)
+
+    # Side-output JSON report alongside the mp4
+    report_path = output_path.with_suffix(output_path.suffix + ".bake-report.json")
+    with open(report_path, "w") as f:
+        json.dump({
+            "input_clip": str(input_clip),
+            "output_path": str(output_path),
+            "shot_id": spec_shot.get("id"),
+            "spec_text_override": spec_shot.get("text_canonical"),
+            "whisper_text": res["whisper_text"],
+            "no_speech_detected": res["no_speech_detected"],
+            "spec_text_used": res["spec_text_used"],
+            "sidecar_rejected": res.get("sidecar_rejected", False),
+            "captions_burned": res["captions_burned"],
+            "cues": res["cues"],
+            "error": res["error"],
+            "success": res["success"],
+        }, f, indent=2, ensure_ascii=False)
+    if not args.quiet:
+        print(f"  Report:             {report_path}")
+
+    return 0 if res["success"] else 1
+
+
+# ----------------------------------------------------------------------------
 # CLI
 # ----------------------------------------------------------------------------
 def main():
@@ -666,8 +1310,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument("--spec", type=Path, required=True,
-                        help="Path to creative-specs/<id>.yaml")
+    parser.add_argument("--spec", type=Path, default=None,
+                        help="Path to creative-specs/<id>.yaml (required for atomic-build mode; "
+                             "optional for --bake-captions when --input-clip is given).")
     parser.add_argument("--shot-id", type=str,
                         help="Single shot to build (e.g. shot_01_hook). Mutually exclusive with --batch.")
     parser.add_argument("--batch", action="store_true",
@@ -688,14 +1333,40 @@ def main():
                         help="Override AVU inject offset (local time). Defaults to end-aligned.")
     parser.add_argument("--quiet", action="store_true",
                         help="Suppress per-shot progress output.")
+    parser.add_argument("--bake-captions", action="store_true",
+                        help="Mode: bake captions per clip from Whisper-derived timing + SPEC text override. "
+                             "Takes --shot-id (or --input-clip standalone) and writes burned mp4 to --output. "
+                             "When set, the atomic build pipeline is bypassed.")
+    parser.add_argument("--input-clip", type=Path, default=None,
+                        help="Input mp4 for --bake-captions standalone mode (no SPEC lookup). "
+                             "If omitted, the script resolves the clip via SPEC + --shot-id.")
+    parser.add_argument("--output", type=Path, default=None,
+                        help="Output mp4 path for --bake-captions mode. Defaults to "
+                             "<output-dir>/<shot_id>_captions_burned.mp4.")
+    parser.add_argument("--sidecar", type=Path, default=None,
+                        help="Optional sidecar JSON (used ONLY for explicit text_canonical override "
+                             "in standalone --bake-captions runs). Note: per adversarial spec, sidecar "
+                             "is IGNORED if SPEC also provides text_canonical for this shot.")
+    parser.add_argument("--bake-language", type=str, default="es",
+                        help="Whisper language code (default: es).")
+    parser.add_argument("--bake-model", type=str, default="base",
+                        help="Whisper model name (default: base).")
     args = parser.parse_args()
 
-    if not args.batch and not args.shot_id:
-        parser.error("Must specify either --shot-id <id> or --batch")
-    if args.batch and args.shot_id:
-        parser.error("--batch and --shot-id are mutually exclusive")
-    if args.batch and args.avu:
-        parser.error("--avu only supported in single-shot mode (batch infers AVU per shot from SPEC)")
+    # Caption-bake mode short-circuit
+    if args.bake_captions:
+        return _run_bake_captions_cli(args)
+
+    # Bake-mode bypasses atomic-build arg validation
+    if not args.bake_captions:
+        if not args.spec:
+            parser.error("--spec is required for atomic-build mode")
+        if not args.batch and not args.shot_id:
+            parser.error("Must specify either --shot-id <id> or --batch")
+        if args.batch and args.shot_id:
+            parser.error("--batch and --shot-id are mutually exclusive")
+        if args.batch and args.avu:
+            parser.error("--avu only supported in single-shot mode (batch infers AVU per shot from SPEC)")
 
     # Resolve roots
     output_dir = args.output_dir.resolve()
