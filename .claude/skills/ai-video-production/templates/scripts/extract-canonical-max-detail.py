@@ -21,7 +21,16 @@ Outputs:
 - canonical-scenes/aggregate-patterns.json (cross-ref hook sub-beat frequencies)
 
 Usage:
-    python extract-canonical-max-detail.py [--refs ref-XX ref-YY] [--skip-frames]
+    python extract-canonical-max-detail.py --format <format-name> [--refs ref-XX ref-YY] [--skip-frames]
+    python extract-canonical-max-detail.py --format horror-choice [--sources-dir <path>] [--canonical-scenes-dir <path>]
+    python extract-canonical-max-detail.py --format horror-choice --dry-run    # prints resolved paths + exit 0
+
+Format-aware defaults:
+- horror-choice: sources-dir = videosref_elige_tu_compa/, canonical-scenes = .claude/skills/horror-choice-format/canonical-scenes/
+- arbitrary <X>: sources-dir = <X>-refs/, canonical-scenes = .claude/skills/<X>-format/canonical-scenes/
+- --format is REQUIRED (no silent assumption)
+
+Refactored Sub-Fase 3A.2 TIER 2.1 (2026-05-25): hardcoded paths → CLI flags per Capa A agnostic principle.
 """
 import argparse
 import json
@@ -33,9 +42,36 @@ from pathlib import Path
 
 PROJECT_ROOT = Path("<repo-root>")
 REF_DIR = PROJECT_ROOT / "referent-analysis"
-SOURCES_DIR = PROJECT_ROOT / "videosref_elige_tu_compa"
-CANONICAL_SCENES_DIR = PROJECT_ROOT / ".claude/skills/horror-choice-format/canonical-scenes"
-CANONICAL_SCENES_DIR.mkdir(exist_ok=True, parents=True)
+
+# Module-level paths populated by main() per --format flag.
+# Sub-Fase 3A.2 TIER 2.1 (2026-05-25): hardcoded → CLI configurable (Capa A agnostic).
+SOURCES_DIR = None
+CANONICAL_SCENES_DIR = None
+
+
+def resolve_format_paths(format_name, sources_override=None, canonical_scenes_override=None, ref_dir_override=None):
+    """Resolve format-aware default paths or honor explicit overrides.
+
+    horror-choice: namespaced post-TIER 2.3 (2026-05-25) — ref-XX moved to referent-analysis/horror-choice/
+    arbitrary X:   <X>-refs/ + .claude/skills/<X>-format/canonical-scenes/ + referent-analysis/<X>/
+    """
+    if format_name == "horror-choice":
+        defaults = {
+            "sources_dir": PROJECT_ROOT / "videosref_elige_tu_compa",
+            "canonical_scenes_dir": PROJECT_ROOT / ".claude/skills/horror-choice-format/canonical-scenes",
+            "ref_dir": REF_DIR / "horror-choice",
+        }
+    else:
+        defaults = {
+            "sources_dir": PROJECT_ROOT / f"{format_name}-refs",
+            "canonical_scenes_dir": PROJECT_ROOT / f".claude/skills/{format_name}-format/canonical-scenes",
+            "ref_dir": REF_DIR / format_name,
+        }
+    return {
+        "sources_dir": Path(sources_override) if sources_override else defaults["sources_dir"],
+        "canonical_scenes_dir": Path(canonical_scenes_override) if canonical_scenes_override else defaults["canonical_scenes_dir"],
+        "ref_dir": Path(ref_dir_override) if ref_dir_override else defaults["ref_dir"],
+    }
 
 REF_TO_SOURCE = {
     "ref-03": "ScreenRecording_05-13-2026 00-01-36_1.MP4",
@@ -317,10 +353,33 @@ def aggregate_patterns(per_ref_events):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--format", required=True,
+                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
+    parser.add_argument("--sources-dir", default=None,
+                        help="Override sources MP4 dir (default: format-aware)")
+    parser.add_argument("--canonical-scenes-dir", default=None,
+                        help="Override canonical-scenes output dir (default: format-aware)")
     parser.add_argument("--refs", nargs="+", help="Specific refs (default: all 8)")
     parser.add_argument("--skip-frames", action="store_true", help="Skip dense frame extraction (use existing)")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Print resolved paths + exit 0 (testability)")
     args = parser.parse_args()
+
+    global SOURCES_DIR, CANONICAL_SCENES_DIR, REF_DIR
+    paths = resolve_format_paths(args.format, args.sources_dir, args.canonical_scenes_dir)
+    SOURCES_DIR = paths["sources_dir"]
+    CANONICAL_SCENES_DIR = paths["canonical_scenes_dir"]
+    REF_DIR = paths["ref_dir"]  # namespace per format post-TIER 2.3 completion (2026-05-25)
+
+    if args.dry_run:
+        print(f"format: {args.format}")
+        print(f"sources_dir: {SOURCES_DIR}")
+        print(f"canonical_scenes_dir: {CANONICAL_SCENES_DIR}")
+        print(f"ref_dir: {REF_DIR}")
+        return 0
+
+    CANONICAL_SCENES_DIR.mkdir(exist_ok=True, parents=True)
 
     refs_to_process = args.refs or list(REF_TO_SOURCE.keys())
 

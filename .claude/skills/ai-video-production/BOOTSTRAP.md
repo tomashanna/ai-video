@@ -27,7 +27,8 @@ Todo proyecto de video se define por DOS ejes ortogonales (ver `DELIVERY-FORMATS
    - `formats/<delivery>.md` (specs técnicas + reglas del delivery)
    - Si short-form (📱 reel / yt-short / ig-story): `RETENTION-RULES.md`
    - SKILL.md + PAUTA.md del genre (ej: `horror-choice-format/PAUTA.md`)
-   - Si genre es horror-choice + format reel: `horror-choice-format/INTRO-FORMULA-V15.md` (receta canónica del intro 9s, validada en v15 con 9.9/10)
+   - Si genre es horror-choice + format reel: `horror-choice-format/INTRO-FORMULA.md` (receta canónica del intro 9s, validada en v15 con 9.9/10)
+   - ⭐⭐ **`video-director/MODEL-BEHAVIOR-LOG.md`** (added 2026-05-22 PM late post V4 shot_16 stability budget discovery): empirical model constraints architect MUST design SPEC within. Each entry has `implications_forward.architect_CP0` block with explicit design rules (e.g., Gemini Image ≤3 prop elements for shots with rare anatomy signature characters; face+hand co-located OR locus anchor for signature feature preservation). **Skipping this read = expensive CP3-CP4 regen rescue when SPEC violates model limits** (V4 shot_16 case: forced SPEC v11.1 → v11.2 amendment $0.20 + 30 min wallclock).
 
 4. Recolectar los inputs específicos del combo. Para horror-choice × reel ver `horror-choice-format/BOOTSTRAP-NEW-PROJECT.md` § 9 (tabla de inputs FASE 0).
 
@@ -67,16 +68,95 @@ AI video 1/                                       ← raíz workspace
 
 ---
 
+## 0.2 GROUND TRUTH CANONICAL PRINCIPLE (D2 codificado 2026-05-24 Sub-Fase 3A.2)
+
+**Filesystem repo es la ÚNICA fuente de verdad para docs canónicos.**
+
+- Project Knowledge (Claude conversacional artifacts) = snapshot informativo, NOT autoritativo
+- Si un doc no existe en filesystem repo → NO existe para el sistema
+- Cualquier doc canónico mencionado en activation protocols, hard rules, o auditor reads DEBE estar committed en filesystem antes de poder ser referenced
+
+**Enforcement estructural (NOT documentation theater):**
+Activation protocols que listen un read no existente en filesystem deben halt y escalar via Bug #9. El Auditor de PRE-4.A demostró este enforcement empíricamente (find/grep antes de proceder, escalation activa en vez de bypass silencioso).
+
+**Casos disparadores (PRE-4.A 2026-05-24):**
+- SYSTEM-LEARNINGS-V3-V4-COMPILATION.md mentioned en activation reads, NO existía en filesystem → blocking, resuelto Commit 2
+- HANDOFF Sub-Fase 3A + HANDOFF-SUB-FASE-3A presentes pero sin .md → blocking ambigüedad, resuelto Commit 1
+
+**Forward enforcement:** cualquier sprint que introduzca docs nuevos a activation reads DEBE incluir filesystem commit step en su plan.
+
+---
+
+## 0.3 HANDOFF NAMING CONVENTION (codificado 2026-05-24 Sub-Fase 3A.2)
+
+Forward, todos los handoff documents siguen este pattern:
+
+```
+HANDOFF-{PROJECT-PHASE-SUBPHASE}.md
+```
+
+**Reglas:**
+- All-caps + hyphens (no spaces, no underscores)
+- Extension .md mandatorio
+- Sub-version separada por punto (e.g., 3A.1, 3A.2)
+
+**Ejemplos válidos:**
+- HANDOFF-SUB-FASE-3A.1.md
+- HANDOFF-SUB-FASE-3A.2.md
+- HANDOFF-MARINA-SPRINT-M.md
+- HANDOFF-V5-CP3.md
+
+**Ejemplos inválidos (lessons from PRE-4.A drift):**
+- "HANDOFF Sub-Fase 3A" (spaces, no ext) — non-grep-able by activation
+- "HANDOFF-SUB-FASE-3A" (no ext) — non-canonical
+
+---
+
+## 0.4 PROJECT KNOWLEDGE SYNC EXPLICIT (codificado 2026-05-24 Sub-Fase 3A.2)
+
+**Project Knowledge es snapshot punto-en-tiempo. Forward NO se mantiene sincronizado con filesystem automáticamente.**
+
+Implicaciones operativas:
+- Claude conversacional debe asumir Project Knowledge stale a menos que el usuario provea explicit fresh content
+- Cuando un doc canónico se actualiza en filesystem, Project Knowledge queda automáticamente stale
+- Sincronización Project Knowledge ↔ filesystem es manual del usuario, NO automática del sistema
+- Cualquier referencia de Claude conversacional a un doc DEBE ser tratada como potencialmente outdated por el Auditor — verificar filesystem si la decisión depende de la actualidad del contenido
+
+**Razón estructural:** mantener sync automático requiere intervención usuario recurring, violando autonomía forward. Mejor: Project Knowledge es ground truth histórico, filesystem es ground truth actual, usuario bridge cuando necesario.
+
+---
+
 ## 1. CREAR DIRECTORIO DEL PROYECTO
 
 ```bash
 cd "<repo-root>"
 mkdir -p "<TU_PROYECTO>"/{assets,scripts,renders}
-mkdir -p "<TU_PROYECTO>/assets/sfx"
+mkdir -p "<TU_PROYECTO>/assets"/{sfx,clips-atomic,concat,music,ambient,narration}
 cd "<TU_PROYECTO>"
 ```
 
 **Convención de naming**: `kebab-case`, descriptivo. Ejemplos: `elige-companero`, `bosque-abandonado`, `bosque-encantado`, `faro-vacio`.
+
+### 1.1 ⭐ Asset layout CANONICAL (codificado PRE-4.1+ post shakedown V4 2026-05-27)
+
+Los 4 scripts Paso 4 (`concat-clips-with-audio` / `apply-effects-between-clips` / `apply-cross-clip-music` / `build-video-hybrid`) **esperan paths exactos** bajo `<proyecto>/assets/`. Sin esto, scripts fallan ("clip(s) missing") o degradan silenciosamente (música/narrador no incluidos en el render).
+
+| Path canonical | Contenido | Consumido por |
+|----------------|-----------|---------------|
+| `<proyecto>/assets/clips-atomic/shot_NN_atomic.mp4` | Per-shot atomic clips (Hard Rule #23) — visual + audio + captions baked. Naming: **EXACT** `shot_NN_atomic.mp4` (no descriptor suffix) | 4.2 concat |
+| `<proyecto>/assets/concat/` | Intermedios pipeline (`clips_concat_only.mp4`, `clips_with_effects.mp4`, `master_final.mp4`) | 4.2/4.4/4.3 escriben |
+| `<proyecto>/assets/music/<layer_id>.mp3` | Music layers per SPEC `music_continuous_layers[].layer_id` — **filename = layer_id EXACTO** | 4.3 cross-clip music |
+| `<proyecto>/assets/narration/narrator_master.mp3` | Narrator master continuous (Layer 3 VO continuo, NO clip-scoped) | 4.3 sidechain duck key |
+| `<proyecto>/assets/ambient/` | Ambient continuous layer files (opcional; algunos SPECs los unifican bajo music/) | 4.3 ambient |
+| `<proyecto>/assets/sfx/` | SFX events per-clip + effect-bound stings | 4.4 effects + clip atomic mux |
+| `<proyecto>/renders/draft-vN.mp4` | Output orchestrator final + `draft-vN_gates.json` + `draft-vN_manifest.json` | 4.1 build-video-hybrid |
+
+**Anti-patterns detectados (shakedown V4 2026-05-27)** — NO seguir el layout rompe el pipeline silenciosamente:
+- ❌ Narrator en `assets/tts/` (cerro V4) → 4.3 no encuentra `assets/narration/narrator_master.mp3` → mix sin narrator + sin sidechain duck (audio degrade silencioso).
+- ❌ Music `layer_id` ≠ filename (e.g. SPEC `drone_base` + file `music_drone_base_cold.mp3`) → 4.3 warn "missing layer" + degrade a master_only si todos missing.
+- ❌ Atomic clips con descriptor suffix (`shot_03_freeze_8s_atomic.mp4`) → 4.2 busca exact `shot_03_atomic.mp4` → error "atomic clip missing".
+
+**Forward (nuevos formatos):** seguir layout canonical desde bootstrap. Si un formato necesita layout distinto (e.g. B2B con voz humana grabada en `voiceover/`, tutorial sin narrator), declararlo en SPEC `video_capabilities` con override fields **forward schema work** — por ahora todos los formatos siguen este layout o fallan en 4.3 graciosamente (degrade documentado).
 
 ---
 
@@ -99,23 +179,53 @@ SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
 #   - build_clip_atomic.py        (steps 2-5 atomic builder per clip: TTS + SFX + ambient + mix + mux + caption sidecar)
 #   - quality_gate_per_clip.py    (Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate)
 #   - gemini_midexec_vision.py    (mid-execution Gemini Vision hook per clip ANTES de concat = 10x más barato detectar bugs)
+#   ⭐⭐ NEW Phase 3 calibrated v4 + Veo enterprise (2026-05-21, Hard Rule #1 updated):
+#   - audit-gemini-calibrated.py  (Tomás-calibrated Gemini scoring, 10-dim EXECUTION CONTINUITY 30% — primary quality gate forward)
+#   - veo3.py                     (Veo 3.1 generation via Gemini API enterprise FREE, native audio+lip-sync, 3 tiers preview/fast/lite)
+#   ⭐⭐⭐ NEW Phase 4 enforcement scripts BEFORE V4+ (2026-05-21 PM late, Hard Rule #24 + #25):
+#   - build_clip_atomic.py        (EXTENDED with caption-burn per clip — Whisper-from-audio + ffmpeg drawtext = caption-audio LOCKED frame level, drift physically impossible)
+#   - audit-shot-spec-compliance.py (Script B — per-shot SPEC compliance verifier, 8 dimensions including dim 0 scope creep + caption-audio sync + character anchor + visual+action match — runs DURING CP4 per shot, NOT post-CP5)
+#   - orchestrator-cp-by-cp.py    (Script C — state machine enforcing per-CP gates structurally, override flag + ARCHITECTURAL-DECISIONS.md log, timeout 50 min default, cost cap $5 default)
+#   ⛔ MANDATORY for V4+: NO video production without these 3 scripts present + adversarial tested (per V4-LAUNCH-CHECKLIST.md)
 cp "$SKILL_DIR/scripts/"*.py scripts/
+# Bug #14 fix Sub-Fase 3A.2 2026-05-24: cp glob no recursivo, lib/ subdir requires explicit copy
+mkdir -p scripts/lib && cp "$SKILL_DIR/scripts/lib/"*.py scripts/lib/
 
 # Templates de proyecto genéricos
-cp "$SKILL_DIR/.env-TEMPLATE"            .env
-cp "$SKILL_DIR/hyperframes.json-TEMPLATE" hyperframes.json
+cp "$SKILL_DIR/.env-TEMPLATE"                            .env
+cp "$SKILL_DIR/hyperframes.json-TEMPLATE"                hyperframes.json
+cp "$SKILL_DIR/calibrated-gemini-prompt-v4.txt"          .  # calibrated v4 prompt template (NEW 2026-05-21)
+cp "$SKILL_DIR/calibrated-gemini-prompt-v2.txt"          .  # v2 symlink (retrocompat — points to v4)
 
 # (Sin POST-MORTEM — deprecated 2026-05-15; learnings van a video-log.md del formato)
 ```
 
 **Verificación post-copy** — confirmar que TODOS los scripts del flow están presentes:
 ```bash
-for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py; do
+for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py audit-gemini-calibrated.py veo3.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py; do
   [ -f scripts/$script ] && echo "✓ scripts/$script" || echo "✗ MISSING scripts/$script"
+done
+# Plus check calibrated prompt template
+[ -f calibrated-gemini-prompt-v4.txt ] && echo "✓ calibrated-gemini-prompt-v4.txt" || echo "✗ MISSING calibrated-gemini-prompt-v4.txt"
+```
+
+Si falta alguno → re-correr el `cp` desde `$SKILL_DIR`. Los scripts marcados ⭐ (audit-spec-completeness, audit-narrative, render-lock, audit-frames, audit-frames-granular, qa-gate) son **gates bloqueantes** del workflow — sin ellos, el agente no puede llegar al stop point pre-animation. Los 3 scripts Phase 2 per-clip atomic (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) son **MANDATORY para video #3+** per Hard Rule #23. Los 2 scripts NEW Phase 3 (`audit-gemini-calibrated.py` + `veo3.py`) + `calibrated-gemini-prompt-v4.txt` son **MANDATORY para video #3+** per Hard Rule #1 updated 2026-05-21 — sin ellos, no se puede aplicar el calibrated quality gate primario.
+
+**⛔ NEW Hard Rule #26 enforcement (codificado 2026-05-23 Sub-Fase 3A)** — **Cada script en el copy list mandatorio debe tener su `test_*.py` companion sidecar.** Verificación adicional:
+
+```bash
+# Plus check test sidecars (Hard Rule #26 enforcement)
+for script in build_clip_atomic.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py audit-spec-completeness.py qa-gate.py; do
+  test_file="scripts/test_${script}"
+  [ -f "$test_file" ] && echo "✓ $test_file" || echo "✗ MISSING test_$script — Hard Rule #26 violation"
 done
 ```
 
-Si falta alguno → re-correr el `cp` desde `$SKILL_DIR`. Los scripts marcados ⭐ (audit-spec-completeness, audit-narrative, render-lock, audit-frames, audit-frames-granular, qa-gate) son **gates bloqueantes** del workflow — sin ellos, el agente no puede llegar al stop point pre-animation. Los 3 scripts NEW Phase 2 per-clip atomic (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) son **MANDATORY para video #3+** per Hard Rule #23 — sin ellos, el ingeniero cae back a legacy global master pipeline.
+Scripts SIN test sidecar son flagged. Engineer NO declara script complete sin tests passing. Auditor NO acepta merge sin test sidecar present + passing. Tests deben validar contra V4 archive (`cerro-aislado-v4/`) como ground truth caso real cuando posible. Forward Sprint M validators ship with test sidecars from day 1.
+
+### 📍 Paths canónicos referenciados (cierre hidden gap 3 — 2026-05-23)
+
+- `elements.json` se ubica en **root del proyecto** (`<repo-root>/elements.json`), NO en `library/` ni en `.claude/skills/`. Esto es codificación canonical post inventory Sub-Fase 3A.
 
 Si vas a producir un video del formato horror-choice, copiar también los templates específicos del formato:
 
@@ -332,7 +442,7 @@ Decirle al agente:
 > "Proyecto bootstrapeado en `<ruta>`. Combo: genre = `<genre>` × format = `<delivery>`. Skills activos: `video-director` + `ai-video-production` + `<genre>-format` + (`video-animation` si aplica). Empezá según el playbook del genre y las reglas del delivery."
 
 Para combo **horror-choice × reel** (validado en v15-final 9.9/10):
-- Agente lee `horror-choice-format/PAUTA.md`, `INTRO-FORMULA-V15.md`, `PATTERNS.md`, `VIDEO-PLAYBOOK.md`
+- Agente lee `horror-choice-format/PAUTA.md`, `INTRO-FORMULA.md`, `PATTERNS.md`, `VIDEO-PLAYBOOK.md`
 - Agente lee `formats/reel.md` (specs + UI safe zones + retention)
 - Agente lee `RETENTION-RULES.md` (📱 short-form)
 - Agente sigue VIDEO-PLAYBOOK fase 0→7

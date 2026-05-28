@@ -3,6 +3,9 @@
   "type": "transition",
   "category": "outro",
   "duration_s": 1.0,
+  "xfade_transition": "fadeblack",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "SEMANTIC MISMATCH: recipe is single-clip terminal fade (outro, no clip_b); fadeblack between two clips approximates a terminal effect.",
   "description": "Final clip fades to full black over 1.0s with audio fading in parallel. Canonical outro / cliffhanger close. Reads as 'end of chapter' — sets up next-video tease.",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -filter_complex \"[0:v]fade=t=out:st={fade_start}:d=1.0:color=black[v];[0:a]afade=t=out:st={fade_start}:d=1.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {
@@ -24,7 +27,8 @@
     "Energetic format outros (use light-flash-impact + cut to card)"
   ],
   "hyperframes_alternative": "GSAP: tl.to('.final-scene', {opacity:0, duration:1.0}, 'tOutro').to('#audio-bed', {volume:0, duration:1.0}, 'tOutro'). Black background body color provides the destination.",
-  "canonical_validation_status": "validated",
-  "validated_against_canonical_refs": ["ref-01", "ref-04", "ref-07", "ref-10"],
-  "validated_notes": "Universal outro pattern — 9/10 F1 referents end with 0.8-1.2s fade to black before final card. Audio fade MUST be parallel; orphaned audio tail breaks immersion."
+  "canonical_validation_status": "validated_2/8",
+  "validated_against_canonical_refs": ["ref-03", "ref-12"],
+  "canonical_observations": "Observed in ref-03 at 49.2-49.7s ('Explosion visual + fade negro' post-death of consequence A2) — used as longer death-cut close, but functionally serves as scene-end fade. Observed in ref-12 at 111.0-113.0s explicit 'Fade out (probable). Music crescendo final' — canonical outro before video end. NOT observed as outro in ref-06/08/09/10/11/13 — these end with hard cut to counterfactual cozy scene (no fade-to-black bridge). Pattern in F1: hard cut to counterfactual is more common (6/8) than fade-to-black outro (2/8). Prior citation of ref-01/04/07 invalid — those refs not in F1 set.",
+  "validated_notes": "2/8 explicit F1 outros use fade-to-black 1.0s. More common F1 pattern (6/8) is hard cut directly to counterfactual cozy scene without fade. Use this transition when narrative explicitly requires 'end of chapter' weight, not as default outro."
 }

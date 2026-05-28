@@ -616,7 +616,7 @@ Los 5 patterns observados (P1, P2, P3, P6, P9). No repetir el mismo pattern en 2
 - ✓ `PATTERNS.md` — reglas técnicas del formato (estructura V15, audio, visual)
 - ✓ `SCRIPT-WRITING-GUIDE.md` — plantilla del guion
 - ✓ `PAUTA.md` — workflow de producción
-- ✓ `INTRO-FORMULA-V15.md` — hook 9s
+- ✓ `INTRO-FORMULA.md` — hook 9s
 - ✓ `CHARACTER-NAMES-CATALOG.md` — nombres
 - ✓ `video-log.md` — rotación cross-video
 

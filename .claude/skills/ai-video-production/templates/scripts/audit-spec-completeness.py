@@ -76,7 +76,14 @@ def collect_ui_active_per_shot(spec: dict) -> dict:
     for shot in shots:
         ui_active = shot.get("ui_active", [])
         for elem in ui_active:
-            elem_lower = elem.lower()
+            # Support both string-form ("countdown") and dict-form ({"element_id": "countdown", ...}).
+            # Schema v11+ uses dict-form. Backported from cerro-aislado-v4 in-place fix
+            # per Sub-Fase 3A 2026-05-23 (CP5-handoff.md L83).
+            if isinstance(elem, dict):
+                elem_str = " ".join(str(v) for v in elem.values() if isinstance(v, str))
+            else:
+                elem_str = str(elem)
+            elem_lower = elem_str.lower()
             if "countdown" in elem_lower:
                 ui_counts["countdown"] += 1
             elif "choice" in elem_lower or "button" in elem_lower:

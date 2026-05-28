@@ -1,0 +1,35 @@
+{
+  "id": "projector-cue-cinema",
+  "type": "transition",
+  "category": "cinema-specific",
+  "duration_s": 1.0,
+  "xfade_transition": "fade",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "xfade=transition=fade core is literal; white-bloom layer decorative (dropped in chained-xfade); projector sting preserved via overlay.",
+  "description": "Cinema-diegetic transition emulating a 35mm projector reel-change cue dot — brief flicker + warm bloom + characteristic projector buzz. Native to cinema-abandonado-style settings.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/projector-cue.mp3 -filter_complex \"[0:v]fade=t=out:st={fadeout_start}:d=0.4:color=white,eq=brightness=0.05:saturation=1.20[a_out];[1:v]fade=t=in:st=0:d=0.4:color=white[b_in];[a_out][b_in]xfade=transition=fade:duration=0.6:offset=0.4[v];[0:a][1:a]acrossfade=d=1.0[base];[2:a]adelay={cue_start_ms}|{cue_start_ms},volume=0.45[cue];[base][cue]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "fadeout_start": "Set = duration(clip_a) - 1.0",
+    "cue_start_ms": "Set = (duration(clip_a) * 1000) - 500. Projector cue lands across the seam, lingering into clip_b.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "projector-cue.mp3 (1.0s buzz/click) at volume 0.45 layered over a 1.0s crossfade of base audio. The buzz tails into clip_b establishing diegetic projection.",
+  "audio_sting_path": "audio-stings/projector-cue.mp3",
+  "audio_sting_volume": 0.45,
+  "use_cases": [
+    "cinema-abandonado scene changes (reel-to-reel)",
+    "Drive-in / vintage cinema settings",
+    "Diegetic transition into 'projected footage'",
+    "Period horror with film-stock aesthetic"
+  ],
+  "avoid_for": [
+    "Non-cinema genres (anachronistic, breaks immersion)",
+    "Reels with cuts/min target >5 (1.0s is too heavy)",
+    "Outdoor / modern digital settings"
+  ],
+  "hyperframes_alternative": "GSAP: white-bloom div opacity 0→1→0 over 1.0s, eq filter on .scene-image tweening saturation up briefly. projector-cue.mp3 scheduled at scene change t.",
+  "canonical_validation_status": "validated_0/8_candidate_deprioritize",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Not observed in 8 canonical refs. F1 canonical set has no cinema-setting refs (mina, carretera, acuario, cockpit, fundición, metro, tren, eléctrica). Cinema sub-genre transition kept for sub-genre-specific use (cinema-abandonado project) only. Per hard rule #19 cinema-abandonado internal use is NOT canonical authority — this transition has zero F1 validation and should require explicit cinema-setting SPEC justification.",
+  "validated_notes": "0/8 F1 canonical observations. Sub-genre-specific (cinema/drive-in/projector-room). Keep available but require explicit SPEC justification. F2 cinema-genre referent set needed to validate technical parameters (duration 1.0s, audio sting volume 0.45, bloom strength)."
+}

@@ -1,0 +1,34 @@
+{
+  "id": "film-burn-transition",
+  "type": "transition",
+  "category": "cinema-feel",
+  "duration_s": 0.6,
+  "xfade_transition": "fadewhite",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "LOSSY: recipe = alpha-fade + amber bloom overlay; fadewhite != amber bloom (color/aesthetic lost); projector sting preserved via overlay.",
+  "description": "Warm orange/amber bloom that consumes clip_a and reveals clip_b — emulates film burning through the gate of a projector. Cinema/horror aesthetic with strong nostalgia cue.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v]format=yuva420p,fade=t=out:st={burn_start}:d=0.6:alpha=1,curves=preset=increase_contrast,eq=brightness=0.10:saturation=1.40:gamma_r=1.20[a_burn];[1:v]format=yuva420p,fade=t=in:st=0:d=0.6:alpha=1[b_in];[a_burn][b_in]overlay=eof_action=pass[v];[0:a][1:a]acrossfade=d=0.6[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "burn_start": "Set = duration(clip_a) - 0.6. Last 0.6s of clip_a burns out while clip_b fades in.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "acrossfade 0.6s + optional film-splicer/celluloid SFX (e.g., _archive-legacy-projects/cinema-abandonado-v2/sfx/film_splicer_cortafilm_cut.mp3) at volume 0.35 placed at burn_start + 0.1s.",
+  "audio_sting_path": "audio-stings/projector-cue.mp3",
+  "audio_sting_volume": 0.35,
+  "use_cases": [
+    "Cinema-specific projects (cinema-abandonado, drive-in horror)",
+    "Memory/flashback into vintage footage",
+    "End-of-reel / outro before cliffhanger",
+    "Transition into 'old projection' diegetic content"
+  ],
+  "avoid_for": [
+    "Non-cinema settings (breaks aesthetic coherence)",
+    "Short-form fast cuts — 0.6s is heavy for cuts/min 5+",
+    "Cold/clinical horror settings (use static-noise-transition)"
+  ],
+  "hyperframes_alternative": "GSAP: layer a div with bg radial-gradient orange/amber on top of clipA, tween opacity 0→1 over 0.6s with blend-mode:screen. Reveal clipB underneath.",
+  "canonical_validation_status": "validated_0/8_candidate_deprioritize",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Not observed in 8 canonical refs. F1 canonical set has no cinema-setting refs (mina, carretera, acuario, cockpit, fundición, metro, tren, eléctrica). Cinema sub-genre transition kept for sub-genre-specific use (cinema-abandonado project) only. Do NOT use as default in horror-choice reels. Recipe remains valid for cinema-aesthetic projects pending F2 cinema-genre referent set.",
+  "validated_notes": "0/8 F1 canonical observations. Sub-genre-specific (cinema). Keep available but require explicit SPEC justification ('setting = cinema/drive-in/projector room' OR 'memory-into-vintage-footage device')."
+}

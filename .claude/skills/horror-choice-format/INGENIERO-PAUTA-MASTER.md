@@ -1288,6 +1288,42 @@ Caso disparador: maikol-crucero 2026-05-15. Ingeniero comparó contra nuestras p
 
 ---
 
+## 11.5 ACCEPTANCE CRITERIA — Script merge requirements (NEW 2026-05-23 post Hard Rule #26)
+
+> **Codificado Sub-Fase 3A 2026-05-23 post Bug #12 user perceptual catch + Gap #52 auditor silent decision pattern threshold reached.**
+
+Engineer NO declara un script complete (ready for merge) sin cumplir:
+
+1. **`test_<script>.py` companion sidecar** existente en mismo directorio
+2. **Tests passing run** completo sin errores
+3. **V4 archive validation** (`cerro-aislado-v4/`) cuando aplicable — usar V4 case real como ground truth
+4. **Honest test results**: si test FALLA, engineer reporta FAIL explícito, NO maquilla
+5. **Cost discipline**: tests deben ejecutar local + FREE Gemini Vision (cost cap $0 enforced)
+
+Auditor NO acepta merge si:
+- Falta test sidecar (Hard Rule #26 violation)
+- Tests existen pero NO pasan
+- Engineer no documentó cómo el script fue validated against V4 archive
+
+Pattern_class enforced: `tests_adversariales_obligatorios_forward`. Sub-Fase 3A Sprint M defense in depth requirement.
+
+**Workflow forward**:
+```
+Engineer builds script_new.py
+  ↓
+Engineer builds test_script_new.py (V4 archive case + mock cases + edge cases)
+  ↓
+Engineer runs test_script_new.py → all PASS
+  ↓
+Engineer emits handoff with test results table
+  ↓
+Auditor verifies tests independent + filesystem state
+  ↓
+Merge OR escalate
+```
+
+---
+
 ## 12. Última actualización
 
 - **2026-05-15 v3** — **Fase 1 post-maikol-crucero feedback completa**:
@@ -1760,6 +1796,8 @@ phase_2_forward:
 
 > **Authority**: `ai-video-production/templates/effects-library/README.md` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
 > **Trigger**: cinema-abandonado iter 1-6 used only hard cuts + zoom transitions — Gemini editing dimension 8/10 (predictable). Canonical refs use varied transitions per beat type.
+
+> ⭐ **TIERED catalogs (PRE-4.K 2026-05-27, "Disponibilidad ≠ Uso")**: las transitions de la tabla viven en DOS capas. **Capa A** (`ai-video-production/templates/effects-library/transitions/`) = primitivas universales: `cross-fade-0.5s`, `cross-fade-1.0s`, `hard-cut-with-whoosh`, `black-screen-0.3s`, `fade-to-black-1.0s`, `light-flash-impact`, `glitch-transition`. **Capa B** (`horror-choice-format/effects-library/transitions/`) = sub-genre horror: `film-burn-transition`, `projector-cue-cinema`, `static-noise-transition`. El engineer pasa `--effects-dir` con AMBOS catálogos (Capa A + Capa B) al correr `apply-effects-between-clips.py`. Disponibilidad ≠ prescripción: el SPEC `shot_list[].transition_out` elige. Cada recipe declara `xfade_transition` + `xfade_fidelity` (Option D PRE-4.J): los 5 `approximate` (light-flash/black-screen/fade-to-black/film-burn/static-noise) emiten WARNING en producción (chained-xfade lossy).
 
 ### 8.13.1 When to use which transition (by beat type)
 

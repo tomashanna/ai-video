@@ -3,6 +3,9 @@
   "type": "transition",
   "category": "narrative-pause",
   "duration_s": 0.3,
+  "xfade_transition": "fadeblack",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "LOSSY: recipe inserts 0.3s pure-black via concat (hard comma); fadeblack dissolves through black (gradual != hard insert).",
   "description": "Brief full-black insert between clips. Acts as a breath — narrative comma. Lets the prior beat land before the next begins. Audio can continue (bed) or fully dip.",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.3 -i \"color=c=black:s=1080x1920:r=30\" -f lavfi -t 0.3 -i \"anullsrc=channel_layout=stereo:sample_rate=44100\" -filter_complex \"[0:v][2:v][1:v]concat=n=3:v=1:a=0[v];[0:a][3:a][1:a]concat=n=3:v=0:a=1[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {
@@ -24,7 +27,8 @@
     "Climax peak (use light-flash-impact)"
   ],
   "hyperframes_alternative": "GSAP: 0.3s gap between clipA end and clipB start, with a full-screen black div z-index 99 opacity 1.0. Audio bed continues underneath via library/ambient track.",
-  "canonical_validation_status": "validated",
-  "validated_against_canonical_refs": ["ref-02", "ref-06"],
-  "validated_notes": "Found in 4/10 F1 referents as narrative breath, always 0.2-0.4s, never >0.5s. Hard rule: in short-form, max 2x per reel."
+  "canonical_validation_status": "validated_2/8",
+  "validated_against_canonical_refs": ["ref-03", "ref-08"],
+  "canonical_observations": "Observed in ref-03 (fade negro rápido at 28.5-29.0s + 49.2-49.7s + 71.7-72.0s — quick black inserts hiding death cuts, descriptive § 6 'fade a negro muy rápido o impacto visual oculta el corte') and ref-08 ('Hard cut a fade negro post-muerte' descriptive § 6 + Beat 8 'Pablo apaga luces / visual fade to dark'). ref-12 has fade out at 111-113s but that is outro-length not 0.3s breath. ref-06/09/10/11/13 show no explicit black-screen breath inserts in narrative descriptions. Pattern: F1 uses 0.3s black mainly to mask death-cut frames, not as inter-beat narrative comma.",
+  "validated_notes": "Explicit in 2/8 F1 referents as death-cut mask (0.3-0.5s). Hard rule: in short-form, max 2x per reel. Use case 'narrative breath between beats' is INFERRED not directly observed in F1 refs (prior 'ref-02/ref-06' citation was incorrect — corrected 2026-05-22)."
 }

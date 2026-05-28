@@ -3,6 +3,9 @@
   "type": "transition",
   "category": "soft-blend",
   "duration_s": 0.5,
+  "xfade_transition": "fade",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "Native xfade=transition=fade (0.5s crossdissolve).",
   "description": "Soft crossfade between two clips. Half-second blend reads as 'invisible' to viewer — used for connecting beats inside the same emotional unit.",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=0.5:offset={offset_clip_a_minus_0.5}[v];[0:a][1:a]acrossfade=d=0.5[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {
@@ -24,7 +27,8 @@
     "Cliffhanger outro (use fade-to-black-1.0s)"
   ],
   "hyperframes_alternative": "GSAP timeline: tl.to(clipA, {opacity:0, duration:0.5}, 'tBeat').to(clipB, {opacity:1, duration:0.5}, 'tBeat'). Use when transitions must be rendered inline in HyperFrames composition rather than pre-baked ffmpeg.",
-  "canonical_validation_status": "validated",
-  "validated_against_canonical_refs": ["ref-01", "ref-04", "ref-07"],
-  "validated_notes": "Crossfades 0.4-0.6s observed in 6/10 F1 canonical referents as inter-beat connector. Always paired with subtle audio acrossfade — never video-only."
+  "canonical_validation_status": "validated_0/8_candidate_deprioritize",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Not observed as inter-clip transition in 8 canonical refs. ref-03 descriptive § 6 explicitly reports '95% hard cuts'; ref-06 mentions 'fade-in' but only for UI choice button reveal (NOT inter-clip transition); ref-03 mentions 'inverse fade-in lento' at 15-17s but for intra-shot eye-adaptation effect, not clip-to-clip. F1 cohort overwhelmingly uses hard cuts between narrative beats (cuts/min 5-10 de-clustered). Prior validation citing ref-01/ref-04/ref-07 is invalid — those refs are not in F1 canonical set. Candidate for removal from default rotation or reframe as HyperFrames UI element fade, not inter-clip transition.",
+  "validated_notes": "0/8 explicit F1 observations. Horror-choice canonical pattern favors hard cuts (with whoosh sting) over soft crossfades. Use only with explicit SPEC justification for non-horror sub-genres."
 }

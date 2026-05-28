@@ -1,0 +1,35 @@
+{
+  "id": "static-noise-transition",
+  "type": "transition",
+  "category": "vhs-glitch",
+  "duration_s": 0.4,
+  "xfade_transition": "dissolve",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "LOSSY: recipe = concat + 0.4s analog-noise insert (geq random); dissolve does NOT generate noise (visual effect lost); drone sting preserved via overlay.",
+  "description": "Burst of VHS-style analog noise (static) covers the seam between clip_a and clip_b. Reads as 'reality breaking' or 'signal corrupted'. Digital horror / found-footage aesthetic.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.4 -i \"nullsrc=s=1080x1920:r=30,geq=random(1)*255:128:128,format=yuv420p\" -filter_complex \"[0:v][2:v][1:v]concat=n=3:v=1:a=0[v_full];[0:a]afade=t=out:st={fade_out_start}:d=0.1[a0];[1:a]afade=t=in:st=0:d=0.1[a1];anullsrc=channel_layout=stereo:sample_rate=44100,atrim=duration=0.4[a_static_silent];[a0][a_static_silent][a1]concat=n=3:v=0:a=1[a]\" -map \"[v_full]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "fade_out_start": "Set = duration(clip_a) - 0.1. Quick 0.1s audio fade-out on clip_a before static.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "Quick afade out 0.1s on clip_a, then 0.4s of synthesized static (white noise band-passed 300-4000Hz at volume 0.45) overlaid on a silent gap, then afade in 0.1s on clip_b. Optionally layer drone-tension.mp3 underneath for sub-bass.",
+  "audio_sting_path": "audio-stings/drone-tension.mp3",
+  "audio_sting_volume": 0.35,
+  "audio_static_recipe": "ffmpeg -f lavfi -i \"anoisesrc=color=white:sample_rate=44100:amplitude=0.45\" -t 0.4 -af \"highpass=f=300,lowpass=f=4000\" static-noise.mp3 (pre-generate or layer inline)",
+  "use_cases": [
+    "Reality glitch / unreliable narrator moment",
+    "Found-footage horror (cabin/cabina/security-cam settings)",
+    "Memory corruption / timeline break",
+    "Transition into 'something is wrong' beat"
+  ],
+  "avoid_for": [
+    "Period horror / cinema settings (anachronistic)",
+    "Soft narrative connectors (use cross-fade-0.5s)",
+    "More than 2x per video — loses impact via repetition"
+  ],
+  "hyperframes_alternative": "GSAP + canvas: overlay <canvas> with requestAnimationFrame drawing random pixels, tween opacity 0→1→0 over 0.4s. Audio scheduled separately.",
+  "canonical_validation_status": "validated_0/8_candidate_deprioritize",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Not observed as inter-clip transition in 8 canonical refs. Caption-level glitch/flicker is present in 4/8 refs (ref-08, ref-10, ref-11, ref-12) but applies to text overlay only, NOT inter-clip VHS static. ref-13 has 'cuts flooding' at warp moments (60+ cuts in 5s) — that is rapid cut density, not VHS static. No F1 ref shows analog noise burst between clips. Sub-genre-specific (found-footage/VHS/digital-corruption) — not part of horror-choice canonical pattern.",
+  "validated_notes": "0/8 F1 canonical inter-clip observations. Sub-genre-specific. Use cap: max 2x per reel. Static frequency band 300-4000Hz avoids tinnitus zone. Requires explicit SPEC justification ('found-footage' or 'reality-glitch beat')."
+}

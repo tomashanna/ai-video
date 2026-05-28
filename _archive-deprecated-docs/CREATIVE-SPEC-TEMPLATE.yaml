@@ -1,0 +1,780 @@
+# CREATIVE-SPEC-TEMPLATE.yaml — v7 (post Bloque J 2026-05-17)
+#
+# CAMBIO v6 → v7 (2026-05-17) — SCHEMA UPGRADE post-matadero-banquete:
+# - Per-shot `camera` block (shot_type + movement + lens_hint) OBLIGATORIO. Sin esto prompts Kling/Hailuo inconsistentes.
+# - Per-shot `mini_cuts_internal` array OPCIONAL (REQUIRED si narrative_function contiene "cuts_flooding" — ref-13 pattern).
+# - `silence_by_design` flag + `silence_reason` en narration_in_this_shot — distingue empty intencional vs bug.
+# - `audio_strategy.character_voice_processing` sub-block per character con voice non-standard (effects chain explícita).
+# - `aesthetic_strategy.color_grading_luts` específicos por palette (reference cinematográfica + CSS filter + LUT hint).
+# - `audio_strategy.music_intent_path_X` enriquecido con style_ref_concrete + instruments_hint + tonal_target.
+# - 4 audits nuevos D24-D27 en creative-director/SKILL.md validan compliance del schema v7.
+# - Backward compat: specs v6 siguen siendo válidos. v7 agrega fields, NO remueve.
+# - Razón: matadero-banquete (primer test post-2026-05-16) reveló schema gaps que forzaron 9 fixes manuales.
+#
+# CAMBIO v5 → v6 (2026-05-16) — STORYBOARD SCHEMA REFORM:
+# - shot_list ahora exige scene_context completo (who_is_there, who_does_what, why_this_shot_exists).
+#   Sin esto el ingeniero improvisa = bugs garantizados (caso cabina-14: 17 issues narrativos por SPEC sin scene_context).
+# - narration_in_this_shot: texto exacto narrador + dialogue per shot (no solo abstracto en narration_script).
+# - visual_action_match: arquitecto certifica matches_literal: true por cada shot.
+# - suggested_model_tier + prompt_quality_required: hint para engineer model selection.
+# - Enum motion_intensity_intent extendido: 'static' es Ken Burns FALLBACK only (no default).
+# - Engineer rule operacional: si shot >2s tiene static intent → escalar al arquitecto (Ken Burns es gap signal).
+#
+# CAMBIO v4 → v5 (2026-05-16):
+# - Enum `motion_intensity_intent`: value `kling_full` → `animation_full` (vendor decoupling).
+# - Comments referencing "Kling" updated to "animation AI" (modelo agnostic, per MODEL-BENCHMARK).
+# - Migration helper: `.claude/skills/creative-director/templates/scripts/migrate-spec-enums.py`
+#   (corre sobre creative-specs/*.yaml para mantener compat con specs viejos).
+# - Valid values for motion_intensity_intent: animation_full | animation_partial | static
+#   (animation_full = clip AI image-to-video / animation_partial = Ken Burns + motion CSS / static = imagen quieta — FALLBACK only post v6).
+# - Razón: hard rules #18 + #19 + Bloques A/F decoupling — CAPA 1 NO debe acoplar vendor.
+#
+# CAMBIO v3 → v4 (2026-05-15):
+# - Añadido `shot_list` como estructura primaria con metadata per-shot:
+#   pov (boolean), lip_sync_required (boolean), motion_intensity_intent,
+#   narrative_function, characters_visible, setting, ui_active.
+# - Añadido `narrative_flow_transitions` para tracking de rama B por decisión.
+# - Añadido `auto_audit_2026_05_15` block con D14-D18 (validaciones obligatorias
+#   antes de declarar SPEC listo).
+# - Razón: feedback maikol-crucero reveló gaps:
+#   issue 7/12/13 → rama B underdev (D15)
+#   issue 15/16 → bueno aparente sin intro suficiente (D16)
+#   issue 3/4 → lip sync mismatch (D17)
+#   issue 2/6/9/11 → POV missing (D14)
+#   issue 11 → transición lógica missing (D18)
+#
+# CAMBIO v2 → v3:
+# La estructura PRIMARIA del SPEC ahora son los SLOTS A-H de la pauta canónica
+# (horror-choice-format/CREATIVE-BRIEF.md § 2). Los campos operacionales
+# (asset_list, checkpoints, animation tiers) son SECUNDARIOS y se generan
+# DESPUÉS de llenar los slots.
+#
+# Antes de llenar este SPEC, el arquitecto DEBE haber leído:
+# 1. horror-choice-format/CREATIVE-BRIEF.md COMPLETO
+# 2. horror-choice-format/PATTERNS.md
+# 3. horror-choice-format/SCRIPT-WRITING-GUIDE.md
+# 4. horror-choice-format/PAUTA.md
+# 5. horror-choice-format/INTRO-FORMULA-V15.md
+# 6. horror-choice-format/video-log.md (para rotación)
+
+# ============================================================
+# META
+# ============================================================
+project_id: <slug>  # ej: faro-magnus-v1
+template_used: elige-tu-companero
+delivery_format: reel_9_16
+duration_target: 60s  # 60-95s range (con H0: hasta 95s)
+budget_target_usd: 10
+created_at: <YYYY-MM-DD>
+status: draft  # draft / approved_by_user / in_production / rendered / published
+
+# ============================================================
+# SLOTS A-H (estructura primaria — de § 2 CREATIVE-BRIEF)
+# ============================================================
+
+# Slot A — Escenario
+# § 2 CREATIVE-BRIEF lista 15 settings validados. Elegí uno o variante.
+# Debe tener: función del lugar + 1-2 elementos diegéticos + iluminación + material
+slot_A_escenario:
+  setting_id: 10  # ej: 10 = "Faro en costa rocosa"
+  setting_name: "Faro en costa rocosa durante tormenta"
+  function_lugar: "guiar barcos durante tormentas / único refugio del puerto"
+  elementos_diegeticos:
+    - "Foco rotatorio del faro (parpadea cada 3s)"
+    - "Manómetro de presión del mar (única medida del peligro)"
+  iluminacion_dominante: "oscuridad total interrumpida cada 3s por foco rotatorio + relámpagos esporádicos"
+  material_paredes_suelo: "piedra húmeda + óxido en escalera de hierro + alfombra empapada"
+
+# Slot B — Visual del malo aparente
+# § 2 CREATIVE-BRIEF Slot B lista 7 plantillas. "Humano + elemento NO humano".
+# Test: ¿pasa el "scroll-stop"? ¿se siente "incorrecto" sin saber nombrarlo?
+slot_B_malo_aparente:
+  name: MAIKOL  # 2 sílabas, fonéticamente contrastante con bueno
+  plantilla_base: "Humano + alteración corporal + híbrido con material decadente"
+  visual_description: |
+    Hombre-faro animatrónico-acuático. Cabello negro grasoso pegado por agua salada.
+    Piel plástica pálida con cristales de sal formando cuarteaduras visibles.
+    Ojo derecho cae ligeramente y twitchea cada 2-3s. Chaqueta de cuero roja desteñida
+    con percebes adheridos a hombros y red de pesca enganchada en manga. Guante blanco
+    salado en mano derecha, dedos un toque más largos que normal. Movimiento entre
+    quietud perfecta y micro-twitches animatrónicos.
+  reference_anchor_required: true
+
+# Slot C — Visual del bueno aparente
+# § 2 CREATIVE-BRIEF Slot C lista 7 plantillas. NO realista — uncanny calmante.
+# Suficientemente extraño para no elegirlo + suficientemente inofensivo para que twist golpee.
+# CONTRASTE visual obligatorio con malo (color, forma, tamaño, postura).
+slot_C_bueno_aparente:
+  name: TOMAS  # contrast fonético vs MAIKOL
+  plantilla_base: "Persona común con UN detalle imposible — pescador con tatuajes azules antiguos cubriéndole entera la cara"
+  visual_description: |
+    Pescador anciano con la cara entera tatuada en azul antiguo (tinta indeleble
+    de marinero años 60, descolorida pero clara). Barba blanca enmarañada como
+    coral seco. Manos artríticas con dedos torcidos. Suéter de lana grueso color
+    crudo (contraste vs chaqueta roja de Maikol). Ojos azul mar profundo (contraste
+    vs ojo blanco-twitch de Maikol). Sonrisa cálida con dientes amarillos.
+    Sostiene termo humeante con dos manos. Sentado (no parado — contraste vs
+    Maikol vertical). Postura horizontal acogedora.
+  reference_anchor_required: true
+  has_dialogue: false  # bueno aparente NO habla (regla inviolable § 1)
+
+# Slot D — La REGLA del malo aparente — LA LÍNEA MÁS IMPORTANTE DE TODO EL SCRIPT
+# § 2 CREATIVE-BRIEF: "Esta es la línea más importante de todo el script."
+# 5-10 palabras, imperativa o declarativa, no moralmente obvia, conecta con dilemas.
+slot_D_regla_del_malo:
+  texto: "Cuando la sirena suena, no respondes."
+  tipo: "Sumisión a un procedimiento"
+  count_palabras: 6  # debe ser 5-10
+  conecta_con_dilemas: true
+  consecuencia_inmediata_si_rompe: "Sales corriendo a la noria. Lo que sale del agua te arrastra al fondo."
+
+# Slot E — 2 dilemas internos
+# § 2 CREATIVE-BRIEF: 5 categorías validadas. Los 2 dilemas del video deben ser de
+# CATEGORÍAS DIFERENTES.
+# Categorías: 1=Honestidad/mentira, 2=Acción/pasividad, 3=Curiosidad/obediencia,
+# 4=Violencia/confianza, 5=Sumisión-instinto/resistencia-estoica
+slot_E_dilemas:
+  - id: D1
+    timestamp_intent: "después de H2 setup"
+    categoria: 1  # Honestidad vs mentira
+    setup: "El barco-rescate pasa a 200m con su radio encendida buscando supervivientes."
+    pregunta: "¿Le dices al barco que estás aquí o callas?"
+    opcion_A_impulso: "Gritar / iluminar / responder al barco"
+    opcion_B_estoica: "Callar / esconderte / no responder"
+    opcion_ganadora: B  # va contra impulso primario (regla inviolable § 1)
+    consecuencia_A_body_horror: "Maikol corre hacia el balcón del faro. Empuja el faro hacia el barco. La luz cegadora desvía al capitán hacia las rocas."
+    consecuencia_B_apertura: "El barco pasa sin verte. Maikol asiente lentamente. La sirena suena."
+
+  - id: D2
+    timestamp_intent: "post-D1 + setup buildup"
+    categoria: 3  # Curiosidad vs obediencia (DIFERENTE a D1)
+    setup: "Suena la sirena del faro. No es la del barco."
+    pregunta: "¿Respondes a la sirena o esperas?"
+    opcion_A_impulso: "Bajar / mirar / acercarte a la fuente"
+    opcion_B_estoica: "Quedarte arriba / no responder / esperar"
+    opcion_ganadora: B
+    consecuencia_A_body_horror: "Sales corriendo a la noria. Lo que sale del agua te arrastra al fondo. Tus pulmones se llenan de algo que no es agua."
+    consecuencia_B_apertura: "La sirena se apaga después de 3 minutos. Maikol entra al faro. Cierra la puerta detrás."
+
+# Slot F — Body horror específico
+# § 2 CREATIVE-BRIEF: NUNCA "mueres". SIEMPRE imagen visualizable específica.
+# 7 tipos: transformación / disolución / penetración / asfixia inversa / pérdida identidad / cocción / multiplicación
+slot_F_body_horror:
+  tipo_principal: "asfixia inversa"  # para D2 consequence A
+  imagenes_validables:
+    - "Tus pulmones se llenan de algo que no es agua. Sentís el peso por dentro."
+    - "El plástico salado de Maikol entra por tu garganta cuando te toca."
+  test_pasa: "imagen IA generable: SÍ"
+
+# Slot G — Archetype del cliffhanger
+# § 3 CREATIVE-BRIEF: 4 archetypes (Paz perdida / Trampa simétrica / Inversión total / Meta)
+# DEBE rotarse vs video anterior (consultar video-log.md).
+# Para Pattern 1 (Verdad visible): generalmente "Paz perdida" o "Inversión total"
+slot_G_cliffhanger_archetype:
+  archetype: "Paz perdida"  # rotar vs último video
+  rotation_check: "video-log.md consultado: último video usó Trampa simétrica → Paz perdida OK"
+  elementos_sensoriales_validados: # de § 3.1 PAZ PERDIDA
+    - "café"
+    - "pan caliente"
+    - "amanecer"
+    - "fuego"  # chimenea del faro
+  texto_intent: |
+    "Si hubieras elegido a TOMAS, habrían encendido la chimenea del faro
+    a las 4 AM. Té con miel hasta el amanecer. Él te habría contado de
+    su perro Berni, que murió en el 87 pero todavía lo nombra como si
+    estuviera. A las 7 una guardacostas los habría visto."
+
+# Slot H — Ambient creatures / easter eggs
+# § 2 CREATIVE-BRIEF: catálogo por setting. Obligatorio post-2026-05-11.
+slot_H_ambient_creatures:
+  setting_aplicable: "Faro/costa"
+  criatura_seleccionada: "sirena en las rocas — silueta tras la espuma a 0:23 (1.5s on-screen)"
+  proposito: "scroll-stop pasivo + comment-driver"
+
+# ============================================================
+# PATTERN + CLIFFHANGER MATRIX (de § 3.5)
+# ============================================================
+plot_pattern:
+  matriz_pattern_id: 1  # "Verdad visible" — el obvio peligroso ES peligroso
+  matriz_appearance: "asimétrico (1 monstruoso + 1 amable)"
+  matriz_truth: "el obvio peligroso ES peligroso"
+  has_twist: false  # P1 no requiere twist
+  rotation_check: "video-log.md: últimos videos usaron P6 (3x) + P4 (1x) → P1 NO usado recientemente → OK"
+
+# ============================================================
+# H0 OPCIONAL — solo si pattern lo permite (§ 3.6)
+# ============================================================
+slot_H0_personal_stakes:
+  habilitado: false  # P1 = ❌ generalmente no — motor "supera el impulso" — personal stakes distrae
+  razon: "Pattern 1 según § 3.6 tabla: H0 NO recomendado. Motor narrativo P1 es supera impulso."
+
+# ============================================================
+# ESTRUCTURA TEMPORAL (de § 1 + PATTERNS § 1 V15)
+# ============================================================
+estructura_temporal:
+  presentacion_0_17pct: 10s   # Hook + dyad presentation + countdown
+  rama_malo_17_78pct: 36s     # Setup + 2 dilemas con loading bars
+  resolucion_78_88pct: 6s     # Consecuencia última elección
+  cliffhanger_88_100pct: 8s   # "Una noche en paz" + CTA narrado
+  total: 60s
+
+# ============================================================
+# NARRATION SCRIPT (de SCRIPT-WRITING-GUIDE plantilla maestra)
+# Reglas: segunda persona implícita, presente indicativo, 5.4 palabras/oración promedio
+# ============================================================
+narration_script:
+  meta:
+    target_total_duration: 60s
+    target_pace_wpm: 90
+    register: tu_implicito_presente_indicativo
+    speakers: [narrator, maikol]  # malo aparente tiene diálogo críptico (Slot D)
+
+  segments:
+    # Implementación operacional en script-writing.md (target_duration + pause_strict)
+    # No hardcoded timestamps — engineer compute timeline post-TTS
+    - id: hook
+      order: 1
+      speaker: narrator
+      text: "Llevas tres días a la deriva. Esta noche no estás solo."
+      target_duration: 4s
+      pause_after_strict_seconds: 0.5
+    - id: presentacion_dyad
+      order: 2
+      speaker: narrator
+      text: "Elige a tu compañero para esta noche. MAIKOL o TOMAS."
+      target_duration: 4s
+      pause_after_strict_seconds: 2  # countdown 3-2-1 corre acá
+      countdown_ui_after: 3s
+    # ... continuar segments según SCRIPT-WRITING-GUIDE plantilla
+    # NOTA: el bueno aparente (TOMAS) NO tiene segments — no habla (Slot C regla)
+    # MAIKOL tiene 1-2 líneas crípticas (Slot D regla)
+
+# ============================================================
+# OPERATIONAL LAYER — referencias a docs en este folder
+# ============================================================
+# Los siguientes campos los llenas usando los docs operacionales:
+# - aesthetic.md → color CSS direction
+# - audio-direction.md → música + SFX + ducking intent
+# - captions.md → 3 clases captions + keyword highlights
+# - camera-and-shots.md → tipos de planos + motion
+# - image-direction.md → per-shot framework
+# - animation-direction.md → tier strategy (HERO/STANDARD/DRAFT)
+# - ui-elements.md → countdown + loading bars + buttons
+# - shared-universe.md → cross-video recurrencia
+
+aesthetic_strategy:
+  ref_doc: aesthetic.md
+  dual_palette_intent: "cool_dark_marítimo vs warm_chimenea_outro"
+  vignette_intent: pronunciada
+  film_grain_intent: visible_8_pct
+
+  # ⭐ v7 — color_grading_luts específicos por palette (engineer sin esto NO tiene reference de LUT exacta)
+  color_grading_luts:
+    cool_dark_marítimo:
+      reference: "Sicario (Roger Deakins) — cool blues + desaturated greens en escenas nocturnas"
+      css_filter_target: "saturate(0.7) brightness(0.85) hue-rotate(-10deg) contrast(1.15) — palette frío/azulado con crushed blacks"
+      lut_file_hint_engineer: "engineer puede usar 3D LUT 'Cinematic Cool Blue' o equivalente Davinci Resolve"
+    warm_chimenea_outro:
+      reference: "Coco (Pixar warm interiors) — amber/orange dominant + soft contrast"
+      css_filter_target: "saturate(1.15) brightness(1.05) hue-rotate(15deg) contrast(1.1) — palette warm/ámbar"
+      lut_file_hint_engineer: "engineer puede usar 3D LUT 'Warm Fire Glow' o equivalente"
+    transition_dramatic_shift:  # opcional, si hay shift de palette mid-video
+      occurrence_timestamp: "shot_12_cliffhanger (cool→warm)"
+      cinematography_note: "Hard cut color shift sincronizado con narration 'Si hubieras elegido a Tomas...'. NO crossfade — el contraste es la herramienta."
+
+audio_strategy:
+  ref_doc: audio-direction.md
+  ducking_intent: active
+  sfx_categories: [foley_pasos_metal_oxidado, impactos_sub_bass_decisiones, ambient_oleaje_continuous]
+
+  # ⭐ v7 — music_intent enriquecido per path (style_ref_concrete + instruments_hint + tonal_target)
+  # ElevenLabs Music + Suno requieren refs concretas, no abstractas. Sin esto engineer improvisa género.
+  music_intent_path_horror:
+    bpm: "65-75 BPM"
+    style_ref_concrete: "Trent Reznor (The Social Network OST) + Cliff Martinez (Drive) — drone electrónico minimal + sub-bass pulses"
+    instruments_hint: "synth drone profundo + ticks metálicos sutiles + sub-bass pulses (sin batería convencional)"
+    tonal_target: "amenaza latente sin urgencia — el horror viene del silencio entre pulses, no de melodía"
+  music_intent_path_cozy_outro:
+    bpm: "85-100 BPM"
+    style_ref_concrete: "Yann Tiersen (Amélie) — piano acústico cálido + acordeón + strings suaves"
+    instruments_hint: "piano acústico + acordeón opcional + fingerpicked guitar + cellos cálidos"
+    tonal_target: "calor seductor cozy — música de hogar al amanecer, NO triste, sí pacífica con un toque melancólico"
+  music_shift_dramatic: true  # cool/horror → warm/cozy hard cut sincronizado con visual shift en cliffhanger
+
+  # ⭐ v7 — character_voice_processing per character con voice NON-standard (D27 auto-audit)
+  # OPCIONAL — solo requerido si algún character no usa voice humana standard ElevenLabs.
+  # Ejemplos non-standard: criatura sin boca (whisper effect), voz procesada (flanger, reverb extremo), distorsión.
+  # character_voice_processing:
+  #   matarife:  # ejemplo del SPEC matadero-banquete
+  #     base_voice_elevenlabs_id_hint: "deep_male_grave (similar a Bruno ref-03)"
+  #     base_pitch_shift_semitones: -2
+  #     effects_chain_order:
+  #       - flanger:
+  #           rate: 0.3
+  #           depth: 0.5
+  #           feedback: 0.4
+  #       - reverb:
+  #           room_size: large
+  #           wet_level: 0.6
+  #       - low_pass_filter:
+  #           cutoff_hz: 2500
+  #     output_target_description: "Voz humana grave + flanger sutil + reverb de matadero industrial. Suena como persona hablando en espacio reverberante, NO criatura."
+  #     reference_canónico: "Similar pattern a Miro ref-13 (voz processed pero comprehensible)"
+  #     engineer_test_criteria: "Pasa side-by-side test con ref-13 Miro: ¿mismo tier de comprehensibilidad? Si NO → re-process."
+
+captions_strategy:
+  ref_doc: captions.md
+  three_class_system: true
+  keyword_highlights:
+    - { word: MAIKOL, color: yellow }
+    - { word: TOMAS, color: yellow }
+    - { word: SIRENA, color: red }
+    - { word: NO_RESPONDES, color: red }  # parte de la regla del malo
+
+camera_shots_strategy:
+  ref_doc: camera-and-shots.md
+  pov_percentage_intent: 80  # regla § 1 + user confirmation 2026-05-13
+
+image_direction:
+  ref_doc: image-direction.md
+  consistency_severity_protagonists: STRICT
+
+animation_direction:
+  ref_doc: animation-direction.md
+  tier_distribution:
+    hero: 3  # hook + climax + outro reveal
+    standard: 4  # decision points
+    draft: 3  # establishing + transitions
+    static: 2  # detail shots
+
+ui_elements:
+  ref_doc: ui-elements.md
+  countdown_appearances: [hook, after_D1_trigger, after_D2_trigger]
+  loading_bars_appearances: [post_D1, post_D2]
+
+shared_universe:
+  ref_doc: shared-universe.md
+  canonical_characters_referenced: [MAIKOL, TOMAS]
+  cross_video_continuity_planned: true
+
+brand:
+  creator_handle: "@elige.tu.compañero"
+  reel_caption_instagram: |
+    ¿A quién elegirías al borde del faro?
+
+    A = MAIKOL 🎭
+    B = TOMAS ☕
+
+    Comentá tu elección 👇
+
+    #horror #elegirtucompañero #faro #ai
+  tagline_signature: "Elige a tu compañero para esta noche"
+  cliffhanger_pattern: B_loop_explicit
+  cliffhanger_text: "Elige a tu compañero para..."
+
+# ============================================================
+# REFERENCE ANCHORS — consistency cross-shots (characters + settings + props)
+# ============================================================
+# v3 → v3.1 (2026-05-13): expandido de solo characters a estructura tripartita.
+# Razón: el ingeniero detectó gaps donde settings recurrentes (>2 shots) y props
+# de setup→payoff (termo, foto, objeto del twist) no tenían anchor — generando
+# inconsistencia visual cross-shots.
+#
+# REGLA de cuándo crear anchor (cross-shot count):
+# - Character → aparece >1 shot → SIEMPRE anchor (STRICT)
+# - Setting → aparece >2 shots → anchor (MEDIUM-STRICT según importancia)
+# - Prop → aparece >1 shot Y es visualmente distintivo Y/O carga setup→payoff
+#          → anchor (MEDIUM-STRICT)
+#
+# El ingeniero auditará este campo en SPEC INGESTION Paso 3 y flageará omisiones.
+reference_anchors:
+  characters:  # personajes recurrentes
+    - id: maikol_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        <ver Slot B visual_description arriba + photorealistic + plain gray background + neutral pose + 8k>
+      approval_checkpoint: true
+      appears_in_shots: [hook, presentacion_dyad, D1_consequence_A, outro_reveal]  # lista shots donde aparece
+
+    - id: tomas_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        <ver Slot C visual_description arriba + photorealistic + plain gray background + neutral pose + 8k>
+      approval_checkpoint: true
+      appears_in_shots: [presentacion_dyad, cliffhanger_outro]
+
+  settings:  # locaciones recurrentes (>2 shots)
+    - id: faro_interior_anchor
+      severity: STRICT
+      visual_anchor_prompt: |
+        <descripción del interior del faro: piedra húmeda + escalera de hierro oxidada
+        + foco rotatorio visible + iluminación dominante per Slot A + lente wide
+        + photorealistic + 8k + plain composition reference>
+      approval_checkpoint: true
+      appears_in_shots: [setup_post_hook, D1_setup, D2_setup, D2_consequence_B]
+
+    # Si el setting solo aparece 1 vez (ej. flashback único) → NO necesita anchor.
+    # Solo settings con >2 apariciones llegan acá.
+
+  props:  # props visualmente distintivos con función recurrente o setup→payoff
+    - id: termo_anchor
+      severity: MEDIUM
+      visual_anchor_prompt: |
+        <termo metálico vintage humeante con iniciales grabadas "B.R." (Berni 87)
+        + suficiente detalle texural para anclar en multi-shot reference
+        + plain neutral background + 8k>
+      approval_checkpoint: true
+      appears_in_shots: [presentacion_dyad_tomas_holds, cliffhanger_outro_reveal]
+      narrative_function: "setup_to_payoff"  # se planta en H0/H2 y se cobra en H6
+
+    # Solo props que aparecen >1 shot Y son distintivos llegan acá.
+    # Props genéricos (lámpara, mesa) no necesitan anchor.
+
+# ============================================================
+# CROSS-SHOT COVERAGE AUDIT (lo que el ingeniero verificará en SPEC INGESTION Paso 3)
+# ============================================================
+# Para que el arquitecto NO omita anchors:
+# 1. Listar todos los shots del asset_list
+# 2. Por cada shot, identificar characters/settings/props que aparecen
+# 3. Si un character aparece >1 shot sin anchor → bug del SPEC
+# 4. Si un setting aparece >2 shots sin anchor → bug del SPEC
+# 5. Si un prop con función setup→payoff no tiene anchor → bug del SPEC
+cross_shot_coverage_audit:
+  characters_count: {maikol: 4, tomas: 2}  # ejemplo, llenar real
+  settings_count: {faro_interior: 4, faro_exterior_balcon: 1}
+  props_recurrentes: {termo: 2, sirena_radio: 1}
+  audit_passed_by_architect: false  # se marca true cuando arquitecto verifica
+
+# ============================================================
+# SHOT LIST (estructura primaria — v4 2026-05-15 / v6 storyboard schema 2026-05-16)
+# ============================================================
+# Cada shot necesita metadata explícita por D14-D22 auto-audit.
+# El arquitecto diseña como STORYBOARD ARTIST DE CINE — quién está, qué hace cada uno, por qué.
+# El ingeniero elige modelo/tool específico según hints.
+#
+# ⚠️ ANTI-PATTERN cabina-14 (2026-05-15): SPEC con `characters_visible: [maikol]` pero SIN who_does_what
+# → engineer improvisó → 17 issues narrativos. v6 schema PREVIENE esto al exigir scene_context completo.
+#
+# Ejemplo completo (shot_01_hook). Aplicar mismo schema a TODOS los shots.
+shot_list:
+  - id: shot_01_hook
+    timestamp_intent: "0-3s"
+    duration_intent_s: 3
+    description: "Hook countdown + dyad presentation"
+
+    # ⭐ v6 SCENE CONTEXT — obligatorio, sin gaps (D21 auto-audit)
+    scene_context:
+      who_is_there: [maikol, tomas]  # quiénes están físicamente en la escena (LITERAL)
+      who_does_what:  # acción específica per character — verbo + objeto + cómo (NO genérico)
+        maikol: "Aparece de espaldas en el faro interior, gira 90° hacia cámara — sonrisa contenida sin abrir boca"
+        tomas: "Permanece estático en marco de puerta, sostiene termo de café con ambas manos, mira a cámara"
+        viewer: "POV: estás en el faro a 2m del dyad, ojos a altura de hombros — sentís el frío del viento marino"
+      why_this_shot_exists: "Hook visual del dyad — viewer debe identificar inmediatamente 2 candidatos para 'elegir compañero'. Sin este shot, el resto del video carece de baseline narrativo."
+
+    # ⭐ v6 NARRATION IN THIS SHOT — texto exacto en este timestamp (D20 auto-audit)
+    # ⭐ v7 — silence_by_design flag agregado (distingue empty intencional vs bug)
+    narration_in_this_shot:
+      narrator_text: "Elige a tu compañero. Para pasar la noche en el faro."  # texto EXACTO 0-3s
+      silence_by_design: false  # v7 — true cuando narrator_text="" es intencional. Default false.
+      silence_reason: ""  # v7 — REQUIRED si silence_by_design=true. Ej: "tensión post-decisión, viewer absorbe stakes en silencio"
+      character_dialogue: {}  # vacío si solo narrator. Si Maikol habla: {maikol: "frase exacta"}
+
+    # ⭐ v6 VISUAL-NARRATION COHERENCE — arquitecto certifica match LITERAL (D20)
+    visual_action_match:
+      visual_intent: "Maikol gira hacia cámara + Tomas con termo en marco de puerta — frame muestra dyad"
+      narration_describes: "Elige a tu compañero — implica 2 candidatos visibles"
+      matches_literal: true  # arquitecto certifica visual==narration. Si false → NO HANDOFF al ingeniero.
+
+    # v5 preserved — POV + lip sync + motion intent
+    pov: true  # D14 ≥80% target
+    lip_sync_required: false  # D17 — false porque no hay dialogue, solo narrator voiceover
+    motion_intensity_intent: animation_full  # per INGENIERO-PAUTA § 5.6 + HOOK VIRAL OVERRIDE MODEL-BENCHMARK § 2.0
+    narrative_function: hook
+    characters_visible: [maikol, tomas]
+    setting: faro_interior_anchor
+
+    # ⭐ v7 CAMERA — block obligatorio per shot (D24 auto-audit)
+    # Sin esto los prompts Kling/Hailuo son inconsistentes — engineer improvisa shot type.
+    camera:
+      shot_type: POV_medium  # opciones: POV_wide | POV_medium | POV_close_up | POV_extreme_close_up | POV_abstract
+      movement: push_in_slow  # opciones: static | push_in_slow | push_in_fast | pan_left | pan_right | tracking_forward_slow | tracking_forward_fast | handheld_subtle | zoom_in_slow | zoom_out_slow
+      lens_hint: 50mm  # opciones: 24mm_wide | 35mm | 50mm | 85mm_telephoto
+
+    # ⭐ v7 MINI-CUTS INTERNAL — OPCIONAL, REQUIRED si narrative_function == cuts_flooding (D25 auto-audit)
+    # Sin esto engineer genera 1 clip largo en vez de cuts flooding signature (ref-13 pattern).
+    # Para shots NO cuts_flooding, omitir este field entero.
+    # mini_cuts_internal:
+    #   - cut_01a: "0.4s — close-up ojo Maikol abriendo lento"
+    #   - cut_01b: "0.3s — mano sobre llave de luz"
+    #   - cut_01c: "0.5s — wide oscuridad + único punto luz lejano"
+    #   - cut_01d: "0.4s — perfil silueta Tomas inmóvil"
+    #   - cut_01e: "0.3s — POV bajada de mirada hacia suelo de madera"
+    #   - cut_01f: "0.6s — flash blanco + cut a beat 2"
+    #   # típicamente 5-7 mini-cuts per shot cuando aplica
+
+    # ⭐ v6 ENGINEER HINT — model tier + prompt quality (NO override, hint informativo)
+    suggested_model_tier: HERO  # opciones: HERO | STANDARD | DRAFT (ver MODEL-BENCHMARK § 1.1)
+    prompt_quality_required: PREMIUM  # SIEMPRE PREMIUM, no negociable (hard rule #20)
+    # ↑ Si engineer usa cheap tier (Hailuo/Seedance Lite), prompt DEBE compensar con multi-clause +
+    #   camera/lighting/atmosphere/style explícitos (INGENIERO-PAUTA § 5.7). Sin scene_context completo,
+    #   premium prompt es imposible → engineer escala al arquitecto antes de generar.
+
+    # ⭐ v8 HOOK SUB-BEATS — REQUIRED for shot con narrative_function == hook (GAP #18 codification 2026-05-19)
+    # Per PAUTA-MASTER § 19.5 canonical hook ordering: countdown LAST, character dialogue NOT in hook.
+    hook_sub_beats:
+      - beat_id: character_intro_name_labels
+        timestamp_intent_s: [0, 2]
+        ui_active: [name_label_A, name_label_B, ambient_setting_visual]
+        avu: null  # no AVU coupled, standard layered UI
+      - beat_id: caption_central_setting_and_narrator_framing
+        timestamp_intent_s: [2, 5]
+        narration_segment_id: "narrator_framing_question"  # ⚠️ REQUIRED ref to narration_script.segments[].id
+        caption_setting_text: "<SETTING_NAME>"  # e.g. "EL FARO"
+        ui_active: [caption_central_setting_name, caption_narrator_framing_question]
+        avu: null  # sync_contract type (text varies per-video)
+      - beat_id: push_in_parallax_micromotion
+        timestamp_intent_s: [3, 5]  # overlaps beat_id 2 motion-only
+        motion_effect: "push_in_slow + parallax_3d_subtle"
+        avu: null
+      - beat_id: countdown_avu_film_leader  # ⚠️ LAST 2-3s del hook — pre-rendered AVU bundled
+        timestamp_intent_s: [5, 7]
+        avu_asset: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+        avu: true
+        avu_audio_bundled: true
+      # ⚠️ Sub-beat 5 (character dialogue) NO incluido en hook — SEPARATE shot_02 post-hook
+
+    # ⭐ v9 SETTING ALIVE — REQUIRED per shot (GAP #23 + GAP #26 codification 2026-05-20)
+    # Per PAUTA-MASTER § 20 canonical 8/8 refs have ≥1 background creature/object + ≥3 atmospheric motions per shot
+    setting_ambient_creature_or_object: "rata gris escapando entre carcasas al fondo (visible ~5% frame width, motion subtle)"  # ⚠️ OBLIGATORIO non-empty — pick from § 20.3 catalog per setting category
+    atmospheric_motions_count: 3  # ⚠️ minimum 3 per shot — declared count, listed below
+    atmospheric_motions_list:  # ⚠️ ≥3 items required — pick from § 20.3 catalog per setting
+      - "breath vapor visible viewer mouth bottom of frame"
+      - "drip slow from hanging carcasa"
+      - "fluorescent yellow tube flicker subtle ceiling"
+
+    # ⭐ v9 POV TRAVERSAL — REQUIRED per shot (GAP #25 codification 2026-05-20)
+    # Per PAUTA-MASTER § 22 canonical refs SHOW viewer physically moving through space, NOT teleporting
+    pov_traversal_intent: "static"  # ⚠️ enum: static | walking_forward | walking_backward | turning_left | turning_right | approaching_character | ascending_stairs | descending_stairs | looking_around
+    pov_body_parts_visible:  # optional but recommended per PAUTA § 22.3 (50%+ shots show body parts)
+      - "blue plastic glove right hand holding cuchillo bottom right of frame"
+
+    # ⭐ v9 CHARACTER ACTIVE GESTURE — REQUIRED per shot con character on-screen (GAP #27 codification 2026-05-20)
+    # Per PAUTA-MASTER § 21 canonical refs include ONE active gesture per character per shot
+    character_active_gesture_per_shot: "cocinera: inclined forward toward camera + slight head tilt while speaking + breath vapor in cold setting + glow eye intensity micro-pulse"  # ⚠️ REQUIRED if character on-screen — pick from § 21 catalog OR compensation alive signals if signature-limited (e.g. matarife cleaver-head)
+    alive_signals_compensation:  # ⚠️ REQUIRED if character signature limits gestures (e.g., cleaver-head, mask, etc.)
+      - "Signature element subtle motion (e.g., cleaver-head vertical vibration during speech)"
+      - "Secondary garment motion (apron sway, sleeve ruffle)"
+      - "Breath vapor if cold setting"
+      - "Glove/hand tension/grip changes per emotional beat"
+      - "Environmental interaction this shot (touching carcasa, gripping knife)"
+
+    # ⭐ v8 AVU REGISTRY — REQUIRED for shots con audio+visual coupled elements (PAUTA § 19 + INGENIERO § 7.11)
+    audio_visual_atomic_units:
+      - id: hook_countdown
+        type: pre_rendered_avu  # enum: pre_rendered_avu | sync_contract
+        asset_path: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+        inject_at_timestamp_s: 5.0
+        bundled_audio: true
+        canonical_validation_status: "validated_via_direct_frame_verification_4_refs_2026_05_19"
+
+      # Example sync_contract para text/audio per-video variable:
+      - id: narrator_framing_question
+        type: sync_contract
+        visual_element_id: caption_central_narrator_framing
+        audio_element_id: tts_narrator_framing
+        contract:
+          visual_start_s: 2.0
+          audio_start_s: 2.0
+          tolerance_s: 0.1
+        pre_render_validation: "verify visual.data-start matches audio segment start ± tolerance"
+
+  - id: shot_02_setup
+    timestamp_intent: "3-10s"
+    description: "Establishing setting + intro stakes"
+    pov: true
+    lip_sync_required: false
+    motion_intensity_intent: animation_full  # primeros 30s = animation AI obligatoria (CLAUDE.md hard rule #6)
+    narrative_function: setup
+    characters_visible: []
+    setting: faro_interior_anchor
+
+  - id: shot_03_D1_setup
+    timestamp_intent: "10-17s"
+    description: "Approach al primer dilema"
+    pov: true
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_setup
+    characters_visible: [maikol]
+    setting: faro_interior_anchor
+
+  # ⚠️ POR CADA DECISIÓN (D1, D2, D3...): incluir shots de consequence A + rama B transition + consequence B
+  - id: shot_04_D1_countdown
+    timestamp_intent: "17-20s"
+    description: "Countdown 3-2-1 decisión 1 + A/B buttons"
+    pov: true
+    lip_sync_required: false
+    motion_intensity_intent: animation_partial  # ⚠️ DECISION UI = minimal motion + filter overlay (NOT animation_full per ref-03/06/12 pattern)
+    narrative_function: decision_countdown
+    ui_active: [countdown, choice_buttons, loading_bar]
+    countdown_target_duration_s: 2.2  # per INGENIERO-PAUTA-MASTER § 7.8
+    narrative_pacing:  # ⚠️ SCHEMA v7 NEW post-2026-05-19 GAP #14 — decision UI editorial canonical pattern — UPDATED v9.1 2026-05-20 post Phase 1 empirical
+      decision_freeze_frame: false  # ⚠️ UPDATED 2026-05-20 default false — Phase 1 14% refs only (OPTIONAL stylistic, NOT canonical default)
+      decision_filter_overlay_type: "clean"  # enum: vhs_sepia_grain | old_camera | vintage | clean — UPDATED default "clean" (Phase 1 minority pattern)
+      decision_filter_overlay_css: ""  # leave empty default (no filter)
+      decision_grain_canvas_opacity: 0  # default no grain (was 0.08 inferred)
+      countdown_starts_after_narration_id: "<narration_segment_id>"  # ⚠️ REQUIRED — string ref to narration_script.segments[].id (NOT loose timing)
+      countdown_pause_beat_s: 0.9  # ⚠️ UPDATED 2026-05-20 was 0.3 — Phase 1 empirical median (p25=0.33, p75=2.1)
+      countdown_digit_duration_s: 1.0  # ⚠️ UPDATED Track A v3 R1 2026-05-20 — user Rule D PRECEDENCE "segundos = segundos literal 1,2,3". Was 0.7 architect v2 compromise — REFUTED. Engineer empirical 0.5 (n=1 LOW confidence) — REFUTED. 3 digits × 1.0 = 3.0s total countdown.
+      countdown_visual_style: "film_leader_academy"  # ✅ CONFIRMED Phase 1 direct frame verification — enum: film_leader_academy | css_minimalist_ring (deprecated) | custom
+      loading_bar_y_position_canonical_safe: 52  # ✅ CONFIRMED Phase 1 — Y52 ≥6% spacing from countdown Y46
+      audio_cue_during_countdown: "time_loop_glitch_optional"  # ⚠️ UPDATED 2026-05-20 — Phase 1 ambient duck +0.22 dB (NO duck canonical). SFX tick optional, NO ambient duck.
+      ambient_duck_db_during_countdown: 0  # ⚠️ UPDATED 2026-05-20 was -6 — Phase 1 empirical +0.22 dB median (NO duck)
+      # ⚠️ Hard Rule #19 EXPANSION 2026-05-18 compliance — canonical validation status
+      canonical_validation_status: "pending_video_measurement"  # enum: validated_via_video_measurement | validated_via_perceptual_test | pending_video_measurement | deprecated_our_prod_only
+      validated_against_canonical_refs: ["canonical-scenes/INDEX.md decision setup grid 3.3 (8 refs)", "ref-13-miro-bryan-electrica.md Beat 4 deep-dive", "auditor proposed defaults"]
+      validation_methodology: "industry_standard_broadcast + canonical-scenes qualitative observations (NO video re-viewing performed)"
+      measurement_pending_script: "measure-canonical-decision-ui-pacing.py (Phase 1 priority forward)"
+      validated_at: null  # flip to ISO date post Phase 1 script run + user perceptual confirm
+
+  - id: shot_05_D1_consequence_A
+    timestamp_intent: "20-30s"
+    description: "Consecuencia rama A elegida"
+    pov: true  # ⚠️ POV CRÍTICO en consequence shots
+    lip_sync_required: false
+    motion_intensity_intent: animation_full  # consequence = critical narrative beat
+    narrative_function: decision_consequence_A
+
+  - id: shot_06_D1_rama_B_transition  # ⚠️ D15 obligatorio post-cada-decisión
+    timestamp_intent: "30-33s"
+    description: "Transición narrativa explícita a rama B (ej. 'Si hubieras esperado...')"
+    pov: true
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: rama_B_transition  # D15 cuenta esto
+
+  - id: shot_07_D1_consequence_B
+    timestamp_intent: "33-40s"
+    description: "Consecuencia rama B (counterfactual mid-video)"
+    pov: true
+    lip_sync_required: false
+    motion_intensity_intent: animation_full
+    narrative_function: decision_consequence_B
+
+  # ... continuar para D2, D3, cliffhanger outro
+  # ⚠️ Bueno aparente (Slot C) DEBE aparecer en ≥2 shots ANTES del cliffhanger (D16)
+
+# ============================================================
+# NARRATIVE FLOW TRANSITIONS (D15 + D18 auto-audit)
+# ============================================================
+narrative_flow_transitions:
+  - decision_id: D1
+    consequence_A_shot_ids: [shot_05_D1_consequence_A]
+    rama_B_transition_shot_id: shot_06_D1_rama_B_transition  # ⚠️ obligatorio
+    rama_B_transition_narration: "Si hubieras esperado, Maikol habría entrado solo..."
+    consequence_B_shot_ids: [shot_07_D1_consequence_B]
+  - decision_id: D2
+    # ... mismo patrón
+  - decision_id: D3
+    # ... mismo patrón
+
+# ============================================================
+# ASSET LIST (production checklist for engineer)
+# ============================================================
+asset_list:
+  reference_anchors_first: [maikol_anchor, tomas_anchor]
+  shot_list_total: 0  # auto: count shot_list above
+  tts_segments_to_generate: []  # de narration_script.segments
+  sfx_prompts_to_generate: []  # de audio_strategy
+  music_to_generate: [main_drone_maritimo, outro_chimenea_warm]
+  ambient_continuous_to_generate: [tormenta_oleaje_loop, outro_fire_loop]
+
+# ============================================================
+# CHECKPOINTS (workflow architect ↔ engineer)
+# ============================================================
+checkpoints:
+  - id: checkpoint_1_anchors
+    approval_required_from: architect
+  - id: checkpoint_2_images
+    approval_required_from: architect
+  - id: checkpoint_3_audio_assets
+    approval_required_from: architect
+  - id: checkpoint_4_animations
+    approval_required_from: architect
+  - id: checkpoint_5_draft_render
+    pre_render_gate_passed: required
+    architect_creative_review: required
+    user_human_checklist: required
+
+# ============================================================
+# VALIDATION CHECKLIST (pauta canónica § 6 + reglas inviolables)
+# ============================================================
+validation_pauta_canonica:
+  slot_A_definido: true
+  slot_B_definido: true
+  slot_C_contraste_visual_con_B: true
+  slot_C_bueno_NO_dialogue: true  # regla inviolable § 1
+  slot_D_regla_5_10_palabras: true
+  slot_D_conecta_con_dilemas: true
+  slot_E_2_dilemas_minimo: true
+  slot_E_categorias_diferentes: true  # D1=Honestidad, D2=Curiosidad → diferentes ✓
+  slot_E_opcion_ganadora_va_contra_impulso: true  # regla inviolable § 1
+  slot_F_body_horror_visualizable: true  # no "mueres"
+  slot_G_cliffhanger_rotado: true  # consultado video-log.md
+  slot_H_ambient_creature_incluida: true
+  pattern_rotado_video_log: true
+  H0_compliance_si_aplica: true  # P1 = no H0 (correcto)
+  POV_80_percent_planos: true
+  tentacion_genuinamente_deseable: true
+  no_engineer_territory_crossed: true  # arquitecto no toca LUFS/CSS/ffmpeg
+
+# ============================================================
+# AUTO-AUDIT 2026-05-15 (D14-D18 — añadido post-maikol-crucero feedback)
+# ============================================================
+# ⛔ OBLIGATORIO llenar antes de declarar SPEC listo.
+# Si CUALQUIER validación falla → NO declarar spec listo. Iterar antes.
+# Detalle de cada D en creative-director/SKILL.md § Validación de tu output.
+auto_audit_2026_05_15:
+
+  # D14 — POV ≥80% (PAUTA-MASTER § 3 Producción)
+  D14_pov_count:
+    total_shots: 0  # auto: count shot_list
+    pov_shots: 0    # auto: count shots con pov: true
+    ratio_pct: 0    # debe ser ≥80
+    passed: false   # auto: true si ratio_pct ≥80
+
+  # D15 — Rama B transition por cada decisión (PAUTA-MASTER § 3 Transiciones)
+  D15_rama_B_transitions:
+    decisions_count: 0           # auto: count narrative_flow_transitions
+    transitions_explicit: 0      # auto: count narrative_flow_transitions con rama_B_transition_shot_id
+    passed: false                # auto: true si transitions_explicit == decisions_count
+    # Si falta transición en alguna decisión → user queda perdido sobre cómo paso de "consequence A" a siguiente hito
+    # Caso maikol-crucero issue 13: sin esto = "no se explica cómo paso de ahogarme a estar con Maikol"
+
+  # D16 — Bueno aparente intro shots (PAUTA-MASTER § 3 Presentación de personajes)
+  D16_bueno_aparente_intro_shots:
+    bueno_aparente_name: TOMAS  # de slot_C
+    count_before_cliffhanger: 0  # auto: count shots con bueno en characters_visible ANTES del cliffhanger
+    passed: false  # auto: true si ≥2
+    # Caso maikol-crucero issue 15: Chelo aparece en 1:18-1:19 sin presentación previa → counterfactual no carga
+
+  # D17 — Lip sync mark per shot (PAUTA-MASTER § 3 Lip sync intent)
+  D17_lip_sync_marked:
+    total_shots: 0      # auto: count shot_list
+    shots_marked: 0     # auto: count shots con lip_sync_required explícito (true|false)
+    passed: false       # auto: true si shots_marked == total_shots
+    # Sin esto el ingeniero usa Kling clips con mouth movement encima de narración (issue 3, 4 maikol)
+
+  # D18 — Narrative transitions logical (PAUTA-MASTER + judgment del arquitecto)
+  D18_narrative_transitions_logical:
+    passed: false  # arquitecto certifica manual
+    justification: ""  # si false: qué falta (ej. "shot intermedio entre espejos y agua missing")
+    # Caso maikol-crucero issue 11: sin shot puente entre espejos→agua → user confused
+
+  # === Resumen agregado ===
+  all_passed: false  # auto: AND de los 5 passed
+  spec_listo_para_handoff: false  # solo true si all_passed = true
+
+# ============================================================
+# END OF SPEC v4 (post-maikol-crucero feedback 2026-05-15)
+# ============================================================

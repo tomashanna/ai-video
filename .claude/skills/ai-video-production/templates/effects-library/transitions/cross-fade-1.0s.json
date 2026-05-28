@@ -3,6 +3,9 @@
   "type": "transition",
   "category": "soft-blend",
   "duration_s": 1.0,
+  "xfade_transition": "fade",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "Native xfade=transition=fade (1.0s crossdissolve).",
   "description": "Longer crossfade. Reads as 'time passing' or 'memory dissolve'. Heavier than 0.5s — viewer notices the blend.",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=fade:duration=1.0:offset={offset_clip_a_minus_1.0}[v];[0:a][1:a]acrossfade=d=1.0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {
@@ -24,7 +27,8 @@
     "Climax / hard impact moments"
   ],
   "hyperframes_alternative": "GSAP timeline with duration:1.0 on both opacity tweens.",
-  "canonical_validation_status": "validated",
-  "validated_against_canonical_refs": ["ref-03 (long-form pacing)", "ref-09"],
-  "validated_notes": "Used sparingly in canonical referents — only 2/10 used 1.0s crossfades, always for explicit time/memory shift, never for ordinary beat connection. Avoid as default; explicit narrative intent required."
+  "canonical_validation_status": "validated_1/8",
+  "validated_against_canonical_refs": ["ref-12"],
+  "canonical_observations": "Observed implicitly in ref-12 (Teresa monólogo Beat 12, 85.0-90.0s): sepia/escala de grises flashbacks of son intercut with current-time Teresa — descriptive § 2 confirms 'Tonos sepia y escala de grises' tonal contrast, transitions handled via Ken Burns + slow blends to support memory/time shift. ref-03 has paleta shift warm/eerie (mina) → warm/dawn (cozy counterfactual) at 79-81s but executed as hard cut to scene change, not 1.0s crossfade. ref-09's prior citation invalid — counterfactual at 0:00-0:10 is hook+counterfactual structure with scene changes via cuts, no 1.0s blend documented. Treat as memory/flashback-only transition.",
+  "validated_notes": "1/8 explicit F1 referent uses 1.0s soft blend for memory/sepia flashback (ref-12 Beat 12). Avoid as default; explicit narrative intent (memory, time jump, dissolve) required."
 }

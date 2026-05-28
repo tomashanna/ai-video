@@ -32,13 +32,45 @@ import sys
 from pathlib import Path
 from statistics import median
 
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    # numpy is required for actual measurement runs but NOT for --dry-run / argparse.
+    # Test environment without numpy can still validate CLI flag handling.
+    np = None
 
 PROJECT_ROOT = Path("<repo-root>")
 REF_DIR = PROJECT_ROOT / "referent-analysis"
-SOURCES_DIR = PROJECT_ROOT / "videosref_elige_tu_compa"
-OUT_DIR = REF_DIR / "empirical-decision-ui-pacing"
-OUT_DIR.mkdir(exist_ok=True, parents=True)
+
+# Module-level paths populated by main() per --format flag.
+# Sub-Fase 3A.2 TIER 2.1 (2026-05-25): hardcoded → CLI configurable (Capa A agnostic).
+SOURCES_DIR = None
+OUT_DIR = None
+
+
+def resolve_format_paths(format_name, sources_override=None, out_override=None, ref_dir_override=None):
+    """Resolve format-aware default paths or honor explicit overrides.
+
+    horror-choice: namespaced post-TIER 2.3 (2026-05-25) — F1 + ref-XX moved to referent-analysis/horror-choice/
+    arbitrary X:   <X>-refs/ + referent-analysis/<X>/empirical-decision-ui-pacing/
+    """
+    if format_name == "horror-choice":
+        defaults = {
+            "sources_dir": PROJECT_ROOT / "videosref_elige_tu_compa",
+            "out_dir": REF_DIR / "horror-choice" / "empirical-decision-ui-pacing",
+            "ref_dir": REF_DIR / "horror-choice",
+        }
+    else:
+        defaults = {
+            "sources_dir": PROJECT_ROOT / f"{format_name}-refs",
+            "out_dir": REF_DIR / format_name / "empirical-decision-ui-pacing",
+            "ref_dir": REF_DIR / format_name,
+        }
+    return {
+        "sources_dir": Path(sources_override) if sources_override else defaults["sources_dir"],
+        "out_dir": Path(out_override) if out_override else defaults["out_dir"],
+        "ref_dir": Path(ref_dir_override) if ref_dir_override else defaults["ref_dir"],
+    }
 
 # Map ref-XX → source MP4 basename (from spec)
 REF_TO_SOURCE = {
@@ -431,9 +463,32 @@ def aggregate_refs(per_ref_results):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--format", required=True,
+                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
+    parser.add_argument("--sources-dir", default=None,
+                        help="Override sources MP4 dir (default: format-aware)")
+    parser.add_argument("--out-dir", default=None,
+                        help="Override output dir (default: format-aware empirical-decision-ui-pacing)")
     parser.add_argument("--refs", nargs="+", help="Specific refs (default: all 8)")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Print resolved paths + exit 0 (testability)")
     args = parser.parse_args()
+
+    global SOURCES_DIR, OUT_DIR, REF_DIR
+    paths = resolve_format_paths(args.format, args.sources_dir, args.out_dir)
+    SOURCES_DIR = paths["sources_dir"]
+    OUT_DIR = paths["out_dir"]
+    REF_DIR = paths["ref_dir"]  # namespace per format post-TIER 2.3
+
+    if args.dry_run:
+        print(f"format: {args.format}")
+        print(f"sources_dir: {SOURCES_DIR}")
+        print(f"out_dir: {OUT_DIR}")
+        print(f"ref_dir: {REF_DIR}")
+        return 0
+
+    OUT_DIR.mkdir(exist_ok=True, parents=True)
 
     refs_to_process = args.refs or list(REF_TO_SOURCE.keys())
 

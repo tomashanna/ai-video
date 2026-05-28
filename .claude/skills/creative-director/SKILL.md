@@ -74,6 +74,50 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
 
 **Validado D22 auto-audit**: handoff requiere `D22_primary_sources_consulted` con N = M (todos los anchors leyeron canonical-scenes correspondiente).
 
+### ⭐⭐ MODEL-BEHAVIOR-LOG MANDATORY READING ANTES de diseñar SPEC shots (added 2026-05-22 post V4 stability budget discovery)
+
+**`../video-director/MODEL-BEHAVIOR-LOG.md`** — empirically-observed limits/quirks of external AI models (image gen, video gen, TTS, vision). Each entry codifies behaviors we cannot control but MUST design around.
+
+**Why mandatory for architect at CP0**:
+- SPEC shot compositions designed without model-awareness produce shots that LOOK CORRECT in YAML but FAIL at render time, forcing expensive iter rescue at CP3-CP4 (case V4 shot_16 2026-05-22: 5+ element multi-action SPEC failed polydactyly 2/2 iter → forced amendment v11.1 → v11.2 to fit Gemini stability budget threshold ~3 prop elements).
+- Each MODEL-BEHAVIOR-LOG entry includes `implications_forward.architect_CP0` block with explicit SPEC design rules. Read those FIRST per relevant model + apply to shot composition.
+
+**Validation D27 auto-audit (NEW per V4)**: SPEC handoff requires `D27_model_behavior_constraints_respected: true` with explicit per-shot check that visual_intent + scene_context.who_does_what + visual_action_match.atmospheric_motions respect the documented model constraints (e.g., ≤3 prop elements for shots with rare anatomy signature character).
+
+**Costo lectura**: 5 min (currently 1 entry + grows). Saves: $0.30-2.00 per failed regen cycle + 20-40 min wallclock.
+
+### ⭐⭐ TIER ASSIGNMENT PER SHOT — Architect CP0 budget-aware design (codified 2026-05-23 post V4 over-engineering lesson)
+
+**Default tier per shot position** (forward V5+ canonical):
+
+| Shot position | Section IDs typical | Default tier | Reason |
+|---------------|---------------------|--------------|--------|
+| Hook shot_01 | hook | **Pro MANDATORY** | Instagram scroll competition critical — hook quality defines engagement |
+| Hook continuation shot_02-03 | hook | **Pro RECOMMENDED** | Retention drop window — viewer not committed yet |
+| Body shots middle | setup_pre_decision / consequence_path_a / consequence_path_b | **Std DEFAULT** | Viewer already engaged — resolution drop acceptable |
+| Hero shots con technical constraint | (anywhere) | **Pro OVERRIDE** | Specific shots needing Pro for: (a) anatomical signature preservation (pose-coupling per MODEL-BEHAVIOR-LOG entry 1) OR (b) complex props (vehicles, multi-character climax) OR (c) emotional climax beats |
+| Outro shots | cliffhanger_outro / consequence outro cozy | **Std DEFAULT** | Viewer committed — quality drop minimal impact |
+
+**Architect MUST declare tier per shot** in SPEC.shot_list[].tier_assignment (SPEC v12 schema forward field):
+```yaml
+shot_list:
+  - shot_id: shot_01
+    tier_assignment: "pro_mandatory"  # hook
+    
+  - shot_id: shot_05
+    tier_assignment: "std_default"  # body
+    
+  - shot_id: shot_16
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "pose-coupling polydactyly preservation per MODEL-BEHAVIOR-LOG entry 1"
+```
+
+**Cost discipline forward**: Sprint M `scripts/audit-spec-tier-strategy.py` validates tier compliance pre-CP4 + projects cost based on tier × pricing. Exit 1 if non-hero shots default to Pro without justified override.
+
+**V4 evidence lesson** (Gap #53 codified 2026-05-23): V4 cerro-aislado-v4 ran 13/20 Pro because brief didn't specify per-shot tier — engineer fell back to default Pro. Body shots like shot_02 (Iván face close-up), shot_03 (Iván panel), shot_05 (Iván command techo), shot_07 (both standing), shot_09 (silhouette outdoors) could have been Std at $0.27 each = potential savings $1.80 on V4 alone. Forward: architect declares tier per shot at CP0, validator checks, engineer respects.
+
+**Marina-specific consideration**: AI influencer hooks (face close-up early) may require Pro mandatory through hook + setup_pre_decision phases for realism belief threshold (uncanny valley sensitivity higher in face close-ups). Adapt rule when Project Marina launches with Hedra cost variables.
+
 2. **`../horror-choice-format/PATTERNS.md`** — reglas técnicas del formato
    - § 1 Estructura temporal V15 (default)
    - § 5 Lenguaje patrones sintácticos
@@ -93,7 +137,7 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
    - § 3.7 Las 3 reglas V8
    - § 5 **Errores pasados — NO REPETIR**
 
-5. **`../horror-choice-format/INTRO-FORMULA-V15.md`** — fórmula del hook 0-9s
+5. **`../horror-choice-format/INTRO-FORMULA.md`** — fórmula del hook 0-9s
 
 6. **`../horror-choice-format/CHARACTER-NAMES-CATALOG.md`** — catálogo nombres pares contrastantes
 
@@ -101,7 +145,7 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
 
 ### 🔧 SECUNDARIO — Layer operacional (después de leer la PAUTA)
 
-Estos docs en `templates/elige-tu-companero/` son **operacionales — NO contienen reglas creativas, solo cómo implementar lo que la PAUTA dicta**:
+Estos docs en `.claude/skills/horror-choice-format/creative-direction/` son **operacionales — NO contienen reglas creativas, solo cómo implementar lo que la PAUTA dicta** (relocated post-Sub-Fase-3A.2 PRE-CLEANUP-A TIER 2.2 — formerly at `creative-director/templates/elige-tu-companero/`):
 
 - `aesthetic.md` — dirección color CSS (operacional)
 - `audio-direction.md` — dirección audio operacional (música/SFX/ducking)

@@ -188,7 +188,7 @@ def main():
     ap.add_argument("--video", required=True, help="Path to our video (mp4)")
     ap.add_argument("--html", required=False, help="Path to index.html (optional, future use)")
     ap.add_argument("--measurements", required=False,
-                    default="../referent-analysis/F1-INGENIERO-MEASUREMENTS.json",
+                    default="../referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json",
                     help="Path to F1 measurements JSON")
     ap.add_argument("--tolerance", choices=["p25-p75", "p5-p95"], default="p25-p75",
                     help="Tolerance per metric (default p25-p75 interquartile range)")

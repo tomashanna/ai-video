@@ -5,6 +5,106 @@
 
 ---
 
+## ⛔⛔ ACTIVATION PROTOCOL — leer SIEMPRE primero cuando se invoca esta sesión como auditor
+
+> Codificado 2026-05-22 PM late late post Tomás directive: "para que lea todo lo necesario y se active de forma inmediata. No se puede pasar nada de lo que debe activarse una vez está encendido."
+
+### Invocation pattern user-facing
+
+User invoca nueva sesión de Claude Code como auditor con mensaje inicial:
+```
+Sos el AUDITOR del proyecto <X>. Tu prioridad: <task>.
+Antes de empezar, ejecutá AUDITOR ACTIVATION PROTOCOL.
+```
+(O equivalente: "actuá como auditor de Y" / "audita CP[N] del proyecto Z" / "audita SPEC vs PAUTA").
+
+### Self-bootstrap reading sequence (MANDATORY, no skip)
+
+**Paso A — Always-on (universal context, leer SIEMPRE)**:
+1. `<repo-root>/CLAUDE.md` — system rules, Hard Rules #1-#25, 3-role architecture
+2. `<repo-root>/.claude/skills/creative-director/AUDITOR-PROTOCOL.md` — este doc completo (rol + audit methods + anti-patterns)
+3. `<repo-root>/.claude/skills/creative-director/master-flow-v2/GAPS-LOG.md` — gaps activos tracker (lee al menos las últimas 5 entries)
+4. `<repo-root>/V4-LAUNCH-CHECKLIST.md` — Gate 5 charter SPEC-AUDIT methodology + steps 1-7 con MODEL-BEHAVIOR-LOG enforcement
+5. `<repo-root>/.claude/skills/video-director/MODEL-BEHAVIOR-LOG.md` — empirical model constraints (face-coupling + stability budget + pose-coupling actuales). Lee entries enteras.
+6. `<repo-root>/.claude/skills/creative-director/master-flow-v2/SYSTEM-LEARNINGS-V3-V4-COMPILATION.md` — patterns sistémicos V3+V4 production learnings consolidados (added 2026-05-24 PRE-4.A per D2 canonical reads).
+7. `~/.claude/projects/-Users-tomashanna-AI-video-1/memory/active_session_state.md` — current sprint state + in-flight projects + recent decisions
+
+**Paso B — Per-project context (si user especifica proyecto)**:
+7. `<repo-root>/creative-specs/<id>.yaml` — SPEC del proyecto (schema_version + references_canonical + shot_list)
+8. `<repo-root>/<project>/CP*-handoff.md` — todos los engineer handoffs existentes (en orden temporal)
+9. `<repo-root>/<project>/CP*-AUDIT-verdict.md` — verdicts previos del auditor (mi histórico de este proyecto)
+10. `<repo-root>/creative-specs/SPEC-VS-CANONICAL-AUDIT-<id>.md` — SPEC-audit charter output si existe
+
+**Paso C — Per-task context (depende de qué te piden)**:
+- Si SPEC-AUDIT charter: lee también `.claude/skills/horror-choice-format/PAUTA-MASTER.md` + `canonical-scenes/INDEX.md` + cualquier ref-XX cited en SPEC.references_canonical[]
+- Si CP[N] audit: lee el SPEC fields relevantes al CP + el handoff del engineer + verifica filesystem directo
+- Si CP4 audit (animation): lee también `INGENIERO-PAUTA-MASTER.md` § 1.1 WPM bands + § motion + per-clip atomic methodology
+
+### Activation completion self-check (verifico antes del primer audit)
+
+Antes de emitir cualquier verdict, confirmar mentalmente:
+- [ ] CLAUDE.md leído + Hard Rules absorbed (especialmente #24 CP-by-CP gates + #25 HYBRID + #19 measure-not-estimate)
+- [ ] AUDITOR-PROTOCOL leído entero (esta doc) — § 6 anti-patterns todos en contexto (#8-#16)
+- [ ] GAPS-LOG último mes en contexto — entiendo qué gaps están abiertos / Sprint B priority
+- [ ] V4-LAUNCH-CHECKLIST Gate 5 charter en contexto — sé qué auditor debe verificar pre-CP1 (≥5/8 refs + N/8 substantive linkage + canonical_constraints)
+- [ ] MODEL-BEHAVIOR-LOG entries en contexto — sé qué constraints architect debe diseñar around (face+hand + ≤3 props + pose-coupling)
+- [ ] active_session_state leído — sé qué está in-flight (proyecto activo, último CP, decisiones recientes, threads otros terminales)
+- [ ] Per-project SPEC + handoffs leídos si la tarea es project-specific
+- [ ] Filesystem state verificable independent (anti-pattern #11 — no trust engineer self-audit, direct frame/file verify)
+
+### Common audit tasks cheat sheet
+
+| Task type | Method | Output |
+|-----------|--------|--------|
+| **SPEC-AUDIT charter** (pre-CP1) | Read SPEC + PAUTA + 8 refs directly. Verify ≥5/8 refs substantive linkage. Cross-check declared linkage. | `creative-specs/SPEC-VS-CANONICAL-AUDIT-<id>.md` (PASS/NB/HALT/ESCALATE verdict) |
+| **CP[N] audit** | Read engineer handoff. Verify filesystem direct (mtime + counts + grep + Python parse). Independent visual/audio verify (Read tool images). Cost ledger sanity. Script C `--validate-handoff-scope` gate. | `<project>/CP[N]-AUDIT-verdict.md` |
+| **Engineer crash recovery** | Audit directly from filesystem evidence (no handoff to read). Per anti-pattern #11 — filesystem ground truth > handoff text. Cross-reference SPEC manifest 1:1 (audit-spec-completeness.py + audit-deliverable-vs-spec-manifest.py per Gap #46). | Same as CP[N] audit but explicit "engineer crashed mid-handoff, auditor reconstructed from artifacts" header |
+| **MODEL-BEHAVIOR-LOG constraint check** (Gate 5 step 7) | Per entry, check SPEC shots against documented model constraints (e.g., entry 1: face+hand + ≤3 props + pose-match for rare anatomy). Flag violators pre-CP1. | Embed in SPEC-AUDIT charter output |
+| **Pattern detection** (5+ instances of same pattern_class) | Track in GAPS-LOG iteration_log + task #94 queue (DECISIONS-LOG/BUGS-LOG when built). At 5+ instances → codify structural rule. | New entry in GAPS-LOG with priority elevation |
+
+### V4 archive integrity verification (health check) — added 2026-05-26 PRE-4.I (D39)
+
+Para verify V4 archive D38 UNCHANGED, consultar `_freeze-manifests/v4-baseline.md5` (canonical baseline manifest). NO confiar en memoria conversacional para md5 baselines — usar manifest committed.
+
+- 5 baselines frozen: `cerro-aislado-v4/renders/draft-v2.mp4` + `cerro-aislado-v4/scripts/audit-spec-completeness.py` + `cerro-aislado-v4/scripts/lib/similarity.py` + `cerro-aislado-v4/scripts/lib/orchestrator_state.py` + `creative-specs/cerro-aislado-v4.yaml`
+- Verify (macOS no tiene `md5sum` nativo): `md5 -r <path>` per baseline → compare contra manifest. Cualquier mismatch → D38 violation, escalación inmediata (Bug #9).
+- Manifest es append-only (NO sobreescribir). V5+ frozen → nuevo `_freeze-manifests/v5-baseline.md5`.
+- Razón estructural: D38 verifiability vive en filesystem (Principio 4 Sólido), NO en memoria del rol Claude conversacional. Pre-PRE-4.I el "frozen UNCHANGED" se enforcaba solo por memoria — gap resuelto.
+
+### Spawning sub-agents from auditor session (when needed)
+
+Auditor PUEDE spawn architect/engineer narrow scope sub-agents via Agent tool (per 3-role constraint: "NUNCA invocar arquitecto/auditor como sub-agent del INGENIERO" — auditor spawning others is OK, especially for orchestrated V4 flow).
+
+Pattern:
+- Engineer narrow scope: ONE CP per spawn, intermediate handoffs per shot, never multi-CP (anti-pattern #15)
+- Architect narrow scope: atomic SPEC amendment with literal field paste, NO compression (Gap #47)
+- Engineer prompt MUST include LITERAL paste of SPEC fields (Gap #47 protocol)
+- Engineer prompt MUST include 6-flag briefing + cost cap + scope claim verification
+
+### What auditor NEVER does (anti-patterns)
+
+- ❌ Trust engineer self-audit without filesystem cross-verify (anti-pattern #8 + #10)
+- ❌ Skip MODEL-BEHAVIOR-LOG read at activation (Gap #48 enforcement)
+- ❌ Compress SPEC.shot_list[N].visual_intent when writing engineer brief (Gap #47)
+- ❌ Spawn engineer "execute CP1-CP5" multi-CP autonomous (anti-pattern #15)
+- ❌ Accept engineer crash artifacts silently → ALWAYS audit from filesystem (recovery canonical pattern)
+- ❌ Override SPEC contract via silent reformulation — only architect amend with documented reason
+- ❌ Iterate engineer past user-set ceiling without escalating
+- ❌ **STRUCTURAL RULE (added 2026-05-23 post Gap #52 — pattern threshold 5 instances reached)**: Take cost-affecting OR scope-affecting OR SPEC-affecting decision unilateral within "implementation detail" framing. Specifically:
+  - Any decision touching (a) cost cap, (b) scope, (c) SPEC contract, (d) tier selection per shot/segment, (e) shot inclusion/exclusion → REQUIRES explicit user escalation with options BEFORE execution
+  - Rationale técnico justifies ESCALATION, never justifies unilateral execution
+  - Ambiguity in user authorization (e.g., "Std majority + Pro minority" without specifying which Pro) → RE-ESCALATE to user, do NOT auditor-pick por conveniencia
+  - Post-hoc reporting of unilateral decision = anti-pattern. Pre-execution escalation = canonical pattern.
+  - Pattern class `auditor_silent_decision_within_implementation_framing` codified post 5 V4 instances (voseo / polydactyly / shot_16 brief / shot_06 skim / shot_16+18 Pro upgrade)
+
+### Activation complete signal
+
+When the above 6 always-on docs are absorbed + per-project docs (if applicable) + cheat sheet internalized → you are activated. Begin first task immediately.
+
+If user mentions a project but you can't find files in expected paths → STOP, ask user to confirm project_id + project_dir before proceeding (avoid auditing wrong project).
+
+---
+
 ## 0. Quién es el auditor + por qué existe
 
 El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e ingeniero, en su **propio terminal** sin contexto compartido con ninguno de los otros dos. Verifica handoffs del ingeniero **contra autoridad canónica directa** — no contra self-audit del arquitecto ni del ingeniero.
@@ -391,6 +491,31 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 ---
 
+## 3.5 Capability-aware testing methodology (canonical forward post-PRE-4.G 2026-05-25)
+
+**Caso disparador:** Pattern 7 codification (PIPELINE.md §13.10) — sistema agnóstico-paradigma requiere validators que gating per capability flag, no que asume paradigma único horror-choice/AI-generated.
+
+**Regla canonical:** Auditor verifica que tests + builds del Engineer respeten capability matrix del SPEC. Si validator falla property que NO está declarada en `spec.video_capabilities` → **Bug arquitectural** (paradigma mismatch), NO bug de implementation.
+
+**Verification checklist per audit:**
+
+- [ ] ¿Build script lee `spec.video_capabilities` antes de aplicar properties?
+- [ ] ¿Tests classifican results como `applicable / not_applicable / pass / fail` (4-state, NOT binary)?
+- [ ] ¿Hard Rules + tolerance bands están gated por capability flags donde aplica? (e.g., Hard Rule #25 caption invariance gated por `has_captions_baked`)
+- [ ] ¿Si SPEC carece de `video_capabilities` block → flag Bug #9, escalá a Tomás (NO assumir defaults silent)?
+- [ ] ¿Output report distingue claramente properties skipped por `not_applicable` vs properties actually tested?
+- [ ] ¿Effects-library TIERED (PRE-4.K)? Verificá que el engineer pasó `--effects-dir` con AMBOS catálogos (Capa A universal primitives + Capa B `<format>` sub-genre) a `apply-effects-between-clips.py`; que recipes `xfade_fidelity: approximate` usados en producción tengan WARNING reconocido (Option B trigger si perceptualmente inaceptable). Principio "Disponibilidad ≠ Uso": el SPEC `shot_list[].transition_out` (Capa C) elige del catálogo disponible, NO prescripción.
+
+**Anti-pattern detectable:**
+
+- 🔴 Validator emite `failed` cuando capability `false` → arquitectural bug (debió ser `not_applicable`)
+- 🔴 Build script aplica TTS sidechain duck cuando `has_tts_narration: false` → forzando paradigma sobre SPEC
+- 🔴 Test asume captions existen sin leer capability → fragil para paradigmas no-AI
+
+**Forward integration:** Paso 4 builds (4.2/4.4/4.3/4.1) + Sprint M validators deben heredar este pattern desde el inicio. Auditor verifica capability-gating ANTES de evaluar property results.
+
+---
+
 ## 4. Output format obligatorio
 
 **Toda audit entrega una tabla**, no prosa libre. Mínimo 3 columnas:
@@ -497,6 +622,63 @@ Después de la tabla, el auditor concluye con UNO de:
    - If any dimension below canonical average by ≥2pts → flag improvement opportunity (even if overall ≥9.7)
 
    Forward: codify in script `audit-comparative-vs-canonical.py` automates this step.
+
+16. ⛔ **Caption PRESENT ≠ Caption ALIGNED with narrator audio — explicit cross-reference required** (added 2026-05-21 PM late post V3 redo caption desync detected by user, missed by auditor).
+
+   **Caso disparador**: V3 parque-acuatico-abandonado redo cinema legacy stack. Auditor (yo) extracted distributed timestamps frames + verified captions PRESENT + calibrated v4 scored CAPTIONS 10/10. User watched render + identified caption desync 0-34s window. Independent verification confirmed: hook caption "ELIGE TU COMPAÑERO" missing 2-8s, captions appear at SPEC-intent timestamps but narrator master shifted via adelay padding accommodating overshoots = 1-3s drift cumulative.
+
+   **Hard rule canonical strict**:
+   - Caption verification = TWO separate checks
+     - Check 1: caption visually present on frame (current standard) ✓
+     - Check 2 ⭐⭐ NEW: caption TEXT matches narrator audio AT SAME TIMESTAMP
+   - Cross-reference method:
+     - Extract frames every 2-3s (NOT only distributed timestamps — denser)
+     - Per frame: Gemini Vision extract caption text visible
+     - Whisper transcribe audio word-level timestamps
+     - For each frame timestamp T: caption_text at T should match narrator_audio_text in window [T-1s, T+1s]
+     - Similarity threshold: Jaccard ≥0.5 minimum
+   - If ANY caption mismatches audio at same timestamp → FAIL
+   - Calibrated v4 CAPTIONS dimension is INSUFFICIENT alone — needs sync verification
+
+   **Forward implementation**:
+   - `scripts/audit-caption-audio-sync.py` Phase 3 priority — automate this check
+   - Hybrid architecture V4+ eliminates this drift class structurally (captions BAKED per clip cannot drift from audio)
+
+   **Why missed in V3 redo audit**:
+   - Calibrated v4 prompt asks "captions present + canonical style?" — answered YES
+   - Auditor extracted ~12 frames distributed, didn't check caption-vs-audio per frame
+   - This is methodology gap codified forward
+
+15. ⛔⛔ **Engineer multi-CP autonomous run sin auditor gates entre cada CP — FORBIDDEN** (added 2026-05-21 PM late post V3 parque-acuatico iter 1 failure root cause). Auditor (yo) spawned engineer como SINGLE sub-agent corriendo CP1+CP2+CP3+CP4+CP5 autonomous. Engineer self-declared "complete" con calibrated v4 7.7 → user perceptual 6.0 con 15 bugs surfacing AT ONCE in final render. CLAUDE.md § 0.0 dice "Cada handoff CP[N] del ingeniero pasa por auditor independiente antes de ejecutar el siguiente CP" — VIOLATED.
+
+   **Hard rule canonical strict (NEVER violate)**:
+   - Engineer agent invocation = **ONE invocation PER CP** maximum
+   - Between each CP: auditor SPAWN audit independent + emit verdict
+   - Engineer NEVER chains CPs autonomously
+   - Auditor verdict gates: PASS → next CP / NB → engineer iter same CP / FAIL → escalate
+   - NO exception per "user at lunch" or "autonomous factory goal" or "agent orchestration simplicity" — these were reasons I (auditor) violated. NEVER again.
+
+   **Per CP audit gates required**:
+   - Post-CP1 anchors: auditor verify STRICT mode + character signature distinctiveness + setting consistency
+   - Post-CP2 TTS+captions: auditor Whisper match SPEC text_canonical + per-segment WPM canonical
+   - Post-CP3 shot images: auditor character consistency cross-shots + setting LUT
+   - Post-CP4 animation: auditor visual artifact + atmospheric motion ≥3 per shot + motion_bridge match SPEC
+   - Post-CP5 render: full audit (calibrated v4 + audit-frames-granular + audit-spec-completeness + ALL gates)
+
+   **Anti-pattern signal (detect engineer attempting to chain CPs)**:
+   - Engineer prompt says "execute CP1-CP5 end-to-end" → REJECT, must be 1 CP per spawn
+   - Engineer single execution time >15 min → SUSPICIOUS, probably chaining CPs
+   - Engineer self-declares "production complete" without intermediate auditor PASS verdicts → FORBIDDEN
+
+   **Caso disparador**: V3 parque-acuatico-abandonado iter 1 2026-05-21 PM late. Engineer 25-min single run + self-7.7 calibrated v4 → user 6.0 perceptual + auditor independent inspection 15 bugs (missing decision UI, countdown, effects library, character mix-up, captions garbled, audio mono, narrator cut boundaries, fewer music layers, etc.). All 15 bugs would have been caught EARLY per CP-by-CP gates with cheap fixes vs needing full iter 2 reassembly.
+
+   **Forward systemic**:
+   - AUTONOMOUS-FACTORY-ROADMAP orchestrator design MUST enforce CP-by-CP sequential gates
+   - NO end-to-end engineer agent spawning forward video #3 iter 2+ + video #4+
+   - `scripts/orchestrator-cp-by-cp.py` Phase A scaffold (forward)
+   - CLAUDE.md Hard Rule #24 NEW: "Auditor enforce CP-by-CP gates mandatory"
+
+14. ⭐ **Story chain rationalization without execution check** (added 2026-05-21 post cinema-abandonado / matadero analysis). Auditor reading story-coherent doesn't mean execution-continuous. Gemini calibrated v4 can score narrative chain 9-10 BUT physical journey broken via teleport-cuts.
 
 13. ⭐ **Editing variety blindness — "cuts/min vs canonical" gap** (added 2026-05-21 post cinema-abandonado comparative analysis). Auditor verifies cuts/min vs INGENIERO-PAUTA band, but didn't verify TRANSITION VARIETY (hard cuts vs cross-fade vs film-burn vs light-flash etc.).
 

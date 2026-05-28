@@ -582,7 +582,7 @@ Benefits:
 
 ### 13.5 Effects library reference
 
-Between-clip transitions live en `ai-video-production/templates/effects-library/`:
+Between-clip transitions live en effects-library catalogs **TIERED** (post-PRE-4.K, principio "Disponibilidad ≠ Uso"): **Capa A** universal primitives `ai-video-production/templates/effects-library/transitions/` (7: cross-fade ×2, hard-cut-with-whoosh, black-screen, fade-to-black, light-flash, glitch) + **Capa B** format sub-genre `<format>-format/effects-library/transitions/` (horror-choice: film-burn, projector-cue-cinema, static-noise). Caption burn styles → `templates/caption-styles/caption-burn-template.css`. Catálogo autoritativo = los JSON specs + READMEs de cada capa (la tabla de abajo es un sketch Phase 2 histórico):
 
 | Effect | File | Use case |
 |--------|------|----------|
@@ -645,7 +645,9 @@ Output: 5 dimensions per clip (UI overlap, frame negros, AVU detect, character c
 ┌─────────────────────────────────────────────────────────────────────┐
 │ LAYER 2 — EFFECT TRANSITIONS (boundary-bound, non-diegetic)        │
 │ ────────────────────────────────────────────────                    │
-│ Lives in: effect_NN_to_NN+1.mp4 (separate file ENTRE clips)         │
+│ Applied as: xfade filter post-concat at clip boundaries.            │
+│   (Canonical pattern PRE-4.E 2026-05-25 — see §13.9.1 LAYER 2.)     │
+│   NOT separate files / NOT pre-rendered intermediate mp4s.          │
 │ Contents:                                                           │
 │   • Editorial impulsive SFX: whoosh, stinger, flash impact,        │
 │     projector-cue (cambio de carrete), glitch-static               │
@@ -692,17 +694,17 @@ Examples:
        sections: [{from: 0s, to: 88s, intent: "tension low-freq"}]
        eleven_labs_prompt: "deep industrial drone, no melody, slow swells"
        compose_strategy: "single_continuous_88s" | "stitched_sections"
-       target_lufs_pre_mix: -27 dBFS
+       target_lufs_pre_mix: -27 ±2 dBFS   # PRE-4.C tolerance (2026-05-25): SPEC-declared band (plumbing). F1 NOT measure per-layer pre-mix (only final mix); SPEC-anchored is canonical for this parameter.
      - layer_id: "accent_drama"
        sections: [{from: 50s, to: 88s, intent: "rising tension"}]
        eleven_labs_prompt: "dark cinematic strings rising"
        compose_strategy: "single_38s"
-       target_lufs_pre_mix: -25 dBFS
+       target_lufs_pre_mix: -25 ±2 dBFS   # PRE-4.C tolerance (2026-05-25): SPEC-declared band
      - layer_id: "ambient_room"
        sections: [{from: 0s, to: 88s, intent: "scene ambience continuous"}]
        eleven_labs_prompt: "abandoned cinema room tone, distant hum"
        compose_strategy: "loop_8s_stretched"
-       target_lufs_pre_mix: -30 dBFS
+       target_lufs_pre_mix: -30 ±2 dBFS   # PRE-4.C tolerance (2026-05-25): SPEC-declared band
 
 2. ENGINEER llama ElevenLabs compose_music PER LAYER per SPEC strategy:
    - "single_continuous_Xs" → 1 file exact length (preferred)
@@ -717,9 +719,17 @@ Examples:
    
 4. ASSEMBLE post-concat (apply-cross-clip-music.py):
    ffmpeg amix assembled.mp4 + drone_base.mp3 + accent_drama.mp3 + ambient_room.mp3
-   + sidechain ducking layer 1+2 UNDER TTS speech (-8 dB during VO segments)
-   + final master loudnorm -14 LUFS / -1 dBTP
+   + sidechain ducking layer 1+2 UNDER TTS speech (-8 ±1 dB during VO segments)   # PRE-4.C tolerance (2026-05-25): SPEC-declared band (plumbing). Outcome verifiable via final dynamic_range_db (F1 canonical 14.49-22.34, typical ducking 10-25 dB).
+   + final master loudnorm -14 ±0.5 LUFS / -1 ±0.3 dBTP   # PRE-4.C tolerance (2026-05-25): LUFS CANONICAL-ANCHORED to F1 (avg -14.06 ±0.41, p25 -14.03, p75 -13.86 per F1-INGENIERO-MEASUREMENTS.json). dBTP headroom SPEC-anchored (F1 NOT measure).
 ```
+
+**PRE-4.C tolerance bands — dual source pattern (codified 2026-05-25)**:
+
+Per PRE-4.B F1 coverage audit (29 properties × dual-source classification):
+- **CANONICAL-ANCHORED (F1 measured)**: final master LUFS (F1 p25-p75 -14.03 to -13.86), dynamic_range_db (F1 14.49-22.34), cuts_per_min, brightness_mean, etc.
+- **SPEC-DECLARED (plumbing, F1 NOT measure)**: per-layer pre-mix LUFS, sidechain duck target dB, dBTP headroom, layer length tolerance, codec/fps/sample rate, etc.
+
+Tests in Paso 4 (apply-cross-clip-music.py, build-video-hybrid.py) reference these tolerance bands per α + γ-1 plan: canonical-anchored where F1 measures, SPEC-anchored otherwise. NO golden reference V4 per Tomás canonical principle.
 
 **transition_post hook expansion (Q2 resuelta)**:
 
@@ -746,11 +756,14 @@ Audio checks (NEW added 2026-05-21):
 Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 ```
 
-**Forward script implementations** (Phase 3 priority):
-- `scripts/audit-effects-audio.py` — Q22 gate post-concat (effect sting audit)
-- `scripts/audit-music-layers.py` — Q23 gate post-concat (3 layers per-layer verify)
-- `scripts/apply-cross-clip-music.py` — Layer 3 assemble protocol with sidechain ducking
-- `gemini_midexec_vision.py transition_post` — extend with 4 audio dimensions
+**Forward script implementations** (status as of 2026-05-23 Sub-Fase 3A inventory):
+- `scripts/audit-effects-audio.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q22 gate post-concat audit done via combination of `audit-audio.py` + manual ffmpeg volumedetect + Gemini Vision audit-frames for visual+audio sync verification. NOT a blocker for V4+ ship.
+- `scripts/audit-music-layers.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q23 gate done via `audit-audio.py` narration coverage + sound fabric thresholds (≥99% fabric required). Music layer count + duration verified manually via ffprobe per layer file pre-mix. NOT a blocker for V4+ ship.
+- `scripts/apply-cross-clip-music.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Layer 3 assemble protocol with sidechain ducking. Engineer V4 used inline ffmpeg; Paso 4 consolidates as reusable script per Sprint M defense in depth.
+- `scripts/concat-clips-with-audio.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Inter-clip concat with audio properly muxed.
+- `scripts/apply-effects-between-clips.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Effects library application between atomic clips.
+- `scripts/build-video-hybrid.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Consolidates V4 engineer inline ffmpeg as reusable script. Encapsulates full HYBRID Layer 1-4 pipeline.
+- `gemini_midexec_vision.py transition_post` — extend with 4 audio dimensions (existing script, extension forward Phase 3 priority).
 
 ---
 
@@ -765,3 +778,344 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 **Bootstrap nuevo proyecto**: copiar los 3 nuevos scripts (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) en step 2 del `BOOTSTRAP.md`.
 
 **SPEC schema v10**: arquitecto declara `assembly_strategy: per_clip_atomic` (default forward) o `global_master` (legacy backcompat solo).
+
+---
+
+### 13.9 ⭐⭐ HYBRID ARCHITECTURE canonical (added 2026-05-21 PM late post V3 caption desync)
+
+> **Root cause V3 desync**: cinema legacy global captions + narrator master drift architecture allows caption-audio misalignment. Phase 2 per-clip atomic eliminates that drift class BUT V3 iter 1 implementation skipped UI overlays. **Solution = HYBRID combining both**.
+
+#### 13.9.1 Three architectural layers (canonical V4+)
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  LAYER 1 — PER-CLIP ATOMIC (mandatory)                               │
+│  Each shot mp4 = self-contained unit:                                │
+│    ├── Visual (Hailuo image-to-video OR Veo if available)            │
+│    ├── Clip-scoped audio:                                            │
+│    │     - Character speech (if shot has character on-screen)        │
+│    │     - Diegetic SFX scoped to shot                               │
+│    │     - AVU overlay audio (countdown ticks if applicable)         │
+│    ├── Captions BURNED per clip:                                     │
+│    │     - Caption text for THIS clip's audio window                 │
+│    │     - Aligned to clip's local timeline (0-Xs relative)          │
+│    │     - Whisper-derived from clip audio (NOT SPEC intent)         │
+│    │     - Burned via ffmpeg drawtext or video filter                │
+│    └── Output: assets/clips-atomic/shot_N_atomic.mp4                 │
+│                                                                      │
+│  PROPERTY: caption-audio LOCKED at frame level. Cannot drift.        │
+└──────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ concat atomic clips
+┌──────────────────────────────────────────────────────────────────────┐
+│  LAYER 2 — EFFECTS BETWEEN CLIPS (xfade filter post-concat)          │
+│  ────────────────────────────────────────────                        │
+│  Canonical pattern (PRE-4.E 2026-05-25): xfade filter applied to     │
+│  concat'd stream AT clip boundaries. NO pre-rendered effect mp4s.    │
+│                                                                      │
+│  Implementation (V4 empirical via cp5-layer2-concat.py):             │
+│    Step 1 — 4.2 concat-clips-with-audio.py:                          │
+│      Concat atomic clips back-to-back, audio properly muxed.         │
+│      Output: assets/concat/clips_concat_only.mp4                     │
+│    Step 2 — 4.4 apply-effects-between-clips.py:                      │
+│      xfade filter at boundaries per SPEC.shot_list[].transition_in   │
+│      + sting audio overlaid per effects-library/transitions/*.json   │
+│      Output: assets/concat/clips_with_effects.mp4                    │
+│                                                                      │
+│  Transition recipes available (effects-library/transitions/):        │
+│    - B&W TV static interference (NEW 2026-05-21 user request)        │
+│    - Cross-fade, hard-cut-whoosh, light-flash, film-burn, glitch     │
+│    - Each recipe bundles audio_sting + visual filter params          │
+│                                                                      │
+│  RATIONALE: simpler + declarative + fewer intermediate artifacts =   │
+│  fewer surface bugs (Principio 4 sistema solidez). Rejected:         │
+│  pre-rendered effect_N_to_N+1.mp4 files (sequence concat pattern,    │
+│  more bug surface, NOT V4 empirical).                                │
+└──────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ concat'd stream with effects applied
+┌──────────────────────────────────────────────────────────────────────┐
+│  LAYER 3 — CROSS-CLIP CONTINUOUS (post-concat overlay)               │
+│  Continuous audio tracks overlaid post-concat:                       │
+│    - Narrator master (continuous 0-duration_s, no cuts at boundaries)│
+│    - Music drone_base + accents per section                          │
+│    - Ambient continuous                                              │
+│    - Sidechain ducking music/ambient under narrator                  │
+│  Plus UI overlays via HyperFrames OR ffmpeg overlay:                 │
+│    - Countdown 3-2-1 at hook end (GSAP OR AVU clip)                  │
+│    - Decision UI (freeze + VHS filter + buttons + loading bar)       │
+│    - AVU outro card ("TÚ DECIDES" + watermark)                       │
+│    - Name labels Y11.5% monospaced                                   │
+│  Final master loudnorm -14 LUFS stereo 48kHz                         │
+└──────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                  ┌─────────────────────────┐
+                  │ Final render mp4         │
+                  │ 1080×1920 9:16           │
+                  │ Caption-audio LOCKED     │
+                  │ Drift-free architecture  │
+                  └─────────────────────────┘
+```
+
+#### 13.9.1.1 LAYER 2 — I/O clarification + tiered catalogs (PRE-4.J / PRE-4.K 2026-05-27)
+
+- **I/O (Finding #1):** `apply-effects-between-clips.py` reads the **atomic clips** (`--clips-dir`), NOT the 4.2 `clips_concat_only.mp4`. xfade physically requires N separate inputs, so the chain is rebuilt from atomic clips (V4 empirical `cp5-layer2-concat.py`). The 4.2 concat output is consumed ONLY by the **passthrough** branch (`has_layer_2_effects: false` → copy).
+- **Tiered catalogs ("Disponibilidad ≠ Uso"):** transitions live in TWO catalogs — Capa A universal primitives (7) + Capa B format sub-genre. `--effects-dir` accepts ONE OR MORE catalog dirs (searched in order), REQUIRED in the effects branch (no silent format default = agnostic-by-design). Availability ≠ prescription: the SPEC `shot_list[].transition_in/out` (Capa C) decides what is applied; a format may reference Capa A primitives + add its own Capa B without duplicating.
+- **Option D fidelity:** each recipe declares `xfade_transition` + `xfade_fidelity` (literal|approximate) + `native_mechanism_note`. Chained-xfade is LOSSY for the 5 `approximate` recipes (native mechanisms = concat-insert / overlay / terminal-fade ≠ a single xfade); a WARNING fires on production use. Full fidelity = Option B hybrid dispatch (`transition_method` enum) — GAPS-LOG trigger.
+- **Schema:** per-shot `transition_in/out` canonical (PRE-4.J Decision 3); legacy top-level `transitions[]` arrays normalized via `lib/spec_transitions_adapter.py`.
+
+#### 13.9.2 Why HYBRID solves caption-audio drift permanently
+
+```
+PROBLEM (cinema legacy global captions):
+  CP2 captions sidecar timestamps reference SPEC intent
+  CP5 narrator master accommodates TTS overshoots via adelay padding
+  CP5 HyperFrames overlay captions at SPEC-intent timestamps
+  → audio plays at actual times, captions at intended times
+  → cumulative drift 1-3s possible (V3 0-34s window evidenced)
+
+PROBLEM (Phase 2 per-clip atomic V3 iter 1):
+  Engineer muxed narrator per-clip → narrator cut at clip boundaries
+  Engineer skipped UI overlays (no countdown / decision UI / outro)
+  → broken in different way
+
+HYBRID solves BOTH:
+  Layer 1: caption baked into clip = same frame data as audio = CANNOT drift
+  Layer 3: narrator continuous overlay = no boundary cuts
+  Layer 3: UI overlays HyperFrames = countdown + decision + outro work
+  
+  Result: best of both worlds, drift class eliminated structurally.
+```
+
+#### 13.9.3 Implementation per CP
+
+```
+CP1 anchors:              Gemini Nano Banana STRICT (unchanged)
+CP2 TTS:                  Per-segment generation (unchanged)
+CP3 shot refs:            Gemini Nano Banana STRICT (unchanged)
+CP4 animation:            Hailuo/Veo image-to-video (unchanged)
+
+CP4.5 NEW — Per-clip atomic mux:
+  build_clip_atomic.py extension:
+    For each shot N:
+      1. Load shot_N.mp4 (Hailuo/Veo visual)
+      2. Determine clip-scoped audio:
+         - If shot has character on-screen speaking: extract Veo native audio OR use Hailuo + Hedra lip-sync
+         - Diegetic SFX: per SPEC sfx_events for this shot timestamp window
+         - AVU overlay audio: if shot has countdown/freeze AVU
+         - NO narrator (narrator is Layer 3)
+      3. Generate captions for this clip's audio:
+         - Whisper transcribe clip's audio (NOT SPEC narration)
+         - OR if no character speech: skip captions in atomic, narrator captions in Layer 3
+         - Burn into clip via ffmpeg drawtext
+      4. Mux: visual + audio + captions → atomic mp4
+      5. Save: assets/clips-atomic/shot_N_atomic.mp4
+
+CP5 — HyperFrames composition + Layer 3:
+  Step 1: Concat atomic clips + insert effects between
+  Step 2: Overlay Layer 3 narrator master (continuous)
+  Step 3: Overlay Layer 3 music + ambient (continuous)
+  Step 4: Apply sidechain ducking
+  Step 5: HyperFrames UI overlays (countdown + decision + outro card + name labels)
+  Step 6: Final loudnorm -14 LUFS
+  Step 7: 8 pre-render gates
+```
+
+#### 13.9.4 Updated build_clip_atomic.py spec
+
+Forward modification of `scripts/build_clip_atomic.py`:
+
+```python
+def build_atomic_clip(shot_id, spec, output_path):
+    """Build self-contained atomic clip with audio + captions baked."""
+    # Load visual
+    visual = load_hailuo_clip(shot_id)
+    
+    # Determine clip-scoped audio (NO narrator)
+    audio_layers = []
+    if shot_has_character_speech(spec, shot_id):
+        char_audio = extract_character_audio(spec, shot_id)
+        audio_layers.append(char_audio)
+    
+    sfx = generate_diegetic_sfx(spec, shot_id)
+    audio_layers.extend(sfx)
+    
+    if shot_has_avu(spec, shot_id):
+        audio_layers.append(load_avu_audio(spec, shot_id))
+    
+    mixed_audio = ffmpeg_amix(audio_layers)
+    
+    # Generate captions FROM CLIP AUDIO (Whisper)
+    captions = whisper_transcribe(mixed_audio, language='es', word_timestamps=True)
+    # Override caption text with SPEC text_canonical (preserve canonical wording)
+    captions = align_captions_to_spec(captions, spec.text_canonical_for_shot(shot_id))
+    
+    # Burn captions into video
+    visual_with_captions = ffmpeg_drawtext(visual, captions, style='canonical_horror_choice')
+    
+    # Mux
+    atomic = ffmpeg_mux(visual_with_captions, mixed_audio)
+    atomic.save(output_path)
+```
+
+#### 13.9.5 NEW auditor sentinel — caption-audio sync verification
+
+`scripts/audit-caption-audio-sync.py` (forward Phase 3 priority):
+
+```python
+def audit_caption_audio_sync(video_path):
+    """Verify caption text at frame T matches narrator audio at T."""
+    
+    # Extract frames every 3s
+    frames = ffmpeg_extract_frames(video_path, interval=3)
+    
+    # Whisper transcribe full audio with word timestamps
+    audio_timeline = whisper_full_word_timestamps(video_path)
+    
+    issues = []
+    for t, frame in frames.items():
+        # Get caption text on frame via Gemini Vision
+        caption_text = gemini_vision_extract_caption(frame)
+        # Get narrator audio words at this timestamp (±1s window)
+        narrator_words = audio_timeline.words_in_window(t, ±1)
+        
+        # Verify caption text matches narrator audio
+        similarity = jaccard_similarity(caption_text, narrator_words)
+        if similarity < 0.5:
+            issues.append({
+                't': t,
+                'caption': caption_text,
+                'narrator': narrator_words,
+                'similarity': similarity
+            })
+    
+    return issues
+```
+
+Run this gate post-CP5 render before declaring complete.
+
+#### 13.9.6 Migration
+
+```
+matadero + cinema-abandonado: legacy global master, grandfather, NO migrate
+V3 parque-acuatico-abandonado: archived as Phase 3 learning (cinema legacy + caption drift exposed)
+V4+ (next video): HYBRID architecture MANDATORY per this § 13.9 + 3 enforcement scripts BLOCKER pre-launch
+```
+
+#### 13.9.7 ⛔ Enforcement scripts MANDATORY BLOCKER pre-V4 (updated 2026-05-21 PM late)
+
+**Previous status**: "Phase 3 priority forward" (descriptive, NOT enforced — was the V3 vulnerability)
+
+**NEW status** (post user feedback "Hard Rules son texto, no enforcement"):
+
+```
+3 scripts BLOCKER for V4+ launch:
+
+1. scripts/build_clip_atomic.py (caption-burn extension)
+   ROLE: Layer 1 hybrid enforcement
+   PRE-V4 STATUS: Built + 10/10 tests + ADV-A PASS ✓ (2026-05-21)
+   Caption-audio LOCKED at frame level via Whisper-from-clip-audio + drawtext
+
+2. scripts/audit-shot-spec-compliance.py (Script B 8 dim per-shot verifier)
+   ROLE: SPEC contract verification per shot during CP4
+   PRE-V4 STATUS: In flight build + V3 adversarial test pending
+   Detects: scope creep + narrator-vs-spec + caption-vs-spec + caption-vs-narrator + visual-vs-intent + characters-vs-anchors + action-vs-narration
+
+3. scripts/orchestrator-cp-by-cp.py (Script C state machine)
+   ROLE: CP-by-CP gates structural enforcement
+   PRE-V4 STATUS: Pending (blocked by A + B PASS)
+   Refuses: multi-CP autonomous prompts, skip-audit attempts, force-pass without override
+   Allows: legitimate overrides with reason logged to ARCHITECTURAL-DECISIONS.md
+```
+
+**Hard rule**: V4 launches via orchestrator-cp-by-cp.py ONLY. Manual agent spawning bypassing orchestrator = anti-pattern #15 violation = FORBIDDEN.
+
+**Verification gate pre-V4**: `V4-LAUNCH-CHECKLIST.md` must show ALL boxes checked (3 scripts built + tested + docs aligned).
+
+#### 13.9.8 Why the "no-blocker" status was the V3 vulnerability
+
+User feedback 2026-05-21 PM late: "Hard Rules son texto que el agente lee y decide aplicar. Eso es exactamente lo que falló en V3. Pueden esos 2 scripts ser blockers obligatorios para V4 antes de arrancar?"
+
+Correct: codified text without enforcement = decoration. V3 iter 1 was ME (auditor) violating MY OWN Hard Rule #24 because text doesn't bind LLM behavior under context pressure. 
+
+Scripts make rules STRUCTURAL not procedural. Agent cannot violate without script REFUSING the operation. This is the architectural shift from V3 to V4.
+
+---
+
+### 13.10 ⭐⭐ CAPABILITY MATRIX per video/format (codified 2026-05-25 PRE-4.G)
+
+> **Caso disparador:** Tomás detectó gap arquitectural — todo lo codificado hasta PRE-4.F asume paradigma único: AI-generated viral video + TTS narration + captions baked + Layer 1-4 architecture + Gemini Image anchors + Veo3. Esto viola Principio 1 (Agnóstico) y Principio 3 (Escalable).
+>
+> **Pattern 7 — Capability Matrix:** El sistema sostiene paradigmas múltiples de producción de video, NO solo AI-generated horror-choice. Forward, cualquier SPEC declara explícitamente sus capabilities en bloque `video_capabilities`. Validators, builds y tests leen capabilities ANTES de aplicar properties.
+
+#### 13.10.1 Paradigmas posibles (no exhaustive)
+
+- **AI-generated viral video con TTS narration + Layer 1-4** (horror-choice canonical, V4 paradigm)
+- **Tutorial sin TTS** (sin Layer 3 audio mix obligatorio, narration humana grabada o silencio)
+- **B2B commercial con voiceover humano grabado** (Layer 1 = pre-existing voice file, no TTS)
+- **Compilation de video pre-existing** (sin Veo3, sin Gemini Image anchors, source = footage existente)
+- **Mixed paradigms** (AI-generated clips + pre-existing voiceover; o pre-existing clips + AI captions)
+
+#### 13.10.2 Capability matrix declarativo (schema conceptual)
+
+```yaml
+video_capabilities:
+  # Source paradigm
+  source_clips_origin: ai_generated | pre_existing | mixed
+  has_ai_generated_clips: true|false
+  
+  # Audio paradigm
+  has_tts_narration: true|false
+  has_human_voiceover: true|false
+  audio_mix_target: lufs_-14 | spec_declared | preserve_source | none
+  
+  # Visual paradigm
+  has_captions_baked: true|false
+  has_layer_2_effects: true|false
+  has_layer_3_music: true|false
+  has_layer_4_ui: true|false
+  
+  # Format paradigm
+  format_type: interactive_choice | tutorial | b2b_commercial | compilation | other
+  duration_intent_s: <integer>
+```
+
+Schema evoluciona con paradigmas nuevos. NO exhaustive — agregar flags cuando paradigma nuevo lo requiera.
+
+#### 13.10.3 Validator behavior canonical forward
+
+Validators + builds + tests **gating per capability flag**:
+
+```python
+# Pseudocode
+def test_caption_audio_lock(video, spec):
+    if not spec.video_capabilities.has_captions_baked:
+        return TestResult.NOT_APPLICABLE  # NOT failed, NOT pass
+    # ... only run property check if capability declared ...
+```
+
+**Ejemplos de gating concretos:**
+
+| Property | Gated by | Behavior if capability=false |
+|----------|----------|------------------------------|
+| Caption-audio sync (Hard Rule #25) | `has_captions_baked` | `not_applicable` |
+| TTS sidechain duck -8 dB | `has_tts_narration` | `not_applicable` (no TTS to duck under) |
+| Layer 3 cross-clip music continuity | `has_layer_3_music` | `not_applicable` |
+| Final master LUFS -14 ±0.5 | `audio_mix_target == lufs_-14` | `not_applicable` if `preserve_source` or `none` |
+| Veo3/Gemini anchor compliance | `source_clips_origin == ai_generated` | `not_applicable` for pre-existing clips |
+| Decision UI overlay (Layer 4) | `format_type == interactive_choice` | `not_applicable` for tutorial/B2B |
+
+#### 13.10.4 SPEC integration
+
+SPEC schema v12+ incluye `video_capabilities` block **mandatorio**. SPEC sin capability matrix → SPEC-AUDIT verdict HALT (Bug #9 escalation a Tomás). Default values reflejan paradigma horror-choice canónico para retrocompatibilidad con V4-era SPECs (v11.x).
+
+#### 13.10.5 Rationale estructural
+
+- **Principio 1 (Agnóstico verdadero):** paradigm-agnóstico, NO solo format-agnóstico. Sistema sostiene tutoriales, B2B, compilations, AI mixed, etc. — sin refactor masivo.
+- **Principio 3 (Escalable):** nuevo paradigma = agregar flag a capability matrix + bypassear properties no-aplicables. Sistema no rechaza ni fuerza.
+- **Forward implementation:** Paso 4 builds (4.2/4.4/4.3/4.1) + Sprint M validators (11 backed) heredan este pattern desde inicio. Tests classifican: applicable / not_applicable / pass / fail.
+
+#### 13.10.6 Backward compat — V4 SPEC
+
+V4 cerro-aislado-v4.yaml (SHIPPED bajo assumptions previas) queda historical sin `video_capabilities` block. Forward V5+ SPECs lo incluyen mandatorio. Validators leyendo V4 SPEC sin capabilities → asume defaults horror-choice paradigm (backward-compat clause).

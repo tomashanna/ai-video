@@ -29,12 +29,12 @@ Estructura optimizada para retención agresiva tras aplicar `ai-video-production
 
 | Hito | % video | Acción | Doc detallado |
 |------|---------|--------|---|
-| Frame 0 | 0% | Teaser visual (empty location + ominous element) + caption Whisper-sync inicia | `INTRO-FORMULA-V15.md` |
-| Hook visual completo | 0-3% | Personajes materializan vía Kling end_image (NO cut) | `INTRO-FORMULA-V15.md` § Assets |
-| Labels personajes | 3-6% | HUGO/SANTI visibles 2.5s con drop shadow uniforme | `INTRO-FORMULA-V15.md` |
-| Question caption | 5-7% | "¿CON QUIÉN BAJARÍAS?" (1s) | `INTRO-FORMULA-V15.md` |
-| Countdown | 6-8% | 3-2-1 (0.5s c/u) + 3 ticks | `INTRO-FORMULA-V15.md` |
-| Flash + bridge | 8% | White flash 0.25s. NO cap-chose (Whisper cap-h3-n1 carry el bridge) | `INTRO-FORMULA-V15.md` |
+| Frame 0 | 0% | Teaser visual (empty location + ominous element) + caption Whisper-sync inicia | `INTRO-FORMULA.md` |
+| Hook visual completo | 0-3% | Personajes materializan vía Kling end_image (NO cut) | `INTRO-FORMULA.md` § Assets |
+| Labels personajes | 3-6% | HUGO/SANTI visibles 2.5s con drop shadow uniforme | `INTRO-FORMULA.md` |
+| Question caption | 5-7% | "¿CON QUIÉN BAJARÍAS?" (1s) | `INTRO-FORMULA.md` |
+| Countdown | 6-8% | 3-2-1 (0.5s c/u) + 3 ticks | `INTRO-FORMULA.md` |
+| Flash + bridge | 8% | White flash 0.25s. NO cap-chose (Whisper cap-h3-n1 carry el bridge) | `INTRO-FORMULA.md` |
 | Setup escenario | 10-25% | Story arranca — narrador h3-narr1 + Whisper captions sync | – |
 | Primera elección | 25-30% | Loading bar 2.5s con "AHORA DECIDE" | § 8 abajo |
 | Primer twist | 30-50% | Hard cut + white flash + SFX al frame 0 | § 8 abajo |
@@ -759,7 +759,7 @@ Validada en mina-abandonada v15-final (9.9/10 Gemini). Usa Kling `start_image + 
 - Cuando el personaje "malo aparente" tiene presencia tan icónica que romper la 4ª pared (Opción B) es más fuerte
 - Cuando el video es para YouTube Long y tenés tiempo para hold de 15s (V1 legacy)
 
-**Receta completa**: ver `INTRO-FORMULA-V15.md` — copy-paste-ready con prompts, GSAP, audio mix.
+**Receta completa**: ver `INTRO-FORMULA.md` — copy-paste-ready con prompts, GSAP, audio mix.
 
 ### Cuándo usar A vs B vs C vs D
 

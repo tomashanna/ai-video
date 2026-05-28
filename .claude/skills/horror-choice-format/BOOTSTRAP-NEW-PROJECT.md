@@ -223,7 +223,7 @@ Antes de que el agente arranque a producir, tener los datos. Divididos en dos bl
 | **Nombre malo aparente** | Cristóbal, Berni, Martín, Hugo, Maikol | `PAUTA-MASTER.md` § 8 catalog Slot B |
 | **Nombre bueno aparente** | Gerald, Yonaiker, Tobías, Santi, Chelo | `PAUTA-MASTER.md` § 9 catalog Slot C |
 | **Escenario / setting** | farmhouse, bosque, faro, mina, crucero, cabaña, calabozo | Propuesta libre dentro del archetype |
-| **Verbo H1** | BAJARÍAS / ENTRARÍAS / SUBIRÍAS / CRUZARÍAS / PASARÍAS LA NOCHE | `INTRO-FORMULA-V15.md` |
+| **Verbo H1** | BAJARÍAS / ENTRARÍAS / SUBIRÍAS / CRUZARÍAS / PASARÍAS LA NOCHE | `INTRO-FORMULA.md` |
 | **Pattern de matriz expandida** | NO improvisar — elegir de los 10 patterns + meta-cliffhanger | `PAUTA-MASTER.md` § 15 + `video-log.md` (rotación) |
 | **Dilema H3 concreto** | primera elección binaria (mirar/no mirar, comer/no comer, entrar/quedarse) | `PAUTA-MASTER.md` § 9 |
 | **Dilema H4 concreto** | segunda elección, sube apuesta | `PAUTA-MASTER.md` § 9 |
@@ -284,13 +284,13 @@ Ver `ai-video-production/QA.md` dimensión #10 (continuidad narrativa).
 ## 10. EL AGENTE TOMA EL VOLANTE
 
 Decirle al agente:
-> "Combo: horror-choice × `<delivery_format>`. Proyecto bootstrapeado en `<RUTA>`. Leí: PAUTA.md, VIDEO-PLAYBOOK.md, PATTERNS.md, INTRO-FORMULA-V15.md, PRODUCTION-PIPELINE.md, BOOTSTRAP-NEW-PROJECT.md, `../ai-video-production/formats/<delivery>.md`, `../ai-video-production/RETENTION-RULES.md`. Inputs FASE 0: [pegar bloques 9.a + 9.b]. Empezá desde Fase 0 del VIDEO-PLAYBOOK."
+> "Combo: horror-choice × `<delivery_format>`. Proyecto bootstrapeado en `<RUTA>`. Leí: PAUTA.md, VIDEO-PLAYBOOK.md, PATTERNS.md, INTRO-FORMULA.md, PRODUCTION-PIPELINE.md, BOOTSTRAP-NEW-PROJECT.md, `../ai-video-production/formats/<delivery>.md`, `../ai-video-production/RETENTION-RULES.md`. Inputs FASE 0: [pegar bloques 9.a + 9.b]. Empezá desde Fase 0 del VIDEO-PLAYBOOK."
 
 El agente debe:
 1. Confirmar lectura de los docs (incluyendo el doc del delivery format específico)
 2. Validar inputs con test de calidad del dilema (`PATTERNS.md` § 6)
 3. Validar combo en `../ai-video-production/DELIVERY-FORMATS.md` § "Matriz GENRE × FORMAT" — horror-choice × reel = ⭐ v15 validado
-4. Aplicar la receta del intro de `INTRO-FORMULA-V15.md` (slots `[SLOT]` → valores de FASE 0) para los primeros 9s del video
+4. Aplicar la receta del intro de `INTRO-FORMULA.md` (slots `[SLOT]` → valores de FASE 0) para los primeros 9s del video
 5. Generar NARRATIVE.md completo siguiendo SCRIPT-WRITING-GUIDE.md
 6. Pedir tu aprobación del guion antes de generar assets
 

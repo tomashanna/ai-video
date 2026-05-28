@@ -461,7 +461,7 @@ def build_canonical_scenes(
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True, help="referent-analysis/ref-XX/ folder")
+    ap.add_argument("--input", required=True, help="referent-analysis/<format>/ref-XX/ folder (e.g., referent-analysis/horror-choice/ref-03/ post-Sub-Fase-3A.2 TIER 2.3 namespace)")
     ap.add_argument("--output", required=True, help="output directory (canonical-scenes/)")
     ap.add_argument("--filename", help="output filename (default: ref-XX.md from input dir name)")
     ap.add_argument("--pattern", help="Pattern P1-P10 (per PAUTA-MASTER § 15)")

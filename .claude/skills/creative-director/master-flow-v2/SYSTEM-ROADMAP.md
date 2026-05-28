@@ -168,10 +168,11 @@ ITER PATTERN:
 │       - quality_gate_per_clip.py (4th role automated)               │
 │       - gemini_midexec_vision.py (4 mid-exec hooks)                 │
 │   • templates/avu-library/ (4 AVU pre-rendered clips)               │
-│   • templates/effects-library/ ⭐ NEW Phase 2                        │
-│     - 10 transitions JSON specs (cross-fade/film-burn/glitch/etc)   │
-│     - caption-burn-template.css (3 canonical classes)               │
-│     - 3 audio stings (whoosh + drone + projector-cue)               │
+│   • effects-library TIERED (PRE-4.K "Disponibilidad≠Uso")           │
+│     - Capa A universal: 7 primitives + stings (whoosh/drone/flash)  │
+│     - Capa B horror: 3 sub-genre (film-burn/projector/static-noise) │
+│     - caption-styles/caption-burn-template.css (Capa A, 3 classes)  │
+│     - per-recipe xfade_transition + xfade_fidelity (Option D)       │
 └─────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -623,6 +624,124 @@ Cada feedback humano = gap codificado = system protection forward. Each video pr
 
 ---
 
+## 8.9 Sprint Definitions (canonical scope/status/budget — added 2026-05-23 Sub-Fase 3A)
+
+> Codificado post user directive: Sprint M referenced en GAPS-LOG pero NO formal sprint definition existed. Hidden gap closure forward. Sprints budget + owner + ETA explicit.
+
+### Capability-gating mandatorio per validator (codified PRE-4.H 2026-05-25)
+
+Cada validator del Sprint M (11 backed below) DEBE declarar en su SPEC inicial:
+
+- **Required capability flags from `spec.video_capabilities` block** (per PIPELINE §13.10 Pattern 7 Capability Matrix)
+- **Behavior si capability=false**: `skip` / `not_applicable` / `always-applicable`
+- **Auditor verify capability-gating presente** ANTES de approve validator build
+
+Forward, NO validator se buildea sin declarar su capability scope. **Anti-pattern**: validator assumes paradigm horror-choice implícitamente sin gating clause.
+
+**Razón estructural**: Sprint M validators son los que enforce Hard Rules estructuralmente. Si validators asumen paradigma único (horror-choice + AI-generated), heredan las 8+ violaciones del Principio Agnóstico que Pattern 7 + Hard Rules gating PRE-4.H ya resolvieron en el layer doc. Validators sin capability-gating = doc theater (codified pattern not enforced structurally — anti-pattern V3 vulnerability redux).
+
+**Forward auditor checklist** (per AUDITOR-PROTOCOL.md §3.5):
+- ¿Validator SPEC declara `required_capabilities: [<flags>]`?
+- ¿Validator code reads `spec.video_capabilities` antes de testear properties?
+- ¿Validator emite `not_applicable` (NOT `failed`) cuando capability=false?
+
+Per Pattern 7 Capability Matrix methodology (Pattern 7 codified PRE-4.G 2026-05-25, gating cascade applied PRE-4.H 2026-05-25).
+
+---
+
+### Sprint A — Enforcement scripts pre-V4
+
+```yaml
+sprint_id: A
+status: COMPLETED (2026-05-22)
+scope: |
+  3 enforcement scripts required structurally pre-V4 launch:
+  - build_clip_atomic.py (Script A — caption-burn extension)
+  - audit-shot-spec-compliance.py (Script B — 8-dim per-shot compliance)
+  - orchestrator-cp-by-cp.py (Script C — CP-by-CP state machine)
+  Plus lib helpers: similarity.py + orchestrator_state.py
+  Plus CONTRACT-A-B-INTERFACE.md binding contract
+owner: auditor + engineer collaboration
+budget_used: $0 (all local + FREE Gemini Vision)
+deliverables_completed:
+  - 10/10 Script A tests PASS + adversarial ADV-A
+  - V3 adversarial Script B detected 4 known bugs + bonus
+  - 17/17 Script C tests PASS post 2 surgical fixes
+  - ARCHITECTURAL-DECISIONS.md schema validated
+validation: V4 cerro-aislado-v4 used all 3 scripts in production successfully
+```
+
+### Sprint B — Validators per specific bugs detected V3+V4
+
+```yaml
+sprint_id: B
+status: PARTIAL (in progress, post-V4 ship trigger)
+scope: |
+  10 validators codified post V3+V4 bug discovery, addressing specific gap classes:
+  - audit-anchor-vs-spec-signature.py (Gap #44+#44b — anchor signature compliance)
+  - audit-tts-perceptual.py (Gap #45 — TTS distortion/intelligibility automated)
+  - audit-deliverable-vs-spec-manifest.py (Gap #46 — 1:1 manifest check per CP)
+  - audit-engineer-brief-vs-spec.py (Gap #47 — auditor brief literal SPEC paste)
+  - audit-spec-stability-budget.py (Gap #48 — ≤3 prop elements model constraint)
+  - audit-spec-pose-coupling.py (Gap #49 — exact pose match anchor)
+  - audit-engineer-prompt-syntax.py (Gap #50 — label-prefix overlay text)
+  - audit-shot-burned-text-ocr.py (Gap #51 — overlay text detection per shot)
+owner: TBD (Sprint B builder)
+budget_estimated: $0 dev (all local + FREE) + ~$0.05-0.30 per audit run Gemini Vision
+priority: B / Phase 4 (post-V4 ship, before V5+ scale)
+trigger: V4 shipped 2026-05-23, ready to start
+```
+
+### Sprint M — Defense in depth + cost tracking + Marina forward
+
+```yaml
+sprint_id: M  # M for "Marina" AI influencer forward + "Multi-layer defense"
+status: NOT_STARTED (codification 2026-05-23)
+scope: |
+  Sprint M consolidates CRITICAL validators preventing entire bug classes that 
+  user perceptual detected when validators technical missed (pattern_class 
+  "user_perceptual_detects_what_validators_miss"). Defense in depth 5 layers + 
+  cost discipline + tier strategy.
+  
+  CRÍTICA (Bug #12 defense in depth — 4 scripts):
+  - audit-spec-narration-fits-duration.py (L1 — WPM band pre-emit SPEC)
+  - audit-tts-vs-spec-duration.py (L2 — TTS actual vs SPEC intent post-CP2)
+  - audit-clip-timing-vs-audio.py (L4 — per-clip + render total pre-CP5)
+  - audit-auditor-decision-scope.py (Gap #52 — auditor escalation enforcement)
+  
+  ALTA:
+  - audit-spec-tier-strategy.py (Gap #53 — default tier per shot position)
+  
+  Plus Sub-Fase 3A products (in flight 2026-05-23):
+  - build-video-hybrid.py + 3 sub-scripts (Layer 1-4 assembly consolidation)
+  - lib/hard_rules_parser.py (dynamic threshold helper)
+  - 6 test_*.py companions (Hard Rule #26 enforcement)
+  
+  Plus 10 user_claim_no_primary_source candidates (validate before build):
+  - cost-tracker-unified.py, audit-spec-narrative-coherence.py, 
+    audit-spec-language-neutral.py, audit-spec-cost-estimates-vs-real.py,
+    audit-thresholds-vs-hardrules.py, audit-spec-consequence-effects.py,
+    audit-architect-bootstrap-reads.py, cost-cap-auto-scale.py,
+    audit-claim-vs-filesystem.py, audit-spec-auto-fixable-violations.py
+
+owner: TBD (Sprint M builder, likely engineer agent narrow scope per validator)
+budget_estimated: $0 dev (all local + FREE Gemini Vision)
+ETA: TBD — depends on V4 perceptual review + V5+ launch planning
+priority: M priority CRÍTICA (escalated post V4 user perceptual catches)
+trigger: 
+  - Bug class #12 narration timing detected V4 user perceptual (validator gap closure)
+  - Gap #52 auditor silent decision (pattern instance #5 threshold reached)
+  - Forward Marina (AI influencer Hedra cost variables) sensitivity
+
+marina_specific_consideration: |
+  AI influencer hooks (face close-up early) may need Pro mandatory through hook + 
+  setup phases for realism belief threshold (uncanny valley face sensitivity higher 
+  in face close-ups). Adapt tier strategy when Marina launches with Hedra lipsync 
+  cost variables.
+```
+
+---
+
 ## 9. Forward improvements + redundancies (opportunities)
 
 ### 9.1 Redundancies identified
@@ -1060,8 +1179,11 @@ TITLE: "AUTONOMOUS VIDEO FACTORY — 3 videos/día con manual publish anti-ban"
    
 [Center: ORCHESTRATOR.py — large blue box]
    • Scheduled trigger 3x/día
-   • State machine PENDING → SPEC_GEN → CP1-5 → AUDITED → READY
-   • Failure recovery patterns
+   • State machine PENDING → SPEC_GEN → AUDIT_SPEC → CP1 → AUDIT_CP1 → 
+     CP2 → AUDIT_CP2 → CP3 → AUDIT_CP3 → CP4 → AUDIT_CP4 → CP5 → AUDIT_CP5 → READY
+   • ⭐ Per-CP auditor gates MANDATORY (Hard Rule #24)
+   • NO engineer multi-CP autonomous run (anti-pattern #15)
+   • Failure recovery: max 3 iter per CP → escalate human
    
 [Below orchestrator — 3 agent boxes side-by-side]:
    🏛️ ARCHITECT (purple)     🛠️ ENGINEER (green)     🔍 AUDITOR (orange)
@@ -1705,6 +1827,7 @@ forward → Engineer implements forward.
 ---
 
 **Última actualización**: 2026-05-20 PM (Sprint A roadmap + Phase 1 Track B Engineer completed + GAPS #23-#28 codified + § 14-17 NEW expansion for Excalidraw diagramming).
+**2026-05-23**: §8.9 Sprint Definitions added (Sub-Fase 3A).
 **Owner**: Auditor terminal 3 (este doc) + cross-validated por architect Track parallel
 **Next revision**: post Phase 1 priority queue completion + video #2 first iter
 

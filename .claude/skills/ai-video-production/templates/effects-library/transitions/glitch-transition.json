@@ -3,6 +3,9 @@
   "type": "transition",
   "category": "digital-horror",
   "duration_s": 0.3,
+  "xfade_transition": "hlslice",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "Native xfade=transition=hlslice; optional RGB-split pre-pass is decorative.",
   "description": "RGB-split + horizontal pixel shift + brief noise burst between clips. Digital horror aesthetic — 'the simulation is glitching'. More aggressive than static-noise-transition (which is purely analog VHS noise).",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v]split=3[r][g][b];[r]lutrgb=g=0:b=0,setpts=PTS-STARTPTS[r_only];[g]lutrgb=r=0:b=0,setpts=PTS-STARTPTS[g_only];[b]lutrgb=r=0:g=0,setpts=PTS-STARTPTS[b_only];[r_only][g_only]blend=all_mode=addition[rg];[rg][b_only]blend=all_mode=addition[rgb_full];[0:v][rgb_full]xfade=transition=hlslice:duration=0.3:offset={glitch_start}[v_pre];[v_pre][1:v]xfade=transition=fade:duration=0.05:offset={glitch_end}[v];[0:a][1:a]acrossfade=d=0.3[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_recipe_simplified": "ffmpeg -y -i {clip_a} -i {clip_b} -filter_complex \"[0:v][1:v]xfade=transition=hlslice:duration=0.3:offset={glitch_start}[v];[0:a][1:a]acrossfade=d=0.3[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
@@ -28,7 +31,8 @@
     "Soft narrative moments"
   ],
   "hyperframes_alternative": "CSS+GSAP: tween `filter:hue-rotate(0deg) → hue-rotate(45deg)` + `transform:translate(0,0) → translate(8px,-4px)` over 0.3s; or use canvas RGB-channel split with requestAnimationFrame.",
-  "canonical_validation_status": "pending",
-  "validated_against_canonical_refs": ["N/A — digital-horror sub-genre not in F1 set"],
-  "validated_notes": "Use simplified recipe (hlslice xfade) as default — full RGB-split filtergraph is heavier compute and only worth it on flagship climax cuts. Manual QA per video."
+  "canonical_validation_status": "validated_0/8_candidate_deprioritize",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Not observed as INTER-CLIP transition in 8 canonical refs. IMPORTANT distinction: refs ref-08, ref-10, ref-11, ref-12 all show glitch/flicker effect — but EXCLUSIVELY applied to caption text overlay (e.g., ref-10 'caption rojo glitch HAY ALGO QUE ENZO', ref-12 'caption rojo pixel + flicker', ref-08 'flicker/glitch effect en texto rojo'), NOT as inter-clip transitions. F1 canonical horror-choice does not use digital RGB-split glitches between clips — that aesthetic belongs to cyberpunk/found-footage sub-genres outside the F1 set. Caption-level glitch effect should be implemented separately as a text-overlay effect, not via this inter-clip transition.",
+  "validated_notes": "0/8 F1 canonical inter-clip observations. Caption-level glitch (separate effect class) is present in 4/8 refs but does NOT validate this transition. Keep available for digital-horror/cyberpunk sub-genres with explicit SPEC justification. Consider splitting into 'caption-glitch-text' effect (validated in 4/8) and 'inter-clip-glitch-transition' (0/8) as separate library items."
 }
