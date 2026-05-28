@@ -13,12 +13,48 @@ CURRENT (manual):
   USER triggers each phase → 30-90 min user time/video → ~1 video/semana max
 
 GOAL (autonomous factory):
-  Theme queue → autonomous CP1-CP5 → human checkpoints → MANUAL publish
+  Theme queue → autonomous CP1-CP5 con AUDITOR GATES per CP → human checkpoints → MANUAL publish
   → 3 videos/día sustainable → 90+/mes scale
   → User time: ~10 min/video × 3 = ~30 min/día
 ```
 
 **Critical constraint**: auto-publishing to Instagram = ban risk. Last mile stays manual. User reviews finished render + clicks publish.
+
+## 1.5 ⛔⛔ CRITICAL — Per-CP auditor gates MANDATORY (post 2026-05-21 V3 failure lesson)
+
+V3 iter 1 producía 15 bugs at once porque engineer spawned as single agent CP1→CP5 autonomous sin auditor gates entre. User found at end + costoso iter 2 reassembly needed.
+
+**HARD architectural rule**: orchestrator MUST spawn engineer as ONE agent per CP, con auditor gate spawn between each:
+
+```
+orchestrator.py per video:
+  spawn architect_agent(theme) → SPEC.yaml
+  spawn auditor_agent(audit SPEC vs PAUTA) → PASS/NB/FAIL verdict ⭐ GATE
+  user_approval_gate(SPEC) ← CHECKPOINT 1
+  
+  spawn engineer_agent(CP1 anchors) → CP1-handoff.md
+  spawn auditor_agent(audit CP1) → verdict ⭐ GATE
+  if FAIL → re-spawn engineer CP1 (iter), max 3 attempts
+  
+  spawn engineer_agent(CP2 TTS) → CP2-handoff.md
+  spawn auditor_agent(audit CP2) → verdict ⭐ GATE
+  
+  spawn engineer_agent(CP3 shots) → CP3-handoff.md
+  spawn auditor_agent(audit CP3) → verdict ⭐ GATE
+  
+  spawn engineer_agent(CP4 animation) → CP4-handoff.md
+  spawn auditor_agent(audit CP4) → verdict ⭐ GATE
+  
+  spawn engineer_agent(CP5 render) → renders/draft.mp4
+  spawn auditor_agent(final audit) → verdict ⭐ GATE (calibrated v4 + sentinels + audit-spec)
+  
+  user_checklist_gate(render) ← CHECKPOINT 2
+  user_publish_manual() ← CHECKPOINT 3 (anti-ban)
+```
+
+**Why this matters**: bug detection cost scales linearly per CP vs exponentially at end-of-pipeline. Catching missing decision UI at CP2 = 5 min fix vs catching at CP5 = full reassembly hour.
+
+**Forward implementation**: `scripts/orchestrator-cp-by-cp.py` enforces this pattern. No "execute end-to-end" allowed.
 
 ---
 

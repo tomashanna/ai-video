@@ -17,12 +17,18 @@ renders/
 
 # PRE-4.1+ excluded paths (local-only artifacts, snapshots, large archives)
 # Sub-fase 3A close 2026-05-27: replace stale root project paths with archive + snapshot exclusions
-_shakedown-v4-pipeline-validation/    # 361 MB local pipeline validation (post-V4 shakedown)
-_snapshot-pre-cleanup-tier2/          # 373 MB local rollback snapshot (Tier 2 cleanup)
-_snapshot-pre-sub-fase-3A/            # 372 KB obsolete post-3A close
-_archive-legacy-projects/             # 15 GB old project dirs (relocated from root)
-_archive-phase3-v3-learning/          # 1.2 GB V3 cycle archive (research learning)
 
-# Canonical reference videos kept LOCAL (large, not for repo)
+# Local pipeline validation (361 MB, post-V4 shakedown)
+_shakedown-v4-pipeline-validation/
+
+# Local rollback snapshots (Tier 2 cleanup + pre-3A obsolete)
+_snapshot-pre-cleanup-tier2/
+_snapshot-pre-sub-fase-3A/
+
+# Large archives (old projects 15 GB + V3 learning 1.2 GB — kept local only)
+_archive-legacy-projects/
+_archive-phase3-v3-learning/
+
+# Canonical reference videos kept LOCAL (too large for repo)
 videosref_elige_tu_compa/
 Videos referencia/
