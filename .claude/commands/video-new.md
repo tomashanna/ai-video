@@ -28,7 +28,7 @@ Vas a crear un video nuevo. Antes de hacer NADA, leé en orden los siguientes do
 8. <repo-root>/.claude/skills/<genre>-format/PATTERNS.md § 6 + § 6.5
 9. <repo-root>/.claude/skills/<genre>-format/PAUTA-MASTER.md (autoridad empírica derivada de 8 videos canónicos)
 10. ⭐ <repo-root>/.claude/skills/<genre>-format/video-log.md (AUTORITATIVO para rotación pattern)
-11. <repo-root>/.claude/skills/<genre>-format/INTRO-FORMULA-V15.md (si genre=horror-choice + delivery=reel)
+11. <repo-root>/.claude/skills/<genre>-format/INTRO-FORMULA.md (si genre=horror-choice + delivery=reel)
 12. <repo-root>/.claude/skills/<genre>-format/BOOTSTRAP-NEW-PROJECT.md § 9.a + 9.b
 13. <repo-root>/.claude/skills/video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md
 14. <repo-root>/.claude/skills/ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + IMAGE-VARIETY.md + MOTION-LAYER.md + SFX-PIPELINE.md + QA.md
@@ -109,7 +109,7 @@ Ejecutar todas las fases sin frenar:
 3. Imágenes de escenas (con `--ref` a anchors)
 4. SFX (chequear `library/` primero, generar solo lo faltante)
 5. Whisper captions (post-procesar para eliminar opacity:0 intermedios)
-6. index.html con HTML + GSAP + INTRO-FORMULA-V15
+6. index.html con HTML + GSAP + INTRO-FORMULA
 7. **Los 5 gates obligatorios**:
    - `npx hyperframes lint`
    - `.venv/bin/python scripts/audit-narrative.py`

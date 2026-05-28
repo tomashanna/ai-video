@@ -2,7 +2,29 @@
 
 > Una fila por video producido. Antes de empezar un nuevo brief: leer las últimas 3 filas. **La combinación apariencia × verdad del próximo video DEBE ser diferente a los 3 últimos (matriz expandida § 3.5 desde 2026-05-13).**
 
-**Última actualización**: 2026-05-13
+**Última actualización**: 2026-05-27 (GAP #10 nomenclature reconciliation)
+
+---
+
+## ⚠️ NOMENCLATURA CANONICAL — reconciliación GAP #10 (2026-05-27)
+
+**Source of truth de pattern numbering = `PAUTA-MASTER.md` (P1/P2/P3/P6/P9 empíricos, derivados de 8 refs canónicos).** El P-numbering histórico de este log (P4 Paz perdida / P6 Trampa simétrica / P10 Inversión total / Meta-cliffhanger) viene del **ex-CREATIVE-BRIEF DEPRECATED** y usa una taxonomía DISTINTA (matriz apariencia×verdad) donde los **mismos números significan otra cosa** (ej: P6 = "Trampa simétrica" acá vs "Hedonismo eterno" en PAUTA-MASTER). NO es mero renaming — son dos taxonomías incompatibles con números colisionando. PAUTA-MASTER ya adjudicó: estos son los únicos observados.
+
+**Taxonomía CANONICAL forward (PAUTA-MASTER — usar SOLO esta para rotación HR#14):**
+
+| Pattern | Significado (empírico, 8 refs) | Refs |
+|---------|--------------------------------|------|
+| **P1 — Verdad visible** | El obvio peligroso ES peligroso | ref-03/06/08/10/12 |
+| **P2 — Supervivencia si manejás bien** | Peligroso sobrevivible con decisiones correctas | ref-03 |
+| **P3 — Seguro era trampa** | Bueno aparente era el peligro real | ref-08 |
+| **P6 — Hedonismo eterno** | "Bueno" lleva a placer pero perdés el objetivo | ref-13 |
+| **P9 — Peligroso te ayuda** | El amenazante es el que te salva | ref-09 |
+
+**P4 / P5 / P10 / Meta-cliffhanger (taxonomía vieja) = NO observados en los 8 refs → DEPRECATED, NO usar forward.**
+
+**Mapeo histórico:** la tabla maestra abajo (#1-#6) usa taxonomía DEPRECATED — se deja **as-is como registro histórico** (esos videos se produjeron bajo la taxonomía vieja; re-taggear sería revisionista). Solo #7 matadero "P6 Hedonismo Eterno" ya está en taxonomía canonical PAUTA-MASTER.
+
+**Rotación V5 (HR#14), sin ambigüedad:** matadero (#7) = **P6 Hedonismo** (canonical) → **V5 NOT P6**. Patterns canonical NO usados por nosotros = **P1, P2, P3, P9** → V5 elige cualquiera de esos. (Las "Reglas de rotación" más abajo con nombres Paz perdida/Trampa/Inversión son DEPRECATED — usar esta tabla.)
 
 ---
 
@@ -19,6 +41,31 @@
 | 5 | 2026-05-13 | `cabana-tormenta` v5 | **P6 — Trampa simétrica** (asimétrica + M/M — KRAVEN/MARCO) | (hardcoded) | (hardcoded) | — | "Decente / muy bueno" | Pre-Kling — setup retroactivo H3→H6 |
 | 6 | 2026-05-13 | `isla-faro` v1 | **P6 — Trampa simétrica** ⚠️ (repetido vs #5) | (hardcoded) | (hardcoded) | — | 9.3/10 | Paró pre-Kling en 9.3 (anti-pattern) |
 | 7 | 2026-05-20 | `matadero-banquete` v1 SHIP | **P6 Hedonismo Eterno** (Cocinera trap eterno cliffhanger — DIFFERENT from #5/#6 P6 Trampa simétrica) | FILM LEADER ACADEMY AVU (canonical correction) | horizontal Y52 | — | **10.0/10** | ✅ SHIPPED 2026-05-20 + 18 gaps codified |
+
+---
+
+## Cross-video uniqueness fields — schema + backfill (BUILD 3 PRE-4.J 2026-05-27)
+
+> Schema enriquecido para soportar `audit-spec-narrative-coherence.py` (cross-video tracking). V5+ SPEC declara `location` + `signature_staging` pre-emit; el validator compara V5 contra estas filas:
+> - **location**: exact-match → FAIL (no repetir lugar específico cross-video)
+> - **signature_staging**: semantic similarity (paraphrase-multilingual-MiniLM-L12-v2) → ≥0.85 hard-block / 0.75-0.84 flag architect review
+> - Verbs de acción + characters: NO check (catálogo válido + repetibles per refinement Tomás 2026-05-27)
+>
+> Backfill #1-#7 = **estimaciones honest** desde titles + descriptions del log (videos previos no tienen content full re-accesible). Confidence per row indicado. Forward rows (#8+) declaran fields al producirse (HIGH confidence).
+
+| # | Proyecto | location | signature_staging | Confidence |
+|---|----------|----------|-------------------|------------|
+| 1 | `elige-companero` V7 | legacy uncertain — origin de la serie | legacy uncertain — descripción no captura staging completo | LOW (legacy log, pre-schema) |
+| 2 | `bosque-abandonado` v3 | bosque abandonado nocturno | figura amenazante emerge entre árboles muertos del bosque oscuro | LOW-MED (estimate from title) |
+| 3 | `mina-abandonada` v6 | mina subterránea abandonada | descenso POV con casco LED encuentra figura al fondo del túnel | LOW-MED (estimate) |
+| 4 | `mina-abandonada` v15-final | mina subterránea abandonada (mismo proyecto que #3 — iter, NO cross-video repeat) | descenso POV iterado del túnel con choice H1-H6 | LOW-MED (estimate, iter de #3) |
+| 5 | `cabana-tormenta` v5 | cabaña montaña en tormenta nocturna | dos figuras KRAVEN/MARCO buscan refugio en cabaña aislada durante tormenta nocturna | LOW-MED (estimate from title) |
+| 6 | `isla-faro` v1 | isla con faro abandonado | aislamiento en isla con faro como punto de elección entre dos figuras presentes | LOW-MED (estimate) |
+| 7 | `matadero-banquete` v1 SHIP | matadero refrigerado -30°C turno noche 2-6 AM | matarife casco-cuchillo en patio matadero + cocinera Kate BFP entre carcasas hanging — banquete eterno trampa P6 Hedonismo | HIGH (descripción rica en log) |
+
+**Validator parsing**: el script lee esta tabla (parser regex sobre filas que matchean `| <N> | ...`) y extrae `(num, project, location, signature_staging, confidence)`. LOW-confidence rows participan en comparación pero el validator anota explícitamente low-confidence en el output (false-positive risk + tunear thresholds empíricamente post 5-10 videos forward-declared HIGH).
+
+**Forward rows (#8+):** producir con location + signature_staging declarados al ship, confidence HIGH (escritos al momento, no backfill).
 
 ---
 

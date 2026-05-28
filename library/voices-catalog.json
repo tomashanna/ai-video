@@ -7,6 +7,55 @@
   "default_voice_note": "Oxley Evil Character validated 2026-05-18 post matadero CP2 (user listen test PASS + M7.7.5 PASS Track A Path 2a SoX). Reemplaza Tj9l48J9 deprecated 2026-05-18.",
   "default_voice_DEPRECATED_2026_05_18": "Tj9l48J9AJbry5yCP5eW",
   "deprecation_reason": "User listen test matadero CP2 2026-05-18 refutó canonical compliance. Voice character (susurro grave + lento natural) NO matches canonical viral narrators (LatAm energetic conversational). Per CLAUDE.md hard rule #19 expansion 2026-05-18, voice IDs validated solo en nuestras producciones (V7 + bosque v1) NO son default canonical viable.",
+  "v5_narrator_strategy_2026_05_27": {
+    "context": "BUILD 9 PRE-4.J post WebSearch research 2026-05-27. Decisión Tomás B: pre-V5 A/B test Eleguar (energetic LatAm shorts/social) vs José Latam Neutral Warm (safe default) en v3 model con settings community-recommended para 'moderate-energetic conversational horror narrator' (TikTok-style, NOT theatrical, NOT monotone).",
+    "model_recommended": "eleven_v3 (GA Feb 2026 — flagship expressive narration, 70+ langs incl. Spanish, supports inline audio tags [whispers] [nervous]. Stability <=0.5 required to trigger tags. Latency 2-3x v2 — fine para offline render).",
+    "settings_recommended": {
+      "stability": 0.45,
+      "similarity_boost": 0.80,
+      "style": 0.35,
+      "use_speaker_boost": true,
+      "rationale": "stability 0.40-0.50 = energetic without instability (>=0.5 = monotone news anchor; <0.4 = unstable). similarity_boost 0.75-0.85 (NOT 1.0 = over-enunciates). style 0.30-0.45 (v3 only, expressiveness)."
+    },
+    "candidates_pending_a_b_test": [
+      {
+        "name": "Eleguar",
+        "label_hint": "Latin American Spanish, excited/dynamic, shorts/social use-case tagged",
+        "rationale_top_pick": "Closest match to TikTok energetic horror narrator per ElevenLabs library tags (excited+dynamic+shorts).",
+        "voice_id": "TBD_from_library_web",
+        "discovery_path": "elevenlabs.io/voice-library filter language=Spanish + accent=Latin American + use-case=narration (browse tiktok-voices too). Direct: https://elevenlabs.io/text-to-speech/latin-american-accent"
+      },
+      {
+        "name": "Jose Latam Neutral Warm",
+        "label_hint": "Latin American Spanish neutral, warm, narration default",
+        "rationale_safe_alt": "Safe default si Eleguar feels too energetic. Neutral baseline LatAm.",
+        "voice_id": "TBD_from_library_web",
+        "discovery_path": "elevenlabs.io/voice-library filter LatAm narrator"
+      }
+    ],
+    "avoid_voices": [
+      {"name": "Javier (Argentine)", "reason": "voseo drift conflicts with feedback_spanish_neutral"},
+      {"name": "Agustin (Buenos Aires)", "reason": "voseo drift, skip"},
+      {"name": "Tj9l48J9AJbry5yCP5eW", "reason": "whisper-grave perfil OPUESTO al energetic-conversational target. Already deprecated 2026-05-18."}
+    ],
+    "a_b_test_protocol": [
+      "1. Browse ElevenLabs voice library → grab exact voice_ids for Eleguar + Jose.",
+      "2. Generate 15-30s sample with REAL V5 SPEC narration text (hook + dilema + cliffhanger).",
+      "3. Apply settings stability=0.45 / similarity=0.80 / style=0.35 / speaker_boost=true.",
+      "4. Compare A vs B perceptually (Tomas listen test — Rule D PRECEDENCE per AUDITOR-PROTOCOL).",
+      "5. Verify M7 acoustic (Whisper re-transcribe + per-segment WPM canonical p25-p75 [152-180] + intelligibility >=0.90).",
+      "6. Pick winner — flip canonical_validation_status to validated + update default_voice for V5+ horror-choice narrator.",
+      "7. If both miss target → consider Instant Voice Clone ($5/mo Starter, 1-5 min sample) as fallback path."
+    ],
+    "v3_pitfalls_2026": [
+      "Audio tags ([whispers], [nervous]) require stability <=0.5 to trigger — high stability ignores them.",
+      "LatAm voces a veces drift hacia Castilian (Spain) en long renders — verify 30s test, atencion c/z sibilants.",
+      "Some Argentine voices ignore neutral input + inject voseo regardless — listen-test mandatory.",
+      "v3 latency 2-3x v2 — fine para offline render, NOT for realtime/streaming."
+    ],
+    "discovery_uncertainty": "Voice IDs alfanumericos NO surfaced en WebSearch 2026-05-27. Tomas toma del library web cuando ejecute A/B. Catalog se actualiza con voice_id real post-test (flip TBD_from_library_web → actual ID).",
+    "role_separation_note": "Oxley (2gPFXx8pN3Avh27Dw5Ma) actual default es creepy character + LatAm baseline 96 WPM — apto matarife/character. Para narrator-tier (TikTok-energetic V5+) NO matchea perfil objetivo. Pre-V5 narrator default = TBD post A/B test (Eleguar / Jose). Matarife OXLEY stays canonical. Cocinera Kate qWWAqFomnJ99VwQLREfT stays canonical."
+  },
   "atempo_rule": "Aplicar atempo per INGENIERO-PAUTA-MASTER § 1.7 measured (per-segment raw_dur/target_dur clamped [0.7, 2.5]) + per-speaker SPEC L660-672 multipliers when applicable (narrator 1.15 / cocinera 1.23 / matarife 1.28 ceiling). Verify post-TTS measure_F1.py methodology vs canonical p25-p75 bands [152.71, 179.84].",
   "atempo_rule_DEPRECATED_2026_05_18": "Aplicar atempo 2.0 con ffmpeg después de generar TTS si la voz es lenta por naturaleza (canónico para Tj9l48J9AJbry5yCP5eW). DEPRECATED — derived from our productions, not canonical refs.",
   "canonical_validation_protocol": {
