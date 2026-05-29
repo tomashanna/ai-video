@@ -147,11 +147,17 @@ def resolve_sting(recipe_dir, sting_path):
     return p if p.exists() else None
 
 
-def build_filtergraph(clips, durs, boundary_recipes):
-    """xfade/concat chain filtergraph (V4 empirical cp5-layer2-concat pattern)."""
+def build_filtergraph(clips, durs, boundary_recipes,
+                      target_w=1080, target_h=1920, target_fps=30):
+    """xfade/concat chain filtergraph (V4 empirical cp5-layer2-concat pattern).
+
+    target_w/target_h/target_fps default to horror-choice canonical (1080x1920 / 30) so
+    SPECs that omit output_resolution/target_fps render byte-identical to pre-C1 behavior
+    (retrocompat MANDATORY, D-editorial-20). Editorial paradigm passes 1920x1080 from
+    video_capabilities.output_resolution. Capability-aware (Pattern 7)."""
     fc = []
     for idx in range(len(clips)):
-        fc.append(f"[{idx}:v]fps=30,scale=1080:1920,setsar=1,format=yuv420p,"
+        fc.append(f"[{idx}:v]fps={target_fps},scale={target_w}:{target_h},setsar=1,format=yuv420p,"
                   f"settb=AVTB,setpts=PTS-STARTPTS[v{idx}n]")
         fc.append(f"[{idx}:a]aresample=async=1:first_pts=0,asettb=AVTB,asetpts=PTS-STARTPTS[a{idx}n]")
 
@@ -190,7 +196,7 @@ def build_filtergraph(clips, durs, boundary_recipes):
     return fc, last_v, last_a, boundaries, cum
 
 
-def run_chain(clips, fc, last_v, last_a, tmp_out):
+def run_chain(clips, fc, last_v, last_a, tmp_out, target_fps=30):
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"]
     for c in clips:
         cmd += ["-i", str(c)]
@@ -198,7 +204,7 @@ def run_chain(clips, fc, last_v, last_a, tmp_out):
         "-filter_complex", ";".join(fc),
         "-map", f"[{last_v}]", "-map", f"[{last_a}]",
         "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k", "-r", "30",
+        "-c:a", "aac", "-b:a", "192k", "-r", str(target_fps),
         str(tmp_out),
     ]
     return subprocess.run(cmd, capture_output=True, text=True)
@@ -369,10 +375,20 @@ def main():
         boundary_recipes.append(rec)
 
     durs = [ffprobe_duration(c) for c in clips]
-    fc, last_v, last_a, boundaries, expected_dur = build_filtergraph(clips, durs, boundary_recipes)
+    # C1 (D-editorial-20): output dims/fps from capabilities. Defaults = horror-choice
+    # canonical (1080x1920 / 30) → byte-identical when flags absent (retrocompat).
+    res = str((caps or {}).get("output_resolution", "1080x1920")).lower()
+    try:
+        target_w, target_h = (int(x) for x in res.split("x"))
+    except ValueError:
+        print(f"WARNING: output_resolution '{res}' unparseable — defaulting 1080x1920.", file=sys.stderr)
+        target_w, target_h = 1080, 1920
+    target_fps = int((caps or {}).get("target_fps", 30))
+    fc, last_v, last_a, boundaries, expected_dur = build_filtergraph(
+        clips, durs, boundary_recipes, target_w, target_h, target_fps)
 
     tmp_out = output.parent / f"{output.stem}.nosting.mp4"
-    r = run_chain(clips, fc, last_v, last_a, tmp_out)
+    r = run_chain(clips, fc, last_v, last_a, tmp_out, target_fps)
     if r.returncode != 0:
         print(f"ERROR: xfade chain failed: {r.stderr[-500:]}", file=sys.stderr)
         return 1

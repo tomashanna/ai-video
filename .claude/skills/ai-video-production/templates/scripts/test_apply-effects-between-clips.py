@@ -382,5 +382,82 @@ class TestAdapterIntegration(unittest.TestCase):
                       "approximate-fidelity recipe must emit WARNING to stderr in real run")
 
 
+def _dimensions(path):
+    r = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream=width,height", "-of", "csv=s=x:p=0", str(path)],
+        capture_output=True, text=True,
+    )
+    w, h = r.stdout.strip().split("x")
+    return int(w), int(h)
+
+
+class TestEditorialOutputResolution(unittest.TestCase):
+    """C1 (D-editorial-20): output_resolution capability drives render dims, NOT hardcode.
+
+    Pre-C1 build_filtergraph hardcoded scale=1080:1920 (vertical). Editorial paradigm
+    declares output_resolution: 1920x1080 → output MUST be horizontal. Retrocompat:
+    omitting the flag must still yield 1080x1920 (covered by TestEffectsProperties fixtures
+    which use 1080x1920 clips + no output_resolution flag → unchanged)."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.clips_dir = Path(self.tmp) / "clips-atomic"
+        self.out_dir = Path(self.tmp) / "concat"
+        self.fx = Path(self.tmp) / "fx"
+        for d in (self.clips_dir, self.out_dir, self.fx):
+            d.mkdir(parents=True)
+        # source clips can be any dims — scale filter forces target. Use 1080x1920 to prove reframe.
+        for i, c in enumerate(["red", "green"], start=1):
+            _make_clip(self.clips_dir / f"shot_0{i}_atomic.mp4", color=c)
+        _make_recipe(self.fx, "xfade-fade-05", 0.5, "fade")
+        self.spec = Path(self.tmp) / "spec.yaml"
+        self.output = self.out_dir / "clips_with_effects.mp4"
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _run_with_resolution(self, res_line, fps_line=""):
+        self.spec.write_text(
+            'schema_version: "v11-editorial-adapt"\n'
+            'video_capabilities:\n'
+            '  source_clips_origin: "pre_existing"\n'
+            '  has_layer_2_effects: true\n'
+            f'{res_line}'
+            f'{fps_line}'
+            'shot_list:\n'
+            '  - shot_id: shot_01\n'
+            '    transition_out: xfade-fade-05\n'
+            '  - shot_id: shot_02\n',
+            encoding="utf-8")
+        return _run(["--format", "editorial", "--spec", str(self.spec),
+                     "--clips-dir", str(self.clips_dir), "--output", str(self.output),
+                     "--effects-dir", str(self.fx)])
+
+    def test_editorial_1920x1080_output_is_horizontal(self):
+        r = self._run_with_resolution('  output_resolution: "1920x1080"\n')
+        self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
+        self.assertTrue(self.output.exists())
+        self.assertEqual(_dimensions(self.output), (1920, 1080),
+                         "output_resolution: 1920x1080 must produce horizontal render (C1)")
+
+    def test_absent_output_resolution_defaults_vertical_retrocompat(self):
+        """Retrocompat: no output_resolution flag → 1080x1920 (pre-C1 hardcode preserved)."""
+        r = self._run_with_resolution("")
+        self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
+        self.assertEqual(_dimensions(self.output), (1080, 1920),
+                         "Absent output_resolution must default to 1080x1920 (retrocompat)")
+
+    def test_target_fps_capability_honored(self):
+        r = self._run_with_resolution('  output_resolution: "1920x1080"\n',
+                                      '  target_fps: 25\n')
+        self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
+        rate = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0",
+             "-show_entries", "stream=r_frame_rate", "-of", "default=noprint_wrappers=1:nokey=1",
+             str(self.output)], capture_output=True, text=True).stdout.strip()
+        self.assertEqual(rate, "25/1", f"target_fps: 25 must yield 25fps output, got {rate}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
