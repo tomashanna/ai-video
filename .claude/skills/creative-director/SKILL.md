@@ -384,6 +384,19 @@ spec_listo_para_handoff: false  # solo true si all_passed = true
 ```
 
 **Si CUALQUIER validación falla (D14-D22) → NO declarar spec listo. Iterar antes.**
+
+### ⛔ Self-validation MANDATORY pre-emit (Hard Rule #27, añadido 2026-05-29 — pattern_class 5/5)
+
+Antes de declarar el SPEC listo para handoff, el arquitecto DEBE **correr los 3 validators de enforcement contra su PROPIO SPEC** (no solo el self-audit D14-D27 cualitativo):
+```bash
+cd <project>/scripts   # o .claude/skills/ai-video-production/templates/scripts
+python3 audit-spec-narrative-coherence.py --format <fmt> --spec <SPEC> --video-log <vlog> --skip-semantic
+python3 audit-spec-narration-fits-duration.py --format <fmt> --spec <SPEC>
+python3 audit-spec-lip-sync-marks.py --format <fmt> --spec <SPEC>
+```
+- Si CUALQUIER validator devuelve **FAIL (exit 1)** → **ITERAR** (corregir el SPEC, re-correr) hasta que los 3 den 🟢 PASS o solo FLAGs aceptables. **NO entregar el SPEC con findings 🔴 known.**
+- Entregar con la línea explícita: **`self_validation: 3/3 validators green (0 FAIL)`** + lista de FLAGs aceptados con razón.
+- ⛔ **Anti-pattern (pattern_class 5/5 `architect_self_flags_gaps_instead_of_iterating_pre_emit`)**: declarar el SPEC "listo" + listar gaps 🔴 conocidos esperando que el auditor/Tomás los triangule. El arquitecto **completa el trabajo antes de pasarlo** al siguiente rol del triángulo (caso disparador V5 sala-limpia 2026-05-29: shot_02 320 WPM + validators no corridos → surfaced en SPEC-AUDIT). Si el auditor recibe un SPEC con 🔴 → RETORNA al arquitecto (no escala a Tomás salvo ambigüedad arquitectural real).
 - [ ] Stakes: ¿Son vitales (muerte/supervivencia)? Si no → escalar
 - [ ] 3 decision points: ¿Tienen ramificación clara A/B con consecuencias visualizables? Si no → repensar
 

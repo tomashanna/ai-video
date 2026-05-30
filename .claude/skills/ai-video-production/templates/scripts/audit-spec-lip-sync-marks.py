@@ -85,16 +85,23 @@ def main():
         has_dialog = bool(nis_d.get("dialog_text") or s.get("dialog_text"))
         has_char_speaker = speaker.startswith("character_") or speaker.startswith("char_")
         character_speaking = has_dialog or has_char_speaker
-        if character_speaking and lsr is False:
+        # CANONICAL EXCEPTION (AUDITOR-PROTOCOL CP4): a faceless character (no mouth — e.g. visor /
+        # mask) delivers dialogue via VOICE-OFF, so lip_sync_required=false is CORRECT, not an
+        # inconsistency. Honored when the shot declares `voice_off: true` OR `faceless_character: true`.
+        # Calca ref-10 (Rurik hazmat sin boca). Without this, V5 Axel (visor) voice-off shots false-FAIL.
+        voice_off = bool(s.get("voice_off") or s.get("faceless_character"))
+        if character_speaking and lsr is False and not voice_off:
             fails.append({
                 "shot_id": sid, "lip_sync_required": False,
                 "reason": ("inconsistency: shot has character speech (dialog_text or speaker=character_*) "
-                           "but lip_sync_required=false → Sync.so layer needed but not flagged"),
+                           "but lip_sync_required=false and no voice_off/faceless_character declared "
+                           "→ Sync.so layer needed but not flagged"),
                 "speaker": speaker, "has_dialog_text": has_dialog,
             })
         else:
             ok.append({"shot_id": sid, "lip_sync_required": lsr,
-                       "character_speaking_detected": character_speaking})
+                       "character_speaking_detected": character_speaking,
+                       "voice_off_exception": voice_off})
 
     overall = "fail" if fails else "pass"
     report = {

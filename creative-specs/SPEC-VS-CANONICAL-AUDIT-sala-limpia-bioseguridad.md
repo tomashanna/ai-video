@@ -87,3 +87,26 @@ Tomás autorizó Opción A: hardening de los 3 validators al schema v11 real (NO
 - **ENFORCEMENT GATE runnability**: 🟢 **RESUELTO** (validators parsean v11; 34/34 tests).
 - **SPEC V5 content**: 🟡 **NB → 1 fix bloqueante** — `shot_02` timing (320 WPM) requiere architect amendment antes de CP1. lip-sync faceless = decisión (refinar validator vs NB). Resto NB aceptable.
 - **CP1 readiness**: 🔴 **NO todavía** — pendiente: (1) architect amend shot_02 duration; (2) decisión lip-sync faceless. Ambos contenidos/rápidos.
+
+---
+
+## UPDATE 2026-05-29 (PM, 2) — fixes aplicados → 🟢 CP1-READY
+
+Tomás autorizó fixes consolidados:
+1. ✅ **Architect amend shot_02**: `duration_intent_s` 4.5→8.5 (320→169 WPM canónico). Total 85.5→**89.5s** (banda 60-90 ✓). + `voice_off: true` en shot_05/shot_15 (Axel faceless). Solo esos campos (scope verificado).
+2. ✅ **lip-sync validator refinado**: excepción `voice_off`/`faceless_character` (AUDITOR-PROTOCOL CP4) + 2 tests. Axel voice-off ya NO false-FAIL.
+3. ✅ **narrative-coherence check_wpm**: downgrade a FLAG advisory (es la banda de ESTILO; la PHYSICS gate es narration-fits) + skip shots con countdown-AVU (duración incluye no-speaking). shot_01 artifact resuelto.
+
+### Re-audit final (amended V5, 3 validators)
+| Validator | Exit | Resultado |
+|-----------|:----:|-----------|
+| narrative-coherence | 0 | cliffhanger/hook/counterfactual/rotation/anti-cliche ✅ · dilema N/A · consequence_framing FLAG (continuation shots, branch marcado en section-head) · WPM FLAG (advisory) → **overall flag, NO fail** |
+| narration-fits-duration | 0 | 🟢 **PASS** (shot_02 169 WPM) |
+| lip-sync-marks | 0 | 🟢 **PASS** (Axel voice_off honored) |
+
+Tests: 20+8+8 = **36 PASS**. D38 intacto.
+
+### Verdict FINAL
+- **CONTENT** 🟢 PASS · **ENFORCEMENT GATE** 🟢 PASS (3/3 exit 0; solo 2 FLAGs advisory documentados) · **MODEL-BEHAVIOR-LOG** ✅.
+- 🟢 **SPEC V5 sala-limpia-bioseguridad CP1-READY.** → CP1 anchors (Axel + Hugo + viewer-hands POV) autorizado.
+- FLAGs residuales (NB, no bloquean): consequence_framing continuation shots (rama marcada en section-head) + WPM stylistic (shot_03 marginal, shot_05 dialog-heavy) — re-verificados en CP2 con TTS real (M7 acoustic per-segment).

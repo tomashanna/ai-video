@@ -87,6 +87,34 @@ class TestLipSyncMarks(unittest.TestCase):
         self.assertIn("inconsistency", r.stdout.lower())
         self.assertIn("shot_dialog_no_marker", r.stdout)
 
+    def test_voice_off_exception_passes(self):
+        # Faceless character (Axel visor) speaks via VOICE-OFF: dialog + lip_sync false + voice_off
+        # → CANONICAL exception (AUDITOR-PROTOCOL CP4, calca ref-10 Rurik). Must PASS, not FAIL.
+        ok = """shot_list:
+  - shot_id: shot_axel_voiceoff
+    has_lip_sync_required: false
+    voice_off: true
+    narration_in_this_shot: "Axel se acerca a la campana de flujo."
+    dialog_text: "Sostenlo a la luz."
+"""
+        _write_spec(self.spec, shot_yaml=ok)
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 0, f"voice_off exception must pass.\nstdout {r.stdout}")
+        self.assertIn("\"pass\"", r.stdout)
+
+    def test_faceless_character_exception_passes(self):
+        ok = """shot_list:
+  - shot_id: shot_faceless
+    has_lip_sync_required: false
+    faceless_character: true
+    narration_in_this_shot:
+      speaker: character_a
+      dialog_text: "Métete y respira hondo"
+"""
+        _write_spec(self.spec, shot_yaml=ok)
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 0, f"faceless_character exception must pass.\nstdout {r.stdout}")
+
 
 _V11_STRING_SCHEMA = """schema_version: "v11.1"
 video_capabilities:

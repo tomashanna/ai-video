@@ -194,6 +194,7 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | 24 ⛔⛔ | Auditor enforce CP-by-CP gates MANDATORY (engineer multi-CP autonomous FORBIDDEN) | universal | `AUDITOR-PROTOCOL § 6 anti-pattern #15` |
 | 25 ⛔⛔ | HYBRID architecture canonical V4+ (captions BURNED per clip + narrator continuous Layer 3) | `has_captions_baked` | `PIPELINE.md § 13.9` |
 | 26 ⛔ | Tests adversariales obligatorios (`test_*.py` companion per new script) | universal | `BOOTSTRAP.md § script copy list` + Sprint M |
+| 27 ⛔ | Arquitecto entrega SPEC con **0 findings 🔴 known** (self-validation pre-emit: corre los validators contra su PROPIO SPEC + itera hasta 🟢; NO entrega con gaps 🔴 declarados). Auditor que recibe SPEC con 🔴 → **RETORNA al arquitecto**, NO escala a Tomás salvo ambigüedad arquitectural real | universal | `creative-director/SKILL.md` § self-validation + `CP2-script-flow.md` + `AUDITOR-PROTOCOL §6 #17` |
 
 > ⚠️ **#22 = empty slot** (accidental skip 2026-05-21, blast radius 54 refs externos > beneficio cosmético). Detalle Numbering note → `HARD-RULES.md`.
 

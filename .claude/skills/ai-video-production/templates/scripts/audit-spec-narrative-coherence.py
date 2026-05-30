@@ -249,8 +249,12 @@ def check_consequence_framing(consequence_shots):
 
 
 def check_wpm(shot_list):
-    failures = []
+    outliers = []
     for s in shot_list:
+        # Shots carrying a countdown AVU overlay include NON-speaking time in duration_intent_s →
+        # WPM from full duration is misleading (e.g. hook with 3s countdown). Skip.
+        if "countdown" in str(s.get("avu_overlay_clip") or "").lower():
+            continue
         role = _beat_role(s) or "default"
         txt = _narr_text(s)
         dur = s.get("duration_intent_s")
@@ -260,10 +264,14 @@ def check_wpm(shot_list):
         wpm = words / float(dur) * 60
         lo, hi = _wpm_band_for(role)
         if not (lo <= wpm <= hi):
-            failures.append(f"{s.get('shot_id', '?')}(role={role}): {wpm:.0f}WPM ∉ [{lo},{hi}]")
-    if failures:
-        return gate("structure_wpm", "fail", f"WPM out of band: {failures[:3]}")
-    return gate("structure_wpm", "pass", "all shots WPM within per-role canonical bands")
+            outliers.append(f"{s.get('shot_id', '?')}(role={role}): {wpm:.0f}WPM ∉ [{lo},{hi}]")
+    if outliers:
+        # STYLE band (per-role canonical pace), ADVISORY only → FLAG. The blocking PHYSICS gate is
+        # audit-spec-narration-fits-duration.py (WPM > 280 = TTS can't deliver = FAIL). A stylistic
+        # deviation (dialog-heavy shot, marginal pace) should not hard-block. (pattern_class lens.)
+        return gate("structure_wpm", "flag",
+                    f"WPM stylistic-band advisory (blocking physics gate = narration-fits-duration): {outliers[:5]}")
+    return gate("structure_wpm", "pass", "all shots WPM within per-role canonical stylistic bands")
 
 
 def check_location_exact(spec_loc, prior_rows):

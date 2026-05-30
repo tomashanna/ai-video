@@ -235,8 +235,9 @@ class TestStructure(unittest.TestCase):
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("counterfactual", r.stdout.lower() + r.stderr.lower())
 
-    def test_wpm_out_of_band_fails(self):
-        # Insert a shot with extremely high WPM: 20 words / 1.0s = 1200 WPM
+    def test_wpm_out_of_band_flags(self):
+        # WPM is the STYLE band (advisory) → out-of-band FLAGs (exit 0), not FAIL. The blocking
+        # PHYSICS gate (WPM>280) lives in audit-spec-narration-fits-duration.py. 20w/1.0s=1200 WPM.
         bad_shot_list = CLEAN_SHOT_LIST_YAML + """  - shot_id: shot_99
     beat_role: setup
     duration_intent_s: 1.0
@@ -244,8 +245,9 @@ class TestStructure(unittest.TestCase):
       narrator_text: "uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciseis diecisiete dieciocho diecinueve veinte"
 """
         r = self._run_clean(shot_list_yaml=bad_shot_list)
-        self.assertNotEqual(r.returncode, 0)
-        self.assertIn("wpm", r.stdout.lower() + r.stderr.lower())
+        self.assertEqual(r.returncode, 0, f"WPM style band must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
+        self.assertIn("flag", r.stdout.lower())
+        self.assertIn("wpm", r.stdout.lower())
 
 
 class TestCrossVideoUniqueness(unittest.TestCase):

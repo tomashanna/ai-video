@@ -730,6 +730,10 @@ Después de la tabla, el auditor concluye con UNO de:
 
 ---
 
+17. ⛔ **Complete the work before passing it to the next triangle role** (added 2026-05-29, Hard Rule #27, pattern_class 5/5 `architect_self_flags_gaps_instead_of_iterating_pre_emit`). Un rol NO entrega trabajo con findings 🔴 conocidos esperando que el siguiente rol los triangule. **Arquitecto**: corre los 3 validators (narrative-coherence + narration-fits-duration + lip-sync-marks) contra su PROPIO SPEC pre-emit + itera hasta 0 FAIL. **Auditor que recibe un SPEC con 🔴** → **RETORNA al arquitecto** (no escala a Tomás salvo ambigüedad arquitectural real); el auditor NO "arregla" el SPEC ni triangula gaps que el arquitecto debió resolver. **Caso disparador**: V5 sala-limpia 2026-05-29 — arquitecto declaró "self-audit all PASS" sin correr los validators → SPEC-AUDIT surfació shot_02 320 WPM + 3 schema crashes que el self-audit cualitativo no detectó. **Corolario auditor (instance 4/5)**: en cada SPEC-AUDIT, CORRER los validators contra el SPEC real (no confiar en el "PASS" del arquitecto).
+
+---
+
 ## 7. Independencia de juicio — separación de 3 terminales
 
 El auditor vive en su **propio terminal** sin contexto del arq/ing. Esto es estructural, no opcional.

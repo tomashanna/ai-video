@@ -58,6 +58,8 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP2:
 | A5 | Matarife audio listen test pre-CP4 obligatorio | SPEC engineer_test_criteria L1385 per-segment validation |
 | A6 | Per-segment WPM band compliance | INGENIERO-PAUTA § 1.1 [153-180] p25-p75 |
 
+> ⛔ **FLOW pre-emit (Hard Rule #27, 2026-05-29):** el arquitecto corre los 3 validators (narrative-coherence + narration-fits-duration + lip-sync-marks) contra su PROPIO SPEC ANTES de entregar, e itera hasta 0 FAIL. NUEVO flow = `Architect → self-validate (3 validators) → iterate hasta 🟢 → entrega`. NO el viejo `Architect → entrega con gap → Auditor corre validators → Tomás triangula`. Si el auditor recibe SPEC con 🔴 → RETORNA al arquitecto (no escala a Tomás salvo ambigüedad arquitectural real). Pattern_class 5/5 `architect_self_flags_gaps_instead_of_iterating_pre_emit`.
+
 **Plus structural CP2 audit**:
 - Consequence framing marca rama en TODAS las consequence narrations — 🟩 variabilidad ("Si la enciendes"/"Si decides"/"Si elegiste a <Nombre>"), 🟥 NO bare label "Si elegiste A" (validation D19, corregido 2026-05-29)
 - Visual matches narration LITERAL (D20 forward CP3)
