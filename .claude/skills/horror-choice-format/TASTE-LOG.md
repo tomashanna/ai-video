@@ -171,6 +171,19 @@ Cualquiera de las opciones requiere arquitectura nueva — NO es ajuste cosméti
 
 ---
 
+## Entry #2 — 2026-05-30 — V5 `sala-limpia-bioseguridad` SHIPPED ("muy bueno") + ajustes forward V6
+
+**Veredicto Tomás V5**: "brutal… muy bueno" tras cerrar 3 bugs forenses (si-elegiste framing, audio truncation, caption coverage). Aprobado.
+
+**Ajustes pequeños pedidos para V6+ (aplicar en SPEC/engine):**
+1. ⭐ **Name labels del hook MÁS GRANDES.** Los labels de personaje (Axel/Hugo, Y11.5) deben aparecer en letra más grande al inicio. → subir `fontsize` en `drawtext_namelabels()` (engine) + codificar tamaño canónico en INGENIERO-PAUTA name-label spec. (V5 quedaron chicos para el gusto de Tomás.)
+2. ⭐ **MÁS SFX, especialmente GRITOS al morir.** Cada consequence-A fatal (body horror = muerte/daño) debe tener un SFX de grito/agonía + más densidad de SFX en general (canonical refs tienen 30-40 SFX, sound design denso). → architect agrega `scream`/`agony` SFX por shot fatal en `asset_list.sfx_prompts_to_generate`; engineer mux. (V5 tenía SFX por acción pero faltaban gritos de muerte.)
+
+**Why**: estos son los detalles de "felt quality" que separan canónico de promedio (TASTE-LOG raison d'être). Sound design denso + labels legibles = más inmersión + scroll-stop.
+**How to apply V6**: el arquitecto los incorpora en el SPEC FASE 0 (name_label_fontsize_intent + scream SFX per fatal shot); el ingeniero ejecuta.
+
+---
+
 ## Emergent patterns to watch in next entries
 
 (Después de 2-3 entries más vamos a iterar el formato real. Por ahora estos son patterns a verificar si recurren.)

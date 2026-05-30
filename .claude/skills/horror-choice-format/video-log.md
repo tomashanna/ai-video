@@ -41,6 +41,9 @@
 | 5 | 2026-05-13 | `cabana-tormenta` v5 | **P6 — Trampa simétrica** (asimétrica + M/M — KRAVEN/MARCO) | (hardcoded) | (hardcoded) | — | "Decente / muy bueno" | Pre-Kling — setup retroactivo H3→H6 |
 | 6 | 2026-05-13 | `isla-faro` v1 | **P6 — Trampa simétrica** ⚠️ (repetido vs #5) | (hardcoded) | (hardcoded) | — | 9.3/10 | Paró pre-Kling en 9.3 (anti-pattern) |
 | 7 | 2026-05-20 | `matadero-banquete` v1 SHIP | **P6 Hedonismo Eterno** (Cocinera trap eterno cliffhanger — DIFFERENT from #5/#6 P6 Trampa simétrica) | FILM LEADER ACADEMY AVU (canonical correction) | horizontal Y52 | — | **10.0/10** | ✅ SHIPPED 2026-05-20 + 18 gaps codified |
+| 8 | 2026-05-30 | `sala-limpia-bioseguridad` (V5) | **P1 — Verdad visible** (Axel = peligroso obvio ES letal; obedecerlo mata) · **DOBLE-MONSTRUOSA** (1er video con esa apariencia, territorio virgen) | FILM LEADER ACADEMY AVU | Y52 | — | aprobado Tomás "muy bueno" | ✅ SHIPPED 2026-05-30 · narrador David C2 · 3 bugs forenses fixed (si-elegiste→acción HR-correcto / audio-trunc→MATRIX HR#28-29 / caption-coverage→HR#30) |
+
+> ⚠️ **Nota rotación (gap de log)**: entre #7 (matadero P6) y #8 (V5 P1) se produjeron `cinema-abandonado` (P3), `cerro-aislado-v4` (P2) y `parque-acuatico` (P6/P9 hybrid) que NO se loguearon acá. **Rotación REAL reciente (de specs): P6 → P3 → P2 → P1.** **Rotación V6 (HR#14): V6 ≠ P1** (recién usado en V5). Pattern canónico nunca usado PURO = **P9 (Peligroso te ayuda)** → recomendado para V6. Alternativas: P2/P3 (usados hace varios videos). Apariencia: doble-monstruosa estrenada en V5; **doble-amable sigue virgen** (anti-fatiga para V6).
 
 ---
 
@@ -62,6 +65,7 @@
 | 5 | `cabana-tormenta` v5 | cabaña montaña en tormenta nocturna | dos figuras KRAVEN/MARCO buscan refugio en cabaña aislada durante tormenta nocturna | LOW-MED (estimate from title) |
 | 6 | `isla-faro` v1 | isla con faro abandonado | aislamiento en isla con faro como punto de elección entre dos figuras presentes | LOW-MED (estimate) |
 | 7 | `matadero-banquete` v1 SHIP | matadero refrigerado -30°C turno noche 2-6 AM | matarife casco-cuchillo en patio matadero + cocinera Kate BFP entre carcasas hanging — banquete eterno trampa P6 Hedonismo | HIGH (descripción rica en log) |
+| 8 | `sala-limpia-bioseguridad` (V5) | laboratorio BSL-4 sellado por cuarentena nocturna, luz UV violeta clínica | Axel hazmat visor-domo con 3 respiradores + Hugo filiforme translúcido venas cian glowing UV, dyad doble-monstruosa entre campana de flujo / autoclave / ducha descontaminación | HIGH |
 
 **Validator parsing**: el script lee esta tabla (parser regex sobre filas que matchean `| <N> | ...`) y extrae `(num, project, location, signature_staging, confidence)`. LOW-confidence rows participan en comparación pero el validator anota explícitamente low-confidence en el output (false-positive risk + tunear thresholds empíricamente post 5-10 videos forward-declared HIGH).
 
