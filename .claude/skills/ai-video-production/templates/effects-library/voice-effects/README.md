@@ -1,8 +1,11 @@
 # Voice Effects Presets — creepy effects library
 
-> **Library de presets reusables para procesar voces TTS** con efectos creepy/horror. 10 presets canónicos covering matarife, cocinera, ghost, ultratumba, demon, possessed child, radio static, distant echo, vampire whisper, phone call. Reusable cross-project via `apply-voice-preset.py`.
+> **Library de presets reusables para procesar voces TTS** con efectos creepy/horror. 10 presets documentados: 4 user-validated en listen test 2026-05-27 (ghost/ultratumba/demon/possessed) + 2 matadero-validated en contexto original (matarife/cocinera) + 4 recipe-archived (static_radio/distant_echo/vampire_whisper/phone_call). Reusable cross-project via `apply-voice-preset.py`.
 
-**Status**: ✅ 2 validated (matarife + cocinera matadero CP2) + 🟡 8 pending user test 2026-05-27.
+**Status post listen-test 2026-05-27**:
+- ✅ **4 user-validated** (Oxley dry base): `ghost_whisper`, `ultratumba_cavernoso`, `demon_growl`, `possessed_child`
+- 🟡 **2 contextually-validated** (matadero CP2 original): `matarife_canonical`, `cocinera_warm` — failed Oxley-dry standalone test (context mismatch, NOT recipe fault). Re-test con voz correcta antes de revival.
+- 📁 **4 recipe-archived** (rejected user test 2026-05-27): `static_radio_old`, `distant_echo`, `vampire_whisper`, `phone_call_horror` — recipes kept como forensic record para futuras producciones que requieran intent específico.
 
 ---
 
@@ -29,21 +32,39 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 
 ## Listening samples
 
-`samples/` contains demos generated 2026-05-27 from Oxley base (`2gPFXx8pN3Avh27Dw5Ma`, 94 WPM raw):
+Binarios viven en `library/voice-effects-presets/samples/` (NO en este skill folder — separación catalog/script aquí, artefactos binarios en library/). 5 archivos validados:
 
-| File | Preset | Listen for |
-|------|--------|-----------|
-| `_base_oxley_dry.mp3` | DRY (baseline) | Reference unprocessed |
-| `matarife_canonical_demo.mp3` | matarife_canonical | Industrial grave + flanger |
-| `cocinera_warm_demo.mp3` | cocinera_warm | Intimate warm echo |
-| `ghost_whisper_demo.mp3` | ghost_whisper | Airy floating layer |
-| `ultratumba_cavernoso_demo.mp3` | ultratumba_cavernoso | Cripta + grave + lowpass |
-| `demon_growl_demo.mp3` | demon_growl | Octave down + distortion |
-| `possessed_child_demo.mp3` | possessed_child | Pitch up + chorus modulation |
-| `static_radio_old_demo.mp3` | static_radio_old | Radio lo-fi + bitcrush |
-| `distant_echo_demo.mp3` | distant_echo | Múltiples ecos + lowpass |
-| `vampire_whisper_demo.mp3` | vampire_whisper | Bass boost + micro reverb intimate |
-| `phone_call_horror_demo.mp3` | phone_call_horror | EQ telephone 400-3400Hz + phaser |
+| File | Preset | Status | Listen for |
+|------|--------|--------|-----------|
+| `_base_oxley_dry.mp3` | DRY baseline | reference | Voz Oxley raw 15.3s sin procesamiento (94 WPM) |
+| `ghost_whisper_demo.mp3` | ghost_whisper | ✅ validated 2026-05-27 | Airy floating layer ethereal |
+| `ultratumba_cavernoso_demo.mp3` | ultratumba_cavernoso | ✅ validated 2026-05-27 | Cripta + grave + lowpass |
+| `demon_growl_demo.mp3` | demon_growl | ✅ validated 2026-05-27 | Octave down + distortion |
+| `possessed_child_demo.mp3` | possessed_child | ✅ validated 2026-05-27 | Pitch up + chorus modulation |
+
+## Revival demos 2026-05-29 (matarife + cocinera fair-context)
+
+Re-generados en contexto correcto post-feedback Tomás:
+
+| File | Voice | Atempo | Text | Status |
+|------|-------|--------|------|--------|
+| `matarife_canonical_revival_2026_05_29.mp3` | Oxley | 1.6× | "Hoy la carne está fresca..." | 🟡 revival_pending_user_test_2026_05_29 |
+| `cocinera_warm_revival_2026_05_29.mp3` | Kate BFP | 1.23× | "Pasa querido, la cena..." | 🟡 revival_pending_user_test_2026_05_29 |
+
+**Si Tomás listen test confirma estos** → flip catalog `revival_validated_2026_05_29` + reusable en SPECs V5+. Si fail también en fair context → recipe-archived definitivo.
+
+## Recipe-archived presets (rejected user test 2026-05-27)
+
+Recipes kept en catalog como forensic record. Sample binaries deleted post listen test. Re-validable en contexto correcto si futuras producciones requieren el intent:
+
+| Preset | Why archived | Context for potential revival |
+|--------|--------------|-------------------------------|
+| `matarife_canonical` | Test base Oxley DRY ≠ matadero original context (atempo 1.6× + matarife text) | Re-test con Oxley + matarife-specific text + atempo. Matadero CP2 M7.7.5 PASS sigue como authority en su contexto original. |
+| `cocinera_warm` | Aplicado a Oxley masculino — preset diseñado para Kate femenina warm | Re-test con Kate (`qWWAqFomnJ99VwQLREfT`) + cocinera text + atempo 1.23×. |
+| `static_radio_old` | Recipe ffmpeg correcto pero outcome no calzaba percepción "radio rota" | Si SPEC futuro pide walkie-talkie/transmisión rota → re-genera demo + re-evaluate |
+| `distant_echo` | Echos sonaron retro/cheesy en lugar de "llamado lejano" canonical | Si SPEC futuro pide bosque/cueva calling pattern → re-evaluate con texto+intent diferente |
+| `vampire_whisper` | Oxley base ya es character-creepy → preset adicional redundant | Re-test con voz base neutral (Eleguar/Ignacio) — el "grave-cercano" puede emerger sobre voz limpia |
+| `phone_call_horror` | EQ telephone funciona pero texto genérico no genera cue "llamada" contextual | Re-test con texto que SUENE a llamada (pregunta urgente directa) + voz neutral |
 
 ## Integración SPEC schema (arquitecto V5+)
 
@@ -134,25 +155,22 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 ## Files
 
 ```
-voice-effects/
-├── README.md                 (this file)
-├── presets-catalog.json      (10 presets canonical)
-└── samples/
-    ├── _base_oxley_dry.mp3   (15.3s reference)
-    ├── matarife_canonical_demo.mp3
-    ├── cocinera_warm_demo.mp3
-    ├── ghost_whisper_demo.mp3
-    ├── ultratumba_cavernoso_demo.mp3
-    ├── demon_growl_demo.mp3
-    ├── possessed_child_demo.mp3
-    ├── static_radio_old_demo.mp3
-    ├── distant_echo_demo.mp3
-    ├── vampire_whisper_demo.mp3
-    └── phone_call_horror_demo.mp3
+.claude/skills/ai-video-production/templates/
+├── effects-library/voice-effects/
+│   ├── README.md             (this file — workflow + docs)
+│   └── presets-catalog.json  (10 presets canonical — recipes + metadata)
+└── scripts/
+    └── apply-voice-preset.py (CLI wrapper + M7.7.5 verify)
 
-scripts/
-└── apply-voice-preset.py     (CLI wrapper + M7.7.5 verify)
+library/voice-effects-presets/samples/   (binaries fuera del skill template)
+├── _base_oxley_dry.mp3                  (15.3s Oxley reference)
+├── ghost_whisper_demo.mp3               ✅ validated 2026-05-27
+├── ultratumba_cavernoso_demo.mp3        ✅ validated 2026-05-27
+├── demon_growl_demo.mp3                 ✅ validated 2026-05-27
+└── possessed_child_demo.mp3             ✅ validated 2026-05-27
 ```
+
+**Por qué split**: catalog + script viven en `.claude/skills/` como template universal (CAPA 1, copiado/leído por todos los proyectos). Samples binarios viven en `library/` (junto a `voices/`, `sfx/`, `music/` — patrón canonical para artefactos reusables). Mantiene skill template liviano.
 
 ## Cross-references
 

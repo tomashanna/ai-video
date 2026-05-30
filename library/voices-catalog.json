@@ -22,15 +22,38 @@
         "name": "Eleguar",
         "label_hint": "Latin American Spanish, excited/dynamic, shorts/social use-case tagged",
         "rationale_top_pick": "Closest match to TikTok energetic horror narrator per ElevenLabs library tags (excited+dynamic+shorts).",
-        "voice_id": "TBD_from_library_web",
-        "discovery_path": "elevenlabs.io/voice-library filter language=Spanish + accent=Latin American + use-case=narration (browse tiktok-voices too). Direct: https://elevenlabs.io/text-to-speech/latin-american-accent"
+        "voice_id": "T7QGPtToiqH4S8VlIkMJ",
+        "discovery_path": "elevenlabs.io/voice-library filter language=Spanish + accent=Latin American",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/T7QGPtToiqH4S8VlIkMJ/",
+        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/eleguar_T7QGPtToiqH4S8VlIkMJ.mp3"
+      },
+      {
+        "name": "Ignacio Uruguayan",
+        "label_hint": "Young Uruguayan, viral videos and stories tag — format match strongest",
+        "rationale_top_pick": "Tag 'viral videos AND stories' + Uruguayan accent = closest match to canonical horror-choice creator perfil (referent-a territory). Added 2026-05-27 post research.",
+        "voice_id": "AvFwmpNEfWWu5mtNDqhH",
+        "discovery_path": "elevenlabs.io/voice-library Latin American narrators",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/AvFwmpNEfWWu5mtNDqhH/",
+        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/ignacio_AvFwmpNEfWWu5mtNDqhH.mp3",
+        "risk": "Uruguay tiene voseo natural — verify NO voseo drift en test sample"
       },
       {
         "name": "Jose Latam Neutral Warm",
         "label_hint": "Latin American Spanish neutral, warm, narration default",
-        "rationale_safe_alt": "Safe default si Eleguar feels too energetic. Neutral baseline LatAm.",
-        "voice_id": "TBD_from_library_web",
-        "discovery_path": "elevenlabs.io/voice-library filter LatAm narrator"
+        "rationale_safe_alt": "Safe default si Eleguar feels too energetic. Neutral baseline LatAm. ⚠️ Risk: perfil 'neutral warm' similar a Vicente rejected matadero CP2 'muy plana'.",
+        "voice_id": "HdHf5loDYrvGJRrbzbUX",
+        "discovery_path": "elevenlabs.io/voice-library filter LatAm narrator",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/HdHf5loDYrvGJRrbzbUX/",
+        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/jose_HdHf5loDYrvGJRrbzbUX.mp3"
+      },
+      {
+        "name": "David C2",
+        "label_hint": "Deep mysterious LatAm horror/crime/mystery — TomásUserPick 2026-05-27",
+        "rationale_horror_baseline": "User listen test 2026-05-27 elected David C2 como horror-narrator favorite. Adds 'horror-deep' axis to A/B (vs energetic-conversational Eleguar/Ignacio). Test confirms si formato prefers TikTok-energetic OR theatrical-deep.",
+        "voice_id": "K3TeN3ZVK8WnOeJ0NYqZ",
+        "discovery_path": "elevenlabs.io/voice-library Spanish horror filter",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/",
+        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/david_c2_K3TeN3ZVK8WnOeJ0NYqZ.mp3"
       }
     ],
     "avoid_voices": [

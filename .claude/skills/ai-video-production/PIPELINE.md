@@ -15,32 +15,43 @@
   -o assets/nombre-raw.mp3
 ```
 
-### Voice IDs validados
+### Voice IDs canonical (post 2026-05-18 — siempre consultar `library/voices-catalog.json` como autoridad)
 
-| Voz | ID | Característica |
-|-----|-----|----------------|
-| Horror narrador grave | `Tj9l48J9AJbry5yCP5eW` | Tono lento, susurro |
-| Voz A/B test | `2gPFXx8pN3Avh27Dw5Ma` | Usado en bosque-abandonado v3 |
-| Reservada | `1BfrkuYXmEwp8AWqSLWk` | Sin testear |
+| Voz | ID | Estado | Característica |
+|-----|-----|--------|----------------|
+| **Oxley Evil Character** | `2gPFXx8pN3Avh27Dw5Ma` | ✅ default canonical | LatAm baseline ~96 WPM. Narrator + matarife (con SoX effects chain). Validated matadero CP2 M7.7.5 PASS. |
+| **Kate BFP** | `qWWAqFomnJ99VwQLREfT` | ✅ cocinera canonical | Warm female Spanish. User override matadero CP2 2026-05-19. |
+| **Valeria** | `9oPKasc15pfAbMr7N6Gs` | 🟡 alternative cocinera | Warm female ~143 WPM. Valid alternative for non-matadero projects. |
+| **A/B V5 narrator candidates** | Eleguar `T7QGPtToiqH4S8VlIkMJ` / Ignacio `AvFwmpNEfWWu5mtNDqhH` / José `HdHf5loDYrvGJRrbzbUX` / David C2 `K3TeN3ZVK8WnOeJ0NYqZ` | 🟡 pending A/B 2026-05-29 | Listening test → pick canonical V5+ narrator. |
+| ~~Matthew Schmitz Nosferatu~~ | ~~`Tj9l48J9AJbry5yCP5eW`~~ | ❌ DEPRECATED 2026-05-18 | Susurro grave lento. Matadero CP2 user listen test refuted canonical compliance ('muy lento'). |
+| Reservada | `1BfrkuYXmEwp8AWqSLWk` | 🟡 untested | Sin testear. |
 
-Cada formato puede definir su voz canónica. **Verificar `DEFAULT_VOICE_ID` en `scripts/tts.py` antes de cada video nuevo.**
+**Verificar `DEFAULT_VOICE_ID` en `scripts/tts.py` antes de cada video nuevo (debe ser `2gPFXx8pN3Avh27Dw5Ma` Oxley).** Cada formato puede definir su voz canónica via `<format>-format/INGENIERO-PAUTA-MASTER.md`.
 
-### Post-procesado obligatorio — atempo 2x
+### Post-procesado obligatorio — atempo per-segment (post 2026-05-18)
 
-Las voces lentas por naturaleza (como `Tj9l48J9AJbry5yCP5eW`) requieren acelerar a 2x:
+**DEPRECATED**: atempo 2.0 uniform (era para Tj9l48J9 deprecated voice). NUNCA uses esto en producción nueva.
+
+**CANONICAL** workflow per `voices-catalog.json` § atempo_rule:
+
+1. Per-segment atempo computed via `raw_dur/target_dur` clamped `[0.7, 2.5]`
+2. Per-speaker multiplier on top (SPEC pace_correction_path_E_2026_05_18):
+   - narrator ×1.15
+   - matarife ×1.28 (ceiling)
+   - cocinera ×1.23
+3. Verify post-TTS measure_F1.py vs canonical p25-p75 bands `[152.71, 179.84]`
 
 ```bash
+# Per-segment example:
 ffmpeg -y -i assets/nombre-raw.mp3 \
-  -filter:a "atempo=2.0" \
-  assets/nombre-2x.mp3
+  -filter:a "atempo=<raw_dur/target_dur clamped 0.7-2.5>" \
+  assets/nombre-atempo.mp3
+
+# Per-segment medir duración:
+ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre-atempo.mp3
 ```
 
-Medir duración después:
-```bash
-ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre-2x.mp3
-```
-
-**Regla:** nunca usar el raw en el render. Siempre el `-2x.mp3` o el procesado equivalente. La voz cruda suena a IA.
+**Regla:** nunca usar el raw en el render. Siempre el `-atempo.mp3` con per-segment ratios. La voz cruda suena a IA + lenta de canonical band.
 
 ---
 
