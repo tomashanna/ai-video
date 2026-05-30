@@ -2,6 +2,13 @@
 
 > Este documento se le pasa a Claude como contexto cuando se le pide generar un nuevo guion del formato. Está optimizado para Claude — ver `PATTERNS.md` para reglas técnicas de producción.
 
+> ⚠️ **CÓMO LEER ESTE DOC (framing — refactor 2026-05-29, pattern_class 3/5).** Los videos canónicos NO tienen reglas rígidas: tienen **flexibilidad creativa dentro de un marco**. Este doc distingue 3 niveles y el arquitecto debe saber cuál es cuál:
+> - 🟦 **PRINCIPIO (underlying, mandatorio)** — el mecanismo que hace funcionar el formato. NO negociable. Ej: "la consecuencia marca a qué rama pertenece".
+> - 🟩 **VARIABILIDAD (exploración creativa, libre)** — cómo ejecutás el principio. Múltiples formas válidas, todas vistas en los 8 virales. Ej: "Si la enciendes" / "Si decides" / "Si elegiste a Víctor". Elegí la que mejor suene; NO hay una "correcta".
+> - 🟥 **ANTI-PATTERN (conocido, evitar)** — formas que empíricamente fallan. Ej: bare label robótico "Si elegiste A".
+>
+> Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. Autoridad última = fuente primaria: `referent-analysis/horror-choice/ref-XX/transcription.json`.
+
 ---
 
 ## CÓMO USAR ESTE DOCUMENTO
@@ -19,8 +26,8 @@ Claude debe responder con: el guion completo siguiendo la plantilla literal, en 
 
 Antes de generar, pedile al usuario estos 5 datos. Si faltan, pedilos antes de empezar:
 
-1. **Nombre del personaje "malo aparente"** (el monstruo amenazante con diálogo)
-2. **Nombre del personaje "bueno aparente"** (el extraño pero pacífico, sin diálogo)
+1. **Nombre del personaje "malo aparente"** (el monstruo amenazante; suele tener diálogo críptico, pero 🟩 varía por video)
+2. **Nombre del personaje "bueno aparente"** (el extraño pacífico; con o sin diálogo — 🟩 variabilidad, NO regla: ref-08 Hugo SÍ habla "No me elijas")
 3. **Escenario** (central nuclear, hospital, submarino, bosque, faro, etc.)
 4. **Categoría de dilema central** — elegir UNA:
    - Honestidad vs mentira propia
@@ -133,15 +140,22 @@ Narración: "Si hubieras elegido a [nombre bueno], habrían [acción cotidiana] 
 
 ## TEMPLATE CANÓNICO DE EVENTO (añadido 2026-05-16)
 
-Cada decisión binaria del horror-choice sigue este template **literal**. No improvisar fuera del formato.
+Cada decisión binaria sigue esta ESTRUCTURA (🟦 principio). El fraseo exacto es 🟩 variabilidad.
 
 ```
 SETUP:        {personaje habla / 1 frase narrator} (1 línea, NO 3 segments fragmentados)
-PREGUNTA:     "Decide. A. {opción}. B. {opción}."
-CONSEQUENCE A: "Si elegiste A, {qué pasa LITERAL que matchea visual}."
-BRIDGE:       caption "SI ELEGISTE B:"
-CONSEQUENCE B: "Si elegiste B, {qué pasa LITERAL que matchea visual}."
+PREGUNTA:     "Ahora decide. A. {opción}. B. {opción}."   ← "Ahora decide(s)" = gatillo canónico (8/8)
+CONSEQUENCE A: "Si {acción que tomaste}, {qué pasa LITERAL que matchea visual}."
+BRIDGE:       caption "SI ELEGISTE B:" (opcional — marca de rama)
+CONSEQUENCE B: "Si {acción que tomaste}, {qué pasa LITERAL que matchea visual}."
 ```
+
+🟦 **PRINCIPIO**: cada consecuencia marca a qué rama pertenece (sin esto el viewer se pierde — regla "rama B explícita", PAUTA).
+🟩 **VARIABILIDAD del marcador** (todas canónicas, primary source — elegí la que mejor suene):
+- acción condicional — *"Si la enciendes"*, *"Si esperas"*, *"Si te niegas"*, *"Si la abres"* (6/8 @referent-a — DOMINANTE)
+- choice-reference — *"Si decides…"*, *"Si escogiste…"* (2/8 @referent-b)
+- branch por nombre — *"Si elegiste a Víctor…"* (ref-09, marca el path por personaje)
+🟥 **ANTI-PATTERN**: bare label robótico *"Si elegiste A"* / *"Si elegiste B"* (0/8 — nunca en primary source; suena a formulario, no a horror).
 
 **Regla "Narración CLARA, NO tenebrosa"** (PAUTA-MASTER § 3 regla añadida 2026-05-16):
 
@@ -155,13 +169,13 @@ El tono tenebroso emerge del **visual + SFX + música ambient**, NO de la narrac
 
 **Test**: ¿el viewer entiende qué pasa en 1ra escucha sin caption? Si NO → reescribir.
 
-**Auto-audit D19** valida que `consequence_A_text` y `consequence_B_text` empiezan con "Si elegiste {A|B}..." — caption "SI ELEGISTE B:" SOLA no cuenta como compliance.
+**Auto-audit D19 (corregido 2026-05-29 — primary source)** valida el 🟦 principio (la consecuencia marca su rama vía cláusula condicional `Si …`) y flaggea el 🟥 anti-pattern (bare label "Si elegiste A/B"). **NO fuerza un fraseo específico**: "Si la enciendes" y "Si decides" pasan igual. Caption "SI ELEGISTE B:" es marcador-puente válido (no el único compliance). El validator `audit-spec-narrative-coherence.py` enforza esto.
 
 ---
 
-## REGLAS DE CALIDAD AL ESCRIBIR
+## CALIDAD AL ESCRIBIR — principios + anti-patterns (no reglas rígidas)
 
-Mientras Claude llena los slots, debe respetar estas reglas o el guion no va a sonar al formato.
+Lo de abajo son 🟦 principios de estilo (staccato, presente, 2ª persona) y 🟥 anti-patterns (vocab IA genérico). El estilo es bastante consistente en los 8 (más "regla" que el contenido narrativo), pero seguí distinguiendo principio underlying de elección creativa libre.
 
 ### Sintaxis
 
@@ -181,9 +195,11 @@ Mientras Claude llena los slots, debe respetar estas reglas o el guion no va a s
 
 **Evitar palabras de IA genérica:** "siniestro", "macabro", "espeluznante", "tenebroso". Estas son adjetivos vagos que no describen nada físico. Reemplazar siempre con descripción corporal concreta.
 
-### Diálogo del personaje "malo"
+### Diálogo de los personajes
 
-El malo dice frases cortas, crípticas y autoritarias. Máximo 5 palabras. Ejemplos del formato:
+🟩 **VARIABILIDAD (NO regla binaria):** que el malo hable y el bueno calle es UNA configuración frecuente, NO ley. El bueno PUEDE hablar (ref-08 Hugo: "No me elijas, algo me controla"); el malo puede ser procedural sin diálogo. 🟦 Principio: caracterización funcional coherente (el malo controla/exige; el bueno calma/ofrece) — con o sin diálogo.
+
+Cuando el malo habla, dice frases cortas, crípticas y autoritarias. Máximo 5 palabras. Ejemplos del formato:
 - "Honesto. Baja conmigo."
 - "Inteligente. Elegiste bien."
 - "Demuéstralo."
@@ -194,29 +210,36 @@ Patrón: una palabra de juicio + una orden o frase declarativa corta.
 
 ### El dilema
 
-**El dilema debe seguir la regla de oro:** la opción ganadora va contra el impulso primario.
+🟦 **PRINCIPIO (mandatorio, PAUTA §6):** el dilema debe generar **DUDA real** — el viewer NO tiene 100% de confianza en cuál es correcta. Si la respuesta es obvia, el dilema está mal diseñado.
 
-Ejemplos correctos del formato:
-- Pedir irse (impulso) ❌ vs Quedarse sentado (estoico) ✅
-- Encender la bengala (curiosidad) ❌ vs Quedarse a oscuras (obediencia) ✅
-- Saltar al rescate (acción) ❌ vs Activar alarma (mediación) ✅
+🟩 **VARIABILIDAD:** "la ganadora va contra el impulso" es UNA forma frecuente de generar duda, NO una ley. Empíricamente NO es universal (PAUTA §6 lo refuta): en ref-09 la ganadora es OBEDECER (con el impulso de confiar en el procedimiento); en ref-08/ref-10 la ganadora es negarse (con el impulso sensato). A veces va contra el impulso, a veces con él. Lo único constante: **ambigüedad**.
 
-Ejemplos incorrectos (no usar):
-- "¿Confías o no confías?" — demasiado abstracto
-- "¿Lo matás o lo dejás vivir?" — binario moral obvio, no de obediencia
-- "¿Vas a la izquierda o a la derecha?" — no hay carga psicológica
+Ejemplos que generan duda real (variabilidad):
+- Encender la bengala (curiosidad) vs Quedarse a oscuras (obediencia)
+- Soltar el cinturón por miedo vs Mantenerlo abrochado mientras se abre la puerta (ref-09, ganadora = obedecer)
+- Saltar al rescate (acción) vs Activar alarma (mediación)
 
-### El cliffhanger
+🟥 **ANTI-PATTERN (decisión sin duda):**
+- "¿Confías o no confías?" — abstracto, no accionable
+- "¿Lo matas o lo dejas vivir?" — binario moral obvio
+- "¿Vas a la izquierda o a la derecha?" — sin carga psicológica ni pista de consecuencia
 
-Estructura literal: `Si hubieras elegido a [BUENO], habrían [ACCIÓN_DE_2_PERSONAS_EN_PAZ] juntos, en silencio, mirando [ELEMENTO_NATURAL] al [TIEMPO_DEL_DÍA].`
+### El cliffhanger (counterfactual outro)
 
-Acciones válidas: vigilado las pantallas, pasado la noche mirando el radar, comido raciones, tomado café, leído en voz alta, escuchado música, esperado el amanecer.
+🟦 **PRINCIPIO (mandatorio):** counterfactual "Si hubieras elegido a [BUENO], habrían…" cerrando con un cozy **ESPECÍFICO al setting**, en contraste tonal con el horror previo. (6/8 conspiracion; @referent-b usa variantes sin "Si hubieras".)
 
-Elementos naturales válidos: el océano, las estrellas, el bosque, las montañas, el cielo, el río, el horizonte.
+🟩 **VARIABILIDAD (primary source — cada uno DISTINTO, NO copy-paste):**
+- ref-03 (mina): *"habrían jugado cartas toda la noche, comido pan con queso y subido a la superficie riendo al amanecer"*
+- ref-06 (carretera): *"estaría junto a una chimenea encendida, con café y un perro, así de simple"*
+- ref-10 (fundición): *"pasado la noche en la sala de control, tomado café mientras juegan cartas y comen pizza"*
+- ref-09 (cockpit): *"hablado toda la noche, mostrado las estrellas desde la cabina, aterrizado el avión suavemente al amanecer"*
+- → El detalle cozy SALE del setting concreto (mina→pan con queso; cockpit→estrellas; fundición→sala de control). Paleta sensorial: café/té, comida casera, cartas, chimenea, perro, amanecer.
 
-Tiempos del día válidos: amanecer, atardecer, primera luz, último silencio.
+🟥 **ANTI-PATTERN:**
+- Template rígido copy-paste *"…juntos, en silencio, mirando [elemento] al [tiempo]"* → **0/8 primary source**. Suena a fórmula, mata el contraste.
+- Cozy genérico no-anclado al setting (intercambiable entre videos).
 
-**Siempre cerrar con:** "Una noche en paz." (frase exacta, sin variaciones)
+⚠️ **"Una noche en paz"** = **0/8 en los virales canónicos** (esos son otros creators con SU firma). Es **NUESTRA firma de marca** (@elige_tucompanero, loop CTA) — legítima como identidad, pero NO es "regla canónica del formato". Usala como cierre de marca opcional, no como ley.
 
 ---
 
@@ -294,10 +317,9 @@ Antes de devolver el guion al usuario, Claude debe verificar:
 - [ ] ¿Hay al menos 3 oraciones nominales sin verbo?
 - [ ] ¿Hay al menos 2 oraciones de 1-3 palabras tipo "Ahora decide" / "Honesto"?
 - [ ] ¿Todos los verbos están en presente, ninguno en futuro?
-- [ ] ¿La opción ganadora va contra el impulso primario?
-- [ ] ¿El cliffhanger usa la frase "Una noche en paz." al final?
-- [ ] ¿El malo tiene 1-2 líneas de diálogo crípticas?
-- [ ] ¿El bueno NO tiene diálogo?
+- [ ] 🟦 ¿La decisión genera DUDA real (ambigua, no obvia)? (NO exigir "contra el impulso" — varía, PAUTA §6)
+- [ ] 🟦 ¿El cliffhanger es counterfactual cozy ESPECÍFICO al setting (no genérico)? ("Una noche en paz" = firma de marca opcional, NO requisito)
+- [ ] 🟩 ¿El diálogo de los personajes es coherente con su caracterización? (malo críptico si habla; bueno con o sin diálogo — NO forzar silencio del bueno)
 - [ ] ¿Hay 2-3 elementos sensoriales concretos en el cliffhanger?
 - [ ] ¿Las loading bars duran exactamente 2.5s cada una?
 

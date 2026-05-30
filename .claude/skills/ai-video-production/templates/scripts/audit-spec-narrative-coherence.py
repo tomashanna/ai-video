@@ -202,10 +202,14 @@ def check_consequence_framing(consequence_shots):
                     f"(0/8 primary source — anti-pattern): {synthetic}. Use action-conditional "
                     f"'Si [la enciendes / te niegas / esperas]' per ref-03/06/08/09/10/11.")
     if missing:
-        return gate("structure_consequence_framing", "fail",
-                    f"consequence shots missing 'Si [acción condicional]' framing: {missing}. "
-                    f"Canonical: consequence opens with a conditional action clause "
-                    f"('Si' + verbo 2ª persona presente/pretérito).")
+        # Principle = consequence marks its branch; the SPECIFIC marker is creative variability.
+        # A consequence may be branch-marked via a bridge caption ("SI ELEGISTE B:") that this
+        # validator (narrator_text only) cannot see → FLAG, do NOT hard-FAIL. Only the bare-label
+        # anti-pattern above is a FAIL. (pattern_class 3/5: enforce principle, not creative choice.)
+        return gate("structure_consequence_framing", "flag",
+                    f"consequence shots without a detectable 'Si [acción]' marker in narrator_text: "
+                    f"{missing}. Principle = branch must be marked; OK if done via bridge caption "
+                    f"'SI ELEGISTE B' (not visible here). Verify branch-marking manually.")
     return gate("structure_consequence_framing", "pass",
                 f"all {len(consequence_shots)} consequence shots use canonical "
                 f"'Si [acción condicional]' framing ✓")
