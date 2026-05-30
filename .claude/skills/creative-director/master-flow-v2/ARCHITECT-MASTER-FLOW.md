@@ -162,7 +162,7 @@ D14-D22 actuales (en SPEC schema v6):
 - **D16**: Anchor character consistency severity flagged
 - **D17**: `lip_sync_required` marker per shot
 - **D18**: ref-XX cinematic reference per HIGH-RISK shot
-- **D19**: SCRIPT-WRITING-GUIDE compliance + "Si elegiste X" framing canonical
+- **D19**: SCRIPT-WRITING-GUIDE compliance + consequence framing marca rama (🟩 variabilidad: "Si la enciendes"/"Si decides"/"Si elegiste a <Nombre>"; 🟥 anti-pattern: bare label "Si elegiste A") — corregido 2026-05-29 vs primary source
 - **D20**: Visual matches narration LITERAL (no metáforas sin acompañamiento visual)
 - **D21**: Narrative simplicity Slot E (1 frase personaje + 1 frase decisión)
 - **D22**: Storyboard-level per hard rule #21 (who_does_what LITERAL per character)
@@ -199,7 +199,7 @@ D14-D22 actuales (en SPEC schema v6):
 |----|---------------------------|
 | **SPEC audit** | Slot A-H compliance + narrative arc + archetype + cliffhanger |
 | **CP1 anchors** | Anchor character signatures + severity flags + cross-anchor consistency |
-| **CP2 script** | Voice selection + pace target + caption strategy + "Si elegiste X" framing |
+| **CP2 script** | Voice selection + pace target + caption strategy + consequence framing (marca rama, NO bare label) |
 | **CP3 shots** | Cinematic ref per HIGH-RISK + shot composition + variants spirit-not-literal + paleta dual |
 | **CP4 animation** | Motion intent per shot + lip sync iteration acceptance criteria + camera direction |
 | **CP5 render** | LUT application + color grade intent + final creative arc legible |

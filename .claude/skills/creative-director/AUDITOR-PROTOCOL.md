@@ -198,7 +198,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ### CP2 — Script + Captions Whisper
 
 1. ✅ **Pace WPM** per INGENIERO-PAUTA § 1.1 banda canónica
-2. ✅ **"Si elegiste X" framing** en TODAS las consequence narrations Slot E (memoria `feedback_si_elegiste_framing`)
+2. ✅ **Consequence framing marca rama** en TODAS las consequence narrations Slot E — 🟩 variabilidad ("Si la enciendes"/"Si decides"/"Si elegiste a <Nombre>"), 🟥 flag bare label "Si elegiste A" (corregido 2026-05-29 vs primary source; ver SYSTEM-LEARNINGS § Pattern 8 + § consequence framing PAUTA-MASTER)
 3. ✅ **Visual matches narration LITERAL** (memoria `feedback_visual_matches_narration`)
 4. ✅ **Narration coherence** sujeto+verbo (memoria `feedback_narration_coherence`)
 5. ✅ **Slot E simplicity** 1 frase personaje + 1 frase decisión (memoria `feedback_narrative_simplicity`)

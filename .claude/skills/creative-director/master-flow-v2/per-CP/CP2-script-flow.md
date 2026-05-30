@@ -59,7 +59,7 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP2:
 | A6 | Per-segment WPM band compliance | INGENIERO-PAUTA § 1.1 [153-180] p25-p75 |
 
 **Plus structural CP2 audit**:
-- "Si elegiste X" framing en TODAS consequence narrations (validation D19)
+- Consequence framing marca rama en TODAS las consequence narrations — 🟩 variabilidad ("Si la enciendes"/"Si decides"/"Si elegiste a <Nombre>"), 🟥 NO bare label "Si elegiste A" (validation D19, corregido 2026-05-29)
 - Visual matches narration LITERAL (D20 forward CP3)
 - Narration simplicity (D21 — 1 frase personaje + 1 frase decisión)
 - Pace WPM target alineado con SPEC vs INGENIERO-PAUTA
@@ -170,7 +170,7 @@ Pattern: SPEC prescribe heavy effects chain (pitch shift + flanger + LPF + rever
 | M3 | 3-class caption system applied | Spot-check captions.json |
 | M4 | 15 keyword_highlights tagged | Count vs SPEC L1413-1428 |
 | M5 | 3 staccato_climax detected | SPEC L1429 verbatim |
-| M6 | "Si elegiste X" framing in consequence narrations | Grep narration_script audio (via captions text) |
+| M6 | Consequence framing marks branch (acción/choice/nombre, NOT bare label "Si elegiste A") | Grep narration_script audio (via captions text) |
 | M7 | Caption text override pattern correct | Schema check `whisper_text` + `spec_segment_id` |
 
 ---

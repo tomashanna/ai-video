@@ -139,12 +139,13 @@ Validado en 8/8: ningún video rompe la estructura. Toda la variación está en 
 - ✓ Implementación técnica: ver `INGENIERO-PAUTA-MASTER.md` § Lip sync rule
 - ✓ **Caso disparador maikol-crucero**: 0:22 Maikol "habla" en clip animado mientras solo narrador habla → user confused "Maikol aparece hablando pero solo habla el narrador"
 
-### "Si elegiste X" framing — REGLA INVIOLABLE (regla añadida 2026-05-16)
-- ✓ **Toda consequence narration en Slot E DEBE prefijarse "Si elegiste {opción}..."** — caption "SI ELEGISTE B:" SOLA no es suficiente
-- ✓ Compliance: validado en 8/8 canónicos (auditor debe verificar lectura de transcriptions reales — Bloque H futuro)
-- ✓ Aplicado por arquitecto en SPEC v6: `consequence_A_text` y `consequence_B_text` empiezan con "Si elegiste {A|B}..."
-- ✓ Auto-audit D19 valida compliance en handoff
-- ✓ Sin este framing, el horror-choice colapsa a horror genérico (caso cabina-14 V1 render 2026-05-16)
+### Consequence framing — marcar la rama (corregido 2026-05-29 vs primary source; pattern_class 3/5)
+> Reframe: esto NO es "Si elegiste X literal" (paráfrasis sintética) sino un PRINCIPIO con variabilidad.
+- 🟦 **PRINCIPIO (mandatorio):** toda consequence narration en Slot E marca a qué rama pertenece (sin esto el viewer se pierde). Caption "SI ELEGISTE B:" sola es marcador-puente válido, no el único compliance.
+- 🟩 **VARIABILIDAD (libre — todas canónicas, primary source `referent-analysis/horror-choice/ref-XX/transcription.json`):** acción condicional *"Si la enciendes / Si esperas / Si te niegas"* (6/8 @referent-a, DOMINANTE) · choice-reference *"Si decides… / Si escogiste…"* (2/8 @referent-b) · branch por nombre *"Si elegiste a Víctor…"* (ref-09).
+- 🟥 **ANTI-PATTERN:** bare label robótico *"Si elegiste A" / "Si elegiste B"* (0/8 — nunca en primary source; suena a formulario).
+- ✓ Auto-audit D19 (corregido) valida el principio + flaggea el anti-pattern; **NO fuerza fraseo**. Validator `audit-spec-narrative-coherence.py`.
+- ✓ Sin marcar la rama, el horror-choice colapsa a horror genérico (caso cabina-14 V1 render 2026-05-16).
 - ⚠️ **EXTRACT to choice-format-base** cuando agreguemos un 2do template del género choice
 
 ### Narración CLARA, NO tenebrosa — REGLA INVIOLABLE (regla añadida 2026-05-16)
@@ -159,7 +160,7 @@ Validado en 8/8: ningún video rompe la estructura. Toda la variación está en 
 
 ### Respeto absoluto de la pauta para guiones — REGLA INVIOLABLE (regla añadida 2026-05-16)
 - ✓ **La estructura narrativa según PAUTA-MASTER no es sugerencia — es regla.**
-- ✓ Improvisar fuera de la pauta (cambiar orden de hitos, agregar slots no canónicos, alterar formato de "Si elegiste X") = BUG del producto creativo.
+- ✓ Improvisar fuera de la pauta (cambiar orden de hitos, agregar slots no canónicos, romper el marcado de rama en consequences — ver § consequence framing) = BUG del producto creativo.
 - ✓ Si el arquitecto cree que un caso justifica desvío → escalar al user PRIMERO, NO improvisar.
 - ✓ Caso disparador: cabina-14 SPEC inicial saltó pattern de Slot E → render reveló gaps narrativos.
 
