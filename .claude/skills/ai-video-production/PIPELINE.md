@@ -22,7 +22,10 @@
 | **Oxley Evil Character** | `2gPFXx8pN3Avh27Dw5Ma` | ✅ default canonical | LatAm baseline ~96 WPM. Narrator + matarife (con SoX effects chain). Validated matadero CP2 M7.7.5 PASS. |
 | **Kate BFP** | `qWWAqFomnJ99VwQLREfT` | ✅ cocinera canonical | Warm female Spanish. User override matadero CP2 2026-05-19. |
 | **Valeria** | `9oPKasc15pfAbMr7N6Gs` | 🟡 alternative cocinera | Warm female ~143 WPM. Valid alternative for non-matadero projects. |
-| **A/B V5 narrator candidates** | Eleguar `T7QGPtToiqH4S8VlIkMJ` / Ignacio `AvFwmpNEfWWu5mtNDqhH` / José `HdHf5loDYrvGJRrbzbUX` / David C2 `K3TeN3ZVK8WnOeJ0NYqZ` | 🟡 pending A/B 2026-05-29 | Listening test → pick canonical V5+ narrator. |
+| **David C2 — Deep horror narrator** | `K3TeN3ZVK8WnOeJ0NYqZ` | ✅ canonical V5+ narrator (2026-05-29) | Deep mysterious LatAm horror. WPM 157.2 raw (canonical band). Tomás A/B pick over Eleguar/Ignacio/José. |
+| Ignacio Uruguayan (A/B alternate) | `AvFwmpNEfWWu5mtNDqhH` | 🟡 reserva TikTok-energetic | WPM 179.4 raw. Reserva si SPEC futuro pide format viral stories. |
+| Eleguar (A/B alternate) | `T7QGPtToiqH4S8VlIkMJ` | 🟡 reserva entertainment | WPM 166.0 raw. Reserva si SPEC futuro pide entertainment-TV energetic. |
+| ~~José Latam Neutral Warm~~ | ~~`HdHf5loDYrvGJRrbzbUX`~~ | ❌ rejected horror (2026-05-29) | WPM 143.3 debajo canonical p25. Pattern repeat de Vicente rejection. |
 | ~~Matthew Schmitz Nosferatu~~ | ~~`Tj9l48J9AJbry5yCP5eW`~~ | ❌ DEPRECATED 2026-05-18 | Susurro grave lento. Matadero CP2 user listen test refuted canonical compliance ('muy lento'). |
 | Reservada | `1BfrkuYXmEwp8AWqSLWk` | 🟡 untested | Sin testear. |
 

@@ -7,7 +7,28 @@
   "default_voice_note": "Oxley Evil Character validated 2026-05-18 post matadero CP2 (user listen test PASS + M7.7.5 PASS Track A Path 2a SoX). Reemplaza Tj9l48J9 deprecated 2026-05-18.",
   "default_voice_DEPRECATED_2026_05_18": "Tj9l48J9AJbry5yCP5eW",
   "deprecation_reason": "User listen test matadero CP2 2026-05-18 refutó canonical compliance. Voice character (susurro grave + lento natural) NO matches canonical viral narrators (LatAm energetic conversational). Per CLAUDE.md hard rule #19 expansion 2026-05-18, voice IDs validated solo en nuestras producciones (V7 + bosque v1) NO son default canonical viable.",
-  "v5_narrator_strategy_2026_05_27": {
+  "v5_narrator_strategy_2026_05_29_WINNER": {
+    "winner": "David C2 (K3TeN3ZVK8WnOeJ0NYqZ)",
+    "decided_at": "2026-05-29",
+    "decision_context": "Tomás listen test 4-way A/B 2026-05-29 (Eleguar / Ignacio / José / David C2) con sample text canonical V5 (~21s @165 WPM target). David C2 pick FINAL — deep mysterious LatAm horror profile preferred over TikTok-energetic axis (Eleguar/Ignacio).",
+    "wpm_measurements_2026_05_29": {
+      "eleguar_T7QGPtToiqH4S8VlIkMJ": "166.0 WPM (median canonical 164.91) ✅",
+      "ignacio_AvFwmpNEfWWu5mtNDqhH": "179.4 WPM (top de banda p75 179.84) ✅",
+      "david_c2_K3TeN3ZVK8WnOeJ0NYqZ": "157.2 WPM (sobre p25 152.71) ✅ ← WINNER",
+      "jose_HdHf5loDYrvGJRrbzbUX": "143.3 WPM (BAJO p25, requeriría atempo) ❌"
+    },
+    "creative_direction_signal": "User pick David C2 (deep horror) over Eleguar/Ignacio (energetic) reveals que el formato horror-choice tolera/prefiere theatrical-narrator profile sobre TikTok-conversational. Esto refuta parcialmente hipótesis pre-test que 'TikTok-energetic' era el match canonical único — formato acepta horror-deep axis también, especialmente para mood-cripta storytelling.",
+    "alternatives_kept_for_future": {
+      "ignacio_AvFwmpNEfWWu5mtNDqhH": "Reserva si SPEC futuro pide TikTok-energetic Uruguayan format — viral stories tag sigue valid",
+      "eleguar_T7QGPtToiqH4S8VlIkMJ": "Reserva si SPEC futuro pide entertainment-TV energetic narrator"
+    },
+    "rejected": {
+      "jose_HdHf5loDYrvGJRrbzbUX": "WPM 143.3 (debajo canonical p25 152.71) + perfil 'neutral warm' confirmó hipótesis 'muy plana' pre-test. Pattern repeat de Vicente rejection matadero CP2. NO usar para horror narrator."
+    },
+    "next_step_codification": "1. David C2 entry agregado a voices[] con status validated_canonical_narrator_v5_2026_05_29. 2. PIPELINE.md narrator row updated. 3. SPEC V5+ declara narrator_voice: K3TeN3ZVK8WnOeJ0NYqZ. 4. Engineer CP4 audio aplica atempo per-segment + multiplier ×1.05 if pace_intent_median (157→165 WPM)."
+  },
+  "v5_narrator_strategy_2026_05_27_DEPRECATED_post_AB": {
+    "deprecation_reason": "Pre-A/B research notes — superseded by v5_narrator_strategy_2026_05_29_WINNER. Kept for forensic record.",
     "context": "BUILD 9 PRE-4.J post WebSearch research 2026-05-27. Decisión Tomás B: pre-V5 A/B test Eleguar (energetic LatAm shorts/social) vs José Latam Neutral Warm (safe default) en v3 model con settings community-recommended para 'moderate-energetic conversational horror narrator' (TikTok-style, NOT theatrical, NOT monotone).",
     "model_recommended": "eleven_v3 (GA Feb 2026 — flagship expressive narration, 70+ langs incl. Spanish, supports inline audio tags [whispers] [nervous]. Stability <=0.5 required to trigger tags. Latency 2-3x v2 — fine para offline render).",
     "settings_recommended": {
@@ -205,6 +226,34 @@
       "atempo": null,
       "validated_in": [],
       "notes": "Tested matadero CP2 narrator search — character mismatch para horror. May work other genres."
+    },
+    {
+      "id": "K3TeN3ZVK8WnOeJ0NYqZ",
+      "label": "David C2 — Deep mysterious LatAm horror/crime/mystery narrator",
+      "characteristics": "Deep, attractive, and mysterious male voice designed for viral horror, crime & mystery. Latin American Spanish. Natural ~157 WPM raw (measured 2026-05-29 con 55-word sample = 21.0s → 157.2 WPM, sobre canonical p25 152.71).",
+      "status": "validated_canonical_narrator_v5",
+      "canonical_validation_status": "validated_canonical_narrator_v5_2026_05_29",
+      "validated_at": "2026-05-29",
+      "validated_in": ["v5-narrator-ab-test-2026-05-29 (Tomás listen test PASS over Eleguar/Ignacio/José)"],
+      "validation_context": {
+        "v5_a_b_test_2026_05_29": {
+          "test_method": "4-way blind perceptual + WPM raw measurement (no atempo)",
+          "candidates_tested": ["Eleguar T7QGPt", "Ignacio AvFwmp", "José HdHf5l", "David C2 K3TeN3"],
+          "wpm_measured": "157.2 (canonical band [152.71, 179.84] PASS)",
+          "user_perceptual_pick": "David C2 — Rule D PRECEDENCE",
+          "creative_direction_signal": "Deep horror profile preferred over TikTok-energetic axis. Format tolerates theatrical-narrator (refutes pre-test hypothesis that energetic-conversational was only canonical match)."
+        }
+      },
+      "use_primary": "Narrator V5+ horror-choice (canonical default for narrator role). Replaces Tj9l48J9 deprecated trajectory pre-Oxley-narrator-bridge.",
+      "atempo_strategy": "per-segment raw_dur/target_dur clamped [0.7, 2.5] + ×1.05 narrator-median bump opcional (157→165 WPM si SPEC pace intent median). NO heavy atempo required (raw already in canonical band).",
+      "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/",
+      "sample_a_b_test": "library/voices/v5-narrator-ab-test-2026-05-29/david_c2_K3TeN3ZVK8WnOeJ0NYqZ.mp3",
+      "ab_test_losers_reserved": {
+        "ignacio_AvFwmpNEfWWu5mtNDqhH": "Reserva si futuro SPEC pide TikTok-energetic Uruguayan",
+        "eleguar_T7QGPtToiqH4S8VlIkMJ": "Reserva si futuro SPEC pide entertainment-TV energetic narrator",
+        "jose_HdHf5loDYrvGJRrbzbUX": "REJECTED — WPM 143.3 debajo canonical p25 + perfil 'muy plana' pattern Vicente rejected. NO usar horror."
+      },
+      "notes": "Canonical narrator V5+ default. Combinable con voice-effects presets (ultratumba_cavernoso natural pair given deep mysterious profile). NUNCA usar para cocinera (Kate canonical) ni matarife (Oxley canonical)."
     }
   ],
   "deprecated": [
