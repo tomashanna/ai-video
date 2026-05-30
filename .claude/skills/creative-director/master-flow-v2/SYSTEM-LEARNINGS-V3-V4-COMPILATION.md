@@ -602,6 +602,18 @@ Esto es información empírica nueva que NO existía documentada antes de V4. Cr
 
 **Codificación forward:** Regla operativa default del Auditor.
 
+### Pattern 8 — "Validation against synthesis violates primary source principle"
+
+**pattern_class:** `validation_against_synthesis_violates_primary_source_principle`
+
+**Definición:** Una regla/validator que se valida contra un doc de SÍNTESIS (PAUTA-MASTER, canonical-scenes, memorias-paráfrasis) en vez de contra la FUENTE PRIMARIA (transcripts Whisper de los 8 virales en `referent-analysis/horror-choice/ref-XX/`) hereda la paráfrasis del sintetizador, no el dato real. Si V_n respeta el canónico correcto, el validator FAIL; si respeta la paráfrasis, PASS pero el output sale robótico. Familia directa del anti-pattern #10 (trust docs/intermediate sin direct verification).
+
+**Instancias detectadas (threshold canonical promotion = 5):**
+- **1/5** — matadero canonical-scenes countdown (auditor concluyó "2/6 refs tienen countdown" desde docs sampleados cada 5s; direct frame extraction reveló 4/4 FILM LEADER ACADEMY universal). Origen del anti-pattern #10. 2026-05-19.
+- **2/5** — ⭐ regla `feedback_si_elegiste_framing` / D19 "Si elegiste X" (síntesis) vs primary source "Si [acción condicional]" (6/8 @referent-a) + "Si decides/escogiste" (2/8 @referent-b). El validator `audit-spec-narrative-coherence.py` enforzaba el substring `si elegiste` → FAIL sobre el 6/8 canónico real. Detectado por Tomás (user_perceptual_catch). Fix: primary-source enforcement + 17 tests. 2026-05-29. **Co-findings TAREA 2** (misma clase, NO fixeados — Tomás decide): `"Una noche en paz"` mandado como "canónico" pero 0/8 (es nuestra firma de marca); template cliffhanger rígido `"juntos, en silencio, mirando…"` 0/8; SCRIPT-WRITING-GUIDE "bueno sin diálogo" + "ganadora contra impulso" contradicen PAUTA §0/§6.
+
+**Codificación forward:** si llega 5/5 → promote a Hard Rule / structural validator (`audit-rule-vs-primary-source.py`: toda regla con claim "canónico N/M" debe citar el transcript/frame primario, no la síntesis). Hasta entonces: el Auditor, al validar CUALQUIER regla con claim canónico, lee la fuente primaria directa (transcript/frame), NO la síntesis. Refuerza anti-pattern #10 en AUDITOR-PROTOCOL §6.
+
 ---
 
 ## SECTION 6 — Mapa agnóstico vs específico (para adaptación a formato nuevo)

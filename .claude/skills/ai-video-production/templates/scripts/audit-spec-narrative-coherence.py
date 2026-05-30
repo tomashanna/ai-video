@@ -15,7 +15,10 @@ Checks (per-gate pass | fail | flag | not_applicable):
     2. hook_sub_beats ends with "countdown" (canonical last beat)
     3. dilema_placement_pct ∈ [10, 30] canonical band
     4. counterfactual_placement != retrospective (PAUTA § 24 anti-pattern)
-    5. "Si elegiste X" framing present in every consequence shot (D19)
+    5. "Si [acción condicional]" framing in every consequence shot (D19 corrected to PRIMARY
+       SOURCE: action-conditional dominant 6/8 @referent-a ["Si la enciendes",
+       "Si te niegas"] + choice-reference variant 2/8 @referent-b ["Si decides",
+       "Si escogiste X"]; bare label "Si elegiste A/B" = 0/8 synthetic anti-pattern)
     6. WPM per beat_role within canonical band (per-role lookup, fallback default [110, 220])
   CROSS-VIDEO UNIQUENESS (parses video-log markdown)
     7. location exact-match vs prior rows → FAIL
@@ -70,6 +73,27 @@ DEFAULT_ANTI_CLICHE = [
     "bucle eterno",
     "nunca encuentras la salida",
 ]
+
+# Consequence framing — re-extracted from PRIMARY SOURCE (Whisper transcripts of the 8 canonical
+# virals: referent-analysis/horror-choice/ref-{03,06,08,09,10,11,12,13}/transcription.json).
+# DOMINANT (6/8 @referent-a): "Si [acción condicional]" = "Si" + optional clitics +
+#   a 2nd-person present/preterite verb describing the action taken
+#   ("Si la enciendes", "Si esperas", "Si te niegas", "Si los sigues", "Si la abres").
+# VARIANT (2/8 @referent-b): choice-reference ("Si decides...", "Si escogiste/escoges X",
+#   "Si tomaste...") — also a 2nd-person verb, accepted by the same regex.
+# ANTI-PATTERN (0/8 — pure synthesis, NEVER in primary source): bare label "Si elegiste A" /
+#   "Si elegiste opción B". This is what the deprecated "Si elegiste X" rule (D19 synthesis)
+#   wrongly required; enforcing it produces robotic guiones and FAILs the canonical action form.
+# NOTE: "Si elegiste a Víctor" (preposition "a" + name, ref-09 branch setup) is NOT the anti-pattern
+#   — the synthetic regex is case-sensitive on the [ABC] label so a lowercase "a" never matches.
+ACTION_CONDITIONAL_RE = re.compile(
+    r"\bsi\s+(?:(?:no|ya)\s+)?(?:(?:te|lo|la|le|los|las|me|se|nos)\s+)*"
+    r"[a-záéíóúñ]+(?:as|es|ás|és|aste|iste)\b",
+    re.IGNORECASE,
+)
+SYNTHETIC_LABEL_RE = re.compile(
+    r"(?i:\bsi\s+(?:elegiste|escogiste|eliges|escoges)\s+(?:la\s+)?(?:opci[oó]n\s+)?)[ABC]\b"
+)
 
 
 def gate(name, status, detail):
@@ -154,19 +178,37 @@ def check_counterfactual(placement):
     return gate("structure_counterfactual", "pass", f"placement={placement} ✓")
 
 
-def check_si_elegiste(consequence_shots):
-    failures = []
+def check_consequence_framing(consequence_shots):
+    """Primary-source enforcement (replaces synthetic 'Si elegiste X' substring check).
+
+    Canonical consequence framing = "Si [acción condicional]" (6/8 @referent-a) or the
+    choice-reference variant "Si decides/escogiste/tomaste ..." (2/8 @referent-b). The bare
+    synthetic label "Si elegiste A/B" (0/8 — never in primary source) is the anti-pattern.
+    """
+    if not consequence_shots:
+        return gate("structure_consequence_framing", "not_applicable",
+                    "no consequence shots in shot_list")
+    synthetic, missing = [], []
     for s in consequence_shots:
         txt = (s.get("narration_in_this_shot") or {}).get("narrator_text", "") or ""
-        if "si elegiste" not in txt.lower():
-            failures.append(s.get("shot_id", "?"))
-    if failures:
-        return gate("structure_si_elegiste_framing", "fail",
-                    f"consequence shots missing 'Si elegiste X' framing: {failures}")
-    if not consequence_shots:
-        return gate("structure_si_elegiste_framing", "not_applicable", "no consequence shots in shot_list")
-    return gate("structure_si_elegiste_framing", "pass",
-                f"all {len(consequence_shots)} consequence shots have 'Si elegiste X' ✓")
+        sid = s.get("shot_id", "?")
+        if SYNTHETIC_LABEL_RE.search(txt):
+            synthetic.append(sid)
+        elif not ACTION_CONDITIONAL_RE.search(txt):
+            missing.append(sid)
+    if synthetic:
+        return gate("structure_consequence_framing", "fail",
+                    f"consequence shots use synthetic bare-label framing 'Si elegiste A/B' "
+                    f"(0/8 primary source — anti-pattern): {synthetic}. Use action-conditional "
+                    f"'Si [la enciendes / te niegas / esperas]' per ref-03/06/08/09/10/11.")
+    if missing:
+        return gate("structure_consequence_framing", "fail",
+                    f"consequence shots missing 'Si [acción condicional]' framing: {missing}. "
+                    f"Canonical: consequence opens with a conditional action clause "
+                    f"('Si' + verbo 2ª persona presente/pretérito).")
+    return gate("structure_consequence_framing", "pass",
+                f"all {len(consequence_shots)} consequence shots use canonical "
+                f"'Si [acción condicional]' framing ✓")
 
 
 def check_wpm(shot_list):
@@ -321,7 +363,7 @@ def main():
     gates.append(check_counterfactual(ns.get("counterfactual_placement")))
     shot_list = spec.get("shot_list") or []
     consequence_shots = [s for s in shot_list if str(s.get("beat_role", "")).startswith("consequence")]
-    gates.append(check_si_elegiste(consequence_shots))
+    gates.append(check_consequence_framing(consequence_shots))
     gates.append(check_wpm(shot_list))
 
     # Cross-video uniqueness

@@ -2,10 +2,12 @@
 
 Per Hard Rule #26: companion test sidecar. TDD: written FIRST (RED).
 
-14 tests covering:
+17 tests covering (consequence-framing re-grounded in PRIMARY SOURCE 2026-05-29 — pattern_class 2/5):
 - CLI/agnostic/capability (3): --format required, arbitrary format → not_applicable, Bug #9 caps missing
-- Structure validation (6): clean PASS, invalid cliffhanger pattern, missing "Si elegiste X",
-  hook countdown not last, dilema placement out of band, counterfactual retrospective, WPM out of band
+- Structure validation (9): clean PASS, invalid cliffhanger pattern, consequence without conditional
+  framing FAIL, synthetic "Si elegiste A" bare-label FAIL, choice-reference variant ("Si decides/
+  escogiste") PASS, hook countdown not last, dilema placement out of band, counterfactual
+  retrospective, WPM out of band
 - Cross-video uniqueness (4): location exact-match FAIL, signature semantic ≥block FAIL,
   signature in [flag, block) FLAG, pattern rotation repeat last video FAIL
 - Anti-cliché (1): forbidden phrase in SPEC → FAIL
@@ -47,12 +49,12 @@ CLEAN_SHOT_LIST_YAML = """shot_list:
     beat_role: consequence_A
     duration_intent_s: 4.0
     narration_in_this_shot:
-      narrator_text: "Si elegiste a Bruno, la luz se apaga y la torre tiembla"
+      narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"
   - shot_id: shot_05
     beat_role: consequence_B
     duration_intent_s: 4.0
     narration_in_this_shot:
-      narrator_text: "Si elegiste a Pablo, el silencio cae sobre la cabina vacía"
+      narrator_text: "Si esperas, Bruno saca el medidor y la pantalla parpadea en rojo"
   - shot_id: shot_06
     beat_role: cliffhanger
     duration_intent_s: 3.0
@@ -183,14 +185,38 @@ class TestStructure(unittest.TestCase):
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("cliffhanger", r.stdout.lower() + r.stderr.lower())
 
-    def test_missing_si_elegiste_in_consequence_fails(self):
+    def test_consequence_without_conditional_framing_fails(self):
+        # No "Si [acción]" conditional clause at all → FAIL (primary-source enforcement)
         bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
-            'narrator_text: "Si elegiste a Bruno, la luz se apaga y la torre tiembla"',
-            'narrator_text: "La luz se apaga y la torre tiembla"'  # missing "Si elegiste"
+            'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
+            'narrator_text: "La luz se apaga y la torre tiembla"'  # no conditional framing
         )
         r = self._run_clean(shot_list_yaml=bad_shot_list)
         self.assertNotEqual(r.returncode, 0)
-        self.assertIn("si elegiste", r.stdout.lower() + r.stderr.lower())
+        self.assertIn("framing", r.stdout.lower() + r.stderr.lower())
+
+    def test_synthetic_si_elegiste_label_fails(self):
+        # Bare synthetic label "Si elegiste A" (0/8 primary source) → FAIL post-fix.
+        # This is the exact form the deprecated "Si elegiste X" rule wrongly REQUIRED.
+        bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
+            'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
+            'narrator_text: "Si elegiste A, la luz se apaga y la torre tiembla"'
+        )
+        r = self._run_clean(shot_list_yaml=bad_shot_list)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("framing", r.stdout.lower() + r.stderr.lower())
+
+    def test_choice_reference_variant_passes(self):
+        # @referent-b variant "Si decides..." / "Si escogiste..." (2/8 primary source) → PASS
+        variant = CLEAN_SHOT_LIST_YAML.replace(
+            'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
+            'narrator_text: "Si decides comer la fruta, la mesa entera se desploma sobre ti"'
+        ).replace(
+            'narrator_text: "Si esperas, Bruno saca el medidor y la pantalla parpadea en rojo"',
+            'narrator_text: "Si escogiste no tocarla, Teresa guarda el plato y se aleja"'
+        )
+        r = self._run_clean(shot_list_yaml=variant)
+        self.assertEqual(r.returncode, 0, f"choice-reference variant must pass.\nstdout {r.stdout}")
 
     def test_hook_countdown_not_last_fails(self):
         r = self._run_clean(hook_beats=("countdown", "name_label", "setting", "narrator_framing", "push_in"))
@@ -295,8 +321,8 @@ class TestAntiCliche(unittest.TestCase):
     def test_anti_cliche_forbidden_phrase_fails(self):
         # Inject forbidden phrase into a shot narration
         bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
-            'narrator_text: "Si elegiste a Bruno, la luz se apaga y la torre tiembla"',
-            'narrator_text: "Si elegiste a Bruno, te conviertes en cena de la torre"'
+            'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
+            'narrator_text: "Si enciendes la linterna, te conviertes en cena de la torre"'
         )
         _build_spec(self.spec, shot_list_yaml=bad_shot_list)
         r = _run(["--format", "horror-choice", "--spec", str(self.spec),
