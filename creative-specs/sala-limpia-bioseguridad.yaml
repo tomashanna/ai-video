@@ -701,7 +701,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Sostenlo a la luz."   # Axel voz off filtrada (sin boca — visor domo)
+    narration_in_this_shot: ""   # Axel voz off filtrada entrega la línea vía dialog_text (sin boca — visor domo); narrador NO repite (HR#27 fix Opción A)
     has_lip_sync_required: false
     voice_off: true                                # canonical faceless exception (AUDITOR-PROTOCOL CP4) — Axel visor domo sin boca
     dialog_text: "Sostenlo a la luz."
@@ -1116,7 +1116,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Métete y respira hondo."   # Axel voz off filtrada
+    narration_in_this_shot: ""   # Axel voz off filtrada entrega la línea vía dialog_text; narrador NO repite (HR#27 fix Opción A)
     has_lip_sync_required: false
     voice_off: true                                # canonical faceless exception (AUDITOR-PROTOCOL CP4) — Axel visor domo sin boca
     dialog_text: "Métete y respira hondo."
