@@ -70,14 +70,19 @@ def main():
     ok = []
     for s in shots:
         sid = s.get("shot_id", "?")
+        # v11 canonical: sibling `has_lip_sync_required` (bool); synthetic fixtures: `lip_sync_required`.
         lsr = s.get("lip_sync_required")
         if lsr is None:
-            fails.append({"shot_id": sid, "reason": "lip_sync_required missing (D17 architect audit)"})
+            lsr = s.get("has_lip_sync_required")
+        if lsr is None:
+            fails.append({"shot_id": sid, "reason": "lip_sync_required/has_lip_sync_required missing (D17 architect audit)"})
             continue
-        # consistency: dialog_text or character speaker → lip_sync_required must be true
-        nis = s.get("narration_in_this_shot") or {}
-        speaker = str(nis.get("speaker", ""))
-        has_dialog = bool(nis.get("dialog_text"))
+        # consistency: dialog_text or character speaker → lip_sync flag must be true.
+        # v11: dialog_text is a SIBLING of the shot; synthetic fixtures nest it under narration_in_this_shot.
+        nis = s.get("narration_in_this_shot")
+        nis_d = nis if isinstance(nis, dict) else {}
+        speaker = str(nis_d.get("speaker", ""))
+        has_dialog = bool(nis_d.get("dialog_text") or s.get("dialog_text"))
         has_char_speaker = speaker.startswith("character_") or speaker.startswith("char_")
         character_speaking = has_dialog or has_char_speaker
         if character_speaking and lsr is False:

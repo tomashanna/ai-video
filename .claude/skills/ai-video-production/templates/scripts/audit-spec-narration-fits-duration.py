@@ -83,7 +83,9 @@ def main():
     shots = spec.get("shot_list") or []
     fail_shots, flag_shots, ok_shots = [], [], []
     for s in shots:
-        text = ((s.get("narration_in_this_shot") or {}).get("narrator_text") or "").strip()
+        # v11 canonical: narration_in_this_shot is a STRING; synthetic fixtures: dict {narrator_text}.
+        _n = s.get("narration_in_this_shot")
+        text = (_n if isinstance(_n, str) else ((_n or {}).get("narrator_text") or "")).strip()
         dur = s.get("duration_intent_s")
         if not text or not dur:
             continue

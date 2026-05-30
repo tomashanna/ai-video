@@ -96,6 +96,33 @@ SYNTHETIC_LABEL_RE = re.compile(
 )
 
 
+def _narr_text(shot):
+    """narration_in_this_shot is a STRING in v11 canonical SPECs (cerro-aislado-v4, V5+) with a
+    sibling `dialog_text`; legacy/synthetic fixtures use a dict {narrator_text, ...}. Accept both.
+    (pattern_class 4/5: validators must parse the real artifact schema, not only synthetic fixtures.)"""
+    n = shot.get("narration_in_this_shot")
+    if isinstance(n, dict):
+        return n.get("narrator_text") or ""
+    if isinstance(n, str):
+        return n
+    return ""
+
+
+def _beat_role(shot):
+    """v11 canonical SPECs key beats via `section_id` (hook / setup_* / decision_* / consequence_* /
+    cliffhanger_* / resolution_*); synthetic fixtures use `beat_role`. Accept both."""
+    return str(shot.get("beat_role") or shot.get("section_id") or "")
+
+
+def _wpm_band_for(role):
+    r = role.lower()
+    for prefix, key in (("hook", "hook"), ("setup", "setup"), ("decision", "decision_setup"),
+                        ("consequence", "consequence"), ("cliffhanger", "cliffhanger")):
+        if r.startswith(prefix):
+            return WPM_BANDS[key]
+    return WPM_BANDS.get(role, WPM_DEFAULT_BAND)
+
+
 def gate(name, status, detail):
     return {"name": name, "status": status, "detail": detail}
 
@@ -153,16 +180,22 @@ def check_cliffhanger(cliff):
 def check_hook_order(hook_beats):
     if not hook_beats:
         return gate("structure_hook_order", "fail", "hook_sub_beats empty")
-    if hook_beats[-1] != "countdown":
+    # v11 canonical: hook_sub_beats is a list of dicts {beat_id, ...}; synthetic fixtures use strings.
+    last = hook_beats[-1]
+    last_label = (last.get("beat_id") or last.get("content") or "") if isinstance(last, dict) else str(last)
+    if "countdown" not in last_label.lower():
         return gate("structure_hook_order", "fail",
-                    f"hook last beat='{hook_beats[-1]}' (must be 'countdown' per canonical)")
-    return gate("structure_hook_order", "pass", "countdown is last hook beat ✓")
+                    f"hook last beat='{last_label}' (must contain 'countdown' per canonical)")
+    return gate("structure_hook_order", "pass", f"countdown is last hook beat ('{last_label}') ✓")
 
 
 def check_dilema_placement(pct):
     lo, hi = DILEMA_PLACEMENT_BAND_PCT
     if pct is None:
-        return gate("structure_dilema_placement", "fail", "dilema_placement_pct missing")
+        # v11 canonical SPECs derive dilema placement from section_id timeline, not a declared %.
+        # Absent → not_applicable (NOT fail) — placement verified via shot_list sections / CP5 render.
+        return gate("structure_dilema_placement", "not_applicable",
+                    "dilema_placement_pct not declared (v11 derives from section_id timeline)")
     if lo <= float(pct) <= hi:
         return gate("structure_dilema_placement", "pass", f"{pct}% ∈ [{lo}, {hi}]")
     return gate("structure_dilema_placement", "fail",
@@ -190,7 +223,7 @@ def check_consequence_framing(consequence_shots):
                     "no consequence shots in shot_list")
     synthetic, missing = [], []
     for s in consequence_shots:
-        txt = (s.get("narration_in_this_shot") or {}).get("narrator_text", "") or ""
+        txt = _narr_text(s)
         sid = s.get("shot_id", "?")
         if SYNTHETIC_LABEL_RE.search(txt):
             synthetic.append(sid)
@@ -218,14 +251,14 @@ def check_consequence_framing(consequence_shots):
 def check_wpm(shot_list):
     failures = []
     for s in shot_list:
-        role = str(s.get("beat_role", "default"))
-        txt = (s.get("narration_in_this_shot") or {}).get("narrator_text", "") or ""
+        role = _beat_role(s) or "default"
+        txt = _narr_text(s)
         dur = s.get("duration_intent_s")
         if not txt or not dur or float(dur) <= 0:
             continue
         words = len(txt.split())
         wpm = words / float(dur) * 60
-        lo, hi = WPM_BANDS.get(role, WPM_DEFAULT_BAND)
+        lo, hi = _wpm_band_for(role)
         if not (lo <= wpm <= hi):
             failures.append(f"{s.get('shot_id', '?')}(role={role}): {wpm:.0f}WPM ∉ [{lo},{hi}]")
     if failures:
@@ -283,11 +316,14 @@ def check_pattern_rotation(spec_cliff, patterns_map):
 def collect_all_text(spec):
     pieces = []
     for s in spec.get("shot_list", []) or []:
-        n = s.get("narration_in_this_shot") or {}
-        for k in ("narrator_text", "dialog_text"):
-            v = n.get(k)
-            if v:
-                pieces.append(str(v))
+        nt = _narr_text(s)
+        if nt:
+            pieces.append(nt)
+        n = s.get("narration_in_this_shot")
+        # dialog_text: dict form (n.dialog_text) OR v11 sibling (shot.dialog_text)
+        dlg = (n.get("dialog_text") if isinstance(n, dict) else None) or s.get("dialog_text")
+        if dlg:
+            pieces.append(str(dlg))
     extra = spec.get("extra_text")
     if extra:
         pieces.append(str(extra))
@@ -366,7 +402,7 @@ def main():
     gates.append(check_dilema_placement(ns.get("dilema_placement_pct")))
     gates.append(check_counterfactual(ns.get("counterfactual_placement")))
     shot_list = spec.get("shot_list") or []
-    consequence_shots = [s for s in shot_list if str(s.get("beat_role", "")).startswith("consequence")]
+    consequence_shots = [s for s in shot_list if _beat_role(s).startswith("consequence")]
     gates.append(check_consequence_framing(consequence_shots))
     gates.append(check_wpm(shot_list))
 

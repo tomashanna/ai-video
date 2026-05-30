@@ -334,5 +334,70 @@ class TestAntiCliche(unittest.TestCase):
         self.assertIn("cliché", r.stdout.lower() + r.stderr.lower() + "cliche")
 
 
+_V11_STRING_SCHEMA = """schema_version: "v11.1"
+video_capabilities:
+  format_type: "interactive_choice"
+  has_layer_2_effects: true
+  has_layer_3_music: true
+  has_layer_4_ui: true
+  audio_mix_target: "lufs_-14"
+narrative_structure:
+  cliffhanger_archetype: "P1"
+  hook_sub_beats:
+    - {beat_id: name_labels_intro, content: "labels"}
+    - {beat_id: countdown_3_2_1, content: "film leader countdown"}
+  counterfactual_placement: "before_choice_resolves"
+shot_list:
+  - shot_id: shot_01
+    section_id: hook
+    duration_intent_s: 3.0
+    narration_in_this_shot: "Elige a tu compañero para esta noche. Axel o Hugo."
+    has_lip_sync_required: false
+    dialog_text: null
+  - shot_id: shot_07
+    section_id: consequence_d1
+    duration_intent_s: 4.0
+    narration_in_this_shot: "Si lo levantas, el vial revienta y el aire te quema."
+    has_lip_sync_required: false
+    dialog_text: null
+"""
+
+
+class TestV11RealSchemaRegression(unittest.TestCase):
+    """pattern_class 4/5: validators must parse the REAL v11 artifact schema (string
+    narration_in_this_shot + sibling dialog_text + section_id + dict hook_sub_beats), not only
+    the synthetic dict fixtures. Regression for the AttributeError crash on the first real v11 SPEC
+    (sala-limpia-bioseguridad / cerro-aislado-v4 both use this schema)."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.spec = Path(self.tmp) / "spec.yaml"
+        self.spec.write_text(_V11_STRING_SCHEMA, encoding="utf-8")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_v11_string_schema_parses_no_crash(self):
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--skip-semantic"])
+        # MUST NOT crash with AttributeError ('str' object has no attribute 'get')
+        self.assertNotIn("Traceback", r.stderr, f"validator crashed on v11 string schema:\n{r.stderr}")
+        self.assertNotIn("AttributeError", r.stderr)
+        self.assertIn("structure_consequence_framing", r.stdout)
+
+    def test_v11_consequence_framing_detected_via_section_id(self):
+        # consequence_d1 shot uses "Si lo levantas" (action-conditional) → must PASS, detected via section_id
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--skip-semantic"])
+        data = json.loads(r.stdout)
+        g = next(x for x in data["gates"] if x["name"] == "structure_consequence_framing")
+        self.assertEqual(g["status"], "pass", f"expected PASS, got {g}")
+
+    def test_v11_hook_dict_beats_countdown_last(self):
+        # hook_sub_beats is a list of DICTS ending with beat_id=countdown_3_2_1 → must PASS
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--skip-semantic"])
+        data = json.loads(r.stdout)
+        g = next(x for x in data["gates"] if x["name"] == "structure_hook_order")
+        self.assertEqual(g["status"], "pass", f"expected PASS on dict hook beats, got {g}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

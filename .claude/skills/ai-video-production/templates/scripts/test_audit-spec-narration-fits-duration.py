@@ -109,5 +109,37 @@ class TestL1(unittest.TestCase):
         self.assertNotIn("shot_visual_only", r.stdout.split("fail_shots")[0] if "fail_shots" in r.stdout else r.stdout)
 
 
+_V11_STRING_SCHEMA = """schema_version: "v11.1"
+video_capabilities:
+  format_type: "interactive_choice"
+  has_tts_narration: true
+shot_list:
+  - shot_id: shot_01
+    section_id: hook
+    duration_intent_s: 3.0
+    narration_in_this_shot: "Elige a tu compañero para esta noche. Axel o Hugo."
+    has_lip_sync_required: false
+    dialog_text: null
+"""
+
+
+class TestV11RealSchemaRegression(unittest.TestCase):
+    """pattern_class 4/5: parse REAL v11 schema (string narration_in_this_shot), not only dict fixtures."""
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.spec = Path(self.tmp) / "spec.yaml"
+        self.spec.write_text(_V11_STRING_SCHEMA, encoding="utf-8")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_v11_string_schema_no_crash(self):
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
+        self.assertNotIn("Traceback", r.stderr, f"crashed on v11 string schema:\n{r.stderr}")
+        self.assertNotIn("AttributeError", r.stderr)
+        # shot_01 = 10 words / 3.0s = 200 WPM → within [60,280] → parses + measures, exit 0
+        self.assertEqual(r.returncode, 0, f"stdout {r.stdout}")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
