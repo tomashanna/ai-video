@@ -23,11 +23,11 @@ def _write_spec(path, *, has_tts=True, shot_yaml=None, omit_caps=False):
     )
     body = shot_yaml or """shot_list:
   - shot_id: shot_01
-    duration_intent_s: 3.0
+    duration_intent_s: 4.0
     narration_in_this_shot:
       narrator_text: "Aterrizaje nocturno con dos dilemas en cuatro horas vivirás"
   - shot_id: shot_02
-    duration_intent_s: 2.5
+    duration_intent_s: 3.0
     narration_in_this_shot:
       narrator_text: "Hay dos figuras esperándote en la torre"
 """
@@ -116,8 +116,22 @@ video_capabilities:
 shot_list:
   - shot_id: shot_01
     section_id: hook
-    duration_intent_s: 3.0
+    duration_intent_s: 4.0
     narration_in_this_shot: "Elige a tu compañero para esta noche. Axel o Hugo."
+    has_lip_sync_required: false
+    dialog_text: null
+"""
+
+# V5 bug class: narration at canonical pace LONGER than min(duration_intent_s, i2v clip max) → truncated.
+_V5_BUG_TRUNCATION = """schema_version: "v11.1"
+video_capabilities:
+  format_type: "interactive_choice"
+  has_tts_narration: true
+shot_list:
+  - shot_id: shot_20
+    section_id: resolution_b
+    duration_intent_s: 5.0
+    narration_in_this_shot: "Si aguantas afuera, la ducha se purga sola. Axel asiente y se aparta. La esclusa se abre al amanecer. Sales con vida."
     has_lip_sync_required: false
     dialog_text: null
 """
@@ -137,8 +151,16 @@ class TestV11RealSchemaRegression(unittest.TestCase):
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         self.assertNotIn("Traceback", r.stderr, f"crashed on v11 string schema:\n{r.stderr}")
         self.assertNotIn("AttributeError", r.stderr)
-        # shot_01 = 10 words / 3.0s = 200 WPM → within [60,280] → parses + measures, exit 0
+        # shot_01 = 10 words / 4.0s → canonical 3.64s ≤ min(4.0, 5.9) → fits, exit 0
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}")
+
+    def test_v5_bug_narration_exceeds_canonical_fit_fails(self):
+        # 22 words / 165 WPM = 8.0s canonical > min(duration_intent_s 5.0, i2v 5.9) → MUST FAIL (V5 bug class).
+        # Old check (WPM=22/5*60=264 ≤ 280) would have PASSED → that was the V5 gap.
+        self.spec.write_text(_V5_BUG_TRUNCATION, encoding="utf-8")
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
+        self.assertNotEqual(r.returncode, 0, f"narration exceeding canonical fit must FAIL.\nstdout {r.stdout}")
+        self.assertIn("truncated", r.stdout.lower())
 
 
 if __name__ == "__main__":

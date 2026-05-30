@@ -620,6 +620,12 @@ Esto es información empírica nueva que NO existía documentada antes de V4. Cr
 
 **Codificación forward:** si llega 5/5 → promote a Hard Rule / structural validator (`audit-rule-vs-primary-source.py`: toda regla con claim "canónico N/M" debe citar el transcript/frame primario, no la síntesis; + toda regla sobre una elección creativa debe declararse como principio+variabilidad+anti-pattern, NO regla binaria). Hasta entonces: el Auditor, al validar CUALQUIER regla, distingue principio underlying (enforce) de variabilidad creativa (NO enforce) de anti-pattern (flag), y lee la fuente primaria directa (transcript/frame), NO la síntesis. Refuerza anti-pattern #10 en AUDITOR-PROTOCOL §6.
 
+### Pattern 9 — `model_constraints_not_propagated_across_triangle_roles` (6/5 → CANONICAL, HR#28/#29)
+
+**Caso disparador V5** (2026-05-30, user_perceptual_catch): 18.8s de narración + captions truncados en 10 shots. Raíz: los límites del modelo (i2v `clip_duration_max_s` Hailuo Std 5.9s, tts canonical pace 165 WPM, t2i constraints) NO estaban codificados en un lugar que los 3 roles consultaran. El arquitecto fijó `duration_intent_s` + narración más larga que el límite Hailuo; el validator L1 chequeaba `WPM≤280` (comprimible) en vez de `narración@165 ≤ min(dur, 5.9)`; Hailuo generó 5.0s; el atomic trim cortó la narración muxeada. **Promoción canónica 2026-05-30**: `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` (Capa A agnóstico, per-model limits+constraints+canonical settings) + **HR#28/#29** + Architect lee MATRIX pre-SPEC (creative-director SKILL §) + validator L1 lee MATRIX (canonical-pace-fit) + AUDITOR-PROTOCOL anti-pattern #18.
+
+**Sub-pattern `user_perceptual_detects_what_validators_miss`**: mis gates CP5 (silencedetect>2s=0, freezedetect, frame-sampling) NO captaron narración truncada (palabras truncadas ≠ silencio). **Lección**: audit comparativo cross-CP es mandatorio cuando user_perceptual detecta bug en el output final (aislar el CP raíz midiendo property-preservation entre stages). Validators forward: `audit-clip-timing-vs-audio.py` (atomic clip_dur ≥ narración_dur per shot — habría cazado V5), `audit-caption-vs-narration-coverage.py`, `audit-cross-cp-output-consistency.py`.
+
 ---
 
 ## SECTION 6 — Mapa agnóstico vs específico (para adaptación a formato nuevo)

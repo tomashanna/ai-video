@@ -203,6 +203,7 @@ narrator_voice: "K3TeN3ZVK8WnOeJ0NYqZ"            # David C2 (157.2 WPM medido; 
 # ═══════════════════════════════════════════════════════════════
 
 narrative_structure:
+  model_constraints_acknowledged: true                  # HR#28/#29 — narración trimmed a canonical@165 ≤ min(dur,5.9 hailuo_std) V5 fix (10 shots)
   counterfactual_placement: "before_choice_resolves"   # CANONICAL preferred (ref-09 10/10, PAUTA § 24)
   emotional_framing: "stakes_lift"
   cliffhanger_archetype: "P1"                          # Paz perdida cozy laboral (no twist; Axel siguió peligroso)
@@ -597,7 +598,7 @@ shot_list:
   - shot_id: "shot_03"
     section_id: "setup_pre_decision"
     description: "Setup BSL-4 — POV recorriendo el laboratorio sellado tras Axel; cuarentena cierra puertas"
-    duration_intent_s: 5.0
+    duration_intent_s: 5.3
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "El viewer sigue a Axel por el laboratorio; al fondo una puerta blindada se sella con luz roja de cuarentena"
@@ -619,7 +620,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si eliges a Axel, estás encerrado en un laboratorio de bioseguridad. La cuarentena selló las puertas hasta el amanecer."
+    narration_in_this_shot: "Si eliges a Axel, quedas encerrado en un laboratorio de bioseguridad sellado hasta el amanecer."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -721,7 +722,7 @@ shot_list:
   - shot_id: "shot_06"
     section_id: "decision_1"
     description: "DECISIÓN 1 — freeze + filtro + countdown film-leader + loading bar. Categoría: curiosidad/obediencia"
-    duration_intent_s: 4.0
+    duration_intent_s: 4.6
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "Frame congelado del vial deslizado + Axel expectante; el viewer debe decidir"
@@ -743,7 +744,7 @@ shot_list:
     caption_burn_strategy: "spec_text_override_with_whisper_timing"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
-    narration_in_this_shot: "Axel desliza un vial fluorescente bajo la campana. Ahora decides. Lo levantas o lo dejas."
+    narration_in_this_shot: "Axel desliza un vial fluorescente. Ahora decides. Lo levantas o lo dejas."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -765,7 +766,7 @@ shot_list:
   - shot_id: "shot_07"
     section_id: "consequence_d1"
     description: "CONSECUENCIA A1 (lo levantas) — el vial revienta por presión, aerosol entra por grieta del traje"
-    duration_intent_s: 5.0
+    duration_intent_s: 4.9
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "El viewer levanta el vial a la luz UV; el vial revienta y libera un aerosol fluorescente que entra por una rendija del traje del viewer"
@@ -787,7 +788,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si lo levantas, el vial revienta por la presión. El aerosol entra por una grieta del traje."
+    narration_in_this_shot: "Si lo levantas, el vial revienta y el aerosol entra por el traje."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -847,7 +848,7 @@ shot_list:
   - shot_id: "shot_09"
     section_id: "consequence_d1"
     description: "CONSECUENCIA B1 (lo dejas) — Axel guarda el vial, te lleva a la campana y prepara un autoinyector (bridge a D2). Hugo NO aparece aquí; reaparece en outro (≥2 shots: shot_01+shot_02+shot_22)"
-    duration_intent_s: 5.0
+    duration_intent_s: 4.2
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "Axel recoge el vial y lo guarda, guía al viewer a la campana de flujo y prepara un autoinyector sobre la mesada"
@@ -869,7 +870,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si lo dejas, Axel guarda el vial. Te lleva a la campana de flujo y prepara un autoinyector."
+    narration_in_this_shot: "Si lo dejas, Axel guarda el vial y prepara un autoinyector."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -928,7 +929,7 @@ shot_list:
   - shot_id: "shot_11"
     section_id: "decision_2"
     description: "DECISIÓN 2 — freeze + filtro + countdown + loading. Categoría: sumisión/resistencia (distinta de D1)"
-    duration_intent_s: 4.0
+    duration_intent_s: 4.6
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "Frame congelado del autoinyector ofrecido; el viewer decide inyectarse o negarse"
@@ -950,7 +951,7 @@ shot_list:
     caption_burn_strategy: "spec_text_override_with_whisper_timing"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
-    narration_in_this_shot: "Te pasa el autoinyector. Ponte la vacuna. Ahora decides. Te inyectas o te niegas."
+    narration_in_this_shot: "Te pasa el autoinyector. Ponte la vacuna. Te inyectas o te niegas."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -972,7 +973,7 @@ shot_list:
   - shot_id: "shot_12"
     section_id: "consequence_d2"
     description: "CONSECUENCIA A2 (te inyectas) — no era vacuna, era el patógeno; venas negras suben por el brazo"
-    duration_intent_s: 5.0
+    duration_intent_s: 5.3
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "El viewer se aplica el autoinyector en el antebrazo; el efecto se revela: venas negras suben por el brazo"
@@ -994,7 +995,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si te inyectas, no era una vacuna. Era el patógeno. Las venas se te ponen negras y suben por el brazo."
+    narration_in_this_shot: "Si te inyectas, no era vacuna. Era el patógeno. Las venas se ponen negras."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -1053,7 +1054,7 @@ shot_list:
   - shot_id: "shot_14"
     section_id: "consequence_d2"
     description: "CONSECUENCIA B2 (te niegas) — Axel deja el inyector; la alarma de cuarentena empieza a sonar (bridge a D3 clímax)"
-    duration_intent_s: 4.5
+    duration_intent_s: 4.6
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "Axel deja el autoinyector en la bandeja; una luz de alarma de cuarentena empieza a girar y a sonar"
@@ -1075,7 +1076,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si te niegas, Axel deja el inyector. La alarma de cuarentena empieza a sonar."
+    narration_in_this_shot: "Si te niegas, Axel deja el inyector. La alarma de cuarentena suena."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -1135,7 +1136,7 @@ shot_list:
   - shot_id: "shot_16"
     section_id: "decision_3_climax"
     description: "DECISIÓN 3 (clímax) — freeze + filtro + countdown + loading. Categoría: confianza/desconfianza"
-    duration_intent_s: 4.0
+    duration_intent_s: 3.8
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "Frame congelado de la boca de la ducha de descontaminación; el viewer decide entrar o aguantar afuera"
@@ -1157,7 +1158,7 @@ shot_list:
     caption_burn_strategy: "spec_text_override_with_whisper_timing"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
-    narration_in_this_shot: "Axel señala la ducha de descontaminación. Ahora decides. Entras o aguantas afuera."
+    narration_in_this_shot: "Axel señala la ducha. Ahora decides. Entras o aguantas afuera."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -1179,7 +1180,7 @@ shot_list:
   - shot_id: "shot_17"
     section_id: "consequence_d3"
     description: "CONSECUENCIA A3 (entras y respiras) — vapor esterilizante a presión, los pulmones se queman desde adentro"
-    duration_intent_s: 5.0
+    duration_intent_s: 4.9
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "El viewer entra a la ducha y respira; los cabezales liberan vapor esterilizante a presión que llena la cabina"
@@ -1201,7 +1202,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si entras y respiras, el vapor esterilizante sale a presión. Los pulmones se te queman desde adentro."
+    narration_in_this_shot: "Si entras y respiras, el vapor esterilizante a presión te quema los pulmones."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |
@@ -1301,7 +1302,7 @@ shot_list:
   - shot_id: "shot_20"
     section_id: "resolution_b"
     description: "RESOLUCIÓN B3 (aguantas afuera) — la ducha se purga sola, Axel asiente y se aparta, la esclusa se abre al amanecer; sales con vida"
-    duration_intent_s: 5.0
+    duration_intent_s: 5.7
     scene_context:
       who_is_there: ["char_a", "viewer_pov"]
       who_does_what: "El viewer se mantuvo afuera; la ducha purga su vapor sola, Axel asiente y se hace a un lado, la esclusa al fondo se abre con luz de amanecer"
@@ -1323,7 +1324,7 @@ shot_list:
     caption_burn_strategy: "whisper_from_clip_audio"
     script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
     avu_overlay_clip: null
-    narration_in_this_shot: "Si aguantas afuera, la ducha se purga sola. Axel asiente y se aparta. La esclusa se abre al amanecer. Sales con vida."
+    narration_in_this_shot: "Si aguantas afuera, la ducha se purga sola. La esclusa se abre. Sales con vida."
     has_lip_sync_required: false
     dialog_text: null
     visual_intent: |

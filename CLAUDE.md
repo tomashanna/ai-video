@@ -195,6 +195,7 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | 25 ⛔⛔ | HYBRID architecture canonical V4+ (captions BURNED per clip + narrator continuous Layer 3) | `has_captions_baked` | `PIPELINE.md § 13.9` |
 | 26 ⛔ | Tests adversariales obligatorios (`test_*.py` companion per new script) | universal | `BOOTSTRAP.md § script copy list` + Sprint M |
 | 27 ⛔ | Arquitecto entrega SPEC con **0 findings 🔴 known** (self-validation pre-emit: corre los validators contra su PROPIO SPEC + itera hasta 🟢; NO entrega con gaps 🔴 declarados). Auditor que recibe SPEC con 🔴 → **RETORNA al arquitecto**, NO escala a Tomás salvo ambigüedad arquitectural real | universal | `creative-director/SKILL.md` § self-validation + `CP2-script-flow.md` + `AUDITOR-PROTOCOL §6 #17` |
+| 28/29 ⛔ | **Pipeline models DECLARAN capabilities en `MODEL-CAPABILITIES-MATRIX.md`; los 3 roles del triángulo CONSULTAN antes de producir/validar.** Arquitecto: per shot `narración@165WPM ≤ min(duration_intent_s, i2v.clip_max_s)` pre-SPEC. Validator/Auditor: NO asumir capacidades hardcoded — leer la MATRIX. Modelo nuevo → agregar entrada ANTES de usarlo. (pattern_class 6/5 `model_constraints_not_propagated_across_triangle_roles`; V5 bug: narración truncada 18.8s) | universal | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` + `audit-spec-narration-fits-duration.py` |
 
 > ⚠️ **#22 = empty slot** (accidental skip 2026-05-21, blast radius 54 refs externos > beneficio cosmético). Detalle Numbering note → `HARD-RULES.md`.
 

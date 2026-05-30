@@ -385,6 +385,16 @@ spec_listo_para_handoff: false  # solo true si all_passed = true
 
 **Si CUALQUIER validación falla (D14-D22) → NO declarar spec listo. Iterar antes.**
 
+### ⛔ MODEL-CAPABILITIES check pre-SPEC (Hard Rule #28/#29, añadido 2026-05-30 — pattern_class 6/5)
+
+ANTES de fijar `duration_intent_s` + escribir narración, leé `.claude/skills/ai-video-production/MODEL-CAPABILITIES-MATRIX.md`. Per shot calculá:
+```
+narración_dur_canonical = (palabras / canonical_pace_wpm[165]) * 60
+effective_max = min(duration_intent_s, modelo_i2v.clip_duration_max_s[hailuo_std 5.9])
+PASS si narración_dur_canonical ≤ effective_max
+```
+Si FAIL → (a) trim narración, (b) split shot en 2 clips, (c) freeze-extend visual (tpad) para cubrir narración más larga, o (d) usar modelo i2v con mayor `clip_duration_max_s`. Documentá `model_constraints_acknowledged: true` en el SPEC. **Caso disparador V5**: narración a 165 WPM > 5.9s Hailuo en 10 shots → 18.8s truncados; ni arquitecto ni validator L1 (chequeaba WPM≤280 comprimible) lo vieron. NUNCA asumas el límite del modelo de memoria — leé la MATRIX.
+
 ### ⛔ Self-validation MANDATORY pre-emit (Hard Rule #27, añadido 2026-05-29 — pattern_class 5/5)
 
 Antes de declarar el SPEC listo para handoff, el arquitecto DEBE **correr los 3 validators de enforcement contra su PROPIO SPEC** (no solo el self-audit D14-D27 cualitativo):
