@@ -367,26 +367,7 @@ Para chispas en fogata, usar Canvas 2D o un sprite sheet animado con `background
 
 ## 4. CAPTIONS — CSS OBLIGATORIO
 
-**El default `white-space: nowrap` rompe captions de más de 5 palabras.** Siempre usar:
-
-```css
-.caption {
-  font-size: 80px;
-  white-space: normal;        /* permite wrapping */
-  width: 960px;               /* limita al área segura */
-  text-align: center;
-  line-height: 1.15;
-  /* ...resto de propiedades */
-}
-```
-
-Para captions de más de 8 palabras (twist, resolución), reducir font-size a 68px inline:
-```html
-<div id="h4-cap-4a" class="caption caption-abs"
-  style="opacity:0; white-space:normal; text-align:center; width:920px; font-size:68px; line-height:1.1;">
-  SI COMES, VES TUS PIERNAS. SE MUEVEN. ERES UNO DE ELLOS.
-</div>
-```
+> ⛔ **CSS/clases de captions → `../ai-video-production/CAPTIONS.md`** (home canónico). Ahí vive el CSS completo (`white-space: normal` obligatorio, font-size 80px / 68px para frases largas, text-stroke, width safe-zone) **+ el sistema de 3 clases** (`caption-name` / `caption-narration` / `caption-warning`) que este subset NO tenía. No dupliques las reglas acá.
 
 ---
 
@@ -920,19 +901,9 @@ Ejemplos validados (bosque-abandonado v3):
 | Body fall | `human body collapsing onto dead leaves and earth, dull thud no scream, single event, no music` | 1.5 | 0.6 |
 | Campfire loop | `warm intimate campfire crackling close-up, dry wood embers popping, cozy continuous ambient` | 8.0 | 0.5 (`loop:true`) |
 
-### Mix volumes — tabla canónica
+### Mix volumes
 
-Aplicar a `data-volume` en cada `<audio class="clip">`:
-
-| Capa | data-volume | Notas |
-|---|---|---|
-| Narración | **1.0** | Siempre. Nada compite con la voz. |
-| Música ambient (horror) | 0.05–0.18 | El número en el proyecto bosque-abandonado fue 0.05 (apenas perceptible). |
-| Música ambient (dawn/cliffhanger) | 0.13–0.18 | Puede subir porque no hay narración encima. |
-| SFX eventos puntuales | 0.20–0.35 | Footsteps, whispers, breaths, body falls. |
-| Flash impacts | 0.55–0.65 | Tienen que pegar. White flash + sub-bass boom. |
-| Ambient continuo (wind/fire loop) | 0.10–0.18 | Capa más profunda, no debe competir con SFX puntuales. |
-| Glass/cup clinks/SFX agudos | 0.25–0.35 | Audibles pero no dominantes. |
+> ⛔ **Mix volumes → `../ai-video-production/SFX-PIPELINE.md § Mix volumes`** (tabla canónica de `data-volume`: narración 1.0 / música 0.05–0.18 / SFX 0.20–0.35 / flash 0.55–0.65 / ambient continuo 0.10–0.18 / clinks 0.25–0.35). No dupliques la tabla acá.
 
 ### Cuántos SFX por video — orden de magnitud
 

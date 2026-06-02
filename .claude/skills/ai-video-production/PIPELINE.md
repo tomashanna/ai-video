@@ -197,18 +197,9 @@ Para motion avanzado (parallax, flicker, vignette pulsante, glitch, glow, niebla
 
 ## 4. CAPTIONS — CSS obligatorio
 
-El default `white-space: nowrap` rompe captions largos. Siempre:
+El default `white-space: nowrap` rompe captions largos: siempre `white-space: normal` + `width: 960px` + `text-align: center`.
 
-```css
-.caption {
-  font-size: 80px;
-  white-space: normal;
-  width: 960px;
-  text-align: center;
-  line-height: 1.15;
-  -webkit-text-stroke: 1.5px rgba(0,0,0,0.7);  /* obligatorio: stroke negro */
-}
-```
+> CSS canónico de captions → `CAPTIONS.md` (3 clases + drop-shadow, NO thick stroke).
 
 Para frases >8 palabras, reducir font-size a 68px inline:
 ```html
@@ -322,10 +313,9 @@ ffmpeg -i music.mp3 -af loudnorm=print_format=summary -f null - 2>&1 | grep "Inp
 # Si dice "-7 LUFS" o similar → OK
 ```
 
-### Volúmenes recomendados (de mix table)
+### Volúmenes recomendados
 
-- Música ambient horror: `data-volume="0.05-0.18"` (apenas perceptible)
-- Música cliffhanger / dawn: `data-volume="0.13-0.18"` (sin narración encima)
+> Mix volumes canónicos → `SFX-PIPELINE.md § Mix volumes`.
 
 ---
 

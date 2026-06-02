@@ -181,34 +181,11 @@
 
 ### 2.5 Premium prompt template — cheap tier compensation (añadida 2026-05-16)
 
-Cuando usás Hailuo / Seedance Lite / Wan-AI / cheap tier, el prompt **DEBE** seguir esta estructura 5-clause. Sin esto, cheap model produce slop.
+**Conexión model-selection (lo único de este doc):** cuando la matriz § 2.1 / § 2.4 te baja a Hailuo / Seedance Lite / Wan-AI / cheap tier (motion narrativo, harto-movimiento budget-tight, establishing >2s sin budget Kling), el prompt **DEBE** ser premium 5-block para cerrar el gap de calidad vs tier HERO. Sin esto, cheap model produce slop y la decisión de bajar de tier no se sostiene.
 
-```
-PROMPT_PREMIUM_TEMPLATE = """
-1. SUBJECT + BODY (verbo + objeto LITERAL):
-   {character/setting} {verbo concreto} {objeto/dirección} {cómo: physical detail}
-   Ejemplo: "Maikol gira 90° hacia cámara, sonrisa contenida sin abrir boca"
-   NO: "Maikol uncanny en faro"
+> 📐 Premium 5-block prompt body (subject+camera+lighting+atmosphere+style, HR#20) canónico → `<format>-format/INGENIERO-PAUTA-MASTER § 5.7`.
 
-2. CAMERA (lens + movement + angle):
-   {lens: 24mm wide / 50mm normal / 85mm portrait}, {movement: static / push-in slow / dolly left / handheld}, {angle: eye-level / low / Dutch}
-   Ejemplo: "85mm portrait, static, eye-level"
-
-3. LIGHTING (source + temperature + intensity):
-   {source: window left / overhead flicker / sconce warm}, {temp: 5000K cool / 3200K warm / 2700K sodium}, {intensity: key+fill / silhouette / chiaroscuro}
-   Ejemplo: "sconce warm overhead, 3200K, chiaroscuro"
-
-4. ATMOSPHERE (mood VIA physical expressions, NOT abstract):
-   {physical detail expressing mood}
-   Ejemplo: "breath visible in cold air, slight shiver in shoulders"
-   NO: "sense of dread atmosphere"
-
-5. STYLE REFERENCE (pick ONE):
-   cinematic | photoreal | painterly | archive footage | VHS degraded
-"""
-```
-
-**Anti-pattern**: prompt de 1 línea "Maikol uncanny en faro horror atmosphere" → cheap model produce slop. Mismo prompt expandido 5-clause + camera + lighting + literal physical mood → cheap model competitivo con tier HERO.
+**Anti-pattern (rationale de la conexión)**: prompt de 1 línea "Maikol uncanny en faro horror atmosphere" → cheap model produce slop. Mismo prompt expandido 5-clause + camera + lighting + literal physical mood → cheap model competitivo con tier HERO.
 
 **Dependencia crítica del SPEC**: si SPEC v6 tiene gap en `scene_context.who_does_what` para algún shot → ENGINEER ESCALA al arquitecto antes de generar prompt. Sin scene description completa, premium prompt es imposible. Ver hard rule #20 + #21 CLAUDE.md.
 

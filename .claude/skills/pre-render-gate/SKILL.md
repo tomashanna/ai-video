@@ -1,6 +1,6 @@
 ---
 name: pre-render-gate
-description: ⛔ INVOCAR OBLIGATORIO antes de cualquier render o reporte al usuario en proyectos de video. Skill bloqueante que ejecuta checklist Y/N de 20 puntos críticos (16 base + 4 referent-validated post 2026-05-13). Si CUALQUIER respuesta es No → PARAR, completar, re-invocar. Sin esto los videos fallan reproduciblemente (casos cabana-tormenta + isla-faro + pueblo-fantasma-desierto). Cubre: scripts QA copiados (7 gates), video-log.md consultado, pattern rotado, NARRATIVE.md cumple Show 70/30, plot twist coherente, primeros 30s = animation AI planeada, TTS sin "..." antes proper nouns, narración coverage >40%, sin gaps narrativos >2s, música coverage >85%, 7 gates obligatorios ejecutados, video-log.md learnings appended, human-checklist ejecutado, Q17 cuts/min 2-7, Q18 LUFS -14 ±0.5, Q19 vignette aplicado, Q20 monospaced fonts para character names, Q21 audit-against-referent ≥85% métricas críticas en p25-p75 bands.
+description: ⛔ INVOCAR OBLIGATORIO antes de cualquier render o reporte al usuario en proyectos de video. Skill bloqueante que ejecuta checklist Y/N de 24 puntos críticos (16 base + 4 referent-validated post 2026-05-13 + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU post-2026-05-19; numeración llega a Q25, Q23 ausente). Si CUALQUIER respuesta es No → PARAR, completar, re-invocar. Sin esto los videos fallan reproduciblemente (casos cabana-tormenta + isla-faro + pueblo-fantasma-desierto). Cubre: scripts QA copiados (7 gates), video-log.md consultado, pattern rotado, NARRATIVE.md cumple Show 70/30, plot twist coherente, primeros 30s = animation AI planeada, TTS sin "..." antes proper nouns, narración coverage >40%, sin gaps narrativos >2s, música coverage >85%, 7 gates obligatorios ejecutados, video-log.md learnings appended, human-checklist ejecutado, Q17 cuts/min 2-7, Q18 LUFS -14 ±0.5, Q19 vignette aplicado, Q20 monospaced fonts para character names, Q21 audit-against-referent ≥85% métricas críticas en p25-p75 bands.
 ---
 
 # pre-render-gate — Checklist bloqueante pre-render
@@ -23,7 +23,11 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 ---
 
-## ⛔ CHECKLIST — 21 preguntas Y/N
+## ⛔ CHECKLIST — 24 preguntas Y/N
+
+> **Q-count nota** (corregido post long-doc-audit): el checklist tiene **24 preguntas reales** numeradas **Q1–Q25** — la numeración **salta Q23** (slot vacío, nunca asignado). Breakdown: 16 base (Q1-Q16) + 4 referent-validated (Q17-Q20) + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU. El body manda sobre cualquier conteo legacy.
+>
+> ⚠️ **Discrepancia gates** (anotada, NO resuelta acá): este doc dice "7 gates" (Q11 + breakdown), pero el canónico (`CLAUDE.md` § Pre-render gate + `video-director/WORKFLOW.md`) define **8 gates obligatorios** (Gate 0 `audit-spec-completeness.py` + Lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate). La secuencia de Q11 NO se reescribe en este pass conservador — pendiente reconciliar a 8 en un pass dedicado.
 
 ### Setup técnico (verificar primero)
 
@@ -232,7 +236,7 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 | Resultado | Acción |
 |---|---|
-| **21/21 Yes** | ✅ STOP POINT autorizado. Reportar al usuario. Esperar autorización animation AI. |
+| **24/24 Yes** | ✅ STOP POINT autorizado. Reportar al usuario. Esperar autorización animation AI. |
 | **1-3 No** | ⚠️ Completar pieza faltante. Re-invocar gate desde inicio. NO reportar al usuario aún. |
 | **4+ No** | ❌ Bootstrap incompleto o flow saltado. Volver al inicio del flow (PASO 1 del `/video-new`). |
 | **Score qa-gate < 9.7** | ❌ Iterar fixes NO-ANIMATION-AI (A→B→C — guion/captions/imágenes/wiring/mix). Re-invocar gate. Máx 3 iter → ESCALAR usuario. |

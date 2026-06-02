@@ -86,8 +86,7 @@
 |---|---|
 | `FEEDBACK-LOOP.md` | Frame slicing + Read para validar video sin reproducir |
 | `elements.json` | Catálogo machine-readable de componentes UI (countdown/loader/lower-third) |
-| `hyperframes-github.md` | Refs externos HyperFrames |
-| `hyperframes-knowledge.md` | Refs externos HyperFrames |
+| `.agents/skills/hyperframes*` | Skill oficial viva HyperFrames (API/CLI/registry, v0.6.69+). Reemplaza los scrapes `hyperframes-github.md`/`hyperframes-knowledge.md` (v0.4.22, DEPRECATED → `_archive-deprecated-docs/`) |
 
 ### 🌐 Skills globales `~/.claude/skills/`
 
