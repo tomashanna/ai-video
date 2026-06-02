@@ -219,7 +219,6 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 canonical reference videos source |
 | `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
 | `creative-specs/<id>.yaml` | `<repo-root>/creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
-| `_archive-bak-snapshots/` | `<repo-root>/_archive-bak-snapshots/` | Historical .bak files (consolidated 2026-05-23 Sub-Fase 3A) |
 | `_archive-deprecated-docs/` | `<repo-root>/_archive-deprecated-docs/` | DEPRECATED docs preserved as historical reference (CREATIVE-BRIEF + POST-MORTEM-TEMPLATE + ARCHITECT-BRIEFING-VIDEO-3 + plain/v10 SPEC templates) |
 | `_archive-legacy-projects/` | `<repo-root>/_archive-legacy-projects/` | Pre-V1 dev projects archived (cabina-14 + bosque-abandonado + mina-abandonada + pueblo-fantasma + maikol-crucero + cabana-tormenta + calabozo-catacumbas + isla-faro + elige-companero) |
 | `_archive-phase3-v3-learning/` | `<repo-root>/_archive-phase3-v3-learning/` | V3 parque-acuatico learning archive |
