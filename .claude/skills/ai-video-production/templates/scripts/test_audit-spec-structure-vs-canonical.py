@@ -28,6 +28,10 @@ SCRIPT = Path(__file__).parent / "audit-spec-structure-vs-canonical.py"
 # .claude/skills/ai-video-production/templates/scripts/ → 5 parents up = repo root).
 REPO_ROOT = Path(__file__).resolve().parents[5]
 V6_SPEC = REPO_ROOT / "creative-specs" / "invernadero-turno-riego.yaml"
+# The real first-attempt sport SPEC. Per sport-choice-format/PAUTA-MASTER.md it is a KNOWN-BROKEN
+# pre-rebuild artifact ("concepto rival/companero roto") — the foil (Dembele) leaks into the played
+# path → it MUST FAIL the agnostic § 2 invariant, same bug class as V6. Perfect real-artifact fixture.
+SPORT_SPEC = REPO_ROOT / "creative-specs" / "champions-sport-choice.yaml"
 
 
 def _run(args):
@@ -130,6 +134,95 @@ shot_list:
     scene_context:
       who_is_there: [char_b, viewer_pov]
     narration_in_this_shot: "En el delantal de Celeste ya hay semillas."
+"""
+
+
+# A canonical-compliant SPORT-CHOICE skeleton (mirrors CLEAN_SPEC but with the sport role taxonomy):
+# the foil (char_a = the rival star you did NOT pick) appears ONLY in hook + counterfactual_opening +
+# cliffhanger. char_b (companero_protagonista = the partner of the team you joined) lives the played
+# path. In the played-path shots the OBSTACLE is the rival KIT / a generic rival player — NOT the
+# foil star himself, who is forbidden there by the agnostic invariant (CHOICE-MECHANIC § 2.2).
+# 2 decisions, each w/ a consequence_A (error) and consequence_B (advance). Counterfactual opening.
+SPORT_CLEAN_SPEC = """schema_version: "v11.1"
+{caps}characters:
+  - character_id: char_a
+    name: Dembele
+    role: foil
+  - character_id: char_b
+    name: Saka
+    role: companero_protagonista
+shot_list:
+  - shot_id: shot_01
+    section_id: hook
+    duration_intent_s: 6.0
+    avu_overlay_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    scene_context:
+      who_is_there: [char_a, char_b, viewer_pov]
+    narration_in_this_shot: "Final de la Champions. Elige tu companero. Saka o Dembele."
+  - shot_id: shot_02
+    section_id: counterfactual_opening
+    duration_intent_s: 8.0
+    scene_context:
+      who_is_there: [char_a, viewer_pov]
+    narration_in_this_shot: "Si eliges a Dembele, juegas para el PSG y la clavas."
+  - shot_id: shot_03
+    section_id: setup_pre_decision
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: [char_b, viewer_pov]
+    narration_in_this_shot: "Si eliges a Saka, juegas para el Arsenal. Avanzas por la banda."
+  - shot_id: shot_04
+    section_id: decision_1
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: [viewer_pov]
+    narration_in_this_shot: "Ahora decides. Encaras al lateral o devuelves seguro."
+  - shot_id: shot_05
+    section_id: consequence_d1
+    consequence_branch: A
+    duration_intent_s: 6.0
+    scene_context:
+      who_is_there: [viewer_pov]
+    narration_in_this_shot: "Si devuelves, pierdes la chance. La hinchada te abuchea."
+  - shot_id: shot_06
+    section_id: consequence_d1
+    consequence_branch: B
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: [char_b, viewer_pov]
+    narration_in_this_shot: "Si encaras, dejas atras al lateral y llegas al area."
+  - shot_id: shot_07
+    section_id: decision_2
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: [viewer_pov]
+    narration_in_this_shot: "Ahora decides. Buscas el angulo o asistes a Saka."
+  - shot_id: shot_08
+    section_id: consequence_d2
+    consequence_branch: A
+    duration_intent_s: 6.0
+    scene_context:
+      who_is_there: [viewer_pov]
+    narration_in_this_shot: "Si buscas el angulo, el arquero la saca. El PSG contraataca."
+  - shot_id: shot_09
+    section_id: consequence_d2
+    consequence_branch: B
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: [char_b, viewer_pov]
+    narration_in_this_shot: "Si asistes a Saka, te la devuelve. Gol. Arsenal campeon."
+  - shot_id: shot_10
+    section_id: resolution_b
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: [char_b, viewer_pov]
+    narration_in_this_shot: "Levantas la copa. Vuelta olimpica con Saka."
+  - shot_id: shot_11
+    section_id: cliffhanger_outro
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: [char_a, viewer_pov]
+    narration_in_this_shot: "Dembele te mira desde la otra banda. Elige bien tu companero."
 """
 
 
@@ -265,6 +358,89 @@ class TestSyntheticFixtures(unittest.TestCase):
         self.assertEqual(skel["status"], "flag", f"expected structure FLAG, got {skel}")
 
 
+class TestSportChoice(unittest.TestCase):
+    """sport-choice is now IN the choice family: the AGNOSTIC § 2 invariant applies, with the
+    apariencia-favorable role resolved to 'foil'/'rival'. KEEP horror green; ADD sport coverage."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.spec = Path(self.tmp) / "spec.yaml"
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_clean_sport_spec_passes(self):
+        # (a) A valid sport SPEC — foil (Dembele) ONLY in hook/counterfactual/cliffhanger → PASS.
+        _write(self.spec, SPORT_CLEAN_SPEC.format(caps=_caps_block()))
+        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 0, f"Clean sport SPEC must pass.\nstdout {r.stdout}\nstderr {r.stderr}")
+        data = json.loads(r.stdout)
+        self.assertEqual(data["overall_status"], "pass", data)
+        inv = next(g for g in data["gates"]
+                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        self.assertEqual(inv["status"], "pass", f"invariant must PASS on clean sport SPEC, got {inv}")
+
+    def test_foil_in_played_path_decision_fails(self):
+        # (b) Inject the foil (char_a) into a DECISION shot's who_is_there → MUST FAIL § 2 (same bug
+        # class as V6/champions: the rival star deciding with the viewer in the played path).
+        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
+            "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
+            "    scene_context:\n      who_is_there: [viewer_pov]",
+            "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
+            "    scene_context:\n      who_is_there: [char_a, viewer_pov]")
+        _write(self.spec, bad)
+        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 1, f"foil in sport decision must FAIL.\nstdout {r.stdout}")
+        data = json.loads(r.stdout)
+        inv = next(g for g in data["gates"]
+                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        self.assertEqual(inv["status"], "fail")
+        self.assertIn("shot_04", inv["detail"])
+        self.assertIn("foil", inv["detail"].lower())
+
+    def test_foil_in_consequence_via_anchor_fails(self):
+        # § 2 also checks anchor_id_required for sport. Inject the foil anchor into a consequence shot.
+        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
+            "  - shot_id: shot_08\n    section_id: consequence_d2\n    consequence_branch: A\n"
+            "    duration_intent_s: 6.0\n    scene_context:\n      who_is_there: [viewer_pov]",
+            "  - shot_id: shot_08\n    section_id: consequence_d2\n    consequence_branch: A\n"
+            "    duration_intent_s: 6.0\n    anchor_id_required: {char_a: char_a_v1}\n"
+            "    scene_context:\n      who_is_there: [viewer_pov]")
+        _write(self.spec, bad)
+        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 1, f"foil anchor in sport consequence must FAIL.\nstdout {r.stdout}")
+        data = json.loads(r.stdout)
+        inv = next(g for g in data["gates"]
+                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        self.assertEqual(inv["status"], "fail")
+        self.assertIn("shot_08", inv["detail"])
+
+    @unittest.skipUnless(SPORT_SPEC.exists(), f"real sport SPEC not found at {SPORT_SPEC}")
+    def test_real_champions_sport_spec_fails_invariant(self):
+        # ⭐ Non-circular real-artifact FAIL regression: the REAL champions-sport-choice.yaml (a
+        # known-broken pre-rebuild attempt — foil Dembele in played-path shots 05/06/07/12/17/19)
+        # MUST FAIL the agnostic § 2 invariant. Same bug class as V6, validated on a real sport SPEC.
+        r = _run(["--format", "sport-choice", "--spec", str(SPORT_SPEC)])
+        self.assertEqual(r.returncode, 1,
+                         f"Real champions sport SPEC (foil in played path) MUST fail.\nstdout {r.stdout}")
+        data = json.loads(r.stdout)
+        inv = next(g for g in data["gates"]
+                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        self.assertEqual(inv["status"], "fail", f"foil leak must be caught on real sport SPEC, got {inv}")
+        self.assertIn("foil", inv["detail"].lower())
+
+    @unittest.skipUnless(SPORT_SPEC.exists(), f"real sport SPEC not found at {SPORT_SPEC}")
+    def test_real_champions_sport_foil_allowed_in_hook_counterfactual(self):
+        # Sanity: the validator must NOT flag the foil's LEGITIMATE appearances (hook + counterfactual
+        # opening). The "present in allowed" companion gate passes on the real sport SPEC.
+        r = _run(["--format", "sport-choice", "--spec", str(SPORT_SPEC)])
+        data = json.loads(r.stdout)
+        allowed = next(g for g in data["gates"]
+                       if g["name"] == "invariant_bueno_aparente_present_in_allowed")
+        self.assertEqual(allowed["status"], "pass",
+                         f"foil should be allowed in hook/counterfactual: {allowed}")
+
+
 class TestCapabilityGate(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -273,10 +449,13 @@ class TestCapabilityGate(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def test_non_horror_choice_not_applicable(self):
+    def test_out_of_family_format_not_applicable(self):
+        # A format OUTSIDE the choice family (e.g. tutorial) → not_applicable. NOTE: sport-choice is
+        # now IN the family (TestSportChoice covers it), so the not_applicable case is pinned with a
+        # genuinely out-of-family genre.
         _write(self.spec, CLEAN_SPEC.format(caps=_caps_block()))
-        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 0, f"non-horror-choice must be not_applicable.\nstdout {r.stdout}")
+        r = _run(["--format", "tutorial", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 0, f"out-of-family format must be not_applicable.\nstdout {r.stdout}")
         self.assertIn("not_applicable", r.stdout.lower())
 
     def test_format_flag_required(self):

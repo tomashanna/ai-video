@@ -1,23 +1,33 @@
 #!/usr/bin/env python3
-"""audit-spec-structure-vs-canonical.py — horror-choice structure/invariant gate (PAUTA-MASTER § 2).
+"""audit-spec-structure-vs-canonical.py — CHOICE-FAMILY structure/invariant gate (CHOICE-MECHANIC § 2).
 
-Enforces .claude/skills/horror-choice-format/PAUTA-MASTER.md § 2 (the structural authority
-derived empirically from 5 canonical refs, 2026-06-01) programmatically, pre-emit. This is the
-"SPEC-AUDIT structure axis" referenced in PAUTA-MASTER § 2.4: the architect runs it against
-his OWN spec (HR#27 self-validation) and the auditor re-runs it (anti-pattern #17).
+Enforces the AGNOSTIC structural authority of the choice family —
+.claude/skills/choice-format-core/CHOICE-MECHANIC.md § 2 (the genre-neutral skeleton + invariant,
+derived empirically from 5 canonical refs via horror, 2026-06-01) — programmatically, pre-emit.
+This is the "SPEC-AUDIT structure axis" referenced in CHOICE-MECHANIC § 2.4: the architect runs it
+against his OWN spec (HR#27 self-validation) and the auditor re-runs it (anti-pattern #17).
 
-Why it exists: the format skeleton + the "bueno aparente never decides with the viewer" invariant
-were implicit in PAUTA-MASTER but NEVER codified as an auditable invariant → in V6 (invernadero)
-the bueno-aparente (Celeste) ended up present in the PLAYED PATH tempting the viewer at shots
-05/06/07/10/11, violating the canon, and neither architect nor auditor flagged it in time (they
-rationalized it). This validator turns the structure into something the SPEC-AUDIT checks explicitly.
+It is gated to the CHOICE FAMILY (horror-choice + sport-choice; the set is trivial to extend as new
+choice genres ship). The invariant it checks is AGNOSTIC; only the NAME of the apariencia-favorable
+role is genre-specific (see FAVORABLE_APPEARANCE_ROLES_BY_FORMAT below):
+  · horror-choice → the "bueno_aparente" (the cozy-looking option you DIDN'T pick).
+  · sport-choice  → the "foil" / rival star (the OTHER star + their kit — the team you DIDN'T join).
+
+Why it exists: the format skeleton + the "the favorable-appearance option never decides with the
+viewer" invariant were implicit in the PAUTA but NEVER codified as an auditable invariant → in V6
+(invernadero) the bueno-aparente (Celeste) ended up present in the PLAYED PATH tempting the viewer
+at shots 05/06/07/10/11, violating the canon, and neither architect nor auditor flagged it in time
+(they rationalized it). Same bug class threatens sport: the rival star (foil) leaking into the
+played path collapses "you chose to play for THIS team". This validator turns the structure into
+something the SPEC-AUDIT checks explicitly, for the whole family.
 
 Checks (each gate: pass | fail | flag | not_applicable):
   § 2 INVARIANT (the key check — 🔴 FAIL):
-    The character with role: bueno_aparente must NOT appear in scene_context.who_is_there (nor
-    anchor_id_required) of ANY decision/consequence shot of the PLAYED PATH. The played path =
-    shots whose section_id ∈ {setup_pre_decision, decision_*, consequence_*}. The bueno_aparente
-    may ONLY appear in hook / counterfactual_* / cliffhanger_*.
+    The character holding the apariencia-favorable role (genre-resolved: bueno_aparente in horror /
+    foil|rival in sport) must NOT appear in scene_context.who_is_there (nor anchor_id_required) of
+    ANY decision/consequence shot of the PLAYED PATH. The played path = shots whose section_id ∈
+    {setup_pre_decision, decision_*, consequence_*}. That role may ONLY appear in hook /
+    counterfactual_* / cliffhanger_*.
   § 1 STRUCTURE (🟡 flag if a block is missing):
     hook + countdown, played-path with 2-3 decisions (each decision_N having a consequence_A
     shot AND a consequence_B shot), counterfactual (opening or final), cliffhanger.
@@ -25,7 +35,7 @@ Checks (each gate: pass | fail | flag | not_applicable):
     the counterfactual is not interleaved inside the played path (it sits at the very start,
     before the first played-path section, or at the very end, after the last one).
 
-Capability-gate (Pattern 7): format != horror-choice → not_applicable. video_capabilities
+Capability-gate (Pattern 7): format ∉ CHOICE_FAMILY → not_applicable. video_capabilities
 missing → Bug #9 (exit 2). Agnostic-by-design: --format REQUIRED.
 
 Exit codes: 0 = pass | flag | not_applicable (no hard structural violation).
@@ -33,7 +43,8 @@ Exit codes: 0 = pass | flag | not_applicable (no hard structural violation).
             2 = usage / missing SPEC / missing video_capabilities (Bug #9).
 
 Build 2026-06-01 — TDD + Hard Rule #26 companion test (test_audit-spec-structure-vs-canonical.py).
-Authority: horror-choice-format/PAUTA-MASTER.md § 2 (§§ 2.1/2.2/2.3/2.4).
+  2026-06-01 (rev): generalized from horror-only to the CHOICE FAMILY (horror-choice + sport-choice).
+Authority: choice-format-core/CHOICE-MECHANIC.md § 2 (§§ 2.1/2.2/2.3/2.4) — agnostic invariant.
 """
 from __future__ import annotations
 
@@ -49,12 +60,35 @@ except ImportError:
     print("ERROR: pyyaml not installed", file=sys.stderr)
     sys.exit(2)
 
-# PAUTA-MASTER § 2.1/2.2 — section taxonomy.
-# PLAYED PATH = the recorrido jugado (the chosen/scary companion's path). The bueno_aparente
-# is FORBIDDEN here.
+# ── CHOICE FAMILY gate (CHOICE-MECHANIC § 2 is agnostic across the family) ────────────────────
+# The structural invariant + skeleton are shared by every choice genre. Extend this set when a new
+# choice genre ships (and add its apariencia-favorable role to FAVORABLE_APPEARANCE_ROLES_BY_FORMAT).
+CHOICE_FAMILY = ("horror-choice", "sport-choice")
+
+# ── Agnostic invariant, genre-resolved role name ─────────────────────────────────────────────
+# CHOICE-MECHANIC § 2.2: "la opción de apariencia-favorable (la NO jugada / la del counterfactual)
+# NUNCA está presente en el RECORRIDO JUGADO tomando decisiones con el viewer." The invariant is
+# agnostic; only the ROLE NAME that designates that option is genre-specific:
+#   · horror → "bueno_aparente" (the cozy-looking companion you didn't pick).
+#   · sport  → "foil" / "rival" (the OTHER star + their kit = the team you didn't join).
+# Each format maps to the set of role strings that designate its apariencia-favorable option.
+FAVORABLE_APPEARANCE_ROLES_BY_FORMAT = {
+    "horror-choice": ("bueno_aparente",),
+    "sport-choice": ("foil", "rival"),
+}
+# Union fallback when --format is in the family but (defensively) not in the map — accept any of the
+# family's favorable-appearance role names so the invariant still resolves.
+ALL_FAVORABLE_APPEARANCE_ROLES = tuple(
+    {r for roles in FAVORABLE_APPEARANCE_ROLES_BY_FORMAT.values() for r in roles}
+)
+
+# CHOICE-MECHANIC § 2.1/2.2 — section taxonomy.
+# PLAYED PATH = the recorrido jugado (the chosen companion's path — scary companion in horror,
+# your-team partner in sport). The apariencia-favorable option (bueno_aparente / foil) is FORBIDDEN
+# here.
 PLAYED_PATH_PREFIXES = ("setup_pre_decision", "decision", "consequence", "resolution")
-# Sections where the bueno_aparente is ALLOWED to appear (hook dyad + counterfactual cozy +
-# cliffhanger). PAUTA-MASTER § 2.2.
+# Sections where the apariencia-favorable option is ALLOWED to appear (hook dyad + counterfactual +
+# cliffhanger). CHOICE-MECHANIC § 2.2.
 ALLOWED_FOR_BUENO_PREFIXES = ("hook", "counterfactual", "cliffhanger")
 
 # The subset of the played path that constitutes "taking decisions WITH the viewer" — the exact
@@ -111,10 +145,20 @@ def load_spec(spec_path):
         return yaml.safe_load(f)
 
 
-def _bueno_aparente_id(spec):
-    """Find the character_id whose role is bueno_aparente. Returns (cid, name) or (None, None)."""
+def _favorable_appearance_roles_for(fmt):
+    """The role string(s) that designate the apariencia-favorable option for this choice genre.
+
+    horror-choice → ('bueno_aparente',) · sport-choice → ('foil', 'rival'). Defensive fallback: if
+    --format is in the family but not in the map, accept any family favorable-appearance role."""
+    return FAVORABLE_APPEARANCE_ROLES_BY_FORMAT.get(fmt, ALL_FAVORABLE_APPEARANCE_ROLES)
+
+
+def _favorable_appearance_id(spec, fmt):
+    """Find the character_id whose role is the apariencia-favorable role for this genre
+    (bueno_aparente in horror / foil|rival in sport). Returns (cid, name) or (None, None)."""
+    roles = _favorable_appearance_roles_for(fmt)
     for c in spec.get("characters", []) or []:
-        if str(c.get("role") or "").strip().lower() == "bueno_aparente":
+        if str(c.get("role") or "").strip().lower() in roles:
             return c.get("character_id"), c.get("name")
     return None, None
 
@@ -133,13 +177,17 @@ def _shot_references_char(shot, char_id):
     return False
 
 
-def check_invariant(spec, shots):
-    """§ 2 INVARIANT — bueno_aparente NEVER in the played-path decision/consequence shots."""
-    cid, cname = _bueno_aparente_id(spec)
+def check_invariant(spec, shots, fmt):
+    """§ 2 INVARIANT — the apariencia-favorable option (bueno_aparente in horror / foil|rival in
+    sport) NEVER in the played-path decision/consequence shots."""
+    roles = _favorable_appearance_roles_for(fmt)
+    role_label = "/".join(roles)
+    cid, cname = _favorable_appearance_id(spec, fmt)
     if not cid:
         return gate("invariant_bueno_aparente_absent_from_played_path", "not_applicable",
-                    "no character with role: bueno_aparente declared — cannot evaluate § 2 invariant "
-                    "(declare one per PAUTA-MASTER § 2.1, or this is not a horror-choice dyad SPEC)")
+                    f"no character with the apariencia-favorable role ({role_label}) declared — "
+                    f"cannot evaluate § 2 invariant (declare one per CHOICE-MECHANIC § 2.1, or this is "
+                    f"not a {fmt} dyad SPEC)")
     violations = []
     for s in shots:
         sid = _section_id(s)
@@ -150,34 +198,37 @@ def check_invariant(spec, shots):
     if violations:
         return gate(
             "invariant_bueno_aparente_absent_from_played_path", "fail",
-            f"bueno-aparente '{cname}' ({cid}) presente en el played path "
-            f"(who_is_there/anchor) de shots de decisión/consecuencia: {violations}. "
-            f"Viola invariante PAUTA-MASTER § 2.2 (el bueno-aparente SOLO puede estar en "
-            f"hook / counterfactual / cliffhanger — NUNCA decidiendo con el viewer en el recorrido "
-            f"jugado). 🔴 RETORNA al arquitecto (HR#27).")
+            f"opción apariencia-favorable ({role_label}) '{cname}' ({cid}) presente en el played "
+            f"path (who_is_there/anchor) de shots de decisión/consecuencia: {violations}. "
+            f"Viola invariante CHOICE-MECHANIC § 2.2 (la opción favorable-aparente SOLO puede estar "
+            f"en hook / counterfactual / cliffhanger — NUNCA decidiendo con el viewer en el recorrido "
+            f"jugado). En sport: el rival/foil + su kit son obstáculo, pero la ESTRELLA foil NO está "
+            f"en el played path con el viewer. 🔴 RETORNA al arquitecto (HR#27).")
     return gate("invariant_bueno_aparente_absent_from_played_path", "pass",
-                f"bueno-aparente '{cname}' ({cid}) ausente del played path — solo en "
-                f"hook/counterfactual/cliffhanger ✓ (PAUTA-MASTER § 2.2)")
+                f"opción apariencia-favorable ({role_label}) '{cname}' ({cid}) ausente del played "
+                f"path — solo en hook/counterfactual/cliffhanger ✓ (CHOICE-MECHANIC § 2.2)")
 
 
-def check_bueno_only_in_allowed(spec, shots):
-    """Companion to § 2: confirm the bueno_aparente DOES appear somewhere allowed (hook /
+def check_bueno_only_in_allowed(spec, shots, fmt):
+    """Companion to § 2: confirm the apariencia-favorable option DOES appear somewhere allowed (hook /
     counterfactual / cliffhanger). If declared but never present anywhere → FLAG (dyad incomplete)."""
-    cid, cname = _bueno_aparente_id(spec)
+    role_label = "/".join(_favorable_appearance_roles_for(fmt))
+    cid, cname = _favorable_appearance_id(spec, fmt)
     if not cid:
         return gate("invariant_bueno_aparente_present_in_allowed", "not_applicable",
-                    "no bueno_aparente declared")
+                    f"no apariencia-favorable character ({role_label}) declared")
     allowed_hits = [
         s.get("shot_id", "?") for s in shots
         if _has_prefix(_section_id(s), ALLOWED_FOR_BUENO_PREFIXES) and _shot_references_char(s, cid)
     ]
     if allowed_hits:
         return gate("invariant_bueno_aparente_present_in_allowed", "pass",
-                    f"bueno-aparente '{cname}' presente en hook/counterfactual/cliffhanger: {allowed_hits} ✓")
+                    f"apariencia-favorable ({role_label}) '{cname}' presente en "
+                    f"hook/counterfactual/cliffhanger: {allowed_hits} ✓")
     return gate("invariant_bueno_aparente_present_in_allowed", "flag",
-                f"bueno-aparente '{cname}' ({cid}) declarado pero NO aparece en ningún shot de "
-                f"hook/counterfactual/cliffhanger. El dyad necesita presentarlo (hook) + su recorrido "
-                f"cozy (counterfactual). Verificá la presentación (PAUTA-MASTER § 2.1/2.2).")
+                f"apariencia-favorable ({role_label}) '{cname}' ({cid}) declarado pero NO aparece en "
+                f"ningún shot de hook/counterfactual/cliffhanger. El dyad necesita presentarlo (hook) "
+                f"+ su recorrido (counterfactual). Verificá la presentación (CHOICE-MECHANIC § 2.1/2.2).")
 
 
 def check_structure(shots):
@@ -246,12 +297,12 @@ def check_structure(shots):
 
     if missing:
         return gate("structure_skeleton", "flag",
-                    f"PAUTA-MASTER § 2.1 skeleton incomplete: {missing}. "
-                    f"Canonical = hook+countdown → played path (2-3 decisions, each A muerte / B sobrevive) "
+                    f"CHOICE-MECHANIC § 2.1 skeleton incomplete: {missing}. "
+                    f"Canonical = hook+countdown → played path (2-3 decisions, each ✗ dead-end / ✓ avanza) "
                     f"→ counterfactual → cliffhanger.")
     return gate("structure_skeleton", "pass",
-                f"skeleton complete: hook+countdown + {n_decisions} decisions (each A & B) + "
-                f"counterfactual + cliffhanger ✓ (PAUTA-MASTER § 2.1)")
+                f"skeleton complete: hook+countdown + {n_decisions} decisions (each ✗ & ✓) + "
+                f"counterfactual + cliffhanger ✓ (CHOICE-MECHANIC § 2.1)")
 
 
 def check_sequential_paths(shots):
@@ -273,13 +324,13 @@ def check_sequential_paths(shots):
         return gate("sequential_paths", "fail",
                     f"counterfactual shots {interleaved} están INTERCALADOS dentro del played path "
                     f"(played-path span shots index {first_played}..{last_played}). Viola "
-                    f"PAUTA-MASTER § 2.3 (los dos recorridos son SECUENCIALES, jamás simultáneos: "
+                    f"CHOICE-MECHANIC § 2.3 (los dos recorridos son SECUENCIALES, jamás simultáneos: "
                     f"el counterfactual va al INICIO o al FINAL, no en el medio).")
     placement = "opening" if max(counterfactual_positions) < first_played else (
         "final" if min(counterfactual_positions) > last_played else "split")
     return gate("sequential_paths", "pass",
                 f"counterfactual {placement} of the played path — secuencial, no intercalado ✓ "
-                f"(PAUTA-MASTER § 2.3)")
+                f"(CHOICE-MECHANIC § 2.3)")
 
 
 def main():
@@ -302,19 +353,20 @@ def main():
               file=sys.stderr)
         return 2
 
-    # Capability gate: this validator is horror-choice CAPA 2 ONLY (PAUTA-MASTER § 2 is
-    # horror-choice-only). We gate on the --format flag (the artifact-level genre declaration).
+    # Capability gate: this validator covers the CHOICE FAMILY (CHOICE-MECHANIC § 2 is the agnostic
+    # structural authority shared by horror-choice + sport-choice). We gate on the --format flag (the
+    # artifact-level genre declaration). Extend CHOICE_FAMILY as new choice genres ship.
     fmt = str(args.format or "").strip().lower()
     if args.dry_run:
-        branch = "structure_checks" if fmt == "horror-choice" else "not_applicable"
+        branch = "structure_checks" if fmt in CHOICE_FAMILY else "not_applicable"
         print(f"format: {args.format}\nspec: {spec_path}\nbranch: {branch}")
         return 0
 
-    if fmt != "horror-choice":
+    if fmt not in CHOICE_FAMILY:
         report = {
             "format": args.format, "overall_status": "not_applicable",
-            "detail": (f"PAUTA-MASTER § 2 is horror-choice CAPA 2 only. format='{args.format}' "
-                       f"≠ horror-choice → structural canonical checks skipped.")
+            "detail": (f"CHOICE-MECHANIC § 2 covers the choice family {list(CHOICE_FAMILY)}. "
+                       f"format='{args.format}' ∉ family → structural canonical checks skipped.")
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         print("not_applicable")
@@ -328,8 +380,8 @@ def main():
         return 1
 
     gates = [
-        check_invariant(spec, shots),            # § 2 — the key check (FAIL)
-        check_bueno_only_in_allowed(spec, shots),  # § 2 companion (FLAG)
+        check_invariant(spec, shots, fmt),            # § 2 — the key check (FAIL)
+        check_bueno_only_in_allowed(spec, shots, fmt),  # § 2 companion (FLAG)
         check_structure(shots),                  # § 1 — skeleton (FLAG)
         check_sequential_paths(shots),           # § 3 — sequencing (FAIL)
     ]
@@ -340,7 +392,7 @@ def main():
     report = {
         "format": args.format,
         "spec": str(spec_path),
-        "authority": "horror-choice-format/PAUTA-MASTER.md § 2 (§§ 2.1/2.2/2.3)",
+        "authority": "choice-format-core/CHOICE-MECHANIC.md § 2 (§§ 2.1/2.2/2.3) — agnostic family invariant",
         "overall_status": overall,
         "overall_pass": overall == "pass",
         "fail_count": len(fails),
