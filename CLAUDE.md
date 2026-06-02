@@ -77,7 +77,9 @@ Identificá la tarea y activá las skills correspondientes (sin esto, fallás):
 |---|---|
 | video, render, captions, SFX, narración, TTS, imagen, motion, animar, Kling, Gemini, Whisper | `video-director` (ingeniero) + `ai-video-production` |
 | diseñar historia, concepto, idear, "qué hacemos", "iteremos con creativo" | 🏛️ `creative-director` (arquitecto) — STANDALONE para diseño |
-| horror, hito, choice, dilema, twist, cliffhanger, "elige a tu compañero", malo/bueno aparente | **+ `horror-choice-format`** |
+| choice / dilema / "elige a tu compañero" / countdown / botones A/B / counterfactual (familia choice) | **+ `choice-format-core` + el skill del GÉNERO** |
+| horror, hito, twist, cliffhanger, malo/bueno aparente, body-horror | **+ `horror-choice-format`** |
+| fútbol / deporte / jugada / penal / gol / Champions / "elige tu equipo" | **+ `sport-choice-format`** |
 | animar, Kling, Replicate, image-to-video, "darle vida" | **+ `video-animation`** |
 | hyperframes lint/render/init/preview | **+ `hyperframes` + `hyperframes-cli`** |
 
@@ -91,7 +93,7 @@ Todo proyecto se define por DOS ejes ortogonales:
 
 Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `format = reel`.
 
-### 0.3 Lectura obligatoria antes de planear (para horror-choice × reel)
+### 0.3 Lectura obligatoria antes de planear (agnóstica — ruteá al formato activo)
 
 > **Si tu rol es 🔍 AUDITOR**: tu lectura obligatoria es la de `creative-director/AUDITOR-PROTOCOL.md` § 1 — NO la lista de abajo. El auditor lee fuentes primarias directas + handoff del ingeniero, **sin** contexto del arquitecto. NO compartas terminal con arq/ing.
 
@@ -99,21 +101,19 @@ Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `forma
 1. README.md (front door — qué es el sistema + arquitectura de capas)
 2. CLAUDE.md (este archivo) — completo
 3. ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT (validar combo)
-4. ai-video-production/formats/reel.md (specs + safe zones)
-5. ai-video-production/RETENTION-RULES.md (short-form)
-6. horror-choice-format/SKILL.md + PAUTA.md (entry del formato)
-7. ⭐ horror-choice-format/**PAUTA-MASTER.md** (AUTORIDAD CREATIVA EMPÍRICA del ARQUITECTO — derivada de 8 videos canónicos virales). Reemplaza CREATIVE-BRIEF.md que está DEPRECATED
-7.5. ⭐ horror-choice-format/**INGENIERO-PAUTA-MASTER.md** (AUTORIDAD TÉCNICA EMPÍRICA del INGENIERO — pace WPM, LUFS, mix, cuts/min, motion, color, BPM, UI timing — derivada de 10 referentes F1). El ingeniero consulta este doc para CUALQUIER métrica técnica. NUNCA usa nuestras producciones como referencia técnica.
-8. horror-choice-format/PATTERNS.md (reglas técnicas — validar contra PAUTA-MASTER + INGENIERO-PAUTA-MASTER en conflicto, ganan los dos masters)
-9. ⭐ horror-choice-format/video-log.md — AUTORITATIVO para rotación pattern
-10. horror-choice-format/INTRO-FORMULA.md (receta canónica)
-11. horror-choice-format/BOOTSTRAP-NEW-PROJECT.md § 9.a + 9.b (template inputs FASE 0)
-12. video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md
-13. ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + MOTION-LAYER.md + IMAGE-VARIETY.md + SFX-PIPELINE.md + QA.md
-14. video-animation/SKILL.md + ANIMATION-LAYER.md § 1 PRE-GATE
-15. library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
-16. elements.json (countdown/loader/lower-third disponibles)
-17. NARRATION-RULES.md + FEEDBACK-LOOP.md
+4. ai-video-production/formats/<delivery>.md (reel / youtube-short / etc. — specs + safe zones)
+5. ai-video-production/RETENTION-RULES.md (si short-form)
+6. choice-format-core/ (SI el formato pertenece a la familia choice — mecánica AGNÓSTICA: dyad + countdown + A/B + counterfactual + cliffhanger + invariante)
+7. ⭐ <format>-format/SKILL.md — el skill del FORMATO ACTIVO, que lista SU lectura obligatoria de género:
+     PAUTA-MASTER (autoridad CREATIVA empírica) + INGENIERO-PAUTA-MASTER (autoridad TÉCNICA empírica:
+     WPM/LUFS/mix/cuts/motion/color/UI) + PATTERNS + video-log (rotación) + refs canónicas + BOOTSTRAP § 9.
+     (Para horror: `horror-choice-format/SKILL.md`. NUNCA usar nuestras producciones como referencia técnica.)
+8. video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md (workflow del ingeniero)
+9. ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + MOTION-LAYER.md + IMAGE-VARIETY.md + SFX-PIPELINE.md + QA.md (toolkit técnico universal)
+10. video-animation/SKILL.md + ANIMATION-LAYER.md § 1 PRE-GATE
+11. library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
+12. elements.json (countdown/loader/lower-third disponibles)
+13. FEEDBACK-LOOP.md
 ```
 
 ### 0.4 Plan-First Rule
@@ -122,9 +122,9 @@ Antes de modificar archivos, llamar APIs externas (ElevenLabs, Gemini, Replicate
 
 ---
 
-## 🏛️ Arquitectura — 2 roles × 3 capas
+## 🏛️ Arquitectura — 3 roles × 4 capas (A / A.5 / B / C)
 
-### 2 roles (axis: QUÉ se hace)
+### Roles (axis: QUÉ se hace) — arquitecto + ingeniero (+ auditor independiente, ver § 0.0)
 
 ```
 🏛️ ARQUITECTO (creative-director)        🛠️ INGENIERO (video-director + stack)
@@ -144,28 +144,28 @@ Antes de modificar archivos, llamar APIs externas (ElevenLabs, Gemini, Replicate
    Output: CREATIVE-SPEC.yaml                 Output: video.mp4 ready
 ```
 
-### 3 capas (axis: alcance del cambio)
+### 4 capas (axis: alcance del cambio)
 
 ```
-CAPA 1 UNIVERSAL (ingeniero)  → .claude/skills/video-director/ + .claude/skills/ai-video-production/
+CAPA A UNIVERSAL (ingeniero)  → .claude/skills/video-director/ + .claude/skills/ai-video-production/
                               → .claude/skills/creative-director/ (arquitecto) + INTERVIEW-FLOW + HANDOFF-PROTOCOL
                               → library/, elements.json, root docs
 
-CAPA 1.5 FAMILIA CHOICE       → .claude/skills/choice-format-core/ (mecánica AGNÓSTICA del formato choice:
+CAPA A.5 FAMILIA CHOICE       → .claude/skills/choice-format-core/ (mecánica AGNÓSTICA del formato choice:
    (agnóstica al género)        hook dyad + countdown + botones A/B + decisión→consecuencia + counterfactual +
                                 cliffhanger + POV + framing condicional + UI safe zones + decision-UI pacing).
                                 La HEREDAN horror-choice-format Y sport-choice-format. Apunta a ai-video-production
                                 para lo UNIVERSAL (NO lo duplica). Creada 2026-06-01 (refactor "agnóstico fuera del template").
 
-CAPA 2 FORMATO/TEMPLATE       → horror-choice-format/ (género horror) + sport-choice-format/ (género deportes)
-                              → cada formato HEREDA la mecánica de choice-format-core (Capa 1.5) + agrega su SABOR de
+CAPA B FORMATO/TEMPLATE       → horror-choice-format/ (género horror) + sport-choice-format/ (género deportes)
+                              → cada formato HEREDA la mecánica de choice-format-core (Capa A.5) + agrega su SABOR de
                                 género (arquitecto = "qué decir" en creative-direction/; ingeniero = "cómo ejecutar")
 
-CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitecto)
+CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitecto)
                               → <proyecto>/ (output del ingeniero: assets + render)
 ```
 
-**Regla de oro**: modificar CAPA 1 sirve a TODOS los videos futuros. CAPA 2 a TODOS los del formato. CAPA 3 es desechable. Si dudás dónde poner algo: `video-director/ARCHITECTURE.md`.
+**Regla de oro**: modificar CAPA A sirve a TODOS los videos futuros. CAPA A.5 a toda la familia choice. CAPA B a TODOS los del formato. CAPA C es desechable. Si dudás dónde poner algo: `video-director/ARCHITECTURE.md`.
 
 ---
 
@@ -178,23 +178,23 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | 1 | Quality gate primario: `calibrated_v4 ≥9.0` OR `user_perceptual ≥8.5` (OR logic) | `format_type ∈ {interactive_choice, reel}` AND `has_ai_generated_clips` | `audit-gemini-calibrated.py` + `quality_standards.md` |
 | 2 | Stop point pre-animation ≥9.7 (iter A→B→C antes de animar) | `has_ai_generated_clips` | `quality_standards.md` |
 | 3 | Captions vía Whisper, NUNCA hand-timed | `has_captions_baked` | `CAPTIONS.md` |
-| 4 | UI safe zones IG Reel (caption Y62 / loading Y48 / name Y11.5) | `format_type ∈ {interactive_choice, reel}` OR vertical 1080×1920 | `formats/reel.md` + `INGENIERO-PAUTA-MASTER § 7` |
+| 4 | UI safe zones IG Reel (caption Y62 / loading Y48 / name Y11.5) | `format_type ∈ {interactive_choice, reel}` OR vertical 1080×1920 | `formats/reel.md` + `choice-format-core/INGENIERO-CHOICE-CORE § 2` + `<format>-format/INGENIERO-PAUTA-MASTER § 7` |
 | 5 | Variantes -a/-b/-c en shots >4s (TIPOS de plano distintos) | `has_ai_generated_clips` | `IMAGE-VARIETY.md` |
 | 6 | ⛔ Primeros 30s = animation AI obligatoria (no Ken Burns) | `has_ai_generated_clips` AND `format_type ∈ {interactive_choice, reel}` | `animation_30s_rule.md` |
-| 7 | Animation AI preferred (Ken Burns fallback ≤20%, max 2-3s) | `has_ai_generated_clips` | `MOTION-LAYER.md` + `INGENIERO-PAUTA § 5.6` |
+| 7 | Animation AI preferred (Ken Burns fallback ≤20%, max 2-3s) | `has_ai_generated_clips` | `MOTION-LAYER.md` + `<format>-format/INGENIERO-PAUTA-MASTER § 5.6` |
 | 8 | Capa SFX dedicada obligatoria (track-index 60-110) | `has_sfx_layer` | `SFX-PIPELINE.md` |
 | 9 | Mix volumes canónicos (narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65) | `audio_mix_target: lufs_-14` | `SFX-PIPELINE.md` |
 | 10 | Atempo 2x sobre TTS lento | `has_tts_narration` | `PIPELINE.md § 1` |
 | 11 | Render lock entre agentes (`render-lock.py acquire`) | universal | `PIPELINE.md § 11` |
 | 12 | Plot twist coherente (3 condiciones: lógica + imágenes + narración) | `format_type: interactive_choice` | `archetype_system.md` |
 | 13 | Audio coverage técnicos (narración ≥70% + block ≥4.5s + fabric ≥99%) | `has_tts_narration` AND `has_layer_3_music` | `audit-audio.py` |
-| 14 | Rotación pattern (NO repetir mismo pattern 2 consecutivos) | horror-choice format | `video-log.md` + `archetype_system.md` |
+| 14 | Rotación pattern (NO repetir mismo pattern 2 consecutivos) | familia choice (horror/sport/…) | `<format>-format/video-log.md` + `choice-format-core/ROTATION-RULES.md` |
 | 15 | HyperFrames namespace `window.__timelines.main = tl` único | universal | `quality_standards.md` |
 | 16 | `data-duration > clip real` → negro total (fix `ffmpeg tpad`) | universal | `HYPERFRAMES-GOTCHAS.md` |
 | 17 | Plan-First Rule (APIs externas + modificación assets requieren plan + confirm) | universal | (este doc § Step 0.4) |
 | 18 | Cada template ships 2 pautas paired (PAUTA-MASTER creative + INGENIERO-PAUTA technical) | universal | `PAUTA-MASTER` + `INGENIERO-PAUTA-MASTER` |
 | 19 | Nuestras producciones **NO** autoridad técnica — "NEVER ESTIMATE, ALWAYS MEASURE" (`canonical_validation_status` mandatorio) | universal | `video-director/SKILL.md` + `voices-catalog.json` |
-| 20 | Modelo barato = prompt premium quality (5-block: subject+camera+lighting+action+atmosphere) | `has_ai_generated_clips` | `INGENIERO-PAUTA § 5.7` + `MODEL-BENCHMARK` |
+| 20 | Modelo barato = prompt premium quality (5-block: subject+camera+lighting+action+atmosphere) | `has_ai_generated_clips` | `<format>-format/INGENIERO-PAUTA-MASTER § 5.7` + `MODEL-BENCHMARK` |
 | 21 | SPEC storyboard-level obligatorio (D19-D22 architect audit) | universal | `CREATIVE-SPEC-TEMPLATE-v11.yaml` + `creative-director/SKILL.md` |
 | 23 | Per-clip atomic assembly canonical V3+ (HYBRID Layer 1) | `has_ai_generated_clips` AND `source_clips_origin ∈ {ai_generated, mixed}` | `PIPELINE.md § 13` + `build_clip_atomic.py` |
 | 24 ⛔⛔ | Auditor enforce CP-by-CP gates MANDATORY (engineer multi-CP autonomous FORBIDDEN) | universal | `AUDITOR-PROTOCOL § 6 anti-pattern #15` |
@@ -215,8 +215,8 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | `elements.json` | `<repo-root>/elements.json` (root, NOT inside library/ ni skills/) | Components UI catalog (countdown/loader/lower-third). Codificado post inventory 2026-05-23 (Hidden gap 3). |
 | `library/voices-catalog.json` | `<repo-root>/library/voices-catalog.json` | ElevenLabs voice IDs validados |
 | `library/sfx-catalog.json` | `<repo-root>/library/sfx-catalog.json` | SFX reusables |
-| ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa 1.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
-| `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 canonical reference videos source |
+| ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
+| `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
 | `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
 | `creative-specs/<id>.yaml` | `<repo-root>/creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
 | `_archive-deprecated-docs/` | `<repo-root>/_archive-deprecated-docs/` | DEPRECATED docs preserved as historical reference (CREATIVE-BRIEF + POST-MORTEM-TEMPLATE + ARCHITECT-BRIEFING-VIDEO-3 + plain/v10 SPEC templates) |
@@ -247,11 +247,11 @@ cp "$SKILL_DIR/scripts/"*.py scripts/
 cp "$SKILL_DIR/.env-TEMPLATE"            .env
 cp "$SKILL_DIR/hyperframes.json-TEMPLATE" hyperframes.json
 
-# 3. Si es horror-choice, además:
-HORROR_DIR="<repo-root>/.claude/skills/horror-choice-format/templates"
-cp "$HORROR_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
-cp "$HORROR_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
-cp "$HORROR_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
+# 3. Si el formato tiene templates propios (Capa B), copialos de <format>-format/templates/:
+FORMAT_DIR="<repo-root>/.claude/skills/<format>-format/templates"   # ej: horror-choice-format
+cp "$FORMAT_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
+cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
+cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
 # 4. Verificación obligatoria (NO continuar si falla):
 for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py qa-gate.py; do
@@ -344,17 +344,18 @@ Para cada tema crítico, hay UN doc autoritativo. **NO buscar en otros docs ni e
 
 | Tema | Doc autoritativo |
 |---|---|
-| **Autoridad CREATIVA del formato horror-choice** (arquitecto) | ⭐ `horror-choice-format/PAUTA-MASTER.md` |
-| **Autoridad TÉCNICA del formato horror-choice** (ingeniero) | ⭐ `horror-choice-format/INGENIERO-PAUTA-MASTER.md` (en construcción 2026-05-15) |
+| **Autoridad CREATIVA del formato activo** (arquitecto) | ⭐ `<format>-format/PAUTA-MASTER.md` (ej. horror-choice, sport-choice) |
+| **Autoridad TÉCNICA del formato activo** (ingeniero) | ⭐ `<format>-format/INGENIERO-PAUTA-MASTER.md` |
+| **Mecánica AGNÓSTICA de la familia choice** | ⭐ `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `INGENIERO-CHOICE-CORE.md` (técnica) |
 | **NUNCA AUTORIDAD** (post-mortem propio) | `referent-analysis/our-production-archive/` con README "NO AUTORIDAD" |
 | Vara de calidad + pre-animation gate + QA protocol | memoria `quality_standards.md` |
 | Selección de modelo AI (animation + imagen) — benchmark + decision tree + cost matrix | `video-director/MODEL-BENCHMARK.md` |
 | Regla 30s universal short-form (model-agnostic) | memoria `animation_30s_rule.md` |
 | Intro 9s pattern (horror-choice) | memoria `intro_9s_canonical.md` + `horror-choice-format/INTRO-FORMULA.md` |
-| Archetype matriz + patterns observados + plot twist | ⭐ `horror-choice-format/PAUTA-MASTER.md` §§ 8, 9, 15 (autoridad empírica) + `PATTERNS.md` § 6.5 |
-| **Rotación pattern entre videos** | ⭐ `horror-choice-format/video-log.md` (NO confiar en NARRATIVE.md viejos) |
+| Patterns (forma abstracta apariencia×verdad) + plot twist | `choice-format-core/CHOICE-MECHANIC.md § 7` (agnóstico) + catálogo de género `<format>-format/PAUTA-MASTER.md` |
+| **Rotación pattern entre videos** | ⭐ `<format>-format/video-log.md` + `choice-format-core/ROTATION-RULES.md` (NO confiar en NARRATIVE.md viejos) |
 | 7 gates obligatorios pre-render | (este doc § Pre-render gate) + `video-director/WORKFLOW.md` |
-| Bootstrap proyecto nuevo | `ai-video-production/BOOTSTRAP.md` (genérico) + `horror-choice-format/BOOTSTRAP-NEW-PROJECT.md` (específico) |
+| Bootstrap proyecto nuevo | `ai-video-production/BOOTSTRAP.md` (genérico) + `<format>-format/BOOTSTRAP-NEW-PROJECT.md` (específico del formato) |
 | Specs técnicos delivery format | `ai-video-production/formats/<delivery>.md` |
 | Retention rules short-form | `ai-video-production/RETENTION-RULES.md` |
 | Character consistency | `ai-video-production/CHARACTER-CONSISTENCY.md` |
@@ -380,7 +381,7 @@ Todo video nuevo necesita inputs FASE 0 confirmados antes de generar assets. Se 
 - **Eje DELIVERY (técnico)** — format, plataforma, duración, idioma. Aplica a TODOS los templates. Ver `ai-video-production/DELIVERY-FORMATS.md` + `ai-video-production/formats/<delivery>.md`.
 - **Eje GENRE (narrativo)** — depende del template. Cada `<format>-format/BOOTSTRAP-NEW-PROJECT.md § 9` define los slots específicos del template.
 
-Para horror-choice × reel (template actual): ver `horror-choice-format/BOOTSTRAP-NEW-PROJECT.md` § 9.a (DELIVERY) + § 9.b (GENRE — autoritativo per `PAUTA-MASTER.md`).
+Para el formato activo: ver `<format>-format/BOOTSTRAP-NEW-PROJECT.md` § 9.a (DELIVERY) + § 9.b (GENRE — autoritativo per su `PAUTA-MASTER.md`). Ej. horror-choice × reel → `horror-choice-format/BOOTSTRAP-NEW-PROJECT.md`.
 
 ---
 
@@ -419,48 +420,33 @@ Detalle: `video-director/WORKFLOW.md`.
 ## ⚠️ Anti-patterns top (los que más cuestan)
 
 1. **Parar pre-animation con sub-9.7 esperando que la animación AI lo arregle.** Animation AI (Kling/Hailuo/Seedance/etc.) NO rescata score. Iterar A→B→C primero.
-2. **Activar UNA skill cuando la tarea requiere 2-3.** Para horror: video-director + ai-video-production + horror-choice-format SIEMPRE.
+2. **Activar UNA skill cuando la tarea requiere 2-3.** Para un video: video-director + ai-video-production + `<format>-format` (+ `choice-format-core` si es de la familia choice) SIEMPRE.
 3. **Hand-timed captions.** Whisper o nada.
 4. **Render sin los 8 gates.** Gate 0 audit-spec-completeness + Lint + audit-narrative + render-lock + audit-frames + **audit-audio + continuity-check** + qa-gate.
 5. **Repetir mismo pattern en videos consecutivos** (no consultar `video-log.md`).
 6. **Setup elements del twist con timing <2.5s.** El viewer no procesa → twist falla retroactivamente.
 7. **Plot twist sin 3 condiciones** (lógica / imágenes / narración). Confunde en vez de impactar.
 8. **Sobre-narrar** (>1.1 palabras/seg). El visual debe cargar el peso emocional.
-9. **Hardcodear horror-specific en CAPA 1.** Va a CAPA 2 (`horror-choice-format/`).
+9. **Hardcodear lo específico de un formato en CAPA A** (o lo de un género en A.5). Va a su CAPA B (`<format>-format/`).
 10. **Crear un skill por proyecto.** Los proyectos NO son skills. El formato sí.
 11. **"..." antes de proper nouns en TTS.** Causa mispronunciación → cascada de regens.
 12. **Modificar `index.html` completo sin micro-composition.** Usar `MICRO-COMPOSITION-WORKFLOW.md`.
 
 ---
 
-## 🧠 Memorias críticas (always-on)
+## 🧠 Memorias (always-on)
 
-7 memorias consolidadas (2026-05-13). Cada una con UN propósito:
+> El índice **completo + autoritativo** se auto-inyecta vía **`MEMORY.md`** (no se duplica acá; el set vigente vive ahí). Cada memoria = UN propósito.
 
-| Memoria | Tema |
-|---|---|
-| `quality_standards.md` | Vara dual (Gemini ≥9.7 + audit-against-referent ≥85%) + stop point pre-animation + QA protocol + HyperFrames gotchas |
-| `animation_30s_rule.md` | Regla universal model-agnostic: primeros 30s = animation AI obligatoria |
-| `intro_9s_canonical.md` | Pattern intro 9s horror-choice + Opción C corporal motion |
-| `archetype_system.md` | Matriz 10 patterns + plot twist coherente (3 condiciones) + setup timing |
-| `feedback_qa_gates_and_audits.md` | Bundle 7 fixes: qa-gate + audit-frames + Show 70/30 + Slot H0 + CTAs |
-| `feedback_ambient_creatures.md` | Slot H formato (gnomo/duende/coyote según setting) |
-| `feedback_no_autocreate_docs.md` | Análisis = chat, no crear .md sin pedir |
+- **Universales** (todo formato): `quality_standards` (vara dual + stop point + QA) · `animation_30s_rule` · `feedback_qa_gates_and_audits` · `feedback_no_autocreate_docs` · `doc_health_git_is_the_log` · `prompt_quality_no_vague`.
+- **De género horror** (solo horror-choice): `intro_9s_canonical` · `archetype_system` (10 patterns + plot twist) · `feedback_ambient_creatures` (Slot H).
 
 ---
 
-## 🔄 Última actualización
+## 📏 Disciplina de archivos (DRY + SRP — calibrada por tipo)
 
-**2026-05-15 — arquitectura "template = 2 pautas paired"**:
-- Identificado bug fundamental: el ingeniero usaba nuestras producciones como autoridad técnica → heredaba bugs (pace 25% más lento que canónicos, etc.).
-- Caso disparador: maikol-crucero — ingeniero recomendó pace 3.0 w/s comparando vs mina/bosque/elige; referentes reales 2.43-2.75 w/s.
-- Fix arquitectural: cada template ships con DOS pautas paired — `PAUTA-MASTER.md` (arquitecto) + `INGENIERO-PAUTA-MASTER.md` (ingeniero). Ambas derivadas de canonical referents.
-- Hard rules #18-#19 agregadas.
-- `ours-*.md` movidos de `referent-analysis/` a `referent-analysis/our-production-archive/` con README "NO AUTORIDAD".
-- `video-director/SKILL.md` ahora tiene sección "📐 FUENTE DE AUTORIDAD TÉCNICA" como regla más importante del ingeniero.
-- `horror-choice-format/INGENIERO-PAUTA-MASTER.md` en construcción (mediciones agent en background — 10 referentes F1).
+- **CÓDIGO (`.py`):** SRP (un módulo = un trabajo) + DRY (lo compartido → `lib/`) + tamaño objetivo ~300-400 líneas (los de 700-1500 son targets de refactor; tests/validators cohesivos exentos) + test companion (HR#26). Excepción documentada: copias de baseline frozen.
+- **DOCS (`.md`):** **un solo tema autoritativo por doc + CERO duplicación cross-doc** ("un solo lugar por tema"). **SIN tope de líneas** — un doc de autoridad largo y cohesivo está sano; dividir solo por TEMA, nunca por número. ⛔ NUNCA changelog / "Última actualización" embebido — el log es **git history** (memoria `doc_health_git_is_the_log`).
+- **Secrets** (`.env`, API keys) NUNCA committeados (gitignored).
 
-**2026-05-13 — refactor mayor (Fase 1+2 de consolidación)**:
-- Memorias consolidadas: 23 → 7 (eliminadas duplicadas con docs canónicos).
-- CLAUDE.md re-escrito como manual operativo denso: 163 → ~280 líneas con bootstrap canónico + 5 gates pre-render + 17 hard rules + mapa docs autoritativos + inputs FASE 0 explícitos.
-- Razón: el agente productor no aterrizaba en sub-docs profundos. Movemos lo crítico a always-on (CLAUDE.md + memorias).
+> **El estado/avances del proyecto NO viven acá** — viven en `git log`. Este doc dice qué es verdad HOY.
