@@ -92,16 +92,25 @@ Un video muestra **los DOS recorridos completos, uno y luego el otro** (= el cou
 |---|---|
 | **Input** | el partido real + quién es **favorito** (cuotas/forma, scrapeado de internet) |
 | **Favorito → su recorrido** | **MENOS compuertas** (~2) → la gloria está más cerca, mayor prob. de ganar |
-| **No-favorito → su recorrido** | **MÁS compuertas** (~3-4) → más difícil, más chances de fallar |
-| **El gap escala con las cuotas** | favoritazo → 2 vs 4 · partido parejo → 2 vs 3 |
+| **No-favorito → su recorrido** | **MÁS compuertas** (~3) → más difícil, más chances de fallar |
+| **El gap escala con las cuotas** | partido parejo → 2 vs 3 · favoritazo → la asimetría grande se expresa en el counterfactual + intensidad de shots (el played path se mantiene 2-3) |
 | 🟦 **Invisible como editorial** | NO se dice "este es el fácil" — se **deriva de la realidad** → hace sentido + automatable |
 | 🟩 **Knob de batacazo** | se puede invertir (underdog más fácil) para narrativa de upset (raro) |
+
+### 🟦 Tagging canónico — cómo mapea al guard estructural
+
+> Para que el guard `audit-spec-structure-vs-canonical.py` enforce el invariante (foil fuera del played path), cada video taguea sus `section_id` así:
+
+- **Recorrido JUGADO** (el del jugador que elegís = protagonista) → `setup_pre_decision` → `decision_N` → `consequence_*` (= el played path; sus compuertas son las que cuenta el guard).
+- **Recorrido del FOIL** (el contraste, el camino no-elegido) → `counterfactual_*` (opening o final). La **estrella foil** aparece SOLO acá + en `hook` + `cliffhanger`. **NUNCA en el played path.**
+- 🟥 **En el played path, el rival es KIT / NPC genérico** (anchor de rival genérico), **NO el anchor de la estrella foil.** Reusar el anchor del foil para los rivales del played path es exactamente lo que **FALLA** el SPEC champions (shots 05/06/07/12/17/19) → usar un anchor `rival_npc` aparte para los obstáculos.
+- **Compuertas del recorrido jugado = 2-3** (banda canónica; favorito 2 / no-favorito 3). El guard **FLAGea** >3.
 
 ---
 
 ## §5 — LAS DECISIONES = JUGADAS (compuertas)
 
-- 🟩 **Compuertas por recorrido:** 2 (favorito) a 3-4 (no-favorito), según §4.
+- 🟩 **Compuertas del recorrido jugado (played path):** 2 (favorito) a 3 (no-favorito) — banda canónica; el guard `audit-spec-structure-vs-canonical.py` flagea >3. El recorrido del foil = `counterfactual_*` (ver §4 tagging).
 - 🟦 **✓ = avanza** (sigue el plano hacia el arco) · **✗ = perdés la jugada Y el partido** (inserto corto dead-end; luego el video sigue por el camino correcto).
 - 🟩 **Tipos distintos** por compuerta (regate/encare, pase/visión, definición), presión escalando zona por zona.
 - 🟥 **"B" no siempre correcta** — rotar qué opción paga.

@@ -11,7 +11,10 @@ fails loudly. The synthetic fixtures (a correct SPEC with bueno_aparente only in
 NO heavy py deps (no numpy/whisper). Synthetic SPEC built inline + parsed by the script. The V6
 regression test is skipped (not failed) only if the real SPEC file is absent from the repo.
 
-Authority under test: horror-choice-format/PAUTA-MASTER.md § 2 (§§ 2.1/2.2/2.3).
+Authority under test: choice-format-core/CHOICE-MECHANIC.md § 2 (§§ 2.1/2.2/2.3) — the AGNOSTIC family
+invariant (NOT horror-specific). The validator + these tests serve the WHOLE choice family: the same
+shared check logic is exercised via horror fixtures (TestSyntheticFixtures) AND sport fixtures
+(TestSportChoice), plus per-genre real-SPEC regressions (V6 horror = invernadero, sport = champions).
 Build 2026-06-01.
 """
 import json
@@ -439,6 +442,38 @@ class TestSportChoice(unittest.TestCase):
                        if g["name"] == "invariant_bueno_aparente_present_in_allowed")
         self.assertEqual(allowed["status"], "pass",
                          f"foil should be allowed in hook/counterfactual: {allowed}")
+
+    def test_sport_interleaved_counterfactual_fails_sequential(self):
+        # Agnostic § 3 on the SPORT fixture (parity w/ the horror sequential test): move the
+        # counterfactual to sit BETWEEN played-path sections → § 3 FAIL (the two recorridos are
+        # sequential, never interleaved — CHOICE-MECHANIC § 2.3).
+        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
+            "  - shot_id: shot_02\n    section_id: counterfactual_opening",
+            "  - shot_id: shot_02\n    section_id: setup_pre_decision").replace(
+            "  - shot_id: shot_06\n    section_id: consequence_d1\n    consequence_branch: B",
+            "  - shot_id: shot_06\n    section_id: counterfactual_mid\n    consequence_branch: B")
+        _write(self.spec, bad)
+        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
+        data = json.loads(r.stdout)
+        seq = next(g for g in data["gates"] if g["name"] == "sequential_paths")
+        self.assertEqual(seq["status"], "fail",
+                         f"interleaved counterfactual must FAIL § 3 for sport.\nstdout {r.stdout}")
+        self.assertEqual(r.returncode, 1)
+
+    def test_sport_missing_decisions_flags_structure(self):
+        # Agnostic § 1 skeleton on the SPORT fixture (parity w/ the horror skeleton test): only ONE
+        # decision → structure skeleton FLAG (not fail), exit 0.
+        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
+            "  - shot_id: shot_07\n    section_id: decision_2\n    duration_intent_s: 4.0\n"
+            "    scene_context:\n      who_is_there: [viewer_pov]\n"
+            '    narration_in_this_shot: "Ahora decides. Buscas el angulo o asistes a Saka."\n', "").replace(
+            "    section_id: consequence_d2\n", "    section_id: consequence_d1_extra\n")
+        _write(self.spec, bad)
+        r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
+        self.assertEqual(r.returncode, 0, f"missing decision must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
+        data = json.loads(r.stdout)
+        skel = next(g for g in data["gates"] if g["name"] == "structure_skeleton")
+        self.assertEqual(skel["status"], "flag", f"expected structure FLAG, got {skel}")
 
 
 class TestCapabilityGate(unittest.TestCase):
