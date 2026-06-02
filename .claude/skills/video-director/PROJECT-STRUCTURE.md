@@ -78,7 +78,7 @@
 | Carpeta | Contenido | Generación |
 |---|---|---|
 | `assets/*.png` | Imágenes del video | `scripts/image.py` + variantes -a/-b/-c |
-| `assets/*-2x.mp3` | Narraciones TTS procesadas | `scripts/tts.py` + atempo 2x con ffmpeg |
+| `assets/*-2x.mp3` | Narraciones TTS procesadas | `scripts/tts.py` + atempo cap ≥0.90 con ffmpeg (NO slow-down de voz — ver INGENIERO §1.6) |
 | `assets/music-*.mp3` | Música procesada | Copy de `library/music/` o procesar de raw |
 | `assets/sfx/*.mp3` | SFX específicos del video | Copy de `library/sfx/` o `scripts/sfx.py` |
 | `assets/sfx/cuts/*.mp3` | 7 cortes universales NARRATIVE-LED | **Siempre copy de `library/sfx/cuts/`** |
@@ -165,7 +165,8 @@ Verificar visualmente cada anchor. Si no convence → regenerar AHORA, antes de 
 
 ```bash
 .venv/bin/python scripts/tts.py -t "<texto>" -v <voice-id> -o assets/narr-N-raw.mp3
-ffmpeg -y -i assets/narr-N-raw.mp3 -filter:a "atempo=2.0" assets/narr-N-2x.mp3
+# Pipeline real: cap atempo ≥0.90 (NUNCA slow-down de voz). atempo=2.0 está DEPRECATED — ver INGENIERO-PAUTA-MASTER §1.6
+ffmpeg -y -i assets/narr-N-raw.mp3 -filter:a "atempo=0.95" assets/narr-N-2x.mp3
 ```
 
 #### 6.C — Escenas CON personajes (usando anchors como --ref)

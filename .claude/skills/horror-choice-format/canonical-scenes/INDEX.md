@@ -320,7 +320,3 @@ Pattern observation: la cuenta referent-a usa cross-video role inversion como **
 ## Cómo se generó este INDEX
 
 Sintetizado de los 8 deep-dives en `canonical-scenes/ref-*.md` (4,740 líneas totales) por sub-agente 2026-05-16 (Bloque I Step 4). Cada celda extraída literal de los docs source — NO se inventaron datos.
-
-## Última actualización
-
-2026-05-16. Inicial.

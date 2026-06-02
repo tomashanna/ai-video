@@ -351,6 +351,6 @@ El script `scripts/audit-audio.py` valida automáticamente:
 - Narration coverage ≥70% ✓
 - Avg block duration ≥4.5s ✓
 - Sound fabric coverage ≥99% ✓
-- LUFS integrated -14 ±0.5 dB (extensión post 2026-05-13) ✓
+- LUFS integrated -14 ±0.5 dB ✓
 
 Si falla cualquier check → ajustar mix → re-render → re-audit.

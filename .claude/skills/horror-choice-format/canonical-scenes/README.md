@@ -8,7 +8,7 @@
 
 1. **Antes de diseñar SPEC v6** para un video horror-choice nuevo:
    - Identificá tu pattern (P1-P10 per PAUTA-MASTER § 15)
-   - Leé `INDEX.md` (cross-ref grid) — VENDRÁ post user validation
+   - Leé `INDEX.md` (cross-ref grid)
    - Leé 1-2 `ref-XX-*.md` del pattern más similar al tuyo
    - **Adaptá structure, NO copies línea por línea**. Plagio creativo ≠ empirical learning.
 
@@ -23,11 +23,11 @@
 | ref-03 | `ref-03-bruno-pablo-mina.md` | DRAFT — needs user validation |
 | ref-06 | `ref-06-enzo-axel-carretera.md` | DRAFT — needs user validation |
 | ref-08 | `ref-08-hugo-pablo-acuario.md` | DRAFT — needs user validation |
-| ref-09 | `ref-09-victor-axel-jet.md` | DRAFT — needs user validation |
-| ref-10 | `ref-10-rurik-enzo-caldera.md` | DRAFT — needs user validation |
+| ref-09 | `ref-09-victor-axel-cockpit.md` | DRAFT — needs user validation |
+| ref-10 | `ref-10-rurik-enzo-fundicion.md` | DRAFT — needs user validation |
 | ref-11 | `ref-11-mario-ivan-metro.md` | DRAFT — needs user validation |
-| ref-12 | `ref-12-nanobanano-teresa-tren.md` | DRAFT — needs user validation (⚠ only 3 raw scene cuts in source — low cut frequency, NOT bug) |
-| ref-13 | `ref-13-miro-brian-planta-electrica.md` | DRAFT — needs user validation |
+| ref-12 | `ref-12-nano-teresa-tren.md` | DRAFT — needs user validation (⚠ only 3 raw scene cuts in source — low cut frequency, NOT bug) |
+| ref-13 | `ref-13-miro-bryan-electrica.md` | DRAFT — needs user validation |
 
 Updated: 2026-05-16 by Bloque I Step 2 agent.
 
@@ -74,11 +74,12 @@ For each `ref-XX-frame-by-frame-events.json`:
 }
 ```
 
-### Build script (Phase 1 priority forward)
+### Build script (Phase 1 — EJECUTADO)
+
+Canonical script: `.claude/skills/ai-video-production/templates/scripts/extract-canonical-max-detail.py`. Ya corrido sobre los 8 source videos canonical horror-choice (los 8 `ref-XX-frame-by-frame-events.json` existen en este dir):
 
 ```bash
-# <repo-root>/scripts/extract-canonical-max-detail.py
-# Runs on all 8 source videos canonical horror-choice:
+# .claude/skills/ai-video-production/templates/scripts/extract-canonical-max-detail.py
 .venv/bin/python scripts/extract-canonical-max-detail.py \
   --source /videosref_elige_tu_compa/<file>.MP4 \
   --ref-id ref-13 \
@@ -86,7 +87,7 @@ For each `ref-XX-frame-by-frame-events.json`:
   --sampling 0.5s-first-30s,1s-rest
 ```
 
-**Output per ref**:
+**Output per ref** (presente en este dir):
 - `canonical-scenes/ref-XX-frame-by-frame-events.json` — exhaustive event stream
 - `canonical-scenes/ref-XX.md` regenerated with MAX DETAIL frame coverage tables
 

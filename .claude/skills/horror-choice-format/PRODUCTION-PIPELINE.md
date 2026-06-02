@@ -11,36 +11,36 @@
 cd "/ruta/al/proyecto"
 .venv/bin/python scripts/tts.py \
   -t "Texto a narrar." \
-  -v Tj9l48J9AJbry5yCP5eW \
+  -v 2gPFXx8pN3Avh27Dw5Ma \
   -o assets/nombre-raw.mp3
 ```
 
 ### Voice IDs validados
+> ⛔ **El voice ID `Tj9l48J9AJbry5yCP5eW` (Video #1) está DEPRECATED.** No usarlo como default. El default canónico y el narrador V5 viven en `library/voices-catalog.json` (source of truth — Hard rule #19, `canonical_validation_status` mandatorio).
+
 | Voz | ID | Uso |
 |-----|-----|-----|
-| Horror narrador (Video #1) | `Tj9l48J9AJbry5yCP5eW` | Hitos 3–6, tono grave, susurro |
-| Default proyecto (no usar para horror) | `0Wj6ADitNyDvXgT6W65p` | Solo fallback |
+| Default proyecto | `2gPFXx8pN3Avh27Dw5Ma` | Default canónico (ver `voices-catalog.json`) |
+| Narrador V5 | `K3TeN3ZVK8WnOeJ0NYqZ` | Narrador horror V5 (ver `voices-catalog.json`) |
+| Horror narrador Video #1 | `Tj9l48J9AJbry5yCP5eW` | ⛔ DEPRECATED — histórico, no usar |
 
-### Post-procesado obligatorio — atempo 2x
-```bash
-ffmpeg -y -i assets/nombre-raw.mp3 \
-  -filter:a "atempo=2.0" \
-  assets/nombre-2x.mp3
-```
+### Post-procesado de narración
+
+> ⛔ **`atempo=2.0` está DEPRECATED.** No acelerar la voz al doble. El pipeline real (ver `../ai-video-production/PIPELINE.md` + `INGENIERO-PAUTA-MASTER.md § 1.6`) ajusta el pace con un **cap ≥0.90** sobre el TTS lento — NO un slow-down/speed-up fijo de la voz. Generar la narración al pace WPM canónico (INGENIERO-PAUTA) y aplicar el atempo de corrección solo si el TTS quedó por debajo del piso, nunca un factor 2.0.
 
 Medir duración del resultado:
 ```bash
-ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre-2x.mp3
+ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre.mp3
 ```
 
-**Regla:** nunca usar el raw en el render. Siempre el `-2x.mp3`. La voz sin procesar suena a IA.
+**Regla:** medir siempre el pace real con ffprobe contra la banda WPM canónica antes de aceptar el clip. La voz sin procesar suena a IA, pero el fix es pace correcto en generación, no `atempo=2.0`.
 
 ### Volumen de producción por hito
 - 4 bloques de narración por hito (narr1–narr4)
-- narr1: setup del escenario (~5–8s a 2x)
-- narr2: tensión + pregunta del personaje (~1.5–2.5s a 2x)
-- narr3: "Ahora decide." (~1s a 2x)
-- narr4: twist dual (malo + bueno) (~7–9s a 2x)
+- narr1: setup del escenario (~5–8s al pace WPM canónico)
+- narr2: tensión + pregunta del personaje (~1.5–2.5s)
+- narr3: "Ahora decide." (~1s)
+- narr4: twist dual (malo + bueno) (~7–9s)
 
 ---
 
@@ -696,15 +696,15 @@ Acortar el caption anterior del Hito 5 1.5s para hacer espacio. En V7: `h5-cap-4
 ```bash
 .venv/bin/python scripts/tts.py \
   -t "Y tú... ¿qué habrías elegido? Comenta A o B abajo, y dinos por qué." \
-  -v Tj9l48J9AJbry5yCP5eW \
+  -v K3TeN3ZVK8WnOeJ0NYqZ \
   -o assets/cta-narration-raw.mp3
 
-ffmpeg -y -i assets/cta-narration-raw.mp3 -filter:a "atempo=2.0" assets/cta-narration-2x.mp3
-ffprobe -v error -show_entries format=duration -of csv=p=0 assets/cta-narration-2x.mp3
-# Esperado: ~2.0-2.4s a 2x
+# ⛔ NO usar atempo=2.0 (DEPRECATED). Generar al pace WPM canónico; aplicar cap ≥0.90 solo si el TTS quedó lento (ver INGENIERO-PAUTA-MASTER § 1.6).
+ffprobe -v error -show_entries format=duration -of csv=p=0 assets/cta-narration-raw.mp3
+# Esperado: ~2.0-2.4s al pace canónico
 ```
 
-Voice ID **mismo que el narrador del horror** (`Tj9l48J9AJbry5yCP5eW`) — mantiene la inmersión. El cambio es de tono (rompe la 4ª pared y habla directo), no de voz.
+Voice ID **el mismo narrador horror del video** (narrador V5 = `K3TeN3ZVK8WnOeJ0NYqZ`, ver `voices-catalog.json`) — mantiene la inmersión. El cambio es de tono (rompe la 4ª pared y habla directo), no de voz. ⛔ El antiguo `Tj9l48J9AJbry5yCP5eW` está DEPRECATED.
 
 #### Paso 2 — HTML del caption visual
 
@@ -755,10 +755,12 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
   --prompt "Analiza en detalle: (1) ¿Se entiende cuándo es outcome A vs B en cada elección? (2) ¿La transición a [BUENO_APARENTE] es clara? (3) ¿El texto es legible en todos los fondos? (4) ¿El tamaño del texto A/B es suficiente para móvil? (5) ¿Hay CTA al final? Dame un score 1-10."
 ```
 
-**Umbral de aprobación:**
-- Score ≥ 9.0/10 → APROBADO para publicar
-- Score 7.0–8.9 → iterar antes de publicar
-- Score < 7.0 → revisar diseño desde la raíz, no solo timing
+**Umbral de aprobación — VARA DUAL (canónica, ver `../ai-video-production/QA.md`):**
+- ⛔ El umbral ≥9.0 de V7 es **OBSOLETO**. La vara fija desde 2026-05-15 es **DUAL** y requiere AMBAS condiciones:
+  - (a) Gemini calibrado (`audit-gemini-calibrated.py`, calibrated_v4) **≥9.7**, **Y**
+  - (b) `audit-against-referent` **≥85%** de métricas críticas en bandas p25–p75 (F1, n=10).
+- AMBAS deben pasar para APROBAR. Si Gemini ≥9.7 pero referent <85% → NO aprobado (iterar). Si referent ≥85% pero Gemini <9.7 → NO aprobado (iterar A→B→C pre-animation).
+- Cap de iteración: 3 rounds pre-animation. Tras 3 sub-9.7 → ESCALAR al usuario (no parar pre-animation esperando que la animación AI rescate el score).
 
 **Qué hacer con el feedback:**
 - Cada problema que Gemini menciona → comparar contra reglas V7-1 a V7-7 — la mayoría son cubiertos por estas reglas

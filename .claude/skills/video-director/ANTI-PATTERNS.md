@@ -389,11 +389,11 @@ Usar siempre el `-loop.mp3`, nunca el original corto.
 
 ---
 
-### ❌ Usar raw TTS sin atempo 2x
+### ❌ Pace de narración TTS sin control (anti-pattern histórico)
 
-Voz `Tj9l48J9AJbry5yCP5eW` es lenta por naturaleza. A 1x produce 162s de narración para un video de 90s.
+> ⚠️ **DEPRECATED** — Este item originalmente prescribía `atempo=2.0` sobre una voz lenta deprecada (caso disparador: una voz producía 162s de narración para un video de 90s a 1x). **Tanto la voz `Tj9l48J9...` como el atempo 2.0 fijo están DEPRECATED.** Pipeline real: voz default `2gPFXx8pN3Avh27Dw5Ma` (narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`), pace controlado por **cap ≥0.90** (NO slow-down de voz). Autoridad canónica → `INGENIERO-PAUTA-MASTER § 1.6`.
 
-**Fix**: SIEMPRE `ffmpeg -i raw.mp3 -filter:a "atempo=2.0" out.mp3` después de TTS.
+El error de fondo sigue vigente: no controlar el pace del TTS y dejar que la narración desborde la duración del video.
 
 ---
 

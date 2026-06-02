@@ -59,10 +59,10 @@ Font size:
 Color:
   - Narration: white (#FFFFFF) + drop shadow black 2px offset
   - Warning (red): #FF3333 + drop shadow black 2px offset
-  - Character name: yellow (#FFD700)
-  
-Stroke:
-  - 1.5-2px black outline on text for readability over any background
+  - Character name: white (#FFFFFF) + drop shadow black 2px offset
+
+Readability:
+  - Drop-shadow only (NO thick stroke) — drop shadow > thick stroke (referent-validated)
 ```
 
 **Caption text source priority**:

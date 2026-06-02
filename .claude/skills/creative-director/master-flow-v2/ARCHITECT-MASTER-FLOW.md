@@ -416,7 +416,6 @@ Per `creative-director/HANDOFF-PROTOCOL.md`, engineer emit Q1-QN architect + A1-
 
 | Doc | Sección | Amendment | Rationale |
 |-----|---------|-----------|-----------|
-| `TEAM-PROTOCOL.md` | § 1 ARCHITECT "NEVER does" | Agregar: "Authora technical implementation detail (tool syntax, ffmpeg flags, script content)" | Anti-pattern 6.3 ARCHITECT-MASTER-FLOW — creative-domain stay |
 | `TEAM-PROTOCOL.md` | § 5 Learning capture | Considerar agregar architect SPEC math coherence check como per-CP-1 obligatorio | Lesson post-CP2 matadero, applies multi-format |
 | `AUDITOR-MASTER-FLOW.md` | § 9 Open question #5 (load-bearing vs enrichment methodology) | Propuesta architect-side: pre-categorize in-SPEC field `shot_features_classification: { load_bearing: [], enrichment: [] }` per shot ANTES de PRE-gate | § 5.3 ARCHITECT-MASTER-FLOW — concrete schema |
 | `per-CP/CP3-shots-flow.md` | § 3 Pre-gate architect checklist (TODO architect stub) | Fill stub con: anchor bundle matrix + cinematic ref per HIGH-RISK + special handling ratios + iteration budget cap + batch ordering decision | Architect-domain content ready to commit |

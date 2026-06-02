@@ -399,9 +399,3 @@ Cuando el proyecto crezca:
 - `PIPELINE.md` § 2 — generación de imágenes general
 - `BOOTSTRAP.md` — ahora incluye "anchor first" como paso explícito
 - `templates/scripts/image.py` — soporta `--ref`
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. Doc dedicado a character consistency. Aplicable a CUALQUIER formato narrativo (horror, documental, edu, ad).

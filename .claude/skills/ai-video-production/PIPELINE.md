@@ -1017,43 +1017,9 @@ V3 parque-acuatico-abandonado: archived as Phase 3 learning (cinema legacy + cap
 V4+ (next video): HYBRID architecture MANDATORY per this § 13.9 + 3 enforcement scripts BLOCKER pre-launch
 ```
 
-#### 13.9.7 ⛔ Enforcement scripts MANDATORY BLOCKER pre-V4 (updated 2026-05-21 PM late)
+#### 13.9.7 ⛔ Enforcement structural, no procedural
 
-**Previous status**: "Phase 3 priority forward" (descriptive, NOT enforced — was the V3 vulnerability)
-
-**NEW status** (post user feedback "Hard Rules son texto, no enforcement"):
-
-```
-3 scripts BLOCKER for V4+ launch:
-
-1. scripts/build_clip_atomic.py (caption-burn extension)
-   ROLE: Layer 1 hybrid enforcement
-   PRE-V4 STATUS: Built + 10/10 tests + ADV-A PASS ✓ (2026-05-21)
-   Caption-audio LOCKED at frame level via Whisper-from-clip-audio + drawtext
-
-2. scripts/audit-shot-spec-compliance.py (Script B 8 dim per-shot verifier)
-   ROLE: SPEC contract verification per shot during CP4
-   PRE-V4 STATUS: In flight build + V3 adversarial test pending
-   Detects: scope creep + narrator-vs-spec + caption-vs-spec + caption-vs-narrator + visual-vs-intent + characters-vs-anchors + action-vs-narration
-
-3. scripts/orchestrator-cp-by-cp.py (Script C state machine)
-   ROLE: CP-by-CP gates structural enforcement
-   PRE-V4 STATUS: Pending (blocked by A + B PASS)
-   Refuses: multi-CP autonomous prompts, skip-audit attempts, force-pass without override
-   Allows: legitimate overrides with reason logged to ARCHITECTURAL-DECISIONS.md
-```
-
-**Hard rule**: V4 launches via orchestrator-cp-by-cp.py ONLY. Manual agent spawning bypassing orchestrator = anti-pattern #15 violation = FORBIDDEN.
-
-**Verification gate pre-V4**: `V4-LAUNCH-CHECKLIST.md` must show ALL boxes checked (3 scripts built + tested + docs aligned).
-
-#### 13.9.8 Why the "no-blocker" status was the V3 vulnerability
-
-User feedback 2026-05-21 PM late: "Hard Rules son texto que el agente lee y decide aplicar. Eso es exactamente lo que falló en V3. Pueden esos 2 scripts ser blockers obligatorios para V4 antes de arrancar?"
-
-Correct: codified text without enforcement = decoration. V3 iter 1 was ME (auditor) violating MY OWN Hard Rule #24 because text doesn't bind LLM behavior under context pressure. 
-
-Scripts make rules STRUCTURAL not procedural. Agent cannot violate without script REFUSING the operation. This is the architectural shift from V3 to V4.
+CP-by-CP gates + HYBRID architecture se enforcan vía scripts (build_clip_atomic.py caption-burn + orchestrator state machine), NO vía texto que el agente decide aplicar. Texto sin enforcement = decoración. Detalle del blocker + razón estructural → **Hard Rule #24** (CLAUDE.md) + **AUDITOR-PROTOCOL § 6 anti-pattern #15** (engineer multi-CP autonomous FORBIDDEN).
 
 ---
 

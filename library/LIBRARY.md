@@ -241,14 +241,15 @@ Mix volume recomendado: 0.05-0.18 para horror ambient, 0.13-0.18 para dawn cáli
 
 ### Voz primaria (default para nuevos proyectos)
 
+> ⛔ Source of truth = `library/voices-catalog.json` (Hard rule #19). Acá solo el resumen.
+
 | Voice ID | Nombre / etiqueta | Características | Status |
 |---|---|---|---|
-| `Tj9l48J9AJbry5yCP5eW` | **Narrador horror primario** | Tono grave, susurro, lento por naturaleza | ✅ Default canónico |
+| `2gPFXx8pN3Avh27Dw5Ma` | Default canónico | — | ✅ Default |
+| `K3TeN3ZVK8WnOeJ0NYqZ` | Narrador V5+ (David C2) | grave, pace natural | ✅ Narrador actual |
+| `Tj9l48J9AJbry5yCP5eW` | Narrador Video #1 (histórico) | grave/susurro, LENTO | ⛔ DEPRECATED — no usar |
 
-**Reglas obligatorias para esta voz**:
-- Aplicar `atempo=2.0` con ffmpeg después de generar
-- "2x es muy rápido" NO aplica acá — esta voz es lenta y 2x suena natural
-- Sample: `library/voices/samples/Tj9l48J9AJbry5yCP5eW-sample.mp3` (pendiente generar)
+**Pace:** `--speed` nativo de ElevenLabs + cap de atempo ≥0.90 (NUNCA `atempo 2.0`, NUNCA ralentizar la voz). Ver `INGENIERO-PAUTA-MASTER § 1.6`.
 
 ---
 
@@ -271,19 +272,11 @@ Mix volume recomendado: 0.05-0.18 para horror ambient, 0.13-0.18 para dawn cáli
 
 ### Workflow para usar voces
 
-```bash
-# 1. Generar TTS raw
-.venv/bin/python scripts/tts.py \
-  -t "Texto a narrar" \
-  -v Tj9l48J9AJbry5yCP5eW \
-  -o assets/narr-raw.mp3
-
-# 2. Aplicar atempo 2x
-ffmpeg -y -i assets/narr-raw.mp3 -filter:a "atempo=2.0" assets/narr-2x.mp3
-
-# 3. Medir duración
-ffprobe -v quiet -show_entries format=duration -of csv=p=0 assets/narr-2x.mp3
-```
+> ⚠️ Para voice IDs canónicos + workflow TTS actualizado, la autoridad es **`library/voices-catalog.json`** (validado, `canonical_validation_status`). NO hardcodear voice IDs ni filtros de tempo desde este doc.
+>
+> - **Voz default (nuevos proyectos)** = `2gPFXx8pN3Avh27Dw5Ma`
+> - **Narrador V5** = `K3TeN3ZVK8WnOeJ0NYqZ`
+> - **Tempo**: NO aplicar slow-down de voz. El pipeline real cappea el tempo a ≥0.90 (no `atempo=2.0`, que está DEPRECATED). Ver `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 1.6`.
 
 ---
 
@@ -313,9 +306,3 @@ ffprobe -v quiet -show_entries format=duration -of csv=p=0 assets/narr-2x.mp3
 1. **Generar voice samples** — un MP3 corto por cada voice ID con la misma frase de ejemplo para comparar rápido sin abrir EL UI.
 2. **Migrar SFX nuevos** después de cada proyecto que se publique.
 3. **Crear sub-categoría `educational/` o `documental/`** cuando aparezca un template nuevo no-horror que requiera SFX distintos.
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. 53 SFX deduplicados de bosque/elige/mina + 5 música + 4 voice IDs catalogados.

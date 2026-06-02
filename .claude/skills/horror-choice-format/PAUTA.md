@@ -59,10 +59,16 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
   Dame un score 1-10 considerando estas 9 dimensiones."
 ```
 
-| Score | Acción |
+**⛔ Vara de calidad = DUAL (canónica, NUNCA single-score):**
+- (a) Gemini **calibrado ≥9.7** Y
+- (b) **audit-against-referent ≥85%** métricas críticas (p25-p75 bands).
+- AMBAS requeridas. (El umbral histórico ≥9.0 de abajo es legacy V7 y queda solo como referencia interpretativa de la severidad del feedback, NO como gate de publicación.)
+
+| Score Gemini | Acción |
 |-------|--------|
-| **≥ 9.0** | APROBADO para publicar |
-| **7.0 – 8.9** | Iterar. Anotar cada feedback de Gemini en V6-VS-V7.md y aplicar reglas V7 |
+| **≥ 9.7 (calibrado) + referent ≥85%** | APROBADO para publicar (DUAL gate) |
+| **9.0 – 9.6** | Iterar. Anotar cada feedback de Gemini en V6-VS-V7.md y aplicar reglas V7 — todavía NO publica (no llega a la vara DUAL) |
+| **7.0 – 8.9** | Iterar. Algo de calidad falta; revisar feedback dimensión por dimensión |
 | **< 7.0** | Revisar diseño desde la raíz, no solo timing — algo estructural está roto |
 
 **Referencia histórica:**
@@ -70,7 +76,7 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
 - V7 → 9.5/10 (todos los problemas resueltos con las 6 reglas V7)
 - bosque-abandonado v2 (proyecto hermano) → análisis Gemini detectó "síndrome de diapositivas": 17 fotos fijas reutilizadas + sound design pobre. Origen de las **reglas V8** abajo.
 
-**No publicar nada por debajo de 9.0.** No tiene sentido subir un video viral imperfecto cuando una iteración de 15 min lo lleva a perfecto.
+**No publicar nada por debajo de la vara DUAL (Gemini calibrado ≥9.7 + audit-against-referent ≥85%).** No tiene sentido subir un video viral imperfecto cuando una iteración de 15 min lo lleva a perfecto.
 
 ---
 
@@ -103,15 +109,15 @@ Entre outcome A y outcome B: pulso oscuro suave + caption "SI [opción B]:" en a
 **DOS capas obligatorias en los últimos 2.4s del video:**
 
 - **Visual:** caption "¿SOBREVIVISTE? 💬 COMENTA A o B" en 60px
-- **Audio:** narración del MISMO voice ID (`Tj9l48J9AJbry5yCP5eW`) preguntando directamente al espectador. Plantilla:
+- **Audio:** narración del MISMO voice ID que el narrador del video (voz canónica — ver `library/voices-catalog.json`; default `2gPFXx8pN3Avh27Dw5Ma`, narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`. ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED) preguntando directamente al espectador. Plantilla:
   > "Y tú... ¿qué habrías elegido? Comenta A o B abajo, y dinos por qué."
 
 **Por qué la voz es obligatoria:** el texto solo invita a comentar "A" o "B" (1 carácter, bajo peso algorítmico). La voz pide "y por qué" → comentarios largos → mejor distribución en el feed.
 
-**Implementación:** generar `assets/cta-narration-2x.mp3` con `tts.py` + atempo 2x. Track-index libre en la franja de narración del Hito 6.
+**Implementación:** generar `assets/cta-narration.mp3` con `tts.py`. (⛔ `atempo 2.0`/2x DEPRECATED — el pipeline real cappea velocidad a ≥0.90 y NO ralentiza la voz; ver `INGENIERO-PAUTA-MASTER.md` § 1.6.) Track-index libre en la franja de narración del Hito 6.
 
 ### V7-6. Gemini QA gate antes de aprobar
-Score ≥ 9.0 obligatorio antes de publicar. Sin excepciones. **Prompt extendido en sección 2** evalúa también motion y sound design.
+Vara DUAL obligatoria antes de publicar (AMBAS): Gemini calibrado **≥9.7** + `audit-against-referent` **≥85%** (ver § 2 + `quality_standards`). Sin excepciones. (El ≥9.0 histórico = legacy V7, NO gate de publicación.) **Prompt extendido en sección 2** evalúa también motion y sound design.
 
 ### V7-7. Instagram safe zones (REGLA INVIOLABLE)
 
@@ -217,7 +223,8 @@ Tier de prioridad por escena: Ken Burns siempre. Parallax + flicker + vignette d
                        ▼
 ┌─────────────────────────────────────────────────────────┐
 │  FASE 2 — ASSETS  (1.5-2 horas)                          │
-│  TTS (ElevenLabs voice Tj9l48J9AJbry5yCP5eW + atempo 2x) │
+│  TTS (ElevenLabs voz canónica — voices-catalog.json;     │
+│   ⛔ NO Tj9l48J9 ni atempo 2x, ver INGENIERO-PAUTA §1.6)  │
 │  Imágenes + VARIANTES -a/-b/-c (V8-1) — regla obligatoria│
 │  SFX dedicado vía scripts/sfx.py + sfx-spec.json (V8-2)  │
 │  Ambient loops >22s: EL loop:true + ffmpeg stream_loop   │
@@ -244,8 +251,8 @@ Tier de prioridad por escena: Ken Burns siempre. Parallax + flicker + vignette d
 ┌─────────────────────────────────────────────────────────┐
 │  FASE 5 — QA GEMINI  (3 min)                             │
 │  /video-analyzer renders/draft.mp4 con prompt completo.  │
-│  Score ≥ 9.0 → ir a Fase 6.                              │
-│  Score < 9.0 → volver a Fase 3 con feedback de Gemini.   │
+│  Score ≥ 9.7 → ir a Fase 6.                              │
+│  Score < 9.7 → volver a Fase 3 con feedback de Gemini.   │
 └──────────────────────┬───────────────────────────────────┘
                        ▼
 ┌─────────────────────────────────────────────────────────┐
@@ -274,7 +281,7 @@ Crash transitorio de Chrome. **Reintentar el mismo comando.** No tocar el códig
 Si usás `-ss antes de -i` + `-af` en el mismo comando ffmpeg, el output sale silencioso. Siempre en 2 pasos: primero extraer, después aplicar fades. Ver `PRODUCTION-PIPELINE.md` sección 8.
 
 ### 5.4 Voz TTS suena a IA
-Falta el `atempo=2.0`. Nunca usar el `-raw.mp3` en el render — siempre el `-2x.mp3`.
+> ⛔ **DEPRECATED.** Este caso describía el viejo flujo `atempo=2.0` (`-2x.mp3`), que ya NO es el pipeline real: hoy la voz NO se ralentiza/duplica, se cappea velocidad a ≥0.90. Ver `INGENIERO-PAUTA-MASTER.md` § 1.6 para el manejo canónico de pace TTS. (Conservado como nota histórica del por-qué se dejó de usar el `-raw.mp3` crudo.)
 
 ### 5.5 Flash visible al inicio de un elemento
 Falta la ancla `tl.set(el, {opacity:0, scale:1.0}, 0)` en t=0. Sin ella HyperFrames hace pre-render del estado visible. Nunca usar `fromTo` para estados iniciales.
@@ -335,19 +342,7 @@ API keys: `.env` en raíz del proyecto. Verificar `GEMINI_API_KEY`, `ELEVENLABS_
 
 ## 7. ESTADO ACTUAL DEL PROYECTO
 
-**Fase del proyecto:** Phase 2 (recreación manual del primer video, no Phase 3 robusto)
-**Video #1:** completado, render V7 aprobado (9.5/10)
-**Próximos pasos posibles:**
-- Subir V7 a Instagram y medir retención
-- Iterar a V8 si el score sugiere mejoras (ej. timing del Hito 4 a t=49s — pendiente, ver V6-VS-V7.md)
-- Una vez validado en producción, considerar Phase 3 (parameterización con TEMPLATE-SPEC.md)
-
-**No iniciar Phase 3 hasta cumplir los 3 criterios de CLAUDE.md:**
-1. 1 video completo subido a Instagram
-2. Retención >70% a los 30 segundos
-3. 3 variantes producidas manualmente que muestren el mismo patrón
-
-Hasta entonces: **simple, local, rápido.**
+> **Movido.** El estado vivo del proyecto (sprints en flight, video shipped, próximos pasos) vive en `memory/active_session_state.md` + `horror-choice-format/video-log.md`. El planning Phase 2/3 + `TEMPLATE-SPEC.md` quedó archivado (no se usa el path de parameterización descrito acá).
 
 ---
 
@@ -360,7 +355,7 @@ Hasta entonces: **simple, local, rápido.**
   - [ ] V8-1: cada escena >4s tiene ≥2 variantes de imagen
   - [ ] V8-2: capa SFX dedicada conectada (track-index 60-110, mix volumes correctos)
   - [ ] V8-3: ningún plano estático >2s sin Ken Burns como mínimo
-- [ ] Gemini QA ejecutado con prompt extendido de 9 dimensiones (§ 2) y score ≥ 9.0
+- [ ] Vara DUAL cumplida: Gemini calibrado ≥9.7 + `audit-against-referent` ≥85% (prompt extendido § 2, 9 dimensiones)
 - [ ] V6-VS-V7.md actualizado con la versión nueva y el score
 - [ ] Lint ejecutado: `npx hyperframes lint` sin errores nuevos
 - [ ] Render en --quality high (no draft) para upload final
@@ -382,4 +377,4 @@ Hasta entonces: **simple, local, rápido.**
 - Pixabay (música royalty-free)
 - `~/.claude/skills/video-analyzer/` (skill local de QA con Gemini)
 
-**Voice ID del narrador horror:** `Tj9l48J9AJbry5yCP5eW`
+**Voice ID del narrador horror:** ver `library/voices-catalog.json` (default `2gPFXx8pN3Avh27Dw5Ma`; narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`). ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED — NO usar.

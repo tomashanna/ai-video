@@ -149,8 +149,10 @@ Symmetrical composition, cold blue-green overhead lighting.
 
 Texto: `"Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]."`
 
+> ⚠️ **Voz + pace (DEPRECATED workaround abajo — consultar fuentes canónicas):** voz default = `2gPFXx8pN3Avh27Dw5Ma` (narrador V5+ = `K3TeN3ZVK8WnOeJ0NYqZ`). El ID viejo `Tj9l48J9...` está DEPRECATED (`library/voices-catalog.json`). El `atempo=2.0` que aparece en los bloques de abajo es un workaround DEPRECATED derivado de nuestras producciones — el pipeline real cappea ≥0.90 sin slow-down de voz (ver `INGENIERO-PAUTA-MASTER.md § 1.6`). Usá la voz/pace canónicos, NO los literales heredados de Video #1.
+
 ```bash
-.venv/bin/python scripts/tts.py -t "Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]." -v Tj9l48J9AJbry5yCP5eW -o assets/narration-raw.mp3
+.venv/bin/python scripts/tts.py -t "Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narration-raw.mp3
 ffmpeg -y -i assets/narration-raw.mp3 -filter:a "atempo=2.0" assets/narration.mp3
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/narration.mp3
 # Guardar duración como DUR_H1_NARR
@@ -217,10 +219,10 @@ Este es el hito de mayor producción. Seguir este orden exacto.
 
 ```bash
 # Generar los 4 raw
-.venv/bin/python scripts/tts.py -t "[NARR1_TEXT]" -v Tj9l48J9AJbry5yCP5eW -o assets/hN-narr1-raw.mp3
-.venv/bin/python scripts/tts.py -t "[NARR2_TEXT]" -v Tj9l48J9AJbry5yCP5eW -o assets/hN-narr2-raw.mp3
-.venv/bin/python scripts/tts.py -t "Ahora decide." -v Tj9l48J9AJbry5yCP5eW -o assets/hN-narr3-raw.mp3
-.venv/bin/python scripts/tts.py -t "[NARR4_TEXT]" -v Tj9l48J9AJbry5yCP5eW -o assets/hN-narr4-raw.mp3
+.venv/bin/python scripts/tts.py -t "[NARR1_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr1-raw.mp3
+.venv/bin/python scripts/tts.py -t "[NARR2_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr2-raw.mp3
+.venv/bin/python scripts/tts.py -t "Ahora decide." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr3-raw.mp3
+.venv/bin/python scripts/tts.py -t "[NARR4_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr4-raw.mp3
 
 # Procesar todos a 2x
 for f in hN-narr1 hN-narr2 hN-narr3 hN-narr4; do
@@ -877,11 +879,13 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
 
 ### 7.2 Acción por score
 
+> **Vara de calidad = DUAL (ambas requeridas):** (a) Gemini calibrado **≥9.7** + (b) `audit-against-referent` **≥85%** métricas críticas en bandas p25-p75. NUNCA aprobar solo con Gemini ni con un umbral ≥9.0/≥9.5.
+
 | Score | Acción |
 |---|---|
-| ≥ 9.0 | **APROBADO** → Fase 7.3 |
-| 7.0–8.9 | Iterar: revisar qué dimensión bajó el score. Si fue (7)/(9) volver a Fase 6.6. Si fue (8) volver a Fase 6.5. Si fue (6) volver a Fase 1/3 y agregar variantes. |
-| < 7.0 | Algo estructural está roto. Revisar PAUTA § 5 errores y `V6-VS-V7.md`. |
+| Gemini ≥9.7 **Y** referent ≥85% | **APROBADO** → Fase 7.3 |
+| Gemini 7.0–9.69 (o referent <85%) | Iterar: revisar qué dimensión bajó el score. Si fue (7)/(9) volver a Fase 6.6. Si fue (8) volver a Fase 6.5. Si fue (6) volver a Fase 1/3 y agregar variantes. |
+| Gemini < 7.0 | Algo estructural está roto. Revisar PAUTA § 5 errores. |
 
 ### 7.3 Render final high-quality
 
@@ -900,7 +904,6 @@ Debe imprimir: `h264 30/1` y `aac 48000`.
 
 ### 7.4 Update de docs
 
-- Actualizar `V6-VS-V7.md` con la versión nueva y el score
 - Documentar cualquier hallazgo nuevo (regla V9?) en PAUTA + PATTERNS + PIPELINE
 - Si se usaron Freesound CC-BY, actualizar `CREDITS.md`
 
@@ -930,23 +933,3 @@ Antes de marcar un hito como aprobado:
 - [ ] Ken Burns en todo plano estático (V8-3 piso)
 - [ ] Motion adicional según plan en NARRATIVE.md (parallax/flicker/vignette/glitch/glow donde aplique)
 - [ ] Ningún plano estático >2s sin algún motion
-
----
-
-## TRACK INDEX REFERENCE — Video #1
-
-Para el próximo video, los primeros índices libres son 36+.
-
-| Rango | Qué es |
-|-------|--------|
-| 1–4 | H1: narración + scene |
-| 5–7 | H2: ticks |
-| 8–13 | H2: loading, countdown |
-| 14–19 | H3: imágenes |
-| 16–19 | H3: narrations |
-| 20–24 | H3: ticks, loading, extras |
-| 25–27 | H4: imágenes principales |
-| 28–31 | H4: narrations |
-| 32–34 | H4: ticks |
-| 35 | H4: exit image |
-| 36+ | H5, H6 — libres |

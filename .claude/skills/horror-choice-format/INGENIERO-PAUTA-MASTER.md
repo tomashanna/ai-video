@@ -106,7 +106,7 @@ Implicancia: frases de tamaño medio (5-8 palabras a 165 WPM). NO frases largas 
 ### 1.6 Cómo aplicar en TTS
 
 #### ElevenLabs (`text_to_speech.convert`)
-- **Voice ID canónico nuestro (Tj9l48J9AJbry5yCP5eW)** es LENTO por default → necesita post-procesado con `ffmpeg atempo 2.0x` para llegar a ~170-185 speaking WPM
+- ⛔ **Voz default canónica = `2gPFXx8pN3Avh27Dw5Ma`** (narrador V5+ `K3TeN3ZVK8WnOeJ0NYqZ`; source of truth `library/voices-catalog.json`). Pace a target con `--speed` nativo de ElevenLabs + el cap de atempo de § 1.6 (abajo) — **NUNCA** `atempo 2.0x`. El viejo `Tj9l48J9AJbry5yCP5eW` + atempo 2.0 está DEPRECATED (workaround lento heredado de Video #1; ver § 1.7 anti-pattern)
 - **Voice IDs alternativos** (ej. `I0RpMYnjlWe6hUgHLXrb`): usar `--speed 0.95-1.0` ElevenLabs nativo (NO 0.7 — produce 120 WPM = -25% del target)
 - Validar con: `python -c "import json; d=json.load(open('output.json')); segs=d['segments']; words=sum(len(s['text'].split()) for s in segs); speak=sum(s['end']-s['start'] for s in segs); print(f'{words/speak*60:.0f} WPM speaking')"`
 
@@ -492,21 +492,9 @@ Variantes observadas (n=10):
 
 **Fix path para los 3 issues**: aplicar 7.2 no-overlap matrix. Mover countdown más alto (Y 35-40% top de su band) si captions activas debajo. CTA outro debe usar banda diferente (probablemente Y 50-58% si captions ausentes en ese momento).
 
-### 7.7 ⚠️ DISCREPANCIA DESCUBIERTA con CLAUDE.md hard rule #4
+### 7.7 Loading bar Y — discrepancia CLAUDE.md HR#4 (resuelta)
 
-CLAUDE.md hard rule #4 dice:
-> `caption-wrap { bottom: 540px; height: 280px }`. Loading bars: `bottom: 700px`. Name labels: `top: 220px`.
-
-Conversión a Y % (frame 1920px tall):
-- Caption: top 1100px = Y 57.3% / bottom 1380px = Y 71.9% → centra ~Y 64% — **alineado con canónico Y 62%** ✓
-- Loading bars: 700px desde abajo = Y 63.5% — **CONFLICTO con canónico Y 48%** ❌
-- Name labels: 220px desde arriba = Y 11.5% — un poquito sobre canónico floor 12-40% ⚠️ aceptable
-
-**Loading bars en hard rule está MAL** vs canónicos. Canónicos lo ponen en Y 48% (banda 44-51%), no en Y 63.5%.
-
-**Decisión operacional**: cuando regenerés maikol-crucero o cualquier video futuro, **usá Y 48% (≈ frame top 920px / bottom 1000px) para loading bars**, NO el `bottom: 700px` de CLAUDE.md.
-
-✅ RESUELTO 2026-05-15: CLAUDE.md hard rule #4 actualizada con loading bar `bottom: 1000px` (Y 48% canónico). Ver `CLAUDE.md` § Hard rules globales #4.
+Loading bar canónico = `bottom: 1000px` (Y 48%, banda 44-51%). Ver § 7.10.4 para el detalle canónico + la clarificación Y52 en decision-UI shots.
 
 ### 7.8 UI timing exact (medido 2026-05-15 vía Gemini-Vision sobre frames a 5fps en ventanas UI)
 
@@ -747,13 +735,6 @@ Métricas que requieren OCR + visual analysis:
 - Color por clase (name / narration / warning)
 - Drop shadow specs (offset, blur, opacity)
 - Sync precision (frame-by-frame)
-
-Lo que sí sabemos por `REFERENT-PATTERNS.md`:
-- Y position bottom-center ~65%
-- 3-class system (name / narration / warning)
-- Monospaced para character names
-- Whisper-sync (NO hand-timed)
-- Red glow para warning text
 
 ---
 
@@ -1314,9 +1295,6 @@ Caso disparador: maikol-crucero 2026-05-15. Ingeniero comparó contra nuestras p
 
 | Métrica | Estado | Próximo paso |
 |---------|--------|---------------|
-| Whisper ref-09 a ref-13 | running 2026-05-15 background | Auto-update a n=10 al completar |
-| Caption visual specs | TODO | Gemini Vision pass sobre frames con captions |
-| UI element timing exact | TODO | Frame extraction 100ms intervals en momento countdown/loading |
 | Music vs narration separation | TODO | Demucs/Spleeter para stems |
 | Frame-by-frame motion intensity | TODO | Optical flow OpenCV |
 

@@ -549,20 +549,6 @@ Si CUALQUIERA `Actual < SPEC` o `HTML count = 0` cuando SPEC requires → engine
 
 ---
 
-## 11. Iteration log
-
-| Date | Update | Context |
-|------|--------|---------|
-| 2026-05-18 | v1 draft initial | mid-CP3 matadero-banquete, post Path B-extension discovery |
-| 2026-05-19 | v1.1 § 10 NEW — engineer STOP point inventory table OBLIGATORIA | post matadero CP5 STOP point gap #13 — SFX/music/ambient/UI elements never generated, audits miden quality not inventory |
-| _next_ | v2 post-CP5 matadero closure | Phase 1 trigger — refactor templates NIVEL 2 + audit-spec-completeness.py implementation |
-| _next_ | v3 post-2do video horror-choice | Validation patterns + amendments |
-| _next_ | v4 post-1er formato distinto | Generalization beyond video horror-choice |
-| _next_ | v5 post-Phase-4 | JSON schemas + automation criteria formalized |
-| _final_ | promoted to canonical | Phase 5 — orchestrator implementation |
-
----
-
 ## 12. Quick reference card
 
 ### Para architect

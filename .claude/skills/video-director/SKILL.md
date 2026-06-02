@@ -358,7 +358,7 @@ Antes de cada nueva tarea preguntate:
 
 1. **Captions vía Whisper, nunca hand-timed.** Hay un script (`scripts/captions.py`). Úsalo.
 2. **Captions en safe zone IG.** `caption-wrap { bottom: 540px; height: 280px }`.
-3. **Loading bars en safe zone.** `bottom: 700px`.
+3. **Loading bars en safe zone.** `bottom: 1000px`.
 4. **Variantes de imagen para escenas >4s.** Convención `-a/-b/-c`. Ver `IMAGE-VARIETY.md`.
 5. **Motion mínimo Ken Burns en TODO plano >2s.** Ningún frame congelado.
 6. **⛔ Primeros 30s del Reel = animation AI obligatoria** (model-agnostic). Toda escena con `data-start < 30s` debe ser un clip animado vía AI image-to-video (Kling/Hailuo/Seedance/etc.), sin importar el tipo de plano (wide/close-up/detail). Ni Ken Burns ni estática aceptables. **Razón:** retención del espectador en los primeros 30s es crítica para el algoritmo de IG. Modelo según `MODEL-BENCHMARK.md` § 1.1 / § 2.0 (con HOOK VIRAL OVERRIDE: Kling 2.5 Turbo Pro default para hook). Detalle: `video-animation/ANIMATION-LAYER.md` § 1 PRE-GATE. Esta regla **anula** parcialmente la rule #5 para esa ventana — Ken Burns no es suficiente en los primeros 30s.

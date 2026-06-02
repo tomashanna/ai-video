@@ -462,9 +462,7 @@ Mismo precio que un Kling normal (tier 5s o 10s). El `end_image` no agrega costo
 
 ## Validado en
 
-- **elige-companero v1** — 9 prompts Kling exitosos (ver PIPELINE.md § 9). Pero v1 cometió el error de **duration mismatch en algunas imágenes** (5s anim para 7s scene) → corregir en v2 con esta doc.
-- **bosque-abandonado** — sin Kling todavía, todo estático + Ken Burns. Candidato a iterar con animación selectiva.
-- **mina-abandonada** — sin Kling todavía.
+- **elige-companero v1** — 9 prompts Kling exitosos; learning clave (duration mismatch → match tier 5s/10s) ya codificado en §2/§12 + SKILL.md.
 
 ---
 

@@ -38,8 +38,6 @@ AI video 1/
 
 **Estado actual**: todos los componentes son estilo `horror-bw-crt`. Cuando aparezca un template que requiera otro estilo, se creará una sub-biblioteca paralela.
 
-**Próximo paso opcional**: reorganizar en `elements/horror-bw-crt/` para reflejar la sub-categorización por estilo. Por ahora flat OK porque solo hay un estilo.
-
 ---
 
 ## Catálogo actual — horror-bw-crt
@@ -98,46 +96,14 @@ cp -r countdown-pulse my-project/countdown-custom
 
 ---
 
-## Selección random por video
-
-Para variar la identidad visual entre videos del mismo formato:
-
-```python
-# Pseudocódigo
-import random, json
-
-elements = json.load(open('elements.json'))['elements']
-countdowns = [e for e in elements if e['type'] == 'countdown']
-loaders = [e for e in elements if e['type'] == 'loader']
-
-# Excluir el del video anterior (chequear video-log.md)
-last_countdown = "countdown-pulse"  # del video anterior
-countdowns = [c for c in countdowns if c['id'] != last_countdown]
-
-picked = random.choice(countdowns)
-# Wire al index.html
-```
-
----
-
 ## Cuándo crear estilo nuevo
 
 Cuando aparezca un template que requiera identidad visual distinta:
 
-### Ejemplo: si lanzás `cooking-format/` con cuenta IG cálida estilo "abuelita cocinando"
-
-```
-1. Crear: elements/clean-warm/
+1. Crear: `elements/<estilo-nuevo>/`
 2. Generar versiones de countdowns/loaders/lower-thirds en ese estilo
-3. Actualizar elements.json con sub-categoría:
-   {
-     "style_libraries": {
-       "horror-bw-crt": { "elements": [...] },
-       "clean-warm": { "elements": [...] }
-     }
-   }
-4. cooking-format/PATTERNS.md referencia explícitamente "use elements/clean-warm/*"
-```
+3. Actualizar `elements.json` con sub-categoría bajo `style_libraries`
+4. El `PATTERNS.md` del nuevo formato referencia explícitamente `use elements/<estilo-nuevo>/*`
 
 ---
 
@@ -242,15 +208,6 @@ En esos casos: hardcodear en `index.html` o crear sub-composition propia en `<pr
 
 ---
 
-## Próximas acciones sugeridas
-
-1. **Generar samples de cada elemento** — render de 3-5s para preview rápido sin abrir el HTML.
-2. **Crear `elements/<estilo-nuevo>/`** cuando aparezca segundo template con identidad visual distinta.
-3. **Considerar más variantes**: countdown-typed (números aparecen letra por letra), loader-skull (loader con esqueleto en horror), etc.
-4. **Sistema de selección random** integrado en el video-director — pickeo automático al iniciar proyecto.
-
----
-
 ## ⭐ Receta universal — Drop shadow para texto sobre IA-generated images
 
 **Scope**: 🌐 **Universal** — aplica a CUALQUIER video con texto overlay sobre imágenes generadas por IA, cualquier formato, cualquier duración.
@@ -342,11 +299,3 @@ Resultado: el texto queda con un "halo oscuro" pequeño que **funciona sobre cua
 ❌ **Text-stroke sin drop shadow** — texto queda "plano", no se separa del background visualmente.
 
 ❌ **Solo glow (`text-shadow: 0 0 40px black`)** — borra los bordes de letra, se siente impreciso.
-
----
-
-## Última actualización
-
-2026-05-11. Agregada receta universal drop shadow text legibility (Scope: 🌐 Universal). Validado en mina-abandonada v15 (9.9/10 Gemini).
-
-2026-05-10. Inicial. Documenta el sistema híbrido de componentes UI. 11 elementos catalogados (estilo horror-bw-crt).
