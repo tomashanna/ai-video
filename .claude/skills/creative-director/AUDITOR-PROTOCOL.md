@@ -188,6 +188,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ### CP1 — Reference Anchors
 
 1. ✅ **Visual de anchors generados** vs `SPEC.reference_anchors[].visual_anchor_prompt` línea por línea
+   - 1.1 ⭐ **Gate PROGRAMÁTICO (existence)**: `.venv/bin/python scripts/audit-anchor-coverage.py --format <fmt> --spec ../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un anchor NECESARIO (char/setting/prop en >1 shot o declarado en `reference_anchors`) no tiene archivo. Previene FileNotFoundError a mitad del batch CP4 (tras gastar $). CP1 ya NO es solo ojo humano.
 2. ✅ **Engineer-expanded prompts** drift check vs SPEC + memoria `prompt_quality_no_vague`
 3. ✅ **Hard rule #20** premium prompt 5-block structure (subject + camera + lighting + atmosphere físico + style)
 4. ✅ **Hard rule #19** ingeniero NO cita nuestras producciones como autoridad
@@ -290,6 +291,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 1. ✅ **Character consistency** cross-shots (face structure + wardrobe + signature features)
 2. ✅ **Variantes -a/-b/-c** en shots >4s con TIPOS de plano distintos (CLAUDE.md hard rule #5)
+   - 2.0 ⭐ **Gate PROGRAMÁTICO (duration-driven existence)**: `.venv/bin/python scripts/audit-variant-coverage.py --format <fmt> --spec ../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un shot con on-screen >4.0s tiene <2 variantes (caso bosque-v2 "PowerPoint narrado"). La distinctness de TIPO de plano (2.1/2.2) sigue siendo juicio del auditor.
    - 2.1 ⭐ **Cross-validate variant composition NOT just intra-shot, ALSO vs adjacent base shots** (caso disparador matadero shot_07-a vs shot_08 absorption_pov 2026-05-18). Si variant duplica composition de adjacent base shot en narrative sequence → 🔴 FAIL redundant pick
    - 2.2 Architect Q-picks deben validar: ¿variant composition distinct vs (a) other variants same shot AND (b) adjacent base shots n-1, n+1?
 3. ✅ **Paleta dual** intent ejecutada per shot tag (narrative warm vs choice cool)
