@@ -5,10 +5,18 @@ Validates that SPEC narration_text per shot FITS in declared duration_intent_s
 
 7 tests: CLI/capability/Bug9 + clean PASS + WPM too high FAIL + WPM too low FLAG + missing-input skip.
 """
-import json, os, shutil, subprocess, sys, tempfile, unittest
+import importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).parent / "audit-spec-narration-fits-duration.py"
+
+
+def _load_module():
+    """Import the hyphen-named script as a module to unit-test its matrix reader directly."""
+    spec = importlib.util.spec_from_file_location("l1_narration_fit", SCRIPT)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def _run(args):
@@ -161,6 +169,58 @@ class TestV11RealSchemaRegression(unittest.TestCase):
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         self.assertNotEqual(r.returncode, 0, f"narration exceeding canonical fit must FAIL.\nstdout {r.stdout}")
         self.assertIn("truncated", r.stdout.lower())
+
+
+# Reproduces the MATRIX structure where a COMMENTED top-level key (veo_3_1: # forward ...) follows
+# hailuo_std. The pre-fix reader matched `^name:$` against the raw line, so the commented key never
+# reset `cur` → veo_3_1's clip_duration_max_s (8) got attributed to hailuo_std, reading 8.0 not 5.9.
+_MATRIX_WITH_COMMENTED_KEY = """## i2v
+```yaml
+hailuo_std:
+  type: i2v
+  clip_duration_max_s: 5.9          # observado V5: 5.875s reales
+
+hailuo_pro:        # forward — NO usado aún
+  type: i2v
+  clip_duration_max_s: 10
+  status: unverified_forward
+
+veo_3_1:           # forward — NO usado (billing surprise V3)
+  type: i2v
+  clip_duration_max_s: 8
+  status: avoid_until_billing_confirmed
+```
+
+## tts
+```yaml
+elevenlabs:
+  canonical_pace_wpm: 165
+```
+"""
+
+
+class TestMatrixReaderInlineCommentRegression(unittest.TestCase):
+    """REGRESSION: a commented top-level key (e.g. `veo_3_1: # forward ...`) must not bleed its
+    clip_duration_max_s onto the previous key. hailuo_std must read 5.9, NOT 8.0."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.matrix = Path(self.tmp) / "MATRIX.md"
+        self.matrix.write_text(_MATRIX_WITH_COMMENTED_KEY, encoding="utf-8")
+        self.mod = _load_module()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_hailuo_std_reads_59_not_80_with_commented_veo_key(self):
+        wpm, caps = self.mod.load_matrix_values(self.matrix)
+        self.assertEqual(caps.get("hailuo_std"), 5.9,
+                         f"commented veo_3_1 key bled its cap onto hailuo_std: {caps}")
+        self.assertNotEqual(caps.get("hailuo_std"), 8.0)
+        # the commented keys must be parsed as their OWN entries (comment stripped, then matched)
+        self.assertEqual(caps.get("hailuo_pro"), 10.0, caps)
+        self.assertEqual(caps.get("veo_3_1"), 8.0, caps)
+        self.assertEqual(wpm, 165.0)
 
 
 if __name__ == "__main__":

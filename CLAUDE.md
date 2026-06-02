@@ -254,7 +254,7 @@ cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
 cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
 # 4. Verificación obligatoria (NO continuar si falla):
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py qa-gate.py; do
+for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py qa-gate.py; do
   [ -f scripts/$f ] && echo "✓ scripts/$f" || echo "✗ MISSING scripts/$f"
 done
 
@@ -301,21 +301,45 @@ npx hyperframes lint
 .venv/bin/python scripts/render-lock.py acquire <proyecto>
 # Falla con lock tomado → wait, NO romper el lock
 
+# ⭐ Gate 4.5a NUEVO — Clip timing vs audio (PER ATOMIC CLIP, en CP4) [Wave 3]
+# Correr 1× por clip atómico ANTES de ensamblar (path HYBRID per-clip-atomic)
+.venv/bin/python scripts/audit-clip-timing-vs-audio.py --mode clip \
+  --format <format> --video renders/clips/<shot_id>.mp4 \
+  --spec ../creative-specs/<id>.yaml --shot-id <shot_id>
+# Exit 0 → clip OK | Exit 1 → FAIL, regenerar clip (narración truncada / dur ≠ intent), BLOQUEA stop point
+
 # Render draft
 npx hyperframes render --output renders/draft.mp4
+
+# ⭐ Gate 4.5b NUEVO — Clip timing vs audio (PER FINAL RENDER) [Wave 3]
+.venv/bin/python scripts/audit-clip-timing-vs-audio.py --mode render \
+  --format <format> --video renders/draft.mp4
+# Exit 0 → A/V sync OK | Exit 1 → FAIL (|video_dur - audio_dur| > tol), BLOQUEA stop point
 
 # Gate 4 — Audit frames (Gemini Vision frame-by-frame)
 .venv/bin/python scripts/audit-frames.py --video renders/draft.mp4 --interval 1.0 --max-issues 2
 # Falla → fix issues localizados (UI overlap, frames negros, texto sobre rostros)
 
-# ⭐ Gate 5 NUEVO — Audit audio (narración coverage + música + gaps)
-.venv/bin/python scripts/audit-audio.py --video renders/draft.mp4 --html index.html --max-issues 2
+# ⭐ Gate 5 — Audit audio coverage (narración coverage + música + gaps)
+# ⭐ [Wave 3] PATH HYBRID per-clip-atomic → usar audit-render-audio-coverage.py (opera sobre el MP4, NO el HTML):
+.venv/bin/python scripts/audit-render-audio-coverage.py \
+  --format <format> --video renders/draft.mp4 --spec ../creative-specs/<id>.yaml
+# Exit 0 → coverage OK | Exit 1 → FAIL (coverage <min, gaps narrativos, música ausente), BLOQUEA stop point
+# PATH LEGACY HTML (timeline global, NO per-clip-atomic) → usar audit-audio.py contra el HTML:
+# .venv/bin/python scripts/audit-audio.py --video renders/draft.mp4 --html index.html --max-issues 2
 # Falla → fix gaps narrativos >2s, cobertura narración <40%, música ausente
 # CRÍTICO: detecta lo que Gemini holístico NO ve (ambient/SFX tapan silencios narrativos)
 
 # ⭐ Gate 6 NUEVO — Continuity check (NARRATIVE.md vs index.html)
 .venv/bin/python scripts/continuity-check.py --narrative NARRATIVE.md --html index.html --video-duration <X>
 # Falla → fix caminos narrativos rotos, hitos under-narrated, balance temporal
+
+# ⭐ Gate 6.5 NUEVO — Caption temporal coverage (post-render, red de seguridad HR#30) [Wave 3]
+.venv/bin/python scripts/audit-caption-temporal-coverage.py \
+  --format <format> --video renders/draft.mp4 --project-dir .
+# Exit 0 → coverage temporal OK | Exit 1 → FAIL (caption NO cubre toda la narración hablada,
+#   bloque estático truncado a 1ª frase, cue span >max), BLOQUEA stop point
+# Verifica coverage TEMPORAL (no existence 1-frame): caption presente durante TODA la narración (HR#30 A+B+C)
 
 # Gemini QA holístico (con prompt UNIVERSAL 14 dimensiones, ver QA.md)
 python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py renders/draft.mp4 --prompt "$PROMPT"

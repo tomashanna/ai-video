@@ -53,7 +53,8 @@ def load_matrix_values(matrix_path):
     caps = {"hailuo_std": I2V_CLIP_MAX_S_DEFAULT, "hailuo_pro": 10.0}  # fallback
     try:
         cur = None
-        for line in Path(matrix_path).read_text(encoding="utf-8").splitlines():
+        for raw in Path(matrix_path).read_text(encoding="utf-8").splitlines():
+            line = raw.split("#", 1)[0].rstrip()  # drop inline/trailing comments (keys carry "# forward ...")
             mw = re.search(r"canonical_pace_wpm:\s*([0-9.]+)", line)
             if mw:
                 wpm = float(mw.group(1))

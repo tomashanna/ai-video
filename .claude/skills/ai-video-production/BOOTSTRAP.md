@@ -202,7 +202,7 @@ cp "$SKILL_DIR/calibrated-gemini-prompt-v2.txt"          .  # v2 symlink (retroc
 
 **Verificación post-copy** — confirmar que TODOS los scripts del flow están presentes:
 ```bash
-for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py audit-gemini-calibrated.py veo3.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py; do
+for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py audit-gemini-calibrated.py veo3.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py; do
   [ -f scripts/$script ] && echo "✓ scripts/$script" || echo "✗ MISSING scripts/$script"
 done
 # Plus check calibrated prompt template
