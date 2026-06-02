@@ -19,9 +19,13 @@
 
 > Síntesis accionable del análisis de los 3 videos virales de @referent-a (V1: 6M views, V2: 4M, V3: 2.4M). ⚠️ Estos 3 videos NO son los 8 canónicos actuales — son referentes antiguos del mismo creator. Para autoridad empírica, usar PAUTA-MASTER.
 
+> ⤴ **MECÁNICA AGNÓSTICA DEL FORMATO CHOICE AHORA EN `choice-format-core/`.** La mecánica genérica (estructura temporal/INTRO timing, lógica del dilema + plot-twist coherente 3-condiciones, mecánica de elección interactiva: loading bar / white flash / separador de rama) se extrajo a `../choice-format-core/CHOICE-MECHANIC.md` (creativa) + `../choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica choice-UI). **Este doc queda como las reglas TÉCNICAS APLICADAS a horror + todo el contenido horror** (audio/visual de terror, arquetipos, lenguaje, cliffhanger sensorial, HTML/CSS, Kling-horror, prohibiciones). Las secciones con puntero `⤴` cross-linkean a core; **ningún cuerpo de sección se borró** (este doc está muy cross-referenciado).
+
 ---
 
 ## 1. ESTRUCTURA TEMPORAL
+
+> ⤴ **El esqueleto temporal agnóstico + el timing del hook viven en `../choice-format-core/CHOICE-MECHANIC.md § 2` + `../choice-format-core/INGENIERO-CHOICE-CORE.md § 5` (0 cuts en hook).** Acá quedan los detalles de timing V15 horror (intro 9s, loading bar 2.5s, countdown, white flash) como receta APLICADA.
 
 ### ⭐ V15 (moderna — post mina-abandonada 9.9/10) — DEFAULT
 
@@ -220,9 +224,9 @@ El formato siempre tiene exactamente 2 personajes con roles invertidos:
 - NO es villano gratuito — es un sistema con lógica interna
 
 **EL "BUENO APARENTE" (Distractor):**
-- Visualmente extraño pero menos amenazante
-- No tiene diálogo propio
-- Aparece solo en el cliffhanger final (2-15 segundos)
+- Visualmente extraño (puede ser tan extreme como el malo — ver `PAUTA-MASTER.md` § 5)
+- Diálogo según apariencia (variabilidad, NO regla: ref-08 Hugo SÍ habla "No me elijas")
+- **INVARIANTE (5/5 refs): NUNCA en el recorrido jugado tomando decisiones — solo en hook (H1 dyad) + counterfactual + cliffhanger.** Ver `PAUTA-MASTER.md` § 2
 - Función narrativa: **representa la paz que el espectador rechazó por prejuicio visual**
 
 **Contraste obligatorio:**
@@ -257,6 +261,8 @@ El formato siempre tiene exactamente 2 personajes con roles invertidos:
 ---
 
 ## 6. LÓGICA DEL DILEMA MORAL — LA REGLA MÁS IMPORTANTE
+
+> ⤴ **La dilemma-mechanics agnóstica vive en `../choice-format-core/CHOICE-MECHANIC.md § 5`** (lo universal es la DUDA real, no "ganadora contra impulso" — ⚠️ ese encabezado de abajo está REFUTADO por PAUTA-MASTER § 6 como no-universal; queda por valor histórico). Acá quedan los ejemplos horror.
 
 > **El sistema premia obediencia, no virtud. La opción ganadora siempre va contra el impulso primario.**
 
@@ -310,6 +316,8 @@ Para esos patterns, validá la calidad del video con: (1) **¿el motor de tensi�
 ---
 
 ## 6.5. ⛔ PLOT TWIST — uno de los pilares del formato
+
+> ⤴ **Las 3 condiciones de coherencia del plot twist (lógica + imágenes + narración) son agnósticas y viven en `../choice-format-core/CHOICE-MECHANIC.md` (dilemma-mechanics + twist coherence).** Acá quedan los ejemplos horror del twist + su aplicación al formato de terror.
 
 > Aplicación específica del principio universal de `video-director/SKILL.md` § Filosofía #8 al formato horror-choice.
 
@@ -458,6 +466,8 @@ Font-size ~60px (más chico que las captions de 80px porque incluye emoji), uppe
 ---
 
 ## 8. MECÁNICA DE ELECCIÓN INTERACTIVA — LA INNOVACIÓN DEL FORMATO
+
+> ⤴ **La mecánica de elección agnóstica (loading bar, white flash, separador de rama A→B, decisión→consecuencia ✗/✓) vive en `../choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica choice-UI) + `../choice-format-core/CHOICE-MECHANIC.md § 4` (dinámica).** Acá queda el sabor horror (glitch digital de terror + el impulso→muerte/castigo).
 
 Esto es lo que diferencia "Elige a tu compañero" del horror narrativo común:
 

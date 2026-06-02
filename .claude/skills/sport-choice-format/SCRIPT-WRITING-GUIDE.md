@@ -7,14 +7,14 @@
 > - 🟩 **VARIABILIDAD (libre)** — cómo ejecutás el principio. Múltiples formas válidas. Ej: el fraseo del framing condicional ("Si encaras…" / "Si decides encarar…" / "Si vas al uno contra uno…"); qué jugada-clave usás en el clímax.
 > - 🟥 **ANTI-PATTERN (evitar)** — formas que rompen la credibilidad futbolística. Ej: pasarle el balón a un rival; "devuelves seguro y pierdes el balón" (no causal).
 >
-> Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. La MECÁNICA (countdown, decisiones binarias, counterfactual, POV) sí es regla dura, heredada de horror-choice.
+> Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. La MECÁNICA (countdown, decisiones binarias, counterfactual, POV) sí es regla dura, **heredada de `../choice-format-core/CHOICE-MECHANIC.md`** (agnóstica, común a horror y sport).
 
 ---
 
 ## CÓMO USAR ESTE DOCUMENTO
 
 Para generar un guion nuevo, pegale a Claude:
-1. Este documento + `PAUTA-MASTER.md` (sport) + las secciones de MECÁNICA de `horror-choice-format/PAUTA-MASTER.md`
+1. Este documento + `PAUTA-MASTER.md` (sport) + la MECÁNICA agnóstica de `../choice-format-core/CHOICE-MECHANIC.md`
 2. Los inputs del usuario (partido/equipos/jugadores, topical o ficticio, tipo de jugada-clave deseada)
 3. La instrucción: "Generá un guion sport-choice siguiendo la plantilla y respetando la lógica deportiva (cadena que cierra + 7 anti-patterns) + la mecánica heredada".
 
@@ -37,7 +37,7 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 
 ## LA ESTRUCTURA DEL GUION SPORT-CHOICE
 
-> 🟦 PRINCIPIO: la estructura es la del formato choice (heredada). Lo que cambia es el CONTENIDO de cada bloque (deportivo).
+> 🟦 PRINCIPIO: la estructura es la del formato choice (heredada de `../choice-format-core/CHOICE-MECHANIC.md § 2` — esqueleto + invariante). Lo que cambia es el CONTENIDO de cada bloque (deportivo).
 
 ```
 [BLOQUE 1 — HOOK / DYAD — 0:00 a ~0:09 (0-15%)]
@@ -85,18 +85,14 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 
 ---
 
-## REGLAS DE ESCRITURA (heredadas + sport-específicas)
+## REGLAS DE ESCRITURA
 
-### Lenguaje (heredado de horror-choice § 3)
-- 🟦 **Segunda persona presente:** "Avanzas por la banda", "Te la deja, le pegas".
-- 🟦 **Español NEUTRAL** (tú/eliges/decides) — NUNCA voseo argentino.
-- 🟦 **Oraciones cortas**, claras. La narración dice QUÉ pasa en la jugada, no "suena épico".
-- 🟦 **Narración CLARA, no estilizada:** el viewer debe entender la jugada en 1ª escucha sin caption. La épica emerge del visual + rugido + música, no de la narración.
+> Esta sección lista SOLO el DELTA deportivo. La mecánica de escritura AGNÓSTICA (lenguaje 2ª persona presente + español neutral + oraciones cortas/claras + narración no-estilizada; framing acción-condicional como PRINCIPIO 🟦 / variabilidad 🟩 / anti-pattern bare-label 🟥; estructura de cada decisión; "orden hablado = orden de botones") **se HEREDA de `../choice-format-core/CHOICE-MECHANIC.md § 3`** y NO se redefine acá. Leer ese doc primero. Abajo, solo el sabor sport sobre esas reglas + la lógica deportiva net-new.
 
-### Framing acción-condicional (heredado + reskineado)
-- 🟦 **PRINCIPIO:** toda consecuencia marca a qué rama/opción pertenece. Sin esto el viewer se pierde.
-- 🟩 **VARIABILIDAD (libre):** "Si encaras…" / "Si devuelves…" / "Si la cruzas…" / "Si picas…" / "Si decides encarar…". Elegí el fraseo que mejor suene con la jugada.
-- 🟥 **ANTI-PATTERN:** bare label robótico "Si elegiste A" / "Si elegiste B" (suena a formulario). Usá la ACCIÓN ("Si encaras al lateral…").
+### Lenguaje + framing — el sabor sport sobre la mecánica heredada
+- ⤴ Reglas base (2ª persona, español neutral, oraciones cortas, narración clara no-estilizada, framing acción-condicional sin bare label) → `../choice-format-core/CHOICE-MECHANIC.md § 3`.
+- 🟩 **Fraseo condicional reskineado a la jugada (variabilidad libre):** "Si encaras…" / "Si devuelves…" / "Si la cruzas…" / "Si picas…" / "Si asistes a tu compañero…". Elegí el fraseo que mejor suene con la jugada.
+- 🟦 **La narración dice QUÉ pasa EN LA JUGADA, no "suena épico":** la épica emerge del visual + rugido de hinchada + música, no de la narración.
 
 ### Lógica deportiva (sport-específico — la sección crítica)
 - 🟦 **La elección = equipo, con contexto explícito** (caption + narración).
@@ -106,9 +102,9 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 - 🟩 **VARIABILIDAD:** qué jugada exacta, qué opción paga (rotar — no siempre A ni siempre B), qué tono de humillación.
 - 🟥 **ANTI-PATTERNS** (correr sobre cada decisión — ver PAUTA-MASTER § 6): balón al rival, orden desalineado, consecuencia no causal, contradicción física (atajada vs tiro afuera), "B" siempre correcta, decisión sin duda real.
 
-### Duración / pace (heredado)
-- 🟦 ~90s total (banda 80-100s).
-- 🟦 Word budget por shot ≈ `duration_intent_s × 2.75` (165 WPM). Cada segmento de narración lo respeta (HR#28/#29 — narración ≤ min(duración del shot, clip_max del modelo)).
+### Duración / pace (heredado — mecánica + universal)
+- 🟦 ~90s total (banda 80-100s). ⤴ Duración total = `../choice-format-core/CHOICE-MECHANIC.md § 2`.
+- 🟦 Word budget por shot ≈ `duration_intent_s × 2.75` (~165 WPM). ⤴ Pace WPM + narración-fits-duration (HR#28/#29 — narración ≤ min(duración del shot, clip_max del modelo)) = técnica universal `ai-video-production/MODEL-CAPABILITIES-MATRIX.md`.
 
 ---
 

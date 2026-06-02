@@ -2,7 +2,7 @@
 
 > ⚠️ **DOC OPERACIONAL SECUNDARIO — NO ES AUTORIDAD CREATIVA.**
 >
-> Los **specs técnicos de UI** (safe zones, posiciones Y, monospaced, decision-UI editorial pacing, no-overlap) se HEREDAN de `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 7` + CLAUDE.md HR#4. Este doc reskinea el CONTENIDO de la UI a deporte. Si hay conflicto → gana la pauta heredada.
+> Los **specs técnicos de UI** (safe zones, posiciones Y, monospaced, decision-UI editorial pacing, no-overlap) se HEREDAN de `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 2` (UI safe zones + no-overlap matrix) + `§ 1` (decision-UI editorial pacing) + CLAUDE.md HR#4. Este doc reskinea el CONTENIDO de la UI a deporte. Si hay conflicto → gana la técnica heredada.
 >
 > Si llegaste acá sin leer las pautas, parar y leerlas primero.
 
@@ -23,7 +23,7 @@
 | **Botones A/B** | Las 2 opciones de jugada | Paired, Y60-70, safe zones IG | Las dos jugadas (ENCARAS / DEVUELVES) |
 | **Watermark** | Brand | bottom, 60-80% opacity, persistente | `@elige_tucompanero` |
 
-> Specs exactos (posiciones Y, monospaced, no-overlap matrix, decision-UI editorial pacing) = los de `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 7`. NO se redefinen acá — se heredan tal cual.
+> Specs exactos (posiciones Y, monospaced, no-overlap matrix, decision-UI editorial pacing) = los de `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 1-§ 2`. NO se redefinen acá — se heredan tal cual.
 
 ---
 
@@ -44,7 +44,7 @@
 
 - **Countdown:** film leader academy AVU (clip heredado `countdown-3-2-1-film-leader-with-ticks.mp4`), Y46, digit 1.0s, SFX tick por dígito. Aparece en el hook (atención) + en cada una de las 3 decisiones.
 - **Loading bar:** horizontal Y52 (≥6% separación del countdown Y46 — heredado, evita overlap), beep tick acumulativo, termina con flash/cut a la consecuencia. Aparece tras cada decisión.
-- **Decision-UI editorial pacing** (heredado de horror PAUTA § 18): freeze frame + filter OPCIONAL (no obligatorio), pause beat 0.9s median, countdown sync al fin de la narración de la pregunta, loading Y52.
+- **Decision-UI editorial pacing** (heredado de `../../choice-format-core/CHOICE-MECHANIC.md § 9` creative intent + `INGENIERO-CHOICE-CORE.md § 1` técnica): freeze frame + filter OPCIONAL (no obligatorio), pause beat 0.9s median, countdown sync al fin de la narración de la pregunta, loading Y52.
 
 (No re-litigar estos specs — son los heredados.)
 
@@ -83,7 +83,7 @@ D3:  [ A ] LA CRUZAS              [ B ] LA PICAS
 
 ## Coordinación con captions (heredado)
 
-UN elemento UI dominante por vez (heredado): si hay countdown, el caption narrativo baja; si hay loading bar, el countdown ya se fue. No overlap visual. Specs de no-overlap = `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 7.2`.
+UN elemento UI dominante por vez (heredado): si hay countdown, el caption narrativo baja; si hay loading bar, el countdown ya se fue. No overlap visual. Specs de no-overlap = `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 2.3` (no-overlap matrix).
 
 ---
 

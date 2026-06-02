@@ -87,6 +87,15 @@ LUFS_TOLERANCE = 1.5  # ±1.5 dB acceptable per-clip (final master tightens to �
 # ----------------------------------------------------------------------------
 # Y position: 62% of frame (canonical safe zone, IG Reel 9:16)
 CAPTION_Y_PERCENT = 0.62
+# ── CAPTION-OVERLAP fix — per-speaker/per-class Y-band + build-time de-conflict ──
+# Narrator/warning captions sit at the canonical Y62 bottom-third. Character DIALOG (name class)
+# sits at Y52 + NAME tag, so narrator + dialog (or 2 chars) NEVER collide at the same Y when their
+# time windows overlap. De-conflict (deconflict_cue_ys) ENFORCES the A3 "no same-Y overlap" invariant
+# in the burn (cross-layer narrator + dialog included) instead of only flagging it in a sidecar.
+CAPTION_Y_NARRATOR = 0.62      # narration / warning
+CAPTION_Y_DIALOG = 0.52        # character dialog (name class) — distinct band + NAME tag
+CAPTION_Y_STEP = 0.08          # de-conflict offset step (≥6% min separation = ≥1 line height)
+CAPTION_Y_MIN = 0.30           # don't push a caption above the lower-third / into the name-label band
 # Font size scaling: 80px base for short captions, 68px when word count > 8
 CAPTION_FONT_SIZE_SHORT = 80
 CAPTION_FONT_SIZE_LONG = 68
@@ -656,6 +665,7 @@ def _build_caption_cues_from_whisper(
             "end_s": float(last),
             "text": spec_text_override,
             "class": _classify_caption(speaker, spec_text_override),
+            "speaker": speaker,
         }]
 
     if spec_text_override and segments and not words:
@@ -667,6 +677,7 @@ def _build_caption_cues_from_whisper(
             "end_s": last,
             "text": spec_text_override,
             "class": _classify_caption(speaker, spec_text_override),
+            "speaker": speaker,
         }]
 
     # Whisper raw: one cue per segment, but split very long segments into ~6-word chunks
@@ -690,6 +701,7 @@ def _build_caption_cues_from_whisper(
                     "end_s": float(chunk[-1].get("end", 0)),
                     "text": chunk_text,
                     "class": _classify_caption(speaker, chunk_text),
+                    "speaker": speaker,
                 })
         else:
             cues.append({
@@ -697,8 +709,43 @@ def _build_caption_cues_from_whisper(
                 "end_s": float(seg.get("end", 0)),
                 "text": seg_text,
                 "class": _classify_caption(speaker, seg_text),
+                "speaker": speaker,
             })
     return cues
+
+
+def _base_y_for_class(klass: str) -> float:
+    """Canonical base Y per caption class. Dialog (name) -> Y52; narration/warning -> Y62."""
+    return CAPTION_Y_DIALOG if klass == "name" else CAPTION_Y_NARRATOR
+
+
+def deconflict_cue_ys(cues: list[dict]) -> list[dict]:
+    """CAPTION-OVERLAP fix — assign each cue a per-class base Y, then resolve same-Y temporal
+    collisions so NO two TIME-overlapping cues share a Y band (cross-layer narration+dialog AND
+    char-vs-char). The later-starting cue is pushed UP by CAPTION_Y_STEP (clamped at CAPTION_Y_MIN;
+    nudged down if it would breach the floor). Sets cue['y_pct'] in place. Idempotent/deterministic."""
+    for c in cues:
+        c.setdefault("y_pct", _base_y_for_class(c.get("class", "narration")))
+    # narration/warning sort before dialog at the same start so the narrator keeps the canonical band
+    ordered = sorted(cues, key=lambda c: (float(c["start_s"]),
+                                          0 if c.get("class") != "name" else 1))
+    for i, c in enumerate(ordered):
+        moved = True
+        while moved:
+            moved = False
+            for j in range(i):
+                p = ordered[j]
+                overlaps = float(c["start_s"]) < float(p["end_s"]) - 0.05 and \
+                    float(c["end_s"]) > float(p["start_s"]) + 0.05
+                same_band = abs(c["y_pct"] - p["y_pct"]) < (CAPTION_Y_STEP - 0.001)
+                if overlaps and same_band:
+                    new_y = round(c["y_pct"] - CAPTION_Y_STEP, 4)
+                    if new_y < CAPTION_Y_MIN:
+                        new_y = round(c["y_pct"] + CAPTION_Y_STEP, 4)
+                    c["y_pct"] = new_y
+                    moved = True
+                    break
+    return ordered
 
 
 def _wrap_text_lines(text: str, max_chars_per_line: int = 22) -> list[str]:
@@ -734,6 +781,11 @@ def _drawtext_filters_for_cue(
     """
     text = cue["text"]
     klass = cue.get("class", "narration")
+    # Dialog (name class): prefix a NAME tag so the viewer knows who speaks + it reads distinct
+    # from the narrator band (CAPTION-OVERLAP fix). Speaker carried on the cue when available.
+    spk = (cue.get("speaker") or "").strip()
+    if klass == "name" and spk and not text.upper().startswith(spk.upper() + ":"):
+        text = f"{spk.upper()}: {text}"
     words_count = len(text.split())
     fontsize = CAPTION_FONT_SIZE_LONG if words_count > CAPTION_LONG_WORD_THRESHOLD else CAPTION_FONT_SIZE_SHORT
 
@@ -765,11 +817,13 @@ def _drawtext_filters_for_cue(
     # Top of block:
     top_offset = - block_height / 2
 
+    # per-cue Y band (CAPTION-OVERLAP fix). Falls back to canonical Y62 if not de-conflicted.
+    cue_y = cue.get("y_pct", CAPTION_Y_PERCENT)
     filters = []
     for i, line in enumerate(lines):
         escaped = _escape_drawtext(line)
-        # y = h*0.62 + (i - (n-1)/2) * line_height  -> centered around 62%
-        y_expr = f"h*{CAPTION_Y_PERCENT}+({i}-{(n - 1) / 2:.2f})*{line_height}"
+        # y = h*cue_y + (i - (n-1)/2) * line_height  -> centered around the cue's band
+        y_expr = f"h*{cue_y}+({i}-{(n - 1) / 2:.2f})*{line_height}"
         parts = [
             f"text='{escaped}'",
             f"fontsize={fontsize}",
@@ -984,6 +1038,10 @@ def bake_captions_per_clip(
         # Resolve fonts
         font_narration = style_overrides.get("font_narration") or _resolve_font(DEFAULT_NARRATION_FONT_CANDIDATES)
         font_mono = style_overrides.get("font_mono") or _resolve_font(DEFAULT_MONO_FONT_CANDIDATES)
+
+        # CAPTION-OVERLAP fix: assign per-class Y bands + de-conflict same-Y temporal collisions
+        # (cross-layer narrator+dialog and char-vs-char) BEFORE burning.
+        cues = deconflict_cue_ys(cues)
 
         # Build chained drawtext filters (multi-line per cue)
         drawtext_filters: list[str] = []

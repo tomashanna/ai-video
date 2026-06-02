@@ -145,6 +145,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 1. SPEC completo: creative-specs/<id>.yaml v actual — TODAS las secciones, no solo las
    "relevantes a este CP". Cross-coherence se rompe por gaps lejanos del CP.
 2. ⭐ PAUTA-MASTER del formato — autoridad creativa empírica del arquitecto
+2.5. ⭐ PAUTA-MASTER § 2 del formato (horror-choice) — estructura + invariante: esqueleto canónico (§ 2.1) + INVARIANTE (§ 2.2: bueno-aparente NUNCA en el recorrido jugado) + name-labels (§ 2.5). En CADA SPEC-AUDIT comparar el guion **beat-por-beat** contra § 2.1/§ 2.2 + chequear las 8 perspectivas de § 2.4 (UI/efecto/sonido canon → INGENIERO-PAUTA §§ 7.4.1, 9, 10).
 3. ⭐ INGENIERO-PAUTA-MASTER del formato — autoridad técnica empírica del ingeniero
 4. ⭐ ref-XX canónico primario aplicable (definido en SPEC.cliffhanger.ref_canonical_anchor)
 5. video-log.md del formato — rotación pattern + learnings previos
@@ -738,6 +739,10 @@ Después de la tabla, el auditor concluye con UNO de:
 
 ---
 
+20. ⛔ **Auditar ESTRUCTURA vs canónico (no solo linkage) — y FLAGEAR divergencias, NUNCA racionalizarlas** (added 2026-06-01, Hard Rule forward, caso V6 invernadero). En el SPEC-AUDIT, comparar el guion **beat-por-beat** contra `horror-choice-format/PAUTA-MASTER.md § 2` — § 2.1 (esqueleto) + § 2.2 (INVARIANTE: el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones) + § 2.4 (las 8 perspectivas: estructura / invariante / recorridos-secuenciales / pattern-rotación / name-labels-durante-countdown / glitch-pantalla-antigua-en-story-change / SFX-densos-matcheados-ducked / + checks pre-existentes). **Verificar el linkage de refs (¿el SPEC cita bien?) NO basta** — hay que verificar que la ESTRUCTURA matchee el canónico. **Si notás una divergencia, FLAGEALA como 🔴 que retorna al arquitecto — NUNCA la racionalices como "fortaleza/necesaria".** Caso disparador: V6 invernadero — Celeste (bueno-aparente) presente y tentando en el played path (shots 05/10), violando el invariante; yo (auditor) lo NOTÉ en el SPEC-AUDIT y lo escribí como "necesario y mejor para el doble-amable" (racionalización) en vez de flagearlo → Tomás lo cazó post-render. Enforcement programático: `audit-spec-structure-vs-canonical.py`. Memoria `feedback_spec_audit_structural_divergence`.
+
+---
+
 ## 7. Independencia de juicio — separación de 3 terminales
 
 El auditor vive en su **propio terminal** sin contexto del arq/ing. Esto es estructural, no opcional.
@@ -752,25 +757,3 @@ ingeniero produce: <proyecto>/CP[N]-handoff[-vN].md  (self-contained)
 auditor lee:       <proyecto>/CP[N]-handoff[-vN].md + autoridad canónica directa
 auditor entrega:   tabla findings + verdict (en chat user, NO crea .md sin pedir)
 ```
-
----
-
-## 8. Última actualización
-
-**2026-05-17** — creación del doc. Gap detectado durante audit CP1 matadero-banquete: el auditor delegó verificación de PAUTA-MASTER al arquitecto en vez de leerla directo, comprometiendo independencia de juicio. Codificación del rol como autoridad canónica para evitar recurrencia.
-
-**2026-05-19** — gap #13 codified post matadero CP5 STOP point. Auditor (yo) pattern-matched engineer's "coverage_pct 69.93% structural" label como "1 LU off LUFS tweak" sin medir directo `ls assets/sfx/`. User flagged "faltan SFX + countdowns + cut effects" → audit verified → 0/10 SFX + 0/3 music + 0/2 ambient + 0 countdown/buttons/loading wired vs SPEC. Amendments:
-- CP4 step 8 NEW (C-INVENTORY video assets — pre-CP5 handoff)
-- CP5 step 9 NEW (C-INVENTORY-WIRED — BLOQUEANTE, MUST run BEFORE other CP5 gates)
-- § 6 anti-pattern #8 NEW (pattern-match label sin medir directo)
-- Forward: `scripts/audit-spec-completeness.py` Phase 1 priority automates this step
-
-**2026-05-19 (afternoon)** — gap #14 codified post matadero CP5 iter 2 review. User flagged "countdowns no van ligados a narración + sobrepuestos con loading bar — en refs canónicos imagen se queda estática con efecto cámara vieja + ahí se hace countdown". 3 roles missed (architect SPEC ui_active shallow sin pacing fields + engineer mechanical wire sin editorial judgment + auditor inventory-only no editorial cinematic audit). Amendments:
-- CP5 step 10 NEW (D29 EDITORIAL PACING AUDIT — freeze frame + filter overlay + countdown narration sync + UI spacing ≥6%)
-
-**2026-05-21** — Phase 2 architectural amendments post cinema-abandonado comparative analysis. User flagged "el nuestro es el peor" vs canonical refs. Comparative Gemini Vision analysis (4 videos) revealed cinema-abandonado weak vs canonical in: cuts/min (12 vs 13-22), music layers (1 vs 3), character consistency (7 vs 9), visual artifacts (7 vs 8), transition variety (hard cuts only vs ≥3 types). Phase 2 architectural refactor completed 2026-05-20 (per-clip atomic + Quality Gate Agent + effects library) eliminates 7/8 bug classes structurally. Amendments:
-- CP5 step 11 NEW (PER-CLIP ATOMIC AUDIT — Quality Gate Agent verdict per shot + mid-exec Gemini Vision + caption sidecar schema + audio mux atomic + effects between clips per beat type)
-- § 6 anti-pattern #12 NEW (Trust Gemini holistic SCORE single-source — must add comparative analysis vs canonical refs)
-- § 6 anti-pattern #13 NEW (Editing variety blindness — verify transition variety not just cuts/min)
-- Forward: `scripts/audit-comparative-vs-canonical.py` + `scripts/audit-transition-variety.py` Phase 3 priority automation
-- Forward arquitecto-domain Track parallel: PAUTA-MASTER § decision-UI-pacing + INGENIERO-PAUTA § 7.X decision-UI-implementation + SPEC schema v7 `narrative_pacing` fields + pre-render-gate Q21 NEW

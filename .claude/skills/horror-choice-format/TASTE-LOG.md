@@ -4,6 +4,7 @@
 > **Owner**: 🔍 Auditor entrevista al USER post-PUBLISH; entries written by auditor based on user input. **NUNCA el auditor inventa entries — solo registra lo que el user articula**.
 > **Why this exists**: el sistema codifica 33+ gaps técnicos pero ~0 gaps estéticos. Sin este doc, después de N videos producís contenido técnicamente correcto pero estilísticamente promedio. Tu gusto = activo más subestimado del sistema (per architectural review 2026-05-21).
 > **Created**: 2026-05-21 — first entry retrospective from 3 backrooms POV refs ingested 2026-05-20/21.
+> **Autoridad estructural + invariante** (separada del juicio perceptual de este doc): `PAUTA-MASTER.md § 2` (esqueleto + "bueno-aparente nunca en el played path"; las entries #1/#2 sobre SFX-densos/inmersión están codificadas en `INGENIERO-PAUTA § 10`).
 
 ---
 
@@ -181,6 +182,24 @@ Cualquiera de las opciones requiere arquitectura nueva — NO es ajuste cosméti
 
 **Why**: estos son los detalles de "felt quality" que separan canónico de promedio (TASTE-LOG raison d'être). Sound design denso + labels legibles = más inmersión + scroll-stop.
 **How to apply V6**: el arquitecto los incorpora en el SPEC FASE 0 (name_label_fontsize_intent + scream SFX per fatal shot); el ingeniero ejecuta.
+
+---
+
+## Entry #3 — 2026-06-01 — V6 `invernadero-turno-riego` SHIPPED ("buena / bastante bueno")
+
+**Veredicto Tomás**: "Buena! Bastante bueno, creo que estamos sacando contenido de calidad." Publicado.
+
+**Lección estructural (no debe recurrir)**: el bueno-aparente (Celeste) quedó presente en el recorrido jugado tentando → violaba el invariante canónico; el arquitecto lo diseñó así + el auditor lo racionalizó. Root cause = receta `SKILL.md` "doble-amable = ambos hablan" sin el límite del invariante. Fixeado: invariante en PAUTA §2 + SPEC-AUDIT anti-pattern #20 + validator `audit-spec-structure-vs-canonical.py` (12 tests). Memoria `feedback_spec_audit_structural_divergence`.
+
+**Ajustes pedidos por Tomás para V7+ (codificados en docs existentes, sin parches nuevos):**
+1. Más sonidos inmersivos matcheados a la acción (PAUTA §2.4 + INGENIERO-PAUTA §10).
+2. Más efectos corte-TV en cambios A↔B + muerte (effects-library `old_screen_glitch_error` + INGENIERO §9).
+3. Narración final no-"retrasada": atempo nunca <0.90 (V6 over-atempo 0.74 = arrastrado); extender clip, no ralentizar la voz (INGENIERO §1.6). David C2 OK.
+4. Name-labels grandes arriba de cada uno, antes Y durante el countdown (INGENIERO §7.4.1).
+5. Música ambiente mood-matched volumen-bajo, atmosférica/tonal (NO melódica — preserva el dread; PAUTA §25).
+6. ⚠️ Caption-overlap cuando hablan 2 (narrador+personaje o 2 personajes) — investigación 2026-06-01.
+
+**Gemini calibrado 7.9** (execution_continuity 5.2 = GAP#40 teleport-cuts; otras 9 dims 8.5-9.6). El techo own-prod sigue siendo la continuidad de ejecución (= matadero 7.9 / cinema 7.8); las mejoras 1-6 NO lo tocan (es de animación i2v — el próximo gran salto de calidad).
 
 ---
 

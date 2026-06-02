@@ -15,6 +15,8 @@
 
 ## Estructura macro (9s flat)
 
+> ⤴ **La MECÁNICA agnóstica del hook 0-9s (countdown ~1s/dígito, white flash, name labels ≥2.5s visibles through-countdown, silence beat, 0 cuts en hook) vive en `../choice-format-core/INGENIERO-CHOICE-CORE.md` (§ 1 decision-UI + § 5 hook-continuity).** Acá abajo queda la receta HORROR-aplicada: el HTML/GSAP copy-paste, el prompt template de Kling horror, el ejemplo mina-abandonada y la tabla de mix de volúmenes — todo se queda en horror (es receta aplicada, no mecánica pura).
+
 ```
 0.00-0.10  Frame 0: imagen atmospheric teaser (empty location + ominous element)
 0.10-3.10  CAPTIÓN h1-narr Whisper-sync (3 frases progresivas)

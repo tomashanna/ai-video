@@ -456,17 +456,23 @@ shot_list:
       atmospheric_motions_list: ["light_flicker", "dust_particles", "character_breathing", "subtle_wind"]
 
     # UI ELEMENTS ACTIVE
+    # ⭐ NAME LABELS (PAUTA-MASTER § 2.5 + INGENIERO-PAUTA § 7.4.1): GRANDES (fontsize_intent:
+    #   large ≈64px), una ARRIBA de CADA personaje, MONOSPACED + drop-shadow. ⛔ Timing: visibles
+    #   desde el inicio de la intro Y DURANTE TODO el countdown → timestamp_visible_s: [0.0,
+    #   fin-del-countdown] (NO cortar al arrancar el countdown — bug V6 labels ausentes 6-9s).
     ui_active:
       - element_id: "name_label_char_a"
-        timestamp_visible_s: [0.0, 4.0]
-        position: {y_pct: 11.5}
+        timestamp_visible_s: [0.0, 9.0]            # [0, fin-del-countdown] — persiste THROUGH-COUNTDOWN (§4)
+        position: {y_pct: 11.5}                    # arriba de char_a
         text: "BRUNO"
         font: "monospaced"
+        fontsize_intent: "large"                   # ≈64px (§ 7.4.1)
       - element_id: "name_label_char_b"
-        timestamp_visible_s: [0.0, 4.0]
-        position: {y_pct: 11.5}
+        timestamp_visible_s: [0.0, 9.0]            # [0, fin-del-countdown] — persiste THROUGH-COUNTDOWN (§4)
+        position: {y_pct: 11.5}                    # arriba de char_b
         text: "MATEO"
         font: "monospaced"
+        fontsize_intent: "large"                   # ≈64px (§ 7.4.1)
 
   # ... continue per all ~20-25 shots
   # ⭐ EVERY shot v11 MUST have: scene_context + motion_bridge_intent + pov_traversal
@@ -479,6 +485,14 @@ shot_list:
 # ═══════════════════════════════════════════════════════════════
 
 transitions:
+  # transition_type enum:
+  #   Capa A universal: hard_cut_with_whoosh | cross_fade_0.5s | cross_fade_1.0s |
+  #                     black_screen_0.3s | fade_to_black_1.0s | light_flash_impact | glitch_transition
+  #   Capa B horror-choice (solo --format horror-choice): static_noise_transition |
+  #                     projector_cue_cinema | film_burn_transition | old_screen_glitch_error
+  #   ⭐ old_screen_glitch_error = glitch "pantalla antigua/pixelada/con error" para CAMBIOS DE HISTORIA
+  #     (transición de recorrido, decisión→consecuencia, bridges entre ramas, played↔counterfactual).
+  #     horror-choice ONLY (PAUTA-MASTER § 2.4 perspectiva 6). Recipe: horror-choice-format/effects-library/transitions/old_screen_glitch_error.json
   - from_shot_id: "shot_01"
     to_shot_id: "shot_02"
     transition_type: "hard_cut_with_whoosh"
@@ -539,18 +553,23 @@ hyperframes_ui_overlay:
 # ═══════════════════════════════════════════════════════════════
 
 asset_list:
+  # ⭐ SFX (PAUTA-MASTER § 2.4 perspectiva 7 + INGENIERO-PAUTA § 10): densidad target 30-40, matcheados a la
+  #   acción de cada shot (uses_shots) + death-scream en CADA consequence-A fatal. mix_db = nivel
+  #   de mezcla (dBFS) AUDIBLE pero DUCKED bajo el narrador (sidechain −6dB); hard rule #9 bands.
   sfx_prompts_to_generate:
     - sfx_id: "footsteps_lobby"
       prompt: "single footstep on wooden floor, slight echo, dim ambient"
       duration_s: 0.5
       uses_shots: ["shot_01", "shot_02"]
       layer_destination: "layer_1_clip_scoped"
+      mix_db: -16                                  # audible-but-ducked (sidechain −6dB bajo narrador, § 10)
     - sfx_id: "bruno_breath_close"
       prompt: "uncanny shallow breath, slight rasp, very close mic"
       duration_s: 1.5
       uses_shots: ["shot_02"]
       layer_destination: "layer_1_clip_scoped"
-    # ... per all SFX events
+      mix_db: -14
+    # ... per all SFX events (target 30-40 total, matcheados a la acción on-screen)
 
   music_to_generate:
     - "drone_base"

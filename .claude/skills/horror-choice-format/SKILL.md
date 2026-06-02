@@ -103,12 +103,8 @@ Hasta validar el formato en producción (1 video con >70% retención + 3 variant
 3. **Hard cuts en twists con white flash 2-3 frames.** Nunca fade ni dissolve.
 4. **Texto on-screen nunca anima** (no fade, no slide). Hard cut only.
 5. **Verbos siempre en presente.** Nunca futuro. "Te quema" no "te quemará".
-6. **Cliffhanger cierra con frase canónica del pattern** (no es siempre "Una noche en paz"). Detalle por pattern en `CREATIVE-BRIEF.md` § 3.5 tabla de cierres:
-   - **Patterns 1, 4** (Verdad visible / Paz perdida): "Una noche en paz" (canon clásico)
-   - **Pattern 2** (Paz neutral): variante cálida ("Una noche tranquila" / "Un día más en casa")
-   - **Pattern 5** (Doble peligro): variante nihilista ("No había salida. Solo dos formas de no llegar")
-   - **Patterns 3, 8, 9, 10** (con twist): canon clásico o variante según archetype
-7. **Diálogo según apariencia visual** (no regla absoluta). Solo aplica en apariencia ASIMÉTRICA (monstruoso + amable): el bueno aparente NO tiene diálogo, solo habla el malo aparente. En patterns con apariencia DOBLE (Patterns 2, 3, 5, 7, 8, 9): la regla se ajusta — doble monstruosa = ninguno habla en H1 (atmospheric); doble amable = ambos hablan equilibrado. Ver `CREATIVE-BRIEF.md` § 3.5.
+6. **Cliffhanger cierra con frase canónica del pattern** (no es siempre "Una noche en paz"). La frase de cierre varía por pattern (P1/P9 → "Una noche en paz" canon; otros → variante cálida/nihilista según archetype). Ver `PAUTA-MASTER.md` §§ 13, 15.
+7. **Diálogo según apariencia (variabilidad, NO regla absoluta):** en doble-amable AMBOS pueden hablar/aparecer **SOLO en el HOOK (H1 dyad de presentación)**. **INVARIANTE (5/5 refs): el bueno-aparente NUNCA aparece en el recorrido jugado tomando decisiones — solo en hook + counterfactual + cliffhanger.** Las tentaciones del recorrido jugado vienen del compañero ELEGIDO (scary) + el instinto/entorno. Ver `PAUTA-MASTER.md` § 2.
 8. **Color grading frío todo el video excepto cliffhanger** (warm amber/gold).
 9. **Narración requiere post-procesado** (atempo 2x, EQ, compresión, reverb dark room <0.6s) — raw TTS nunca aceptable.
 10. **Duración sweet spot 80-100 segundos.** Fuera de ese rango cae la retención.

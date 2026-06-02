@@ -7,19 +7,19 @@ description: GENRE skill — sport-choice (drama deportivo interactivo). Misma M
 
 > Este es un GENRE skill (qué cuenta el video), NO un delivery format skill (cómo se entrega). El delivery por default es `reel` (vertical 9:16, 80-100s).
 >
-> **Sport-choice es un HERMANO de horror-choice**: comparte 100% la MECÁNICA del formato choice (hook dyad → countdown → decisiones binarias → consecuencias → counterfactual → cliffhanger). Lo único que cambia es la HISTORIA/LÓGICA: drama deportivo en vez de horror. Por eso este formato **hereda el pipeline universal de `ai-video-production` + la mayor parte de `horror-choice-format`**, y solo documenta lo que es sport-específico.
+> **Sport-choice y horror-choice son HERMANOS que heredan la mecánica de `choice-format-core`**: comparten 100% la MECÁNICA AGNÓSTICA del formato choice (hook dyad → countdown → decisiones binarias → consecuencias → counterfactual → cliffhanger), que vive en `choice-format-core/` (Capa A.5) — NO una hereda de la otra (hermano heredando de hermano sería un anti-pattern de capas). Lo único que cambia entre ambos es la HISTORIA/LÓGICA de género: drama deportivo en vez de horror. Por eso este formato **hereda el pipeline universal de `ai-video-production` (Capa A) + la mecánica choice de `choice-format-core` (Capa A.5)**, y solo documenta lo que es sport-específico (Capa B).
 
 ## ⛔ LECTURA OBLIGATORIA al activar esta skill
 
-> **🏗️ ESTADO DEL FORMATO (2026-05-31):** sport-choice es un **template NUEVO Capa 2** recién creado. Football es la primera aplicación. A diferencia de horror-choice (derivado empíricamente de 8 videos virales canónicos), sport-choice **AÚN NO tiene referentes virales propios** — su autoridad empírica se derivará de nuestros primeros videos (igual que horror-choice se derivó de sus 8 virales). Hasta entonces, la estructura/mecánica se HEREDA de horror-choice (que SÍ está validada) y solo la lógica deportiva es net-new. Ver § "Estado del formato" abajo.
+> **🏗️ ESTADO DEL FORMATO (2026-05-31):** sport-choice es un **template NUEVO Capa 2** recién creado. Football es la primera aplicación. A diferencia de horror-choice (derivado empíricamente de 8 videos virales canónicos), sport-choice **AÚN NO tiene referentes virales propios** — su autoridad empírica se derivará de nuestros primeros videos (igual que horror-choice se derivó de sus 8 virales). Hasta entonces, la estructura/mecánica se HEREDA de `choice-format-core` (la mecánica agnóstica que SÍ está validada — derivada de los 8 virales vía horror) y solo la lógica deportiva es net-new. Ver § "Estado del formato" abajo.
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
 1. **`<repo-root>/CLAUDE.md`** — context global + arquitectura 3 capas + 3 roles
 2. **⭐ `<repo-root>/.claude/skills/sport-choice-format/PAUTA-MASTER.md`** — **AUTORIDAD CREATIVA del ARQUITECTO** para sport-choice. La historia/lógica: elección=equipo, decisiones=jugadas, consecuencias=gol/burla, ramas asimétricas, cadena de lógica que debe cerrar, anti-patterns.
-2.5. **⭐ `<repo-root>/.claude/skills/sport-choice-format/INGENIERO-PAUTA-MASTER.md`** — **AUTORIDAD TÉCNICA del INGENIERO** para sport-choice. HEREDA lo universal de la INGENIERO-PAUTA de horror-choice (pace WPM, LUFS, mix, captions, ensamblado HYBRID, MODEL-CAPABILITIES, 8 gates) + lo sport-específico: la ⭐⭐ **REGLA DE AMBIENTE** (orden visual del partido), paleta SFX fútbol, consistencia de kits.
-3. **⭐ `<repo-root>/.claude/skills/horror-choice-format/PAUTA-MASTER.md`** — **se HEREDA la MECÁNICA estructural** (estructura temporal, hook dyad, las reglas de Slots E/F/G, lenguaje 2ª persona presente, POV >80%, counterfactual, etc.). Leer las secciones de ESTRUCTURA/MECÁNICA, ignorar el contenido de horror puro (body horror, muerte, monstruos).
-3.5. **⭐ `<repo-root>/.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`** — **se HEREDA toda la técnica universal**: pace 156-195 WPM, LUFS -14, cuts/min, music BPM, coverage, 0 cuts en hook, UI safe zones (caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced), decision-UI implementation, lip sync rule, caption chunking. El ingeniero de sport-choice consulta ESTE doc para CUALQUIER métrica técnica heredada.
+2.5. **⭐ `<repo-root>/.claude/skills/sport-choice-format/INGENIERO-PAUTA-MASTER.md`** — **AUTORIDAD TÉCNICA del INGENIERO** para sport-choice. HEREDA la técnica choice-UI de `choice-format-core/INGENIERO-CHOICE-CORE.md` (decision-UI pacing, UI safe zones, caption chunking, lip sync, 0 cuts en hook) + la técnica universal de `ai-video-production/` (pace WPM, LUFS, mix, captions, ensamblado HYBRID, MODEL-CAPABILITIES, 8 gates) + lo sport-específico: la ⭐⭐ **REGLA DE AMBIENTE** (orden visual del partido), paleta SFX fútbol, consistencia de kits.
+3. **⭐ `<repo-root>/.claude/skills/choice-format-core/CHOICE-MECHANIC.md`** — **se HEREDA la MECÁNICA estructural AGNÓSTICA** (estructura temporal, hook dyad, invariante, decisión→consecuencia, framing acción-condicional, lenguaje 2ª persona presente, POV >80%, counterfactual placement, cliffhanger/CTA loop, patterns abstractos). Esta es la autoridad de la mecánica choice — derivada de los 8 virales (vía horror) pero ya género-neutro. (Los 8 canonical-scenes de horror se consultan SOLO por su valor ESTRUCTURAL hasta tener canonical-scenes propios de sport.)
+3.5. **⭐ `<repo-root>/.claude/skills/choice-format-core/INGENIERO-CHOICE-CORE.md`** — **se HEREDA la técnica choice-UI específica**: decision-UI editorial pacing, UI safe zones (caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced + no-overlap matrix), caption chunking word-timed, lip sync rule, 0 cuts en hook. El ingeniero de sport-choice consulta ESTE doc para la técnica de la mecánica choice. ⤴ Para la técnica UNIVERSAL (pace WPM, LUFS -14, mix de volúmenes, cuts/min, music BPM, coverage, HYBRID per-clip atomic, MODEL-CAPABILITIES, 8 gates) la autoridad es **`ai-video-production/`** (Capa A) — `INGENIERO-CHOICE-CORE.md` apunta ahí, no la duplica.
 4. **`<repo-root>/.claude/skills/sport-choice-format/SCRIPT-WRITING-GUIDE.md`** — cómo escribir un guion sport-choice (lente principio/variabilidad/anti-pattern, igual que horror).
 5. **⭐ `<repo-root>/.claude/skills/sport-choice-format/video-log.md` (AUTORITATIVO PARA ROTACIÓN)** — registro de videos producidos. OBLIGATORIO consultar antes de elegir pattern/setting/dyad.
 6. **El sub-doc específico de tu tarea** en `creative-direction/`:
@@ -36,7 +36,7 @@ Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
 Si la tarea es animar, **también `video-animation`**.
 
-**NO planees ni ejecutes hasta haber leído**: CLAUDE.md + **sport-choice PAUTA-MASTER.md (COMPLETO)** + sport-choice INGENIERO-PAUTA-MASTER.md + las secciones de MECÁNICA de horror-choice PAUTA-MASTER + video-log.md + este SKILL.md + el sub-doc de tu tarea.
+**NO planees ni ejecutes hasta haber leído**: CLAUDE.md + **sport-choice PAUTA-MASTER.md (COMPLETO)** + sport-choice INGENIERO-PAUTA-MASTER.md + la MECÁNICA agnóstica de `choice-format-core/CHOICE-MECHANIC.md` (+ `INGENIERO-CHOICE-CORE.md` si la tarea es técnica) + video-log.md + este SKILL.md + el sub-doc de tu tarea.
 
 ---
 
@@ -44,7 +44,7 @@ Si la tarea es animar, **también `video-animation`**.
 
 Este skill encodea las **reglas, patterns y dirección creativa del formato sport-choice** — la versión deportiva del formato choice. El espectador vive una jugada decisiva de fútbol en POV: elige un jugador (= elige equipo), y luego toma 3 decisiones de juego reales cuyo desenlace es la gloria (gol, levantar la copa) o la humillación (fallar, perder, ser la burla en redes).
 
-Es **format-specific (Capa 2)**. El toolkit técnico general (TTS, image gen, SFX gen, motion, captions, render, QA, ensamblado HYBRID per-clip atomic) vive en `ai-video-production/`. La mecánica estructural del formato choice (hook dyad, countdown, decisiones, counterfactual, cliffhanger) vive validada en `horror-choice-format/` y se HEREDA. Este skill construye encima de ambos y aporta SOLO la capa sport.
+Es **un GENRE skill (Capa B)**. El toolkit técnico general (TTS, image gen, SFX gen, motion, captions, render, QA, ensamblado HYBRID per-clip atomic) vive en `ai-video-production/` (Capa A). La mecánica estructural AGNÓSTICA del formato choice (hook dyad, countdown, decisiones, counterfactual, cliffhanger) vive en `choice-format-core/` (Capa A.5) — derivada de los 8 virales (vía horror) pero género-neutro — y se HEREDA. horror-choice y sport-choice son HERMANOS que heredan de ese núcleo común. Este skill construye encima de ambas capas y aporta SOLO el sabor sport.
 
 ## En qué difiere de horror-choice (la diferencia central)
 
@@ -59,7 +59,7 @@ Es **format-specific (Capa 2)**. El toolkit técnico general (TTS, image gen, SF
 | **Paleta SFX** | Drones, susurros, gritos de horror | **Rugido de hinchada, silbato, redes, cánticos, abucheos, atajada, confeti** (NUNCA gritos de horror) |
 | **Counterfactual** | "Si hubieras elegido a X (bueno), habrías tomado café" | **Rama corta del otro equipo: "Si eliges a X, juegas para el equipo A → la mete → campeón"** (foil glorioso, no cozy hogareño) |
 
-**Lo que NO cambia (se HEREDA tal cual de horror-choice):** POV 1ª persona >80%, hook con dyad simultánea + name labels GRANDES, 3 decisiones binarias con countdown 3-2-1 + loading bar + botones A/B, framing acción-condicional ("Si encaras / Si devuelves"), counterfactual placement, cliffhanger + CTA verbal, duración 80-100s, español neutral, narrador grave, captions Whisper word-timed, watermark `@elige_tucompanero`, ensamblado HYBRID per-clip atomic, 8 gates pre-render.
+**Lo que NO cambia (se HEREDA tal cual de `choice-format-core` — la mecánica agnóstica común a horror y sport):** POV 1ª persona >80%, hook con dyad simultánea + name labels GRANDES, 3 decisiones binarias con countdown 3-2-1 + loading bar + botones A/B, framing acción-condicional ("Si encaras / Si devuelves"), counterfactual placement, cliffhanger + CTA verbal, duración 80-100s, español neutral, captions Whisper word-timed, decision-UI editorial pacing, UI safe zones, lip-sync rule. (El narrador grave, watermark `@elige_tucompanero`, ensamblado HYBRID per-clip atomic y los 8 gates pre-render se heredan del pipeline universal `ai-video-production` + preferencias del creator.)
 
 ## Validado en
 
@@ -97,11 +97,14 @@ Activar cuando el usuario:
 
 ## Qué se HEREDA (NO duplicar) vs qué es sport-específico
 
-**SE HEREDA del pipeline universal `ai-video-production` + `horror-choice-format` (NO duplicado en este skill):**
-- `canonical-scenes/` → se consultan los de horror-choice **solo por su valor ESTRUCTURAL** (placement del counterfactual, framing acción-condicional, dyad, escalada de 3 decisiones, outro). sport-choice aún no tiene canonical-scenes propios — se derivarán empíricamente de nuestros primeros videos.
+**SE HEREDA de `choice-format-core` (Capa A.5) + `ai-video-production` (Capa A) (NO duplicado en este skill):**
+- **MECÁNICA estructural agnóstica** (estructura temporal, hook dyad sub-beats, invariante, decisión→consecuencia, framing acción-condicional, counterfactual placement, cliffhanger/CTA loop, POV >80%, patterns abstractos) → `choice-format-core/CHOICE-MECHANIC.md`.
+- **Técnica choice-UI** (decision-UI editorial pacing, UI safe zones, caption chunking word-timed, lip sync rule, 0 cuts en hook) → `choice-format-core/INGENIERO-CHOICE-CORE.md`.
+- **Rotación entre videos** (no repetir pattern/dyad consecutivo) → `choice-format-core/ROTATION-RULES.md`.
+- **Técnica universal** (pace WPM, LUFS, mix, captions Whisper, HYBRID per-clip atomic, MODEL-CAPABILITIES-MATRIX, motion, mastering, 8 gates) → `ai-video-production/` (la apunta `INGENIERO-CHOICE-CORE.md`, no la duplica).
 - `templates/scripts/` (tts.py, image.py, sfx.py, captions.py, video.py, los 8 gates, build_clip_atomic.py, etc.) → se heredan de `ai-video-production/templates/`.
 - `effects-library/` → se hereda de `ai-video-production/templates/effects-library/` (transiciones, voice-effects). Los presets de voz de horror NO se usan; se usa narrador deportivo limpio.
-- MECÁNICA estructural (estructura temporal, hook sub-beats, decision UI editorial pacing, lip sync rule, caption chunking, HYBRID layers, MODEL-CAPABILITIES-MATRIX) → se hereda de horror-choice + ai-video-production.
+- `canonical-scenes/` → ⚠️ sport-choice aún no tiene canonical-scenes propios. Hasta entonces se consultan los de `horror-choice-format/canonical-scenes/` **solo por su valor ESTRUCTURAL** (placement del counterfactual, framing acción-condicional, dyad, escalada de 3 decisiones, outro) — son refs virales HORROR-específicos, no de sport. Se derivarán los propios empíricamente de nuestros primeros videos.
 - CREATIVE-SPEC schema (v11.1) → se hereda de `creative-director/templates/`.
 
 **Es SPORT-ESPECÍFICO (vive en este skill):**
@@ -113,7 +116,7 @@ Activar cuando el usuario:
 
 ## Hard rules del formato (nunca romper)
 
-> Para hard rules del toolkit general (variantes -a/-b/-c, capa SFX dedicada, motion AI, ensamblado HYBRID), ver `ai-video-production/SKILL.md` + CLAUDE.md. Para la MECÁNICA del formato choice (countdown, loading bar, framing condicional, counterfactual, POV), se HEREDA de `horror-choice-format`. Estas son **específicas de sport-choice**:
+> Para hard rules del toolkit general (variantes -a/-b/-c, capa SFX dedicada, motion AI, ensamblado HYBRID), ver `ai-video-production/SKILL.md` + CLAUDE.md. Para la MECÁNICA del formato choice (countdown, loading bar, framing condicional, counterfactual, POV), se HEREDA de `choice-format-core/CHOICE-MECHANIC.md` + `choice-format-core/INGENIERO-CHOICE-CORE.md` (Capa A.5 agnóstica, común a horror y sport). Estas son **específicas de sport-choice**:
 
 1. **La elección del hook = EQUIPO.** Se presentan dos jugadores, uno de cada equipo. Elegir uno = jugás PARA ese equipo. **SIEMPRE dar contexto explícito** al viewer ("Si eliges a X, juegas para el equipo A; si eliges a Y, para el equipo B"). Esto resuelve de raíz la incoherencia rival/compañero. Ver PAUTA-MASTER § 1.
 2. **Ramas asimétricas en UN video:** una rama CORTA ("eliges tal equipo y ganás" — glimpse rápido, ocupa el slot del counterfactual de apertura) + una rama PROFUNDA (el viaje interactivo con las 3 decisiones). Ver PAUTA-MASTER § 2.
@@ -125,12 +128,12 @@ Activar cuando el usuario:
 8. **Evitar que "B" sea siempre la correcta** (predecible). Rotar qué opción es la acertada entre decisiones y entre videos. Ver PAUTA-MASTER § 6.
 9. **REGLA DE AMBIENTE** (técnica, pero load-bearing creativa): cada prompt UBICA la escena ANTES de la acción en orden — POV → zona del campo → geografía (arco, kits, balón, líneas) → estadio lleno → acción. Ver INGENIERO-PAUTA-MASTER § REGLA DE AMBIENTE + `creative-direction/image-direction.md`.
 10. **Likeness de jugadores reales = descriptor-based**, NUNCA el nombre de celebridad literal en el prompt (los modelos t2i no reproducen personas reales nombradas; riesgo CP1). Ver PAUTA-MASTER § 5 + INGENIERO-PAUTA § consistencia.
-11. **Heredadas inviolables del formato choice:** POV 1ª persona >80%, hook dyad simultánea con name labels GRANDES, 3 decisiones con countdown + loading bar + botones, framing acción-condicional (NO bare label "Si elegiste A"), counterfactual placement, cliffhanger + CTA, duración 80-100s, español neutral, watermark `@elige_tucompanero`.
+11. **Heredadas inviolables del formato choice (de `choice-format-core` — comunes a horror y sport):** POV 1ª persona >80%, hook dyad simultánea con name labels GRANDES, 3 decisiones con countdown + loading bar + botones, framing acción-condicional (NO bare label "Si elegiste A"), counterfactual placement, cliffhanger + CTA, duración 80-100s, español neutral, watermark `@elige_tucompanero`. Ver `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica).
 
 ## Estado del formato
 
 - **Última actualización:** 2026-05-31 (creación del template Capa 2)
 - **Fase:** validación (mecánica heredada probada en horror-choice; lógica deportiva en su primer video)
 - **Primer video:** `champions-sport-choice` (SPEC validado en `creative-specs/champions-sport-choice.yaml`) — pending ship
-- **Referentes virales propios:** NINGUNO todavía. Se derivarán empíricamente de nuestros primeros videos (igual que horror-choice se derivó de 8 virales). Hasta entonces, la autoridad estructural se hereda de horror-choice (validado) + la lógica deportiva se documenta en PAUTA-MASTER como diseño + se ajusta con cada video logueado en `video-log.md`.
+- **Referentes virales propios:** NINGUNO todavía. Se derivarán empíricamente de nuestros primeros videos (igual que horror-choice se derivó de 8 virales). Hasta entonces, la autoridad estructural se hereda de `choice-format-core` (la mecánica agnóstica validada — derivada de los 8 virales vía horror) + la lógica deportiva se documenta en PAUTA-MASTER como diseño + se ajusta con cada video logueado en `video-log.md`.
 - **Pending:** shippear video #1 + recolectar ≥3 videos para derivar canonical-scenes propios de sport-choice + escribir patterns deportivos empíricos.

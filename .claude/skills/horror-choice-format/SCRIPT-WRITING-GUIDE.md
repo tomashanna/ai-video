@@ -9,6 +9,8 @@
 >
 > Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. Autoridad última = fuente primaria: `referent-analysis/horror-choice/ref-XX/transcription.json`.
 
+> 🟦 **Autoridad ESTRUCTURAL + invariante (PRINCIPIO, no negociable)**: el esqueleto canónico y el invariante "el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones con el viewer" viven en **`PAUTA-MASTER.md § 2`** (validador pre-emit: `audit-spec-structure-vs-canonical.py`). Escribí el guion contra ese esqueleto.
+
 ---
 
 ## CÓMO USAR ESTE DOCUMENTO

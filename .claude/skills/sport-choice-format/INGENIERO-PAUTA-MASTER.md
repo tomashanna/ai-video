@@ -2,9 +2,9 @@
 
 > **AUTORIDAD TÉCNICA del formato sport-choice** (rol 🛠️ INGENIERO). Define CÓMO ejecutar técnicamente lo que la PAUTA-MASTER creativa dicta.
 >
-> ⚠️ **ESTE DOC HEREDA, NO DUPLICA.** sport-choice comparte 100% el pipeline técnico universal. Para CUALQUIER métrica técnica heredada (pace WPM, LUFS, mix de volúmenes, cuts/min, music BPM, captions, UI safe zones, decision-UI implementation, lip sync, HYBRID per-clip atomic, MODEL-CAPABILITIES, 8 gates), la autoridad es:
-> - **`horror-choice-format/INGENIERO-PAUTA-MASTER.md`** (técnica del formato choice — derivada de mediciones F1 de 10 referentes) +
-> - **`ai-video-production/`** (PIPELINE, CAPTIONS, SFX-PIPELINE, MOTION-LAYER, AUDIO-MASTERING, MODEL-CAPABILITIES-MATRIX, etc.).
+> ⚠️ **ESTE DOC HEREDA, NO DUPLICA.** sport-choice comparte 100% el pipeline técnico universal + la técnica choice-UI agnóstica. La autoridad de lo heredado vive en DOS capas:
+> - **`../choice-format-core/INGENIERO-CHOICE-CORE.md`** (Capa A.5 — técnica choice-UI agnóstica: decision-UI editorial pacing, UI safe zones caption Y62/loading Y52/countdown Y46/name labels Y11.5, caption chunking word-timed, lip sync rule, 0 cuts en hook — derivada de mediciones F1 de 10 referentes vía horror) +
+> - **`ai-video-production/`** (Capa A — técnica UNIVERSAL: pace WPM, LUFS, mix de volúmenes, cuts/min, music BPM, coverage, HYBRID per-clip atomic, MODEL-CAPABILITIES, motion, mastering, 8 gates — PIPELINE, CAPTIONS, SFX-PIPELINE, MOTION-LAYER, AUDIO-MASTERING, MODEL-CAPABILITIES-MATRIX, etc.). `INGENIERO-CHOICE-CORE.md` apunta a esta capa para lo universal; no la duplica.
 >
 > Este doc documenta SOLO lo sport-específico: la ⭐⭐ **REGLA DE AMBIENTE**, la paleta SFX fútbol, y la consistencia de kits/likeness. Todo lo demás se hereda.
 >
@@ -15,27 +15,29 @@
 
 ## 0. METODOLOGÍA — DE DÓNDE VIENEN ESTAS REGLAS
 
-### Lo que se HEREDA (autoridad empírica F1 de horror-choice, NO re-medido)
+### Lo que se HEREDA — DOS capas (técnica choice-UI de Capa A.5 + técnica universal de Capa A, NO re-medido)
+
+> Las filas marcadas **[A.5 choice-core]** son técnica de la mecánica choice → autoridad `../choice-format-core/INGENIERO-CHOICE-CORE.md`. Las marcadas **[A universal]** son pipeline universal → autoridad `ai-video-production/`. Ninguna se re-mide acá. (El lineaje empírico de ambas son las mediciones F1 de 10 referentes vía horror — esa historia sigue siendo cierta, ahora vive en core.)
 
 | Métrica técnica | Valor heredado | Autoridad |
 |-----------------|----------------|-----------|
-| **Speaking rate** | 156-195 WPM (target ~165 WPM; David C2 = 157 WPM medido, atempo ×1.05) | horror INGENIERO-PAUTA § 1 |
-| **Narration coverage** | ≥80% | horror INGENIERO-PAUTA § 1.3 |
-| **LUFS integrated** | -14 ±0.5 (Instagram) | horror INGENIERO-PAUTA § 2.1 + `AUDIO-MASTERING.md` |
-| **Mix de volúmenes** | narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65 | CLAUDE.md HR#9 + `SFX-PIPELINE.md` |
-| **Ducking / sidechain** | -6 dB target sobre música+ambient cuando narrador habla | horror INGENIERO-PAUTA § 2 + SPEC `layer_3.sidechain_target_db` |
-| **Cuts/min** | banda 14-22 (modulado por sección — ver editing_targets del SPEC) | horror INGENIERO-PAUTA § 3 |
-| **Music BPM** | según mood (ver § música sport abajo) | horror INGENIERO-PAUTA § 4 |
-| **0 cuts en hook** | universal (hook = single shot O push-in continuo) | horror INGENIERO-PAUTA + feedback_hook_continuity_no_zoom_cut |
-| **Captions** | Whisper word-timed progresivos, ≤2 líneas, chunk_caption_cues (NUNCA bloque estático que se trunca) | CLAUDE.md HR#3 + HR#30 + `CAPTIONS.md` |
-| **UI safe zones** | caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced | CLAUDE.md HR#4 + horror INGENIERO-PAUTA § 7 |
-| **Decision-UI editorial pacing** | countdown digit 1.0s, pause beat 0.9s median, loading Y52 ≥6% sep de countdown, NO ambient duck obligatorio, freeze/filter OPCIONAL | horror PAUTA-MASTER § 18 + horror INGENIERO-PAUTA § 7.10 |
-| **Lip sync rule** | si `lip_sync_required: false` → NO clip con boca visible moviéndose | horror INGENIERO-PAUTA § 8.5 |
-| **Ensamblado** | HYBRID per-clip atomic (captions burned per clip + Layer 3 continuo) | CLAUDE.md HR#23 + HR#25 + `PIPELINE.md § 13` + `build_clip_atomic.py` |
-| **MODEL-CAPABILITIES** | Hailuo clip_max 5.9s, etc. — leer la MATRIX antes de producir | CLAUDE.md HR#28/#29 + `MODEL-CAPABILITIES-MATRIX.md` |
-| **8 gates pre-render** | Gate 0 spec-completeness + lint + narrative + render-lock + frames + audio + continuity + qa-gate | CLAUDE.md § Pre-render gate |
+| **Speaking rate** | 156-195 WPM (target ~165 WPM; David C2 = 157 WPM medido, atempo ×1.05) | **[A universal]** `ai-video-production/` (NARRATION) + `MODEL-CAPABILITIES-MATRIX.md` |
+| **Narration coverage** | ≥80% | **[A universal]** `ai-video-production/` (audit-audio / coverage) |
+| **LUFS integrated** | -14 ±0.5 (Instagram) | **[A universal]** `ai-video-production/AUDIO-MASTERING.md` + CLAUDE.md HR#1/#9 |
+| **Mix de volúmenes** | narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65 | **[A universal]** CLAUDE.md HR#9 + `SFX-PIPELINE.md` |
+| **Ducking / sidechain** | -6 dB target sobre música+ambient cuando narrador habla | **[A universal]** `SFX-PIPELINE.md` + SPEC `layer_3.sidechain_target_db` |
+| **Cuts/min** | banda 14-22 (modulado por sección — ver editing_targets del SPEC) | **[A universal]** `ai-video-production/PACING-MARKERS.md` |
+| **Music BPM** | según mood (ver § música sport abajo) | **[A universal]** `SFX-PIPELINE.md` (MUSIC layers) |
+| **0 cuts en hook** | universal (hook = single shot O push-in continuo) | **[A.5 choice-core]** `../choice-format-core/INGENIERO-CHOICE-CORE.md § 5` |
+| **Captions** | Whisper word-timed progresivos, ≤2 líneas, chunk_caption_cues (NUNCA bloque estático que se trunca) | **[A.5 choice-core]** `../choice-format-core/INGENIERO-CHOICE-CORE.md § 3` + CLAUDE.md HR#3/#30 + `CAPTIONS.md` |
+| **UI safe zones** | caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced + no-overlap matrix | **[A.5 choice-core]** `../choice-format-core/INGENIERO-CHOICE-CORE.md § 2` + CLAUDE.md HR#4 |
+| **Decision-UI editorial pacing** | countdown digit 1.0s, pause beat 0.9s median, loading Y52 ≥6% sep de countdown, NO ambient duck obligatorio, freeze/filter OPCIONAL | **[A.5 choice-core]** `../choice-format-core/INGENIERO-CHOICE-CORE.md § 1` |
+| **Lip sync rule** | si `lip_sync_required: false` → NO clip con boca visible moviéndose | **[A.5 choice-core]** `../choice-format-core/INGENIERO-CHOICE-CORE.md § 4` |
+| **Ensamblado** | HYBRID per-clip atomic (captions burned per clip + Layer 3 continuo) | **[A universal]** CLAUDE.md HR#23 + HR#25 + `PIPELINE.md § 13` + `build_clip_atomic.py` |
+| **MODEL-CAPABILITIES** | Hailuo clip_max 5.9s, etc. — leer la MATRIX antes de producir | **[A universal]** CLAUDE.md HR#28/#29 + `MODEL-CAPABILITIES-MATRIX.md` |
+| **8 gates pre-render** | Gate 0 spec-completeness + lint + narrative + render-lock + frames + audio + continuity + qa-gate | **[A universal]** CLAUDE.md § Pre-render gate |
 
-> **Regla #1 del ingeniero (heredada):** NUNCA usar nuestras propias producciones como autoridad técnica. La autoridad de la mecánica son los referentes F1 (vía horror INGENIERO-PAUTA). Para la capa sport (REGLA DE AMBIENTE, SFX fútbol), la autoridad es ESTE doc + se valida con cada video.
+> **Regla #1 del ingeniero (heredada):** NUNCA usar nuestras propias producciones como autoridad técnica. La autoridad de la mecánica son los referentes F1 (vía `choice-format-core/INGENIERO-CHOICE-CORE.md` para la técnica choice-UI + `ai-video-production/` para lo universal). Para la capa sport (REGLA DE AMBIENTE, SFX fútbol), la autoridad es ESTE doc + se valida con cada video.
 
 ### Lo que es SPORT-ESPECÍFICO (este doc)
 
@@ -152,7 +154,7 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 | **BURLA (error)** | ⭐ **Abucheos / "uy" decepcionado** de la hinchada | Cada error → la jugada se cae |
 | **BURLA** | ⭐ **Pings de redes / notificaciones** (meme alert) | "Eres la burla" — el furor de memes en su contra |
 | **BURLA** | **Silbidos** de la hinchada | Humillación sostenida |
-| **UI** | Tick del countdown 3-2-1 (film leader academy) + beep tick del loading bar | Cada decisión (se hereda el AVU countdown de horror) |
+| **UI** | Tick del countdown 3-2-1 (film leader academy) + beep tick del loading bar | Cada decisión (el AVU countdown es UNIVERSAL — vive en `ai-video-production/templates/avu-library/`, NO en horror) |
 
 ### Regla absoluta de la paleta
 
@@ -195,13 +197,13 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 ### Lip sync (heredado, aplicado al protagonista)
 
 - El **jugador protagonista PUEDE hablar on-screen** (p.ej. pidiendo el balón / "Confía en ti, la metes" / "Te lo dije, hermano"). En esos shots `lip_sync_required: true`.
-- Aplica la **lip sync rule heredada** (horror INGENIERO-PAUTA § 8.5): si `lip_sync_required: false`, NO usar clips con boca visible moviéndose (crea disonancia). El ingeniero itera tools (Hedra primary, ver MODEL-BENCHMARK) hasta resultado aceptable.
+- Aplica la **lip sync rule heredada** (`../choice-format-core/INGENIERO-CHOICE-CORE.md § 4`): si `lip_sync_required: false`, NO usar clips con boca visible moviéndose (crea disonancia). El ingeniero itera tools (Hedra primary, ver MODEL-BENCHMARK) hasta resultado aceptable.
 
 ---
 
 ## 4. MÚSICA DEPORTIVA (mood reskineado)
 
-> Hereda la mecánica de música de horror INGENIERO-PAUTA § 4 (3 capas mandatorias, BPM por mood, evolución, ducking). Reskin del MOOD:
+> Hereda la mecánica de música universal de `ai-video-production/SFX-PIPELINE.md` (3 capas mandatorias, BPM por mood, evolución, ducking — ver tabla heredada-universal de `../choice-format-core/INGENIERO-CHOICE-CORE.md § 0`). Reskin del MOOD:
 
 | Sección | Mood musical sport-choice | Ejemplo de prompt ElevenLabs |
 |---------|---------------------------|------------------------------|
@@ -236,8 +238,8 @@ Se heredan los **8 gates pre-render** (CLAUDE.md § Pre-render gate) + el dual q
 
 ### Hereda (autoridad técnica, NO re-litiga)
 
-- ✓ `horror-choice-format/INGENIERO-PAUTA-MASTER.md` — TODA la técnica de la mecánica choice (pace, LUFS, mix, cuts, BPM, captions, UI safe zones, decision-UI, lip sync, silencios).
-- ✓ `ai-video-production/` — PIPELINE, SFX-PIPELINE, CAPTIONS, MOTION-LAYER, AUDIO-MASTERING, COLOR-GRADING, PACING-MARKERS, MODEL-CAPABILITIES-MATRIX, build_clip_atomic.py, los 8 gates.
+- ✓ `../choice-format-core/INGENIERO-CHOICE-CORE.md` (Capa A.5) — la técnica choice-UI de la mecánica: decision-UI editorial pacing, UI safe zones (caption Y62/loading Y52/countdown Y46/name labels Y11.5 + no-overlap matrix), caption chunking word-timed, lip sync rule, 0 cuts en hook.
+- ✓ `ai-video-production/` (Capa A) — la técnica UNIVERSAL: PIPELINE, SFX-PIPELINE, CAPTIONS, MOTION-LAYER, AUDIO-MASTERING, COLOR-GRADING, PACING-MARKERS, MODEL-CAPABILITIES-MATRIX, build_clip_atomic.py, pace WPM, LUFS, mix, cuts, BPM, los 8 gates. (`INGENIERO-CHOICE-CORE.md` apunta acá para lo universal; no lo duplica.)
 - ✓ `video-director/MODEL-BENCHMARK.md` — selección de modelo (imagen + animation + lip sync).
 
 ### Aporta (lo sport-específico)

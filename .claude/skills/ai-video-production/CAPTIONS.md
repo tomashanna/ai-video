@@ -451,6 +451,14 @@ Para frases como "NO CONFÍES EN ÉL", "ESTÁS SOLO", "NO HAY VUELTA ATRÁS". Un
 | `caption-narration` | Story progression, instrucciones | Y ~65% (tercio inferior) | innerHTML swap (Whisper sync) |
 | `caption-warning` | Frases ominosas, twist reveal | Y central (Y ~50%) | scale pop dramatic + glow pulse |
 
+### ⛔ Per-speaker Y-band — NUNCA 2 cues concurrentes al mismo Y (cross-layer incluido)
+
+**Narrador (Layer 3) = Y62** (banda canónica del tercio inferior). **Diálogo de personaje (Layer 1) = Y52 + tag del nombre** ("BRUNO:" / "CELESTE:"), banda distinta para que el viewer sepa quién habla.
+
+**Regla dura**: ningún par de cues de caption que se solapen en TIEMPO puede compartir banda Y. Esto incluye **el cross-layer narrador-L3 + diálogo-L1** (no solo dos narraciones, ni solo dos personajes). El burn DEBE de-conflictar en build-time: si dos cues solapados caen en el mismo Y → offset automático del cue más tardío hacia arriba (≥6% = ≥1 alto de línea de separación). Si 2 personajes hablan concurrentes → Y distintos con ≥6% de separación (o secuenciar).
+
+**Por qué importa**: el bug CAPTION-OVERLAP (invernadero V6) usaba `base_pct=0.62` para TODOS los speakers → narrador y diálogo concurrentes se sobreponían en Y62. El check "no same-Y overlap" existía en el audit (sidecar JSON) pero NO se enforzaba en el burn ni cubría el cross-layer narrador+diálogo. Fix codificado en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + portado al template `build_clip_atomic.py`.
+
 ### Por qué drop shadow > thick stroke
 
 **Comparativa visual:**

@@ -5,9 +5,13 @@
 > **Última actualización:** 2026-05-13 PM
 > **Versión:** v1.0 (post-restructure post-Maikol-incident)
 
+> ⤴ **MECÁNICA AGNÓSTICA AHORA EN CAPA A.5 (`choice-format-core/`).** La mecánica genérica de la familia choice (esqueleto temporal, invariante, decisión→consecuencia, framing acción-condicional, counterfactual, cliffhanger/CTA, patterns abstractos apariencia×verdad, rotación, decision-UI pacing) se extrajo a `../choice-format-core/CHOICE-MECHANIC.md` (creativa) + `../choice-format-core/ROTATION-RULES.md` (rotación) + `../choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica choice-UI), de donde la heredan TANTO horror-choice COMO sport-choice. **Este doc queda como la APLICACIÓN de esa mecánica a los 8 virales horror + TODO el contenido horror-específico** (body horror, monstruos, malo/bueno aparente, archetypes P1-P10, "Paz perdida", settings de terror, SFX de horror). Donde una sección de abajo tiene un puntero `⤴`, la versión agnóstica canónica vive en core y acá queda solo el sabor horror. **Ningún contenido ni anchor se borró** — los validators (`audit-spec-structure-vs-canonical.py`) + AUDITOR-PROTOCOL citan secciones de este doc y siguen resolviendo.
+
 ---
 
 ## 0. METODOLOGÍA — DE DÓNDE VIENEN ESTAS REGLAS
+
+> ⤴ **El framework metodológico genérico (marco 🟦 principio / 🟩 variabilidad / 🟥 anti-pattern + cómo se valida una regla de mecánica) ahora vive en `../choice-format-core/CHOICE-MECHANIC.md § 0`.** Acá queda la metodología HORROR-específica: la base empírica de los 8 virales, el BAN de nuestras producciones como autoridad, y la lista de invenciones prohibidas de incidentes horror pasados.
 
 ### Los 8 videos canónicos (base empírica única)
 
@@ -68,15 +72,21 @@ Cuando una regla acá tiene compliance N/8 explícito, podés ver EJEMPLOS CONCR
 
 ## 1. FILOSOFÍA — LA REGLA DE ORO
 
+> ⤴ **La "regla de oro" genérica (el formato es el GENERADOR, no el LÍMITE) ahora es canónica agnóstica en `../choice-format-core/CHOICE-MECHANIC.md § 1`.** Acá queda con sabor horror; si discrepan sobre la MECÁNICA, gana core. Abajo el texto horror-aplicado.
+
 > **El formato es el GENERADOR de creatividad, no el LÍMITE.** El espectador viene por la fórmula reconocible (countdown, dilema binario, twist, cliffhanger). La creatividad vive en QUÉ poblamos esos slots, no en romperlos.
 >
 > **Si te encontrás queriendo romper el formato, el problema es tu historia, no el formato.**
 
 Validado en 8/8: ningún video rompe la estructura. Toda la variación está en los slots.
 
+> 🏛️ **Autoridad ESTRUCTURAL + invariante**: el esqueleto canónico (hook→played-path→counterfactual→cliffhanger) y el INVARIANTE "el bueno-aparente NUNCA decide con el viewer en el recorrido jugado" son check auditable en **§ 2** (validador: `audit-spec-structure-vs-canonical.py`). Los 3 roles lo usan: arquitecto diseña contra esto · ingeniero ejecuta los specs de UI/efecto/sonido · auditor compara el guion beat-por-beat (eje del SPEC-AUDIT, § 2.4).
+
 ---
 
 ## 2. ESTRUCTURA TEMPORAL EMPÍRICA
+
+> ⤴ **El esqueleto agnóstico + el INVARIANTE + recorridos-secuenciales genéricos viven ahora en `../choice-format-core/CHOICE-MECHANIC.md § 2`.** Acá queda la versión HORROR-aplicada (el esqueleto con malo/bueno aparente + body horror + "Paz perdida"). ⛔ **Los anchors § 2.1 / 2.2 / 2.3 / 2.4 de ESTE doc se conservan textualmente** porque los citan los validators (`audit-spec-structure-vs-canonical.py`) + AUDITOR-PROTOCOL línea 742 ("PAUTA-MASTER § 2"). No se borró nada de § 2; solo se agregó este puntero.
 
 ### Duración total (range real, no fijo)
 
@@ -94,6 +104,43 @@ Validado en 8/8: ningún video rompe la estructura. Toda la variación está en 
 | **3-4 dilemas con consecuencias** | 25-85% | Cada uno con countdown + loading bar + body horror si fallás |
 | **Resolución del último dilema** | 85-92% | Climax del path elegido |
 | **Counterfactual outro** | 92-100% | "Si hubieras elegido X, habrías..." |
+
+### 2.1 Esqueleto canónico (5/5 refs auditados — ref-03/06/08/09/10)
+
+```
+1. HOOK            dyad "elige a tu compañero" + name labels (§ 2.5) + countdown 3-2-1
+2. RECORRIDO JUGADO   el del compañero ELEGIDO (= el "malo/scary aparente")
+   · setup           el elegido hace algo ominoso / da una orden o regla ambigua
+   · DECISIÓN 1/2/3  →  consecuencia A (muerte/horror)  /  consecuencia B (sobrevivís → seguís)
+   · la última decisión cierra con RESOLUCIÓN (sobrevivís la noche)
+3. RECORRIDO COUNTERFACTUAL   el del OTRO compañero (= "bueno aparente"): su camino cozy
+   "Paz perdida". Se muestra UNA vez — al FINAL (default 4/5) o al INICIO (variante ref-09).
+4. CLIFFHANGER / tagline loop
+```
+
+**Decisiones por video: 2-3** (+ la decisión inicial "elegir compañero"). Cada decisión SIEMPRE muestra ambas ramas (A muerte + B sobrevive-continúa). Refs: ref-03 Bruno/Pablo (3 dec, counterfactual FINAL) · ref-06 Axel/Enzo (3, FINAL) · ref-08 Pablo/Hugo (2, FINAL) · ref-09 Victor/Axel (3, counterfactual INICIO invertido) · ref-10 Rurik/Enzo (2, FINAL).
+
+### 2.2 ⛔ EL INVARIANTE (5/5 refs, sin excepción) — el check más importante del SPEC-AUDIT
+
+**El "bueno aparente" (el compañero NO jugado / el del counterfactual) NUNCA está presente en el RECORRIDO JUGADO tomando decisiones con el viewer.**
+
+- Aparece SOLO en: el **hook** (dyad de presentación) + su **recorrido counterfactual** (cozy) + opcional el **cliffhanger**.
+- En el recorrido jugado, las tentaciones/órdenes vienen del **compañero ELEGIDO (scary)** + del **instinto del viewer / el entorno** — NUNCA de un segundo personaje presente tentando.
+- Los dos recorridos (jugado + counterfactual) son **SECUENCIALES, jamás simultáneos**.
+
+🔴 **VIOLACIÓN = error que retorna al arquitecto** (caso disparador V6 invernadero: Celeste tentando en shots 05/10 del played path; ni arquitecto ni auditor lo flagearon a tiempo — lo racionalizaron). Si el rechazado sigue decidiendo con vos, colapsa la premisa "elegiste a X" + diluye el pattern a un genérico "bueno-vs-malo con ambos presentes".
+
+### 2.3 Variables (lo que SÍ cambia libremente entre videos)
+
+El esqueleto + el invariante son fijos. Varía (decisión creativa del arquitecto): **quién es bueno vs malo aparente** + el pattern (P1/P2/P3/P6/P9 — § 15 + rotación HR#14 video-log) · **qué recorrido se muestra primero** (counterfactual al final = default / al inicio = ref-09) · **qué decisiones y consecuencias** (categorías, body horror al setting) · **setting / characters / paleta**.
+
+### 2.4 ⭐ SPEC-AUDIT — las 8 perspectivas que el auditor mira en CADA guion
+
+El SPEC-AUDIT compara el guion **beat-por-beat contra este esqueleto** + chequea: (1) **Estructura** § 2.1 (🔴 si falta un bloque) · (2) **INVARIANTE § 2.2** (🔴 si el bueno-aparente está en shots de decisión/consecuencia del played path) · (3) **Recorridos secuenciales** (🔴 si se mezclan) · (4) **Pattern + rotación** (HR#14, ∈ canónicos + ≠ último video) · (5) **Name labels § 2.5** · (6) **Efecto glitch** declarado en cambios de historia (`INGENIERO-PAUTA § 9`) · (7) **Sonido** (SFX densos 30-40 matcheados a la acción + death-screams en cada consequence-A fatal + mix ducked — `INGENIERO-PAUTA § 10`; sonido = factor #1 de inmersión, TASTE-LOG #1/#2) · (8) **+ checks pre-existentes** (WPM/narración-fits HR#28/29, framing acción-condicional, visual-matches-narración, character consistency, references_canonical ≥5/8). Enforcement: `audit-spec-structure-vs-canonical.py` (§ 2.1/2.2/2.3) + `audit-spec-narrative-coherence.py` + validators existentes. Arquitecto los corre pre-emit (HR#27); auditor los re-corre (anti-pattern #17).
+
+### 2.5 UI canon — name labels
+
+Nombres **arriba de cada personaje** (label sobre cada char del dyad), **letra GRANDE** (`fontsize_intent: large`). **Visibles desde el inicio de la intro Y DURANTE todo el countdown** — NO desaparecen al arrancar el countdown (bug V6: labels 0-4.5s, ausentes durante countdown 6-9s). Monospaced + drop-shadow. Schema: `ui_active` name-label per char con `timestamp_visible_s: [0, fin-del-countdown]` + `position` arriba de cada personaje. Detalle técnico → `INGENIERO-PAUTA-MASTER § 7.4.1`.
 
 ---
 
@@ -115,6 +162,7 @@ Validado en 8/8: ningún video rompe la estructura. Toda la variación está en 
 ### Producción
 - ✓ **POV (primera persona) ≥80% de los shots** — ENFORCEMENT obligatorio. El arquitecto debe contar shots POV vs non-POV en el SPEC y reportar ratio en self-audit pre-handoff. Validado >70-80% en 8/8 (refinado de estimación previa). NO shots en tercera persona donde el viewer ve "al protagonista" — el viewer ES el protagonista.
 - ✓ **Body horror específico, no genérico** — "destrozado por taladro", "ahogado en algo que no es agua", "atropellado", "electrocutado" (no "mueres")
+- ✓ **Sonido de muerte SUTIL bajo el death-scream (V7+, req Tomás 2026-06-01)** — en cada consequence-A fatal (esporas/inhalación/asfixia/muerte) + beats de tensión, suma una capa **leve** de tos / ahogo / gasping húmedo / estertor **POR DEBAJO** del death-scream. NO fuerte (lo fuerte se siente cheap; lo sutil da realismo + dread corporal). Es perspectiva 7 del SPEC-AUDIT (§ 2.4) — el arquitecto lo especifica per shot fatal; impl + mix `INGENIERO-PAUTA § 10`. Caso disparador V6: la inhalación de esporas pedía toser/ahogo leve.
 - ✓ **CTA narrado al final** ("Una noche en paz" tipo tagline)
 - ✓ **Watermark del creator** visible toda la duración
 - ✓ **Caption del Reel** con pregunta directa ("¿A quién elegirías?") + hashtags
@@ -146,7 +194,7 @@ Validado en 8/8: ningún video rompe la estructura. Toda la variación está en 
 - 🟥 **ANTI-PATTERN:** bare label robótico *"Si elegiste A" / "Si elegiste B"* (0/8 — nunca en primary source; suena a formulario).
 - ✓ Auto-audit D19 (corregido) valida el principio + flaggea el anti-pattern; **NO fuerza fraseo**. Validator `audit-spec-narrative-coherence.py`.
 - ✓ Sin marcar la rama, el horror-choice colapsa a horror genérico (caso cabina-14 V1 render 2026-05-16).
-- ⚠️ **EXTRACT to choice-format-base** cuando agreguemos un 2do template del género choice
+- ✅ **EXTRAÍDO 2026-06-01 → `../choice-format-core/CHOICE-MECHANIC.md`** (al crear sport-choice como 2do template del género choice). El principio agnóstico vive en core; acá queda la aplicación horror + el ⤴ puntero.
 
 ### Narración CLARA, NO tenebrosa — REGLA INVIOLABLE (regla añadida 2026-05-16)
 - ✓ **Foco**: pocas palabras que digan QUÉ pasa (acción) o den contexto. NO priorizar "sonar tenebroso" en el relato.
@@ -197,6 +245,8 @@ Cuando diseñes un video nuevo, considerá:
 
 ## 5. HALLAZGO CRÍTICO — BUENO APARENTE PUEDE SER VISUALMENTE EXTREME
 
+> ⤴ **La forma agnóstica (la opción favorable-aparente no necesita ser "tame") vive en `../choice-format-core/CHOICE-MECHANIC.md § 5` (dilema-mechanics / patterns).** Acá quedan los ejemplos HORROR concretos (los buenos aparentes de los 8 virales + su visual signature).
+
 La pauta vieja decía: "Bueno aparente = uncanny calmante, no monstruoso". **Falso en 7/8.**
 
 | Video | Bueno aparente | Es "tame"? |
@@ -219,6 +269,8 @@ La pauta vieja decía: "Bueno aparente = uncanny calmante, no monstruoso". **Fal
 ---
 
 ## 6. HALLAZGO CRÍTICO — "OPCIÓN GANADORA CONTRA IMPULSO" NO ES UNIVERSAL
+
+> ⤴ **El principio agnóstico (lo universal NO es "ganadora contra impulso" sino la DUDA real) vive en `../choice-format-core/CHOICE-MECHANIC.md § 5` (reglas de los dilemas).** Acá quedan los ejemplos HORROR concretos (la tabla de decisiones de los 8 virales).
 
 La pauta vieja decía: "La opción ganadora va contra el impulso primario. SIEMPRE."
 
@@ -324,6 +376,8 @@ La pauta vieja decía: "La opción ganadora va contra el impulso primario. SIEMP
 
 ## 10. SLOT D — LA REGLA / DINÁMICA DEL MALO APARENTE
 
+> ⤴ **La FORMA agnóstica (hay una dinámica que los dilemas testean; no es moralmente obvia; consecuencia inmediata si se rompe) vive en `../choice-format-core/CHOICE-MECHANIC.md § 4` (la dinámica que testean los dilemas).** Acá queda el CONTENIDO horror: la "regla del malo aparente" + sus ejemplos en los 8 virales.
+
 Lo que el malo enforza o exige. **NO siempre es una frase textual literal**, a veces es procedural implícita.
 
 ### De los 8 videos
@@ -358,6 +412,8 @@ Cuando diseñes, identificá **la dinámica de control del malo**:
 ---
 
 ## 11. SLOT E — LOS DILEMAS
+
+> ⤴ **La dilemma-structure agnóstica (3-4 decisiones, estructura setup→pregunta→countdown→loading→consecuencia ✗/✓, duda real, variedad de categorías) vive en `../choice-format-core/CHOICE-MECHANIC.md § 5`.** Acá quedan las CATEGORÍAS horror concretas (curiosidad/obediencia, sumisión/resistencia, etc.) + los ejemplos de los 8 virales.
 
 ### Número de dilemas (incluye decisión inicial "elegir compañero")
 
@@ -495,6 +551,8 @@ La pauta vieja decía rotar 4 archetypes (Paz perdida / Trampa simétrica / Inve
 
 ## 15. PATTERNS NARRATIVOS OBSERVADOS
 
+> ⤴ **La FORMA abstracta de los patterns (configuraciones de apariencia × verdad, género-neutro) vive en `../choice-format-core/CHOICE-MECHANIC.md § 7`.** Acá queda el CATÁLOGO horror concreto P1-P10 con su contenido de terror + los videos que cada pattern instancia.
+
 ### Patrones explícitos en los 8
 
 | Pattern | Definición | Videos |
@@ -564,6 +622,8 @@ Antes de aprobar un SPEC, validar:
 ---
 
 ## 17. REGLAS DE ROTACIÓN ENTRE VIDEOS
+
+> ⤴ **LA REGLA de rotación agnóstica (no repetir pattern / rol / setting / beat-clave en videos consecutivos + consultar el video-log antes de diseñar) vive en `../choice-format-core/ROTATION-RULES.md`.** Acá quedan las notas HORROR-específicas (settings de terror, personajes recurrentes cross-video, los 5 patterns P1/P2/P3/P6/P9). El `video-log.md` de horror sigue siendo autoritativo para el ESTADO de rotación de horror (HR#14).
 
 ### Rotación de roles de personajes recurrentes
 
@@ -643,6 +703,8 @@ Antes de aprobar esta pauta como autoridad, verificá:
 ---
 
 ## § 18 — Decision UI editorial pacing (added 2026-05-19 — GAP #14 codification)
+
+> ⤴ **El timing agnóstico de la decision-UI (pause beat → countdown 1s/dígito → loading bar, defaults canónicos genéricos) vive en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 1` (creative-intent en `CHOICE-MECHANIC.md § 9`).** Acá queda el detalle HORROR-aplicado (filtro sepia/grain de cámara vieja, SFX glitch de terror, AVU countdown del formato horror). No se borró nada de § 18.
 
 > **Status**: codified empíricamente post-matadero CP5 iter 2 user feedback.
 > **Authority basis**: pattern observed 8/8 canonical refs (canonical-scenes/INDEX.md decision setup grid 3.3) + ref-13 deep-dive Beat 4 + ref-03 explicit "filter cinematic/gritty con grain".
@@ -819,6 +881,8 @@ Elementos audio+visual acoplados (countdown+ticks, hook transition+whoosh, outro
 - Hook transition flashes
 - Outro cards with tone signature
 - Music section transitions
+
+> ⛔ **El audio bundled del AVU NO se pierde al componer (V7+, fix bug V6, req Tomás 2026-06-01)**. El punto del AVU es visual+audio = 1 unidad (§ 19.1); compositear el AVU **video-only** rompe el principio. **Bug V6**: el countdown (`countdown-3-2-1-film-leader-with-ticks.mp4`, que SÍ trae ticks) se overlayó video-only → **countdown MUDO**. Regla: el countdown (hook + las 3 decisiones) DEBE tener **tick audible** sincronizado al 3-2-1, sobre el bed (urgencia de decisión) — muxeando el audio del AVU O colocando `countdown_tick` por beat. Vale para todo AVU con audio bundled (countdown/flash/outro). Impl + forward check `audit-audio.py`: `INGENIERO-PAUTA § 7.10.5 + § 9`.
 
 ### 19.4 When AVU NOT applicable (use sync_contract instead)
 
@@ -1314,9 +1378,13 @@ narrative_structure:
 ### 25.1 Rule
 
 **Music score MUST consist of 3 simultaneous layers minimum**:
-1. **Drone (continuous)** — low-frequency tonal bed, persistent 80-100% of video duration.
+1. **Drone (continuous)** — low-frequency tonal bed, persistent **100% of video duration** (V7+ refuerzo: SIN gaps — ver § 25.1-bis).
 2. **Ambient (scene-specific)** — texture that changes per setting/section (mine drip, cockpit hum, projector hum, train rumble).
 3. **Accent (event-driven)** — punctual cues on dilemma beats, countdown ticks, climax peaks, transitions.
+
+#### 25.1-bis ⛔ Bed continuo SIN gaps — beats de tensión (V7+, req Tomás 2026-06-01)
+
+El bed musical (drone + ambient, layers 1+2) **cubre TODA la timeline sin momentos mudos** — especialmente en los beats de **TENSIÓN** (pre-decisión, setup del dilema, body-horror), donde cortar la música mata la inmersión. Mood-matched por sección, a volumen bajo/ducked bajo el narrador (§ 25.3). **NO cambiar el tipo: atmosférico/tonal, NUNCA melódico** — sólo varía textura/intensidad entre secciones, la capa nunca se corta a silencio. Caso disparador V6: hubo tramos sin música → inmersión baja. Implementación + check: `INGENIERO-PAUTA § 4.2`.
 
 Cinema-abandonado shipped with effectively 1 layer ("minimal, allowing the voice to dominate" per Gemini). Even with that minimal mix, audio dimension scored 9/10 because narrator + sparse SFX carried the work. BUT canonical refs scoring 9-10/10 ALL show 3-layer depth per Gemini direct quotes.
 
@@ -1392,35 +1460,4 @@ phase_2_forward:
   - "Build audit-audio.py extension: spectrogram-based layer count detection (3 freq bands threshold)"
   - "Codify drone/ambient/accent ElevenLabs SFX prompts in library/sfx-catalog.json per genre"
 ```
-
----
-
-## ⚠️ CONSOLIDATION PASS SCHEDULED — post video #2 (added 2026-05-20)
-
-PAUTA-MASTER ha crecido orgánicamente post-matadero a través de codifications incrementales: § 17 rotación + § 18 decision-UI-pacing + § 19 AVU + § 20 setting alive + § 21 character alive + § 22 POV traversal. **18 gaps codified** post matadero v1 SHIP across 5 NIVEL cascade.
-
-**Risk identified**: redundancy entre §§ relacionadas (e.g. § 18 + § 19 overlap on decision UI editorial; § 20 + § 21 + § 22 overlap on "alive" canonical patterns) + cognitive load para architect leyendo PAUTA pre-design.
-
-**Consolidation plan**:
-
-Post video #2 SHIPPED (next horror-choice production using P3/P5/P9 + cinema abandonado setting), merge §§ 18+20+21+22 into unified section:
-
-```
-§ NEW. Canonical quality dimensions (consolidated post video #2)
-  18.x → "Decision UI editorial dimension" (sub-section)
-  19.x → "AVU principle dimension" (sub-section)
-  20.x → "Setting alive dimension" (sub-section)
-  21.x → "Character alive dimension" (sub-section)
-  22.x → "POV traversal dimension" (sub-section)
-```
-
-**Benefits**:
-- Single authoritative "Quality dimensions" reference vs scattered §§
-- Reduce cognitive load architect pre-design (1 § read vs 5 §§)
-- Cross-dimension dependencies surface (e.g. AVU principle applies decision UI + countdown intersection)
-- Empirical bands consolidated single canonical defaults block (Phase 1 measurements unified)
-
-**Status**: deferred until post-video-#2 production complete. Trigger consolidation pass once video #2 lessons learned integrated. Maintain current incremental §§ structure for now (post-matadero traceability).
-
-**Owner**: architect creative-domain authority. Auditor concurrence required pre-merge (avoid lossy compression).
 

@@ -117,6 +117,12 @@ Implicancia: frases de tamaño medio (5-8 palabras a 165 WPM). NO frases largas 
 # Si coverage < 80% → narración hay que extender (más palabras o menos pausas)
 ```
 
+#### ⛔ Cap de atempo — NUNCA ralentizar la voz por debajo de ~0.90 (fix narración-retrasada)
+
+- **Banda recomendada de atempo per-shot: ~0.95-1.30** (sobre el TTS ya a pace canónico). Ralentizar la voz por debajo de **~0.90 suena arrastrado / "retrasado"** — caso V6 shot_19=0.74 / shot_21=0.76.
+- **Si la narración no entra en la duración del clip, EXTENDER la duración del clip (freeze-extend del último frame), NO ralentizar la voz.** El clip se estira; la voz mantiene su pace natural.
+- Narrador canónico **David (voice C2)** se mantiene. (atempo-floor ≠ voice change.)
+
 ### 1.7 ⛔ Anti-pattern de nuestras producciones (caso de estudio)
 
 Medido empíricamente: nuestras producciones (mina v15, bosque v10, elige V7) y maikol-crucero hasta 2026-05-15:
@@ -252,6 +258,15 @@ Implicancia operacional: si tu hook tiene >2 cuts, estás rompiendo el pattern t
 
 Nota: librosa beat_track sobre mezcla narración+música puede sesgar — para BPM puro de la pista musical idealmente correr sobre stems separados (Demucs). TODO.
 
+### 4.2 ⛔ Continuidad — bed musical SIN gaps (V7+, req Tomás 2026-06-01)
+
+El bed musical (drone + ambient, layers 1+2 de PAUTA § 25) **cubre TODA la timeline sin momentos mudos** — `0` segundos de bed ausente entre el primer y el último frame (los silencios <5% de § 6 son del *narrador*, NO del bed: el sound fabric sigue sonando debajo). **Crítico en los beats de TENSIÓN** (pre-decisión, setup del dilema, body-horror), donde un corte de música mata la inmersión.
+- **Tipo invariante**: atmosférico/tonal (drone + ambient), NUNCA melódico. Mood-matched por sección (BPM/textura cambian per § 4.1 + § 8.11), pero la *capa* nunca se corta — se cross-fadea entre secciones (`acrossfade` ~0.5-1.0s), nunca hard-cut a silencio.
+- **Mix**: volumen bajo + ducked −3 a −6 dB bajo el narrador (§ 25.3, § 10). El bed es cama, no protagonista.
+- **Implementación**: 1 pista drone+ambient continua loopeada/extendida a `dur(video)` con `aloop`/`apad`, ANTES de mezclar accents+SFX+narrador encima. NO ensamblar el bed per-clip (genera gaps en los joins).
+- **Caso disparador V6**: hubo tramos sin música → bajó la inmersión en los beats de tensión.
+- **Check forward**: extender `audit-audio.py` para flaggear cualquier ventana >0.5s con energía musical (banda 40-2000 Hz) ausente, además del gap de narrador ya medido.
+
 ---
 
 ## 5. VISUAL / COLOR GRADING
@@ -380,6 +395,8 @@ Cuando uses modelo más barato (Hailuo / Seedance Lite / Wan-AI cheap tier), el 
 
 ## 7. UI ELEMENTS — SAFE ZONES + POSITION (medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes)
 
+> ⤴ **La versión AGNÓSTICA de la matriz de UI safe zones (caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced + no-overlap matrix + per-speaker Y-band) ahora es canónica en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 2`, de donde la heredan horror Y sport.** Este header § 7 (y § 7.10) se conservan porque los citan CLAUDE.md HR#4 ("INGENIERO-PAUTA-MASTER § 7") + AUDITOR-PROTOCOL + PAUTA-MASTER § 2.5/§ 7.4.1. Acá abajo queda la medición horror-aplicada (raw F1 + matices de horror); para layout agnóstico, gana core.
+
 Fuente raw: `/referent-analysis/F1-UI-SAFE-ZONES.json` (n=100 detecciones de UI elements via Gemini-3.1-flash-lite).
 
 > ⚠️ **REGLA OPERACIONAL MÁS IMPORTANTE DE ESTA SECCIÓN**: UN UI element por banda Y a la vez. Si countdown está activo en Y 35-56%, NO pongas captions en esa banda. Si captions en Y 60-65% activos, NO pongas otro UI en Y 58-72%. Bands son temporalmente exclusivas.
@@ -428,6 +445,8 @@ Variantes observadas (n=10):
 - Width ~47% (caption box centered, X 27-73%)
 - Height ~3% per line (multi-line wraps)
 
+**⛔ Per-speaker Y-band (CAPTION-OVERLAP fix)**: **narrador (Layer 3) = Y62**; **diálogo de personaje (Layer 1) = Y52 + tag del nombre** ("BRUNO:" / "CELESTE:"). NUNCA 2 cues de caption que se solapen en TIEMPO al MISMO Y — **cross-layer narrador-L3 + diálogo-L1 incluido** (no solo char-vs-char). El burn de-conflicta en build-time: cue tardío solapado → offset Y ↑ con ≥6% de separación (≥1 alto de línea). Bug disparador invernadero V6: `base_pct=0.62` para todos los speakers → narrador + diálogo concurrentes overlap en Y62; el check A3 estaba en el audit (sidecar) pero no enforzado en el burn. Fix en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + template `build_clip_atomic.py`.
+
 ### 7.4 Character name labels — MONOSPACED canónico
 
 13/25 observaciones son monospaced (52%) — **es el font canónico** para character names en horror-choice. Refuerza pattern previo en `referent_validated_patterns.md`.
@@ -436,6 +455,15 @@ Variantes observadas (n=10):
 - Color: **white** (25/25 = 100%)
 - Width avg: 14% (nombres cortos como BRUNO, AXEL, MAIKOL, CHELO)
 - Stroke: 60% / Shadow: 60%
+
+#### 7.4.1 Name labels GRANDES + visibles through-countdown (req Tomás 2026-06-01 — PAUTA-MASTER § 2.5)
+
+> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.5`. Esta sub-sección = el "cómo" técnico del ingeniero.
+
+- **Tamaño**: GRANDE. `fontsize_intent: large` del SPEC → **~64px** (frame 1080px wide; ≈6% de la altura). Suficientemente grande para leerse de un vistazo en el scroll de Instagram, encima de cada personaje del dyad. (Bug V6: labels demasiado discretos.)
+- **Posición**: una label **arriba de cada personaje** (no centradas) — sobre la cabeza de char_a y de char_b respectivamente, dentro de la banda Y 12-40% (anchor canónico Y11.5 del frame top).
+- **Timing — visibles desde el inicio de la intro Y DURANTE TODO el countdown**: `timestamp_visible_s: [0.0, fin-del-countdown]`. ⛔ Las labels **NO desaparecen cuando arranca el countdown** (bug V6: labels visibles 0-4.5s pero AUSENTES durante el countdown 6-9s). El `fin-del-countdown` = el último frame del AVU `countdown-3-2-1-film-leader-with-ticks.mp4` (típicamente ~9.0s con la receta de hook 9s). Implementación: mantené el GSAP de la label activo (opacity 1) hasta el `data-end` del countdown, NO lo cortes en el push-in.
+- **Font + legibilidad**: monospaced + drop-shadow (referent-validated, § 7.4 arriba).
 
 ### 7.5 Choice buttons A/B — 2 estilos observados
 
@@ -549,6 +577,8 @@ Característica: loading bar inicia EXACTAMENTE cuando A/B buttons aparecen + te
 
 ### 7.10 Decision UI implementation — NEW (post-matadero GAP #14 codification 2026-05-19)
 
+> ⤴ **Los defaults agnósticos del decision-UI (countdown 1s/dígito, pause beat 0.9s median, loading bar Y52 ≥6% sep, freeze/filter OPCIONAL, audio cue per dígito) viven ahora en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 1`.** Este anchor § 7.10 se conserva (lo cita PAUTA-MASTER § 18 + § 19). Acá abajo queda la implementación HORROR-aplicada (snippets GSAP con filtro sepia/grain de terror + SFX glitch de horror).
+
 > **Authority**: `horror-choice-format/PAUTA-MASTER.md § 18 decision-UI-pacing` (creative intent) + canonical-scenes/INDEX.md decision setup grid 3.3 (empirical 8/8 refs).
 > **Trigger**: user iter 2 matadero "Countdowns NO van ligados a narración + countdown se sobrepone con loading bar + falta efecto cámara vieja".
 
@@ -653,6 +683,13 @@ tl.to("#audio-ambient", { volume: 1.0 }, countdownStart + (digitDuration * 3)); 
 - `decision-tick` (alternative, more clinical/clock-tick feel)
 - Avoid: full impact SFX (too aggressive for decision tension)
 
+⛔ **COUNTDOWN AUDIBLE — el tick NO es opcional (V7+, fix bug V6, req Tomás 2026-06-01)**. El countdown (hook + las 3 decisiones) DEBE tener **tick audible** sincronizado al 3-2-1, a volumen **SOBRE el bed** (audible, da urgencia a la decisión) — no debajo como el resto de SFX.
+- **Bug V6 diagnosticado**: el AVU `countdown-3-2-1-film-leader-with-ticks.mp4` SÍ trae pista de audio con ticks (y existe `countdown_tick.mp3`), PERO el ensamble compositó el overlay Layer-4 del countdown como **video-only** (no arrastró el audio del AVU) y tampoco se colocó el SFX tick en los beats → **countdown MUDO**. Esto contradice el principio AVU (PAUTA § 19.1: visual + audio bundled = 1 unidad). Ver nota en el build § 9.
+- **Fix — dos caminos válidos** (cualquiera basta; preferí el primero por el principio AVU):
+  - **(A) Muxear la pista de audio del AVU** al overlayarlo: cuando el countdown viene del `.mp4` film-leader, NO lo metas video-only — arrastrá su audio track al mix (mapeá su stream de audio, no solo el de video). El AVU ya trae los ticks sincronizados al dígito = sync bullet-proof.
+  - **(B) Colocar `countdown_tick`** (o `decision-tick`) en CADA beat 3-2-1 vía el patrón GSAP `playSfx` de abajo, si el countdown se compone con dígitos sueltos en vez del AVU.
+- **Volumen**: tick **audible sobre el bed** (no ducked bajo él). En la escala hard rule #9 va como accent percibible — apuntá a que se oiga claramente por encima del drone+ambient (≈ mismo plano que un accent, no un SFX de fondo).
+
 #### 7.10.6 Full integrated GSAP timeline snippet
 
 ```javascript
@@ -691,11 +728,12 @@ tl.set("#shot-06-video", { attr: { paused: false } }, decisionStart + (digitDur 
 
 #### 7.10.7 Compliance verification
 
-Pre-render-gate Q22 obligatorio (per `pre-render-gate/SKILL.md`). Required 4/4 checks:
+Pre-render-gate Q22 obligatorio (per `pre-render-gate/SKILL.md`). Required 5/5 checks:
 - [ ] Freeze frame applied (GSAP `paused: true` at narration_end)
 - [ ] Filter overlay class applied (sepia + contrast + hue-rotate + grain canvas)
 - [ ] Countdown `data-start` = narration_end + 0.3s (NOT loose timing)
 - [ ] Loading bar Y52 (`bottom: 940px`) ≥6% Y separation from countdown Y46
+- [ ] **Countdown tick AUDIBLE** en cada beat 3-2-1 (hook + las 3 decisiones) — AVU audio muxeado O `countdown_tick`/`decision-tick` colocado per beat, sobre el bed (V7+ § 7.10.5). **Forward check**: extender `audit-audio.py` para verificar energía de audio (transiente percibible sobre el bed) en cada timestamp de countdown — un countdown mudo (V6) DEBE flaggear.
 
 Si Q22 fails → editorial canonical signature missing → BLOQUEA render hard-rule horror-choice format.
 
@@ -720,6 +758,8 @@ Lo que sí sabemos por `REFERENT-PATTERNS.md`:
 ---
 
 ## 8.5 LIP SYNC RULE — REGLA OPERACIONAL (añadida 2026-05-15)
+
+> ⤴ **La regla agnóstica de lip-sync (`lip_sync_required: true|false` → si false, NUNCA clip con boca visible moviéndose + auto-detección del bug) vive ahora en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 4`, común a horror y sport.** Acá queda la versión horror (ejemplo maikol-crucero + tools concretos).
 
 Caso disparador: maikol-crucero (issue 3, 4) — clip animado de Maikol con movimiento de boca visible mientras audio era solo narrador → user confused "Maikol aparece hablando pero solo habla el narrador".
 
@@ -1323,33 +1363,6 @@ Merge OR escalate
 ```
 
 ---
-
-## 12. Última actualización
-
-- **2026-05-15 v3** — **Fase 1 post-maikol-crucero feedback completa**:
-  - § 5.6 Motion intensity per shot añadida (table por shot context: hook 100% Kling, decision consequence Kling, body horror Kling, outro Kling)
-  - § 7 UI elements completamente repoblada con n=10 mediciones reales (antes era TODO):
-    - § 7.1 Safe zones (caption Y 62%, countdown Y 46%, loading Y 48%, character labels Y 12-40%, choice buttons stacked top o inline)
-    - § 7.2 No-overlap matrix (bandas Y temporalmente exclusivas)
-    - § 7.7 Discrepancia detectada con CLAUDE.md hard rule #4 (loading bars Y 63.5% vs canónico Y 48%)
-    - § 7.8 UI timing exact (hook countdown 2.2-2.5s, loading 2.0-2.5s, CTA outro ~1s)
-    - § 7.9 Fix path para 3 issues maikol con datos n=10
-  - § 8.5 Lip sync rule añadida (anti-pattern + 4 alternativas + auto-detección)
-- **2026-05-15 v2** — n=10 referentes F1 completos (post-Whisper). Pace WPM 115-195. Cuts/min de-clustered. Hue bimodal warm/cool. Caso maikol-crucero pace re-evaluado.
-- **2026-05-15 v1** — n=5. Disparado por caso maikol-crucero (engineer recomendó pace 3.0 w/s comparando contra nuestras producciones, no contra referentes).
-
-## 13. Cambios significativos n=5 → n=10
-
-| Métrica | n=5 dijo | n=10 dice | Implicancia |
-|---------|----------|-----------|--------------|
-| Pace WPM total | 156-195 (avg 176) | 115-195 (avg 162) | Range más amplio. Floor más bajo. Median 165. |
-| Block duration target | ≥4.5s | 2.8-3.5s | n=5 sobre-estimó duraciones largas. Corrected. |
-| Hook cuts | "0 universal 5/5" | "8/10 = 0" | Pattern fuerte, NO absoluto |
-| Hue distribution | 3 red dominant | 4 red + 4 cyan bimodal | Setting-dependent, no solo warm |
-| LUFS std | 0.11 (extreme tight) | 0.41 (still tight) | 1 outlier expandió std |
-| Cuts/min raw vs de-clustered | n=5 usaba raw | n=10 de-clustered avg 4.19 | Raw inflado 2-4x — corrected |
-
-**Lección operacional**: n=5 produce direcciones correctas pero rangos optimistas. n=10 da rangos más realistas. **Para futuros INGENIERO-PAUTAs minimum n=5, target n=10**.
 
 ### 7.10.8 ⚠️ Canonical validation status (Hard Rule #19 EXPANSION compliance) — UPDATED 2026-05-20 post engineer Phase 1
 
@@ -2617,4 +2630,32 @@ phase_3_forward:
   - "Test motion_bridge_intent in Veo prompts (POV walking forward continuous between shots)"
   - "Architect SPEC v10 needs `model_tier_override: veo_3_1` field per shot"
 ```
+
+---
+
+## 9. EFECTO GLITCH `old_screen_glitch_error` — cambios de historia (req Tomás 2026-06-01 — horror-choice ONLY)
+
+> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 6 del SPEC-AUDIT). Recipe completa (cadena ffmpeg + CSS + sting): `horror-choice-format/effects-library/transitions/old_screen_glitch_error.json` (**Capa B sub-género horror-choice — NO universal**, NO bleed a sport-choice/editorial).
+
+- **Cuándo**: en los **cambios de historia/recorrido** — específicamente (a) **cambios de recorrido A↔B de personajes** (transiciones de recorrido, bridges entre ramas, played↔counterfactual) Y (b) **momentos de MUERTE (consequence-A fatal)** (el corte hacia el body-horror fatal). También en decisión→consecuencia. NO en cortes normales (el default sigue siendo `hard-cut-with-whoosh`, 8/8 canónico). NO en el freeze de decisión (eso es D29 freeze+sepia, la versión MENOS pronunciada).
+- **Look**: base parque-acuatico V3 = sepia/grano/contraste + glitch xfade + sting `glitch_warm`; filtro CSS `sepia(0.45) contrast(1.22) hue-rotate(-12deg) saturate(0.85)`. **V7+ lo lleva más digital-error**: pixelación (downscale→upscale neighbor) + chromatic aberration (RGB split ±6-10px) + scanlines (1px @0.18 cada 3px) + frame-tear/datamosh-lite (banda horizontal ~12-20% desplazada ±20-40px por 1-2 frames).
+- **Params**: `duration_s: 0.4` · `xfade_transition: hlslice` (fidelity `approximate` — el bare xfade NO reproduce la decoración digital; usar el `ffmpeg_recipe` completo). `glitch_start = dur(clip_a) − 0.4`, `glitch_end = dur(clip_a)`, `fade_out_start = dur(clip_a) − 0.12`.
+- **Sting**: `glitch_warm` = `drone-tension.mp3` bit-crushed WARM (`chorus=0.7:0.9:55:0.4:0.25:2,aresample=8000,aresample=44100`), **volume 0.40** (banda SFX hard rule #9), peak en `glitch_start + 0.1s`.
+- **Cap de uso**: ~1x por beat de cambio; NO sobre-usar a lo largo del reel (agota la "corrupción").
+
+> ⚠️ **NOTA DE BUILD — carry AVU audio al overlayar (V7+, fix V6)**: cuando se overlaya un AVU `.mp4` que trae audio bundled (countdown film-leader con ticks, hook flash con whoosh, outro card con drone) como capa de composición, **arrastrá su pista de audio al mix — NO lo compositees video-only**. El bug V6 fue exactamente este: el countdown AVU se metió video-only → ticks perdidos → countdown mudo (detalle + fix completo § 7.10.5). Esto vale para CUALQUIER AVU con audio bundled (PAUTA § 19), no solo el countdown.
+
+---
+
+## 10. SFX — densidad 30-40 matcheada a la acción + duck −6dB bajo narrador (req Tomás 2026-06-01)
+
+> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 7 del SPEC-AUDIT) (+ hard rules #8 capa SFX dedicada / #9 volúmenes). Sonido = factor #1 de inmersión (TASTE-LOG #1).
+
+- **Densidad target**: **30-40 SFX por video es el PISO** (TASTE-LOG #2, referent-derived) — densos para captar atención + dar realismo; los canónicos van más densos. **Mapear un SFX a CADA acción/elemento on-screen** (cada paso, goteo, crujido, mecanismo, criatura, viento, no solo los beats grandes) — el sonido es el **factor #1 de inmersión** (TASTE-LOG #1). El SPEC (arquitecto) los especifica per shot vía `asset_list.sfx_prompts_to_generate` con `uses_shots` + `mix_db` + mapeo a la acción. **Death-screams en CADA consequence-A fatal** (TASTE-LOG #2).
+- **Capas SUTILES de tos/ahogo bajo los death-screams (V7+, req Tomás 2026-06-01)**: en los beats de TENSIÓN + cada consequence-A fatal (esporas/inhalación/asfixia/muerte) sumá una capa **leve** de tos / ahogo / gasping húmedo / estertor **POR DEBAJO** del death-scream existente. **NO fuerte** — lo fuerte se siente cheap; lo sutil da realismo + dread corporal. Prompt ElevenLabs ej.: *"faint wet cough, choking gasp, labored breathing, distant, low"*. Mix: `mix_db` ~−18 a −22 (más bajo que el scream, que va a su volumen normal) → queda como textura corporal, no como evento. Caso disparador V6: la inhalación de esporas pedía toser/ahogo leve y no lo tenía.
+- **Mix (ingeniero)** — audibles pero **DUCKED bajo la narración** (no la entorpecen):
+  - Volúmenes canónicos hard rule #9: narración **1.0** / SFX **0.20-0.35** / música 0.05-0.18 / flash 0.55-0.65.
+  - **Sidechain duck −6dB** del SFX (y música/ambient) bajo el narrador continuo (Layer 3). Equivale al `mix_db` del SPEC: un SFX a `mix_db: -12` a -16 dB reposa cómodo bajo un narrador a ~0 dBFS de referencia; durante el habla el sidechain lo baja 6 dB extra.
+  - Capa SFX dedicada (track-index 60-110, hard rule #8). SFX diegéticos → Layer 1 clip-scoped; stings no-diegéticos (whoosh, glitch_warm) → Layer 2 effect.
+- **Implementación duck**: `sidechaincompress` con el bus del narrador como key, ratio ~4:1, threshold tal que el ducking efectivo ≈ −6dB cuando el narrador habla; release ~250ms para que el SFX "respire" de vuelta entre frases.
 

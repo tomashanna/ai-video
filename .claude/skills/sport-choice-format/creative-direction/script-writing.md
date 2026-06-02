@@ -2,7 +2,7 @@
 
 > ⚠️ **DOC OPERACIONAL SECUNDARIO — NO ES AUTORIDAD CREATIVA.**
 >
-> La **autoridad creativa de sport-choice** vive en `sport-choice-format/PAUTA-MASTER.md`. La **mecánica del formato choice** se hereda de `horror-choice-format/PAUTA-MASTER.md` (8 virales). Este doc te ayuda a IMPLEMENTAR la lógica narrativa deportiva. Si hay conflicto → gana la pauta.
+> La **autoridad creativa de sport-choice** vive en `sport-choice-format/PAUTA-MASTER.md`. La **mecánica del formato choice** se hereda de `../../choice-format-core/CHOICE-MECHANIC.md` (agnóstica, derivada de los 8 virales vía horror). Este doc te ayuda a IMPLEMENTAR la lógica narrativa deportiva. Si hay conflicto → gana la pauta.
 >
 > Si llegaste acá sin leer las pautas, parar y leerlas primero.
 
@@ -29,7 +29,7 @@ Todo se sincroniza al script timeline (igual que en el pipeline universal): `nar
 
 > 🟦 PRINCIPIO: presentar dos jugadores simultáneamente; elegir uno = jugar PARA su equipo; dar contexto EXPLÍCITO.
 
-- **Dyad simultánea** en el hook (heredado de horror § 3 personajes): los dos jugadores en frame al mismo tiempo, name labels GRANDES (monospaced Y11.5), kits contrastantes.
+- **Dyad simultánea** en el hook (heredado de `../../choice-format-core/CHOICE-MECHANIC.md § 2.1` + name labels § 2.5): los dos jugadores en frame al mismo tiempo, name labels GRANDES (monospaced Y11.5), kits contrastantes.
 - **El contexto de equipo es OBLIGATORIO y EXPLÍCITO:**
   - Narración: "Saka, Arsenal. Dembélé, PSG."
   - Caption: "SAKA = ARSENAL · DEMBÉLÉ = PSG"
@@ -66,7 +66,7 @@ Todo se sincroniza al script timeline (igual que en el pipeline universal): `nar
 
 > 🟦 PRINCIPIO: mecánica del dilema heredada (setup → pregunta → countdown → loading → consecuencia A + B); contenido = jugadas reales de tipos distintos con escalada de presión.
 
-### Estructura de cada decisión (heredada de horror § 11)
+### Estructura de cada decisión (heredada de `../../choice-format-core/CHOICE-MECHANIC.md § 5`)
 
 ```
 1. SETUP (1-2 frases) — dónde estás en el campo, qué pasa ("Avanzas por la banda. El lateral te cierra.")
@@ -113,7 +113,7 @@ Todo se sincroniza al script timeline (igual que en el pipeline universal): `nar
 
 ---
 
-## Lenguaje (heredado de horror § 3)
+## Lenguaje (heredado de `../../choice-format-core/CHOICE-MECHANIC.md § 3`)
 
 - 🟦 Segunda persona presente ("Avanzas", "Te la deja, le pegas").
 - 🟦 Español NEUTRAL (tú/eliges) — NUNCA voseo.

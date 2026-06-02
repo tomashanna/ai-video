@@ -10,7 +10,7 @@
 
 sport-choice es un **formato NUEVO** (creado 2026-05-31). A diferencia de horror-choice (8 referentes virales propios), sport-choice **aún no tiene referentes virales propios**. La rotación, por ahora, se ajusta a mano sobre nuestros propios videos. Cuando haya ≥3 videos shipped, se derivarán bandas + reglas de rotación empíricas (igual que horror-choice las derivó de sus 8 virales).
 
-**Pattern numbering canonical** (heredado del enum choice de `horror-choice-format/PAUTA-MASTER.md`, usado por el validator `audit-spec-narrative-coherence.py`):
+**Pattern numbering canonical** (la FORMA abstracta apariencia×verdad del enum choice vive en `../choice-format-core/CHOICE-MECHANIC.md § 7`; el catálogo concreto P1-P10 con contenido y el enum exacto usado por el validator `audit-spec-narrative-coherence.py` se heredan de `horror-choice-format/PAUTA-MASTER.md` — sport reusa esa numeración hasta tener catálogo propio):
 
 | Pattern | Significado | Aplicación a sport-choice |
 |---------|-------------|----------------------------|

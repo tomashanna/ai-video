@@ -96,7 +96,7 @@ Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `forma
 > **Si tu rol es 🔍 AUDITOR**: tu lectura obligatoria es la de `creative-director/AUDITOR-PROTOCOL.md` § 1 — NO la lista de abajo. El auditor lee fuentes primarias directas + handoff del ingeniero, **sin** contexto del arquitecto. NO compartas terminal con arq/ing.
 
 ```
-1. INDEX.md (front door)
+1. README.md (front door — qué es el sistema + arquitectura de capas)
 2. CLAUDE.md (este archivo) — completo
 3. ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT (validar combo)
 4. ai-video-production/formats/reel.md (specs + safe zones)
@@ -106,7 +106,7 @@ Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `forma
 7.5. ⭐ horror-choice-format/**INGENIERO-PAUTA-MASTER.md** (AUTORIDAD TÉCNICA EMPÍRICA del INGENIERO — pace WPM, LUFS, mix, cuts/min, motion, color, BPM, UI timing — derivada de 10 referentes F1). El ingeniero consulta este doc para CUALQUIER métrica técnica. NUNCA usa nuestras producciones como referencia técnica.
 8. horror-choice-format/PATTERNS.md (reglas técnicas — validar contra PAUTA-MASTER + INGENIERO-PAUTA-MASTER en conflicto, ganan los dos masters)
 9. ⭐ horror-choice-format/video-log.md — AUTORITATIVO para rotación pattern
-10. horror-choice-format/INTRO-FORMULA-V15.md (receta canónica)
+10. horror-choice-format/INTRO-FORMULA.md (receta canónica)
 11. horror-choice-format/BOOTSTRAP-NEW-PROJECT.md § 9.a + 9.b (template inputs FASE 0)
 12. video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md
 13. ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + MOTION-LAYER.md + IMAGE-VARIETY.md + SFX-PIPELINE.md + QA.md
@@ -151,9 +151,15 @@ CAPA 1 UNIVERSAL (ingeniero)  → .claude/skills/video-director/ + .claude/skill
                               → .claude/skills/creative-director/ (arquitecto) + INTERVIEW-FLOW + HANDOFF-PROTOCOL
                               → library/, elements.json, root docs
 
-CAPA 2 FORMATO/TEMPLATE       → INGENIERO:  .claude/skills/horror-choice-format/
-                              → ARQUITECTO: .claude/skills/horror-choice-format/creative-direction/
-                              (mismo formato, 2 perspectivas — arquitecto = "qué decir", ingeniero = "cómo ejecutar"; ambos viven ahora en horror-choice-format/ post-Sub-Fase-3A.2 PRE-CLEANUP-A TIER 2.2)
+CAPA 1.5 FAMILIA CHOICE       → .claude/skills/choice-format-core/ (mecánica AGNÓSTICA del formato choice:
+   (agnóstica al género)        hook dyad + countdown + botones A/B + decisión→consecuencia + counterfactual +
+                                cliffhanger + POV + framing condicional + UI safe zones + decision-UI pacing).
+                                La HEREDAN horror-choice-format Y sport-choice-format. Apunta a ai-video-production
+                                para lo UNIVERSAL (NO lo duplica). Creada 2026-06-01 (refactor "agnóstico fuera del template").
+
+CAPA 2 FORMATO/TEMPLATE       → horror-choice-format/ (género horror) + sport-choice-format/ (género deportes)
+                              → cada formato HEREDA la mecánica de choice-format-core (Capa 1.5) + agrega su SABOR de
+                                género (arquitecto = "qué decir" en creative-direction/; ingeniero = "cómo ejecutar")
 
 CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitecto)
                               → <proyecto>/ (output del ingeniero: assets + render)
@@ -209,6 +215,7 @@ CAPA 3 POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | `elements.json` | `<repo-root>/elements.json` (root, NOT inside library/ ni skills/) | Components UI catalog (countdown/loader/lower-third). Codificado post inventory 2026-05-23 (Hidden gap 3). |
 | `library/voices-catalog.json` | `<repo-root>/library/voices-catalog.json` | ElevenLabs voice IDs validados |
 | `library/sfx-catalog.json` | `<repo-root>/library/sfx-catalog.json` | SFX reusables |
+| ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa 1.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
 | `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 canonical reference videos source |
 | `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
 | `creative-specs/<id>.yaml` | `<repo-root>/creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
@@ -344,7 +351,7 @@ Para cada tema crítico, hay UN doc autoritativo. **NO buscar en otros docs ni e
 | Vara de calidad + pre-animation gate + QA protocol | memoria `quality_standards.md` |
 | Selección de modelo AI (animation + imagen) — benchmark + decision tree + cost matrix | `video-director/MODEL-BENCHMARK.md` |
 | Regla 30s universal short-form (model-agnostic) | memoria `animation_30s_rule.md` |
-| Intro 9s pattern (horror-choice) | memoria `intro_9s_canonical.md` + `horror-choice-format/INTRO-FORMULA-V15.md` |
+| Intro 9s pattern (horror-choice) | memoria `intro_9s_canonical.md` + `horror-choice-format/INTRO-FORMULA.md` |
 | Archetype matriz + patterns observados + plot twist | ⭐ `horror-choice-format/PAUTA-MASTER.md` §§ 8, 9, 15 (autoridad empírica) + `PATTERNS.md` § 6.5 |
 | **Rotación pattern entre videos** | ⭐ `horror-choice-format/video-log.md` (NO confiar en NARRATIVE.md viejos) |
 | 7 gates obligatorios pre-render | (este doc § Pre-render gate) + `video-director/WORKFLOW.md` |
