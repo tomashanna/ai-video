@@ -105,11 +105,9 @@
 
 > Si seguís este orden, no te trabás. Saltearse pasos siempre cuesta más al final.
 
-### Paso 1 — Pre-requisitos (5 min)
+### Paso 1 — Bootstrap (venv + deps + .env)
 
-- Carpeta del proyecto: `mkdir <proyecto> && cd <proyecto>`
-- `.venv` + `pip install elevenlabs python-dotenv openai-whisper`
-- Copy `.env` del proyecto previo (mismas API keys: ELEVENLABS_API_KEY, GEMINI_API_KEY, REPLICATE_API_TOKEN)
+> ⛔ **Bootstrap canónico → `CLAUDE.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Ahí viven los comandos autoritativos: `mkdir` de la estructura, `.env` template, venv + el set **COMPLETO** de deps (`elevenlabs google-genai python-dotenv openai-whisper replicate`). No dupliques los comandos acá — la receta previa de este doc estaba desactualizada (deps incompletas).
 
 ### Paso 2 — Governance + design (10 min)
 
@@ -122,13 +120,11 @@ cp ../<proyecto-previo>/AGENTS.md .
 
 Editar `CLAUDE.md`: ajustar Phase actual si cambió. Mantener Plan-First rule + Source-of-Truth rule.
 
-### Paso 3 — Scripts del formato (1 min)
+### Paso 3 — Scripts QA (copy-list + verificación)
 
-```bash
-cp -r ../.claude/skills/<formato>-format/templates/scripts ./scripts
-```
+> ⛔ **Copy-list canónica de scripts → `CLAUDE.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Los scripts se copian de **`ai-video-production/templates/scripts/`** (universales — production + los gates obligatorios, incluyendo los audit-* nuevos), NO de `<formato>/templates`. La lista completa + el `for f in … done` de verificación viven en el canónico. No la dupliques acá.
 
-Verificar que `scripts/tts.py` tiene el voice ID correcto en `DEFAULT_VOICE_ID`.
+Tras copiar: verificar que `scripts/tts.py` tiene el voice ID correcto en `DEFAULT_VOICE_ID`.
 
 ### Paso 4 — Creative brief (20 min)
 
@@ -272,26 +268,9 @@ Doc completo del sistema: `ai-video-production/ELEMENTS-LIBRARY.md`.
 # Copiar al script del HTML
 ```
 
-### Paso 9 — Checkpoints (5 min)
+### Pasos 9-11 — Lint + render draft + gates pre-render
 
-```bash
-npx hyperframes lint
-npx hyperframes preview  # visual check rápido
-```
-
-### Paso 10 — Render draft (8-15 min)
-
-```bash
-npx hyperframes render -c index.html -o renders/v1-draft.mp4
-```
-
-### Paso 11 — Gemini QA (3 min)
-
-```bash
-python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
-  renders/v1-draft.mp4 \
-  --prompt "$(cat /path/to/qa-prompt.txt)"
-```
+> ⛔ **Secuencia canónica → `CLAUDE.md § Pre-render gate` (los 8 gates obligatorios) + `video-director/WORKFLOW.md`.** Lint (`npx hyperframes lint`), render draft (`npx hyperframes render`) y Gemini QA NO son 3 pasos sueltos: son parte de la secuencia de **8 gates** (Gate 0 spec-completeness + lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate) que se corre ANTES de declarar stop point. No dupliques los comandos sueltos acá — seguí el canónico.
 
 ### Paso 12 — Iterar hasta ≥9.7 (variable)
 
