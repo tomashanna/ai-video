@@ -20,7 +20,9 @@ from elevenlabs import ElevenLabs
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-DEFAULT_VOICE_ID = "Tj9l48J9AJbry5yCP5eW"
+# Source of truth: library/voices-catalog.json `default_voice` (Hard rule #19).
+# `Tj9l48J9AJbry5yCP5eW` quedó DEPRECATED 2026-05-18 (refutado en listen-test matadero CP2).
+DEFAULT_VOICE_ID = "2gPFXx8pN3Avh27Dw5Ma"
 DEFAULT_MODEL = "eleven_multilingual_v2"
 DEFAULT_LANG = "es"
 DEFAULT_OUTPUT_FORMAT = "mp3_44100_128"

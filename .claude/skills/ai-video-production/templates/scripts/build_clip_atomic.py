@@ -636,6 +636,66 @@ def _classify_caption(speaker: str | None, text: str) -> str:
     return "narration"
 
 
+# Caption chunking: máx palabras por cue progresivo (<=2 líneas al quemar). HR#30.
+CAPTION_MAX_WORDS_PER_CUE = 6
+
+
+def _chunk_text_over_word_timestamps(
+    spec_text: str, words: list[dict], speaker: str | None,
+    max_words: int = CAPTION_MAX_WORDS_PER_CUE,
+) -> list[dict]:
+    """Distribuye el wording del SPEC sobre los word-timestamps de Whisper como cues
+    PROGRESIVOS word-timed (<= max_words c/u), para que el burn muestre TODA la narración
+    en el tiempo — no un bloque estático que el wrap trunca a la 1ª línea (bug V5/V6, HR#30).
+    El SPEC es autoridad del wording; Whisper aporta solo el timing (alineación POSICIONAL/
+    proporcional, robusta a drift de conteo SPEC-vs-audio)."""
+    spec_words = spec_text.split()
+    if not spec_words or not words:
+        return []
+    n_spec, n_whis = len(spec_words), len(words)
+    cues: list[dict] = []
+    for i in range(0, n_spec, max_words):
+        chunk = spec_words[i:i + max_words]
+        last_idx = i + len(chunk) - 1
+        ws = min(round(i * n_whis / n_spec), n_whis - 1)
+        we = max(min(round(last_idx * n_whis / n_spec), n_whis - 1), ws)
+        start_s = float(words[ws]["start"])
+        end_s = float(words[we]["end"])
+        if cues and start_s < cues[-1]["end_s"]:
+            start_s = cues[-1]["end_s"]
+        if end_s <= start_s:
+            end_s = start_s + 0.4
+        text = " ".join(chunk)
+        cues.append({
+            "start_s": start_s, "end_s": end_s, "text": text,
+            "class": _classify_caption(speaker, text), "speaker": speaker,
+        })
+    return cues
+
+
+def _chunk_text_over_span(
+    spec_text: str, start_s: float, end_s: float, speaker: str | None,
+    max_words: int = CAPTION_MAX_WORDS_PER_CUE,
+) -> list[dict]:
+    """Sin word-timestamps: distribuye el wording del SPEC uniformemente sobre [start_s, end_s]
+    como cues progresivos (en vez de 1 bloque)."""
+    spec_words = spec_text.split()
+    if not spec_words:
+        return []
+    total = max(end_s - start_s, 0.1)
+    n_chunks = (len(spec_words) + max_words - 1) // max_words
+    cues: list[dict] = []
+    for c in range(n_chunks):
+        chunk = spec_words[c * max_words:(c + 1) * max_words]
+        text = " ".join(chunk)
+        cues.append({
+            "start_s": start_s + total * (c / n_chunks),
+            "end_s": start_s + total * ((c + 1) / n_chunks),
+            "text": text, "class": _classify_caption(speaker, text), "speaker": speaker,
+        })
+    return cues
+
+
 def _build_caption_cues_from_whisper(
     whisper_result: dict,
     spec_text_override: str | None,
@@ -644,12 +704,11 @@ def _build_caption_cues_from_whisper(
     """
     Return list of {start_s, end_s, text, class} cues.
 
-    Strategy:
-      - If spec_text_override provided AND whisper has at least one word: span the
-        SPEC text across [first_word_start, last_word_end] as ONE cue. Word-level
-        chunking from SPEC would require alignment that is outside scope.
-      - Else: chunk whisper segments naturally — one cue per segment (or word-group
-        of ~6 words for long segments).
+    Strategy (HR#30 — caption TEMPORAL coverage, NUNCA bloque estático):
+      - spec_text_override + words: el wording del SPEC se CHUNKEA word-timed en cues
+        progresivos (<=6 palabras c/u) vía _chunk_text_over_word_timestamps.
+      - spec_text_override + segments sin words: se distribuye uniforme sobre el span.
+      - Whisper raw (sin override): un cue por segmento; segmentos largos en grupos de ~6.
     """
     segments = whisper_result.get("segments", []) or []
     words = whisper_result.get("words", []) or []
@@ -658,27 +717,13 @@ def _build_caption_cues_from_whisper(
         return []
 
     if spec_text_override and words:
-        first = words[0]["start"]
-        last = words[-1]["end"]
-        return [{
-            "start_s": float(first),
-            "end_s": float(last),
-            "text": spec_text_override,
-            "class": _classify_caption(speaker, spec_text_override),
-            "speaker": speaker,
-        }]
+        return _chunk_text_over_word_timestamps(spec_text_override, words, speaker)
 
     if spec_text_override and segments and not words:
-        # No word timestamps; collapse all segments into single span
+        # Sin word-timestamps: distribuir el wording del SPEC sobre el span de segmentos.
         first = float(segments[0].get("start", 0))
         last = float(segments[-1].get("end", first))
-        return [{
-            "start_s": first,
-            "end_s": last,
-            "text": spec_text_override,
-            "class": _classify_caption(speaker, spec_text_override),
-            "speaker": speaker,
-        }]
+        return _chunk_text_over_span(spec_text_override, first, last, speaker)
 
     # Whisper raw: one cue per segment, but split very long segments into ~6-word chunks
     cues = []

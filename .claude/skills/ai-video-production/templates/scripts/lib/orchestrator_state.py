@@ -125,16 +125,20 @@ def parse_verdict(verdict_path: Path) -> str:
     except OSError:
         return "MISSING"
 
-    # Try several patterns
+    # Canonical verdicts + el vocabulario emoji/GO-NO-GO que MANDA AUDITOR-PROTOCOL § 5.
+    # Mapeo: GO -> PASS · NO-GO -> FAIL · ESCALAR -> ESCALATE.
+    vocab = r"(PASS|NB|FAIL|ESCALATE|ESCALAR|NO-?GO|GO)"
     patterns = [
-        r"(?im)^\s*\**\s*verdict\s*\**\s*[:=]\s*\**\s*(PASS|NB|FAIL|ESCALATE)\b",
-        r"(?im)^\s*[-*]\s*verdict\s*[:=]\s*(PASS|NB|FAIL|ESCALATE)\b",
-        r"(?im)^\s*verdict\s+(PASS|NB|FAIL|ESCALATE)\b",
+        rf"(?im)^\s*\**\s*(?:verdict|veredicto)\s*\**\s*[:=]\s*\**\s*(?:🟢|🟡|🔴|⛔)?\s*{vocab}\b",
+        rf"(?im)^\s*[-*|]\s*(?:🟢|🟡|🔴|⛔)?\s*(?:verdict|veredicto)\s*[:=]\s*{vocab}\b",
+        rf"(?im)^\s*(?:🟢|🟡|🔴|⛔)\s*{vocab}\b",
     ]
+    norm = {"GO": "PASS", "NOGO": "FAIL", "NO-GO": "FAIL", "ESCALAR": "ESCALATE"}
     for pat in patterns:
         m = re.search(pat, text)
         if m:
-            return m.group(1).upper()
+            raw = m.group(1).upper()
+            return norm.get(raw, norm.get(raw.replace(" ", ""), raw))
     return "UNKNOWN"
 
 
@@ -161,6 +165,25 @@ FORBIDDEN_PHRASES = [
     "end to end",
     "multi-cp",
     "multi cp",
+    # ── ES — el sistema es spanish-neutral; estos eran el bypass confirmado ──
+    "de corrido",
+    "sin parar",
+    "de un tiron",
+    "de un tirón",
+    "de un saque",
+    "punta a punta",
+    "de punta a punta",
+    "todos los checkpoints",
+    "todos los cp",
+    "todos los cps",
+    "autónomo",
+    "autonomo",
+    "corré todo",
+    "corre todo",
+    "hazlo solo",
+    "sin auditar",
+    "salta el audit",
+    "saltea el audit",
 ]
 
 
