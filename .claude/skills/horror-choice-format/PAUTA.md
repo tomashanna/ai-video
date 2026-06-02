@@ -162,16 +162,7 @@ Cada escena necesita SFX granulares más allá de narración + música + ticks d
 **Motor único:** ElevenLabs Sound Effects API vía `scripts/sfx.py` con `sfx-spec.json` batch. Para ambient loops >22s, generar 22s con `loop:true` y expandir con ffmpeg `stream_loop` — patrón en `PRODUCTION-PIPELINE.md` § 12.5.
 **Fallback opcional:** Freesound solo si un asset puntual sale notoriamente uncanny y no se arregla iterando el prompt. **No es parte del workflow estándar.** Decisión 2026-05-10 validada en bosque-abandonado v3.
 
-**Mix volumes estandarizados:**
-| Capa | data-volume |
-|---|---|
-| Narración | 1.0 (siempre) |
-| Música ambient | 0.05–0.18 |
-| SFX eventos puntuales | 0.20–0.35 |
-| Flash impacts | 0.55–0.65 |
-| Ambient continuo (viento/fuego loop) | 0.10–0.18 |
-
-Reservar `data-track-index` 60–110 para SFX en `index.html`.
+**Mix volumes** → tabla canónica completa en `../ai-video-production/SFX-PIPELINE.md § Mix volumes` (narración 1.0 / música 0.05–0.18 / SFX 0.20–0.35 / flash 0.55–0.65 / ambient continuo 0.10–0.18 / clinks 0.25–0.35). No dupliques la tabla acá. Reservar `data-track-index` 60–110 para SFX en `index.html`.
 
 **Implementación**: `PRODUCTION-PIPELINE.md` § 12 (ElevenLabs) y § 13 (Freesound). **Regla perenne**: `PATTERNS.md` § 2.
 
