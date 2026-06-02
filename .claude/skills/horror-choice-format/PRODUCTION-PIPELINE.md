@@ -54,10 +54,10 @@ cd "/ruta/al/proyecto"
   -o assets/nombre.png
 ```
 
-El script agrega automáticamente el HORROR_SUFFIX al final del prompt:
+⚠️ El template de `image.py` es **AGNÓSTICO** (no aplica suffix por default). Para horror, aplicá el HORROR_SUFFIX de una de dos formas: pasá `--style-suffix "<horror suffix>"` en cada call, **o** seteá `STYLE_SUFFIX = HORROR_SUFFIX` en tu copia de `scripts/image.py` (la constante `HORROR_SUFFIX` ya está definida ahí). El estilo horror es:
 > "Dark cinematic horror aesthetic, desaturated color grade with warm amber and orange highlights only, liminal space mood, eerie atmospheric lighting, Midjourney v6 photorealistic style, uncanny valley, subtle film grain, low-key lighting, dead-center composition, 35mm lens, shallow depth of field. No text, no logos, no watermarks."
 
-No lo repitas en tu prompt. Solo describí la escena.
+No repitas el suffix en tu prompt si lo aplicás vía `--style-suffix`/`STYLE_SUFFIX`. Solo describí la escena.
 
 ### Estructura de prompt que funciona
 ```

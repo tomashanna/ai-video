@@ -104,7 +104,7 @@ Ver template completo en `SFX-LIST-TEMPLATE.md`. Mínimo por video:
 
 ## Prompts de imagen detallados
 
-> Todos los prompts se usan con `image.py` (incluye HORROR_SUFFIX automático). Excepto los marcados `--no-mono-suffix` que llevan estilo cálido inline.
+> Todos los prompts se usan con `image.py` aplicando el horror style vía `STYLE_SUFFIX = HORROR_SUFFIX` (en tu copia) o `--style-suffix` — el template es AGNÓSTICO por default (ya NO automático; ver `PRODUCTION-PIPELINE.md` § image.py). Los marcados `--no-mono-suffix` van sin suffix (estilo cálido inline en el prompt).
 
 ### h1-characters.png
 ```

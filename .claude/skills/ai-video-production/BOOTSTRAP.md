@@ -349,24 +349,22 @@ Ver `QA.md` dimensión #10 — agregado al prompt Gemini.
 
 ---
 
-## 6. PERSONALIZAR `scripts/image.py` (si tu formato tiene STYLE_SUFFIX)
+## 6. STYLE_SUFFIX por formato en `scripts/image.py` (AGNÓSTICO por default)
 
-El script copiado del template tiene `HORROR_SUFFIX` hardcoded. Si tu formato es distinto, editar:
+El template es **agnóstico**: `STYLE_SUFFIX = ""` (no aplica estilo por default — Capa A NO asume género). Dos formas de dar el estilo de tu formato:
 
-```python
-# scripts/image.py
-
-# Reemplazar HORROR_SUFFIX por el style suffix de tu formato
-STYLE_SUFFIX = (
-    " Documentary cinematic photography, naturalistic color grade, "
-    " ... [tu estilo aquí] ... "
-    "No text, no logos, no watermarks."
-)
+**(a) Por call (recomendado, sin editar el script):**
+```bash
+.venv/bin/python scripts/image.py -p "..." --style-suffix " <estilo de tu formato>" -o assets/...
 ```
 
-Y en `main()` cambiar las referencias de `HORROR_SUFFIX` a `STYLE_SUFFIX`.
+**(b) Seteando la constante en tu copia** (si todas las imágenes llevan el mismo estilo):
+```python
+# scripts/image.py
+STYLE_SUFFIX = " <estilo de tu formato>"   # horror: STYLE_SUFFIX = HORROR_SUFFIX (ya definido en el script)
+```
 
-Si tu formato no requiere suffix (ej: ya pasás todo el estilo en el prompt), usar `--no-mono-suffix` siempre.
+`HORROR_SUFFIX` queda definido en el script (Capa B horror) pero **NO se aplica por default**. Si tu formato no usa suffix, dejá `STYLE_SUFFIX` vacío. (`--no-mono-suffix` sigue como opt-out explícito, hoy redundante con el default vacío.)
 
 ---
 

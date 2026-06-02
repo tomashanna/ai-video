@@ -20,10 +20,10 @@ Usage:
       --ref assets/yonaiker-anchor.png \\
       -o assets/h1-both.png
 
-    # Override del style suffix
-    .venv/bin/python scripts/image.py -p "..." --no-mono-suffix -o assets/...
+    # Style suffix por formato (default AGNÓSTICO = vacío; ver BOOTSTRAP § 6)
+    .venv/bin/python scripts/image.py -p "..." --style-suffix " <estilo del formato>" -o assets/...
 
-Defaults are tuned for vertical Reels: 9:16, 1K resolution, monochrome-enforced prompt suffix.
+Defaults are tuned for vertical Reels: 9:16, 1K resolution. STYLE_SUFFIX vacío por default (agnóstico).
 
 CHARACTER CONSISTENCY:
     Para mantener un personaje visualmente idéntico entre tomas:
@@ -44,6 +44,13 @@ from google.genai import types
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
+# STYLE_SUFFIX agnóstico: VACÍO por default (Capa A universal — NO asume género).
+# Cada formato pasa su estilo con --style-suffix, o setea STYLE_SUFFIX al customizar el
+# script copiado (ver ai-video-production/BOOTSTRAP.md § 6). El suffix de horror está abajo.
+STYLE_SUFFIX = ""
+
+# Suffix de estilo del formato HORROR (Capa B). NO se aplica por default. Horror lo usa vía
+# `--style-suffix` o seteando `STYLE_SUFFIX = HORROR_SUFFIX` en su copia del script.
 HORROR_SUFFIX = (
     " Dark cinematic horror aesthetic, desaturated color grade with warm amber "
     "and orange highlights only, liminal space mood, eerie atmospheric lighting, "
@@ -51,6 +58,14 @@ HORROR_SUFFIX = (
     "low-key lighting, dead-center composition, 35mm lens, shallow depth of field. "
     "No text, no logos, no watermarks."
 )
+
+
+def resolve_style_suffix(no_mono_suffix: bool, style_suffix: str | None) -> str:
+    """Suffix de estilo agnóstico: --style-suffix (per-formato) gana; si no, STYLE_SUFFIX
+    (constante, default ''). --no-mono-suffix fuerza vacío (back-compat)."""
+    if no_mono_suffix:
+        return ""
+    return style_suffix if style_suffix is not None else STYLE_SUFFIX
 
 
 def load_reference_images(ref_paths):
@@ -106,7 +121,8 @@ def main() -> None:
         help="Resolution (default 1K; 512 for drafts)",
     )
     parser.add_argument("--aspect", default="9:16", help="Aspect ratio (default 9:16)")
-    parser.add_argument("--no-mono-suffix", action="store_true", help="Skip style suffix enforcement")
+    parser.add_argument("--no-mono-suffix", action="store_true", help="Forzar sin suffix (back-compat; el default ya es agnóstico)")
+    parser.add_argument("--style-suffix", default=None, help="Suffix de estilo del formato (agnóstico). Default vacío. Ej horror: pasar el HORROR_SUFFIX.")
     args = parser.parse_args()
 
     load_dotenv(PROJECT_ROOT / ".env")
@@ -114,7 +130,12 @@ def main() -> None:
     if not api_key:
         sys.exit("error: GEMINI_API_KEY not found in .env")
 
-    prompt_text = args.prompt if args.no_mono_suffix else args.prompt + HORROR_SUFFIX
+    suffix = resolve_style_suffix(args.no_mono_suffix, args.style_suffix)
+    if not suffix and args.style_suffix is None and not args.no_mono_suffix:
+        print("[image.py] ⚠️ Sin style suffix (STYLE_SUFFIX vacío = agnóstico). Pasá --style-suffix "
+              "con el estilo del formato o seteá STYLE_SUFFIX (horror: = HORROR_SUFFIX). Ver BOOTSTRAP § 6.",
+              file=sys.stderr)
+    prompt_text = args.prompt + suffix
 
     # Build multimodal contents: [ref_image_1, ref_image_2, ..., prompt_text]
     contents = []
