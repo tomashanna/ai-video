@@ -367,9 +367,3 @@ Detalle completo en `ai-video-production/QA.md` § STOP CONDITIONS. Resumen:
 | Dos renders en paralelo | Sequential. Wait until done. |
 | "Mejorá esto" sin métrica de éxito | "Score Gemini de 8.8 → meta 9.7" |
 | Inventar pattern cuando hay doc | Buscar pattern → si no existe, inventar Y documentar |
-
----
-
-## Última actualización
-
-2026-05-10. Inicial.

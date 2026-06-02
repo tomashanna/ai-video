@@ -1,214 +1,147 @@
-# AI Video Edits — horror-choice format production system
+# AI Video — sistema de producción de video con IA
 
-> **What is this**: production system for AI-generated horror-choice videos (binary-decision format published @elige_tucompanero on Instagram). Multi-layer agnostic architecture supporting horror-choice format active + forward placeholders (Marina AI Influencer, tutorial, B2B).
+> **Qué es esto.** Un sistema para producir videos cortos generados con IA de punta a punta
+> (imagen → TTS → SFX → animación i2v → lip-sync → composición HyperFrames → master -14 LUFS → render).
+> Está construido como una jerarquía de **capas agnósticas** + un equipo de **tres roles** con
+> autoridad separada, de modo que agregar un formato nuevo no toca el núcleo y cada decisión
+> tiene UNA sola fuente de verdad.
 
----
-
-## Current state (last update 2026-05-28)
-
-**Sub-fase 3A CERRADA** — pipeline validated against V4 baseline, 4 validators armed pre-V5, 8 commits temáticos pushed.
-
-| Dimension | State |
-|-----------|-------|
-| Pipeline Paso 4 sequence (4.2 → 4.4 → 4.3 → 4.1) | ✅ Built + tested + shakedown-validated vs V4 |
-| 4 critical validators pre-V5 | ✅ Armed (narrative-coherence + L1 narration-fits + L2 TTS-duration + lip-sync-marks) |
-| Pattern 7 capability matrix | ✅ Cascadeado sistema-wide (15 Hard Rules gated + SPEC v11.1 §1.6) |
-| Effects-library TIERED (Capa A universal + Capa B horror) | ✅ Relocated + Option D fields |
-| D38 baseline frozen + verifiable | ✅ `_freeze-manifests/v4-baseline.md5` (11× verified UNCHANGED last session) |
-| Voice strategy V5 | ⏳ Settings codified; A/B test pending Tomás (Eleguar vs candidate alts) |
-| 109 tests aggregate | ✅ PASS |
+> **Front-door operativo.** Este README explica *qué es* el sistema y *cómo está organizado*.
+> Para las reglas de trabajo vivas — hard rules, gates obligatorios, triggers de skills, paths
+> canónicos, qué doc es autoritativo por tema — la fuente es **`CLAUDE.md`** (se auto-inyecta en
+> cada sesión). El **estado del proyecto** (qué se hizo, qué versión va) es el **`git log`**, no este archivo.
 
 ---
 
-## Triángulo operativo (3 roles)
+## Arquitectura — capas agnósticas
 
-- 🔴 **Tomás** — decisor creativo, override authority, listen test ground truth (Rule D PRECEDENCE).
-- 🟣 **Claude conversacional** — estratega en chats del Project. NO ejecuta scripts ni spawn agents. Estructura mensajes al Auditor.
-- 🟠 **Auditor (Claude Code)** — engineer + architect role, ejecuta scripts via subprocess, escribe filesystem, audita compliance, emite verdicts honestos.
-
-Roles NUNCA se mezclan. Comunicación vía filesystem (ground truth) + chats separados.
-
----
-
-## Architecture — 3 layers (Capa A / B / C)
+El cambio se aísla por *alcance*. Modificar una capa baja sirve a todo lo de arriba; las capas
+altas son desechables.
 
 ```
-Capa A — agnostic universal             (.claude/skills/ai-video-production/)
-├── templates/scripts/                  ← engines: 4 Paso 4 builds + validators + lib helpers
-├── templates/effects-library/          ← 7 universal transition primitives + audio stings
-├── templates/voice-effects/            ← 10 creepy voice presets + apply-voice-preset.py
-├── templates/caption-styles/           ← caption-burn 3 canonical classes
-└── templates/CREATIVE-SPEC-TEMPLATE-v11.yaml ← canonical SPEC schema
+Capa A    — UNIVERSAL, agnóstica de género        .claude/skills/ai-video-production/
+            Toolkit técnico de CUALQUIER video: TTS, imagen, SFX, motion, captions Whisper,
+            mix/mastering, pipeline HYBRID per-clip, validators, QA. + creative-director (arquitecto)
+            + video-director (ingeniero) + video-animation. Catálogo, no prescripción.
 
-Capa B — format-specific active         (.claude/skills/horror-choice-format/)
-├── PAUTA-MASTER.md                     ← creative authority (8 viral refs synthesized)
-├── INGENIERO-PAUTA-MASTER.md           ← technical authority (F1 measurements)
-├── canonical-scenes/                   ← 8 reference videos frame-by-frame
-├── effects-library/                    ← 3 horror sub-genre transitions (film-burn/projector/static-noise)
-├── creative-direction/                 ← per-dimension creative guides
-├── lip-sync-workflow.md                ← Sync.so canonical workflow
-└── video-log.md                        ← per-video rotation log + cross-video uniqueness
+Capa A.5  — NÚCLEO de una FAMILIA de formatos      .claude/skills/choice-format-core/
+            Mecánica común a TODOS los formatos "choice" (hook dyad + countdown + botones A/B +
+            decisión→consecuencia + counterfactual + cliffhanger + POV 1ª persona + UI safe zones).
+            Agnóstica al género. La heredan los formatos choice de Capa B. Apunta a Capa A para
+            lo universal — no lo duplica.
 
-Capa C — per-video                      (cerro-aislado-v4/ + V5+ projects)
-└── cerro-aislado-v4/                   ← D38 frozen baseline reference (READ-ONLY)
+Capa B    — FORMATO / GÉNERO concreto              .claude/skills/<formato>-format/
+            Hereda su familia (Capa A.5 si aplica) y agrega el SABOR de género: autoridad creativa
+            (PAUTA-MASTER) + autoridad técnica (INGENIERO-PAUTA-MASTER) + creative-direction +
+            referencias canónicas + rotación. Un formato nuevo = una Capa B nueva; A y A.5 intactas.
+
+Capa C    — POR-VIDEO, desechable                  <proyecto>/  +  creative-specs/<id>.yaml
+            El output: el SPEC del arquitecto (creative-specs/<id>.yaml) + el directorio del
+            video con sus assets y renders. El SPEC decide qué del catálogo se USA.
 ```
+
+**Principio "Disponibilidad ≠ Uso".** Capa A y A.5 son *catálogos disponibles*, no obligaciones.
+La Capa C (el SPEC) decide qué se usa. Un formato nuevo referencia el catálogo existente y solo
+agrega lo que su género necesita.
+
+**Regla de oro.** ¿Sirve a CUALQUIER video? → Capa A. ¿A toda una familia de formatos? → Capa A.5.
+¿A un solo formato? → Capa B. ¿A un solo video? → Capa C. (Detalle: `video-director/ARCHITECTURE.md`.)
 
 ---
 
-## Quick start
+## Los tres roles
+
+Tres roles que **nunca se mezclan**, cada uno en su propio terminal/contexto. Se comunican por
+**filesystem** (ground truth), no por memoria conversacional.
+
+| Rol | Skill / doc canónico | Hace | Output |
+|-----|----------------------|------|--------|
+| 🏛️ **Arquitecto** | `.claude/skills/creative-director/` | DISEÑA el qué: historia, personajes, script, intent visual/audio | `creative-specs/<id>.yaml` |
+| 🛠️ **Ingeniero** | `.claude/skills/video-director/` + `ai-video-production/` + skills técnicos | EJECUTA el SPEC: imagen, TTS, SFX, animación, lip-sync, mix, render | `video.mp4` + handoff por checkpoint |
+| 🔍 **Auditor** | `.claude/skills/creative-director/AUDITOR-PROTOCOL.md` | VERIFICA cada handoff contra la autoridad canónica, de forma independiente | tabla de findings + verdict GO / NO-GO / ESCALAR por CP |
+
+**Por qué tres.** El auditor lee las fuentes primarias *sin* compartir contexto con arquitecto ni
+ingeniero — ese tercer ojo independiente es lo que evita que pase un bug sistémico.
+
+El handoff entre roles y los gates por checkpoint están en
+`creative-director/HANDOFF-PROTOCOL.md` y `creative-director/AUDITOR-PROTOCOL.md`.
+
+---
+
+## Cómo navegar — dónde vive la autoridad de cada tema
+
+Para cada tema hay **un solo** doc autoritativo. La fuente maestra de este mapa es
+`CLAUDE.md` § "Docs autoritativos" y § "Paths canónicos" — abajo el resumen para arrancar.
+
+| Buscás… | Está en |
+|---------|---------|
+| Reglas de trabajo vivas (hard rules, gates, **triggers → skill**, paths) | **`CLAUDE.md`** (auto-load) + detalle en `HARD-RULES.md` |
+| Toolkit técnico universal (TTS, imagen, SFX, motion, captions, QA) | `.claude/skills/ai-video-production/` (`SKILL.md`, `PIPELINE.md`, `CAPTIONS.md`, …) |
+| Arquitectura de pipeline (HYBRID per-clip, Layers 1-4) | `.claude/skills/ai-video-production/PIPELINE.md` |
+| Mecánica agnóstica de los formatos choice | `.claude/skills/choice-format-core/` |
+| Autoridad CREATIVA de un formato | `.claude/skills/<formato>-format/PAUTA-MASTER.md` |
+| Autoridad TÉCNICA de un formato (WPM, LUFS, mix, pacing) | `.claude/skills/<formato>-format/INGENIERO-PAUTA-MASTER.md` |
+| Referencias canónicas de un formato (videos virales medidos) | `.claude/skills/<formato>-format/canonical-scenes/` |
+| Esquema canónico del SPEC | `.claude/skills/creative-director/templates/CREATIVE-SPEC-TEMPLATE-v11.yaml` |
+| Protocolo de handoff arquitecto↔ingeniero | `.claude/skills/creative-director/HANDOFF-PROTOCOL.md` |
+| Protocolo del auditor (metodología de verificación) | `.claude/skills/creative-director/AUDITOR-PROTOCOL.md` |
+| Selección de modelo IA (imagen + animación, benchmark) | `.claude/skills/video-director/MODEL-BENCHMARK.md` |
+| Capacidades declaradas por modelo del pipeline | `.claude/skills/ai-video-production/MODEL-CAPABILITIES-MATRIX.md` |
+| Voice IDs validados | `library/voices-catalog.json` |
+| SFX reusables | `library/sfx-catalog.json` + `library/LIBRARY.md` |
+| Componentes UI (countdown / loader / lower-third) | `elements.json` |
+| Templates copy-paste para proyecto nuevo | `.claude/skills/ai-video-production/templates/` |
+| Qué está congelado / es baseline | `_freeze-manifests/` (cada manifest se auto-documenta) |
+| Mediciones empíricas de referentes (autoridad técnica) | `referent-analysis/` |
+| Estado del proyecto / qué se hizo / qué versión va | **`git log`** |
+
+---
+
+## Getting started
 
 ```bash
-# 1. Clone
-git clone https://github.com/tomashanna/aI-Video-Edits-.git
-cd "AI Video Edits"  # or similar workspace name
+# 1. Clonar
+git clone https://github.com/tomashanna/AI-Video-Edits-.git
+cd AI-Video-Edits-
 
-# 2. Setup deps
+# 2. Leer el front-door operativo (NO opcional)
+#    CLAUDE.md se auto-inyecta en sesiones de Claude Code; si trabajás a mano, leelo primero.
+
+# 3. Entorno + dependencias base
 python3 -m venv .venv
 source .venv/bin/activate
-pip install pyyaml sentence-transformers  # core deps for validators
-# Plus per script: elevenlabs, google-genai, openai-whisper, replicate
+pip install pyyaml sentence-transformers
+# Por script, además: elevenlabs, google-genai, openai-whisper, replicate
 
-# 3. Verify tests pass (~3 min, 109 tests)
+# 4. Verificar que los tests pasan
 cd .claude/skills/ai-video-production/templates/scripts
-for f in test_*.py lib/test_*.py; do python3 "$f" 2>&1 | tail -1; done
-# Expect: each "OK"
-
-# 4. Verify D38 baseline UNCHANGED
-cd "/path/to/AI Video Edits"
-md5 -r cerro-aislado-v4/renders/draft-v2.mp4 \
-       cerro-aislado-v4/scripts/audit-spec-completeness.py \
-       cerro-aislado-v4/scripts/lib/similarity.py \
-       cerro-aislado-v4/scripts/lib/orchestrator_state.py \
-       creative-specs/cerro-aislado-v4.yaml
-# Compare vs _freeze-manifests/v4-baseline.md5 — must match 5/5
+for f in test_*.py lib/test_*.py; do python3 "$f" 2>&1 | tail -1; done   # cada uno → "OK"
 ```
 
----
-
-## ⛔ What NOT to touch
-
-These are frozen / authoritative — modify only with explicit Tomás approval:
-
-| Path | Why |
-|------|-----|
-| `cerro-aislado-v4/` | D38 frozen baseline V4 — ground truth for forward validation. Never modify, never delete |
-| `_freeze-manifests/v4-baseline.md5` | Canonical baseline MD5 manifest. Modifying invalidates D38 verifiability |
-| `_archive-*/` | Historical records preserved as historical reference |
-| Any commit hash already pushed | NEVER `git commit --amend` on pushed commits. NEVER `git push --force` |
+**Para arrancar un video nuevo**, no improvisar: seguir el bootstrap canónico de
+`ai-video-production/BOOTSTRAP.md` (genérico) + el del formato (`<formato>-format/BOOTSTRAP-NEW-PROJECT.md`),
+que copian los scripts de QA y los gates obligatorios antes de generar nada. El flujo completo
+arquitecto → ingeniero → auditor (con los gates por checkpoint) está en `CLAUDE.md` § Step 0.
 
 ---
 
-## Where to find things
+## Principios canónicos del proyecto
 
-| Looking for... | Location |
-|----------------|----------|
-| Pipeline engines (Paso 4 builds) | `.claude/skills/ai-video-production/templates/scripts/` |
-| Validators (Sprint M + narrative coherence) | `.claude/skills/ai-video-production/templates/scripts/audit-*.py` |
-| SPEC schema canonical | `.claude/skills/creative-director/templates/CREATIVE-SPEC-TEMPLATE-v11.yaml` |
-| Hard Rules (canonical project rules) | `CLAUDE.md` (auto-loaded into every session) |
-| Architect protocol (audit methodology) | `.claude/skills/creative-director/AUDITOR-PROTOCOL.md` |
-| Pipeline architecture (HYBRID Layer 1-4) | `.claude/skills/ai-video-production/PIPELINE.md` § 13.9 |
-| System roadmap (Sprint A/B/M) | `.claude/skills/creative-director/master-flow-v2/SYSTEM-ROADMAP.md` § 8.9 |
-| V3/V4 learnings (20 decisions + 7 bugs + 4 Gemini constraints) | `.claude/skills/creative-director/master-flow-v2/SYSTEM-LEARNINGS-V3-V4-COMPILATION.md` |
-| Horror-choice creative authority | `.claude/skills/horror-choice-format/PAUTA-MASTER.md` |
-| Horror-choice technical authority | `.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md` |
-| Canonical reference videos (8 refs) | `.claude/skills/horror-choice-format/canonical-scenes/INDEX.md` |
-| Voice IDs catalog + V5 narrator strategy | `library/voices-catalog.json` |
-| Voice effects presets (sox/ffmpeg chains) | `.claude/skills/ai-video-production/templates/effects-library/voice-effects/` |
-| Lip-sync workflow (Sync.so) | `.claude/skills/horror-choice-format/lip-sync-workflow.md` |
-| F1 canonical measurements (autoridad WPM bands) | `referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json` |
-| System visual overview (multi-layer diagram) | `EXCALIDRAW-SYSTEM-OVERVIEW.md` |
-| Latest session handoff (continuity) | `HANDOFF-SUB-FASE-3A-CIERRE-2026-05-27.md` |
+| # | Principio | Qué significa |
+|---|-----------|---------------|
+| 1 | **Agnóstico** | `--format` requerido en los scripts; lo específico de un formato vive en su Capa B, nunca en A |
+| 2 | **Automatizable** | Scripts > documentación. Una regla sin script de enforcement es decoración |
+| 3 | **Escalable** | Capability matrix por validator. Formato nuevo = Capa B nueva, Capa A intacta |
+| 4 | **Sólido** | El filesystem es la ground truth (no la memoria). Lo congelado se verifica vía freeze-manifest, no por confianza |
 
 ---
 
-## How the system works (high-level)
+## Contribuir / colaborar
 
-### Pipeline CP-by-CP (one video end-to-end)
+- **Maintainer**: Tomás Hanna (tomashanna)
+- **Colaboradores**: IanCid + afluence (técnico)
+- **Comunicación**: filesystem como ground truth (no memoria conversacional — Principio 4)
+- **Commit / branch**: nunca `--amend` ni `push --force` sobre commits ya pusheados. Los detalles
+  operativos vivos están en `CLAUDE.md`.
 
-```
-CP0 SPEC creation → CP1 anchors → CP2 TTS → CP3 shots → CP4 Hailuo → 
-CP4.5 Sync.so (lip sync) → CP4.6 atomic mux → CP5 hybrid assembly → publish
-```
-
-See `EXCALIDRAW-SYSTEM-OVERVIEW.md` § "CP narrative summary" for prose walkthrough.
-
-### Pattern 7 — Capability Matrix
-
-Every validator + build is **capability-gated** by `spec.video_capabilities` flags. Properties classify as `applicable / not_applicable / pass / fail` (4-state, not binary). `video_capabilities` missing → Bug #9 exit 2 (no silent paradigm assumption).
-
-### "Disponibilidad ≠ Uso" principle
-
-- **Capa A** = catalog disponible para CUALQUIER format (NOT prescription).
-- **Capa B** = format-specific catalog (available under `--format <X>`).
-- **Capa C (SPEC)** = decides what's used.
-
-Forward formats (Marina, tutorial, B2B) reference Capa A + add their Capa B without duplicating universals.
-
-### Subprocess chaining (Paso 4 orchestrator)
-
-`build-video-hybrid.py` chains:
-1. `concat-clips-with-audio.py` (Layer 1 atomic concat)
-2. `apply-effects-between-clips.py` (Layer 2 xfade + stings, multi-catalog `--effects-dir` REQUIRED)
-3. `apply-cross-clip-music.py` (Layer 3 music + sidechain duck + two-pass loudnorm -14 LUFS)
-4. Layer 4 UI overlay + fps normalization
-5. 8 pre-render gates
-
----
-
-## Project canonical principles
-
-| # | Principle | What it means |
-|---|-----------|----------------|
-| 1 | **Agnóstico** | `--format` REQUIRED on all CLI scripts. No silent paradigm assumption. Format-specific stuff lives in Capa B |
-| 2 | **Automatizable** | Scripts > documentation theater. Hard Rules without enforcement scripts are decoration |
-| 3 | **Escalable** | Pattern 7 capability matrix per validator. New format = new Capa B, Capa A intact |
-| 4 | **Sólido** | Filesystem = ground truth (NOT memory). D38 verifiable via freeze-manifest (NOT trust) |
-
-Plus **7 patterns codified canonical** (No downstream patch of source · Architect proposes, user chooses · SPEC amend with source authority when model constrained · Structural correspondence never manual audit · Cost discipline conservative · No circular self-audit · Parallelize when temporally compatible AND independent).
-
-### Hard Rules (26 numbered, capability-gated)
-See `CLAUDE.md` § "Hard rules globales (NO negociables)". Highlights:
-- **#1** Quality gate primario (Gemini ≥9.7 + audit-against-referent ≥85%)
-- **#19** "NEVER ESTIMATE, ALWAYS MEASURE" — our productions NOT technical authority; F1 referents are
-- **#23** Per-clip atomic assembly canonical V3+ (HYBRID Layer 1)
-- **#25** HYBRID architecture canonical V4+ (captions baked per clip, narrator continuous Layer 3)
-- **#26** Tests adversariales obligatorios forward (test sidecar per new script)
-
----
-
-## Documentation links
-
-- `EXCALIDRAW-SYSTEM-OVERVIEW.md` — multi-layer visual diagram source (parseable by MCP Excalidraw agent) + CP narrative summary in prose.
-- `HANDOFF-SUB-FASE-3A-CIERRE-2026-05-27.md` — latest session detail handoff (8 commits + decisions + pendings + MD5 evidence).
-- `V4-LAUNCH-CHECKLIST.md` — V4 launch gates charter (5 gates GREEN reference).
-- `.claude/skills/creative-director/master-flow-v2/ARCHITECTURAL-DECISIONS.md` — YAML schema for forward decisions.
-- `.claude/skills/creative-director/master-flow-v2/GAPS-LOG.md` — gap tracker (52+ gaps codified).
-- `.claude/skills/video-director/MODEL-BEHAVIOR-LOG.md` — empirical AI model constraints (Gemini --ref face/stability/pose-coupling + label-prefix overlay).
-
----
-
-## Forward / known pending (NO blocks V5)
-
-| Priority | Item |
-|----------|------|
-| **HIGH pre-V5** | Voice A/B test Tomás (Eleguar vs candidate alts) — listen test Rule D PRECEDENCE |
-| MEDIUM forward | Sprint M CRÍTICA 3 validators NOT built (audit-clip-timing-vs-audio + audit-auditor-decision-scope + audit-spec-tier-strategy) |
-| MEDIUM forward | Sprint B 8 validators NOT built (anchor-vs-spec-signature + tts-perceptual + deliverable-vs-spec-manifest + etc.) |
-| LOW forward | HR#26 test debt: `test_apply-voice-preset.py` missing |
-| LOW post-V5 | Cleanup root (11 UI dirs + .bak consolidation) |
-| LOW post-V5 | Marina format slot Capa B build (forward AI Influencer + Hedra Character-3 viable) |
-| Optional | LFS for `cerro-aislado-v4/assets/concat/master_pre_layer3.mp4` 90 MB |
-
----
-
-## Contact / collaboration
-
-- **Primary maintainer**: Tomás Hanna (tomashanna)
-- **Collaborators**: IanCid + afluence (technical)
-- **Communication**: project channel + filesystem ground truth (NOT conversational memory — Principle 4 Sólido)
-
----
-
-**Repo**: `github.com/tomashanna/aI-Video-Edits-`
-**Last verified state**: 2026-05-28, local HEAD == remote HEAD = `be8f3cd`, D38 11× UNCHANGED.
+**Repo**: `github.com/tomashanna/AI-Video-Edits-`

@@ -280,7 +280,7 @@ SELF-AUDIT CHECKPOINT N:
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
 1. **`<repo-root>/CLAUDE.md`** — context global del directorio + hard rules + arquitectura 3 capas + § Mapa de docs autoritativos (UN solo lugar por tema)
-2. **`<repo-root>/INDEX.md`** — mapa rápido trigger → doc
+2. **`<repo-root>/README.md`** — estructura del sistema (capas + 3 roles)
 3. Este archivo (`SKILL.md`) entero — identidad + workflow + hard rules
 4. **`<repo-root>/.claude/skills/video-director/ARCHITECTURE.md`** — las 3 capas
 5. **`<repo-root>/.claude/skills/video-director/WORKFLOW.md`** — loop maestro 5 pasos
@@ -553,9 +553,3 @@ Antes de generar TTS, revisar:
 - Siempre validar con criterio humano: extraer frames a momentos clave + escuchar audio solo con auriculares.
 
 Ver `ai-video-production/NARRATIVE-LED-EDITING.md` (nuevo doc 2026-05-10).
-
----
-
-## Última actualización
-
-2026-05-10. Skill creado durante session de bosque-abandonado v2 a pedido del usuario para codificar la personalidad del editor IA.

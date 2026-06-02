@@ -32,3 +32,22 @@ _archive-phase3-v3-learning/
 # Canonical reference videos kept LOCAL (too large for repo)
 videosref_elige_tu_compa/
 Videos referencia/
+
+# ── Secrets — NEVER commit (si alguna se pusheó, ROTAR la key) ──
+.env
+.env.*
+
+# ── Process-journal efímero por-proyecto (git history ES el log) ──
+# Handoffs/audits/regens per-CP = coordinación efímera, no documentación permanente.
+# Caso disparador: cerro-aislado-v4 (34 .md). Para los ya-trackeados: git rm --cached.
+CP[0-9]*-handoff.md
+CP[0-9]*-*-handoff.md
+*-regen-*-handoff.md
+CP[0-9]*-AUDIT-verdict.md
+*-AUDIT-verdict.md
+FINAL-AUDIT*-handoff.md
+/*/NARRATIVE.md
+# Excepciones — NO ignorar docs canónicos (flows / SPECs / mediciones, no journals):
+!.claude/**
+!referent-analysis/**
+!creative-specs/**

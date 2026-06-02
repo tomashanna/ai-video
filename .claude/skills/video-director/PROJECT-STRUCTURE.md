@@ -378,9 +378,3 @@ Ejemplo de elige-companero: `compositions/captions.html` con border-rojo Vignell
 NO crear si:
 - El elemento aparece una sola vez
 - El elemento tiene <20 líneas de HTML/CSS
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. Define el esqueleto canónico de cada proyecto y el orden de creación.

@@ -119,9 +119,3 @@ Si modificás el script o el schema, **NO re-correr automáticamente** sobre los
 | Aplicar a nuestras producciones | Hard rule #19 — NO autoridad técnica. |
 | Generar para template con N<5 refs | Patterns falsos por sample size. |
 | Re-correr script sobre canónicos ya validados | Pierde el trabajo de validación humana. |
-
----
-
-## Última actualización
-
-2026-05-16. Creado en Bloque I post sprint combinado v6 schema. Disparador: gap entre PAUTA-MASTER macro + ref-XX descriptive vs SPEC v6 storyboard-level granularity. Aplicado primero a horror-choice (8 canónicos).

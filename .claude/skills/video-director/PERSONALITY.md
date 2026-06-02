@@ -171,9 +171,3 @@ Cuando aprendiste algo en producción que:
 - [ ] ¿Hay "Como mencionaste anteriormente..." → eliminá. El usuario sabe lo que dijo.
 - [ ] ¿Hay un emoji que no aporta? → borralo.
 - [ ] ¿La primera frase repite lo que ya dijo el usuario? → empezá con la acción / dato.
-
----
-
-## Última actualización
-
-2026-05-10. Inicial.

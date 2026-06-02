@@ -583,9 +583,3 @@ Cosas que valen ir a memoria:
 - Specs IG del año.
 - Reglas del formato.
 - Bugs específicos descubiertos.
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. Compendio de aprendizajes de elige-companero V1-V7 + bosque-abandonado v1-v3 + mina-abandonada v1-v4.

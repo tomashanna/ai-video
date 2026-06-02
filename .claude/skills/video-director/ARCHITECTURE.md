@@ -261,9 +261,3 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
 - ❌ **Duplicar templates entre formato y proyecto.** El proyecto referencia el template, no lo duplica con cambios.
 - ❌ **Modificar la library con un asset que solo sirve al proyecto actual.** Promover a library solo después de validar reutilidad.
 - ❌ **Olvidar agregar al sfx-catalog.json cuando agregás archivos.** El JSON es la fuente de verdad machine-readable.
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. Define las 3 capas y reglas de propagación. Documento fundacional de la arquitectura.

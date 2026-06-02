@@ -19,7 +19,7 @@ Vas a crear un video nuevo. Antes de hacer NADA, leé en orden los siguientes do
 
 ```
 1. <repo-root>/CLAUDE.md (manual operativo canónico)
-2. <repo-root>/INDEX.md
+2. <repo-root>/README.md (estructura del sistema + capas)
 3. <repo-root>/.claude/skills/ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT
 4. <repo-root>/.claude/skills/ai-video-production/formats/<delivery>.md  (donde <delivery> = reel, youtube-short, etc.)
 5. <repo-root>/.claude/skills/ai-video-production/RETENTION-RULES.md  (si short-form)

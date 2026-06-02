@@ -170,9 +170,3 @@ Claro. Lanzo el comando documentado.
 ### Caso 6: "Hacelo perfecto"
 
 Hyperbólico. **Decisión**: traducir a "≥9.7 Gemini score" y proceder con quality bar. Si requiere muchas iteraciones, hacer scope-cut explícito.
-
----
-
-## Última actualización
-
-2026-05-10. Inicial.

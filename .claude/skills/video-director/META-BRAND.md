@@ -198,9 +198,3 @@ Cuando el usuario tome decisiones que afecten la marca (publicar, elegir nicho n
 2. **Publicar primer video horror-choice** (bosque-abandonado o elige-companero V7) y empezar a capturar métricas (per `PERFORMANCE.md` — a crear)
 3. **Definir Brand de horror-choice-format** (cuenta temática #1) — ver siguiente acción en `horror-choice-format/BRAND.md` (a crear)
 4. **Construir sistema de PERFORMANCE.md** — el feedback loop para que el sistema mejore
-
----
-
-## Última actualización
-
-2026-05-10. Inicial. Refleja decisiones tomadas (estrategia fase 1, voz híbrida, escalado secuencial, no clickbait) y decisiones explícitamente diferidas con criterios de resolución.
