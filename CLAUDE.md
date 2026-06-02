@@ -254,7 +254,7 @@ cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
 cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
 # 4. Verificación obligatoria (NO continuar si falla):
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py qa-gate.py; do
+for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py audit-variant-coverage.py audit-anchor-coverage.py qa-gate.py; do
   [ -f scripts/$f ] && echo "✓ scripts/$f" || echo "✗ MISSING scripts/$f"
 done
 
