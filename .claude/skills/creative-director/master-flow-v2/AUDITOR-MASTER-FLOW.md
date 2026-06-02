@@ -129,6 +129,8 @@ Open items forward: [lista de checks pendientes en CPs siguientes]
 
 ## 4. Verdicts — 4 estados con criterios sharp
 
+> Mismos 4 estados universales 🟢/🟡/🔴/⛔ que define **`TEAM-PROTOCOL § 2`** (home canónico). Acá NO se redefinen: se especializan con los criterios de gating con sabor AUDITOR (qué hace que el auditor marque cada estado) + la acción que dispara en el engineer. (Espeja a `ARCHITECT-MASTER-FLOW § 4`, que cita el mismo home.)
+
 | Verdict | Criterio | Acción engineer |
 |---------|----------|------------------|
 | 🟢 **GO incondicional** | TODOS los items PASS, 0 FAILs, NBs aceptables. Architect verdicts (si aplica) concurrent. | Ejecuta plan exactamente |
