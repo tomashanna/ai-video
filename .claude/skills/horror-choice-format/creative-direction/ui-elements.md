@@ -13,6 +13,8 @@
 
 > El arquitecto define INTENT visual de los elementos UI. El ingeniero implementa con HTML/CSS/GSAP. Estos son elementos signature del formato que el viewer asocia con "es elige a tu compañero".
 
+> ⛔ **Herencia (Capa A.5).** La MECÁNICA UI agnóstica de la familia choice — posiciones/safe-zones, timing del countdown (1.0s/dígito), pause beat (~0.9s), loading bar Y52, countdown Y46, film-leader-academy, no-overlap matrix, SFX tick — vive en **`../../choice-format-core/INGENIERO-CHOICE-CORE.md §1-2`** (técnica) + **`CHOICE-MECHANIC.md`** (intent). Este doc NO la re-define: solo agrega el **sabor horror** (estructura de hitos, variaciones de label dramáticas, color rojo=peligro/cyan=seguro, decisiones creativas de género).
+
 ---
 
 ## Los 4 elementos UI signature
@@ -41,22 +43,12 @@
 - **H4 Decision 2 (alrededor 40-43s):** countdown de decisión
 - **H5 Decision 3 (alrededor 65-68s):** countdown de decisión
 
-### Visual intent
+### Visual intent + position + SFX (técnica agnóstica → home canónico)
 
-- **Forma:** círculo grande centrado
-- **Números:** GRANDE, sans-serif bold, blanco
-- **Animación intent:** 3 → 2 → 1 con scale pop en cada número
-- **Color del círculo:** negro sólido con stroke sutil O transparente con stroke
-- **Background tint:** sutil oscurecimiento del frame mientras está activo
-- **Duración:** ~3 segundos total (1s por número)
+> ⛔ **Countdown técnico → `../../choice-format-core/INGENIERO-CHOICE-CORE.md §1` (pacing) + §2.2 (safe zone Y46).** Ahí viven: estilo `film_leader_academy` (crosshair + dígito central ~40-50% frame, serif/condensed bold), `countdown_digit_duration_s = 1.0`, `pause_beat ~0.9s`, posición Y46 (X50% center), tick audible por dígito **sobre el bed** (no ducked). No dupliques esos valores acá.
 
-### Position
-- Centro absoluto del frame (X 50%, Y 50%)
-- O ligeramente arriba (Y 40%) para no tapar captions narrativos abajo
-
-### SFX intent
-- Tick-tick audible por cada número (tic 3, tic 2, tic 1)
-- Crescendo de tensión
+**Sabor horror (decisión de género, NO en el home):**
+- **Background tint:** sutil oscurecimiento del frame mientras el countdown está activo (refuerza la tensión horror).
 
 ---
 
@@ -72,21 +64,11 @@
 - Aparece como overlay sobre la imagen
 - Dura 2-4 segundos máximo
 
-### Visual intent
+### Visual intent + SFX (técnica agnóstica → home canónico)
 
-- **Forma:** barra horizontal con texto "LOADING" y porcentaje 0% → 100%
-- **Posición:** centro del frame (Y 50%) o adjacent a las choice buttons
-- **Color:** monocromática (blanco/gris) o con accent del archetype elegido
-- **Animación intent:** porcentaje sube de 0 a 100, barra se llena de izquierda a derecha
-- **Duration:** 2-4s
-- **Termina con:** flash/transición al consequence shot
+> ⛔ **Loading bar técnica → `../../choice-format-core/INGENIERO-CHOICE-CORE.md §1.2-1.4` + §2.2 (safe zone Y52).** Ahí viven: posición **Y52** (≥6% sep del countdown Y46), fill L→R, duración **2.0-2.5s** (variante dramática ~4.2s con % counter), termina con flash/cut al consequence shot, beep tick acumulativo. No dupliques esos valores acá.
 
-### SFX intent
-- Beep tick acumulativo a medida que sube el porcentaje
-- Click sutil al llegar a 100%
-- Pre-impact sound antes de la consecuencia
-
-### Variaciones (decisión creativa)
+### Variaciones de label (sabor horror — decisión creativa)
 - "LOADING..." (genérico)
 - "PROCESSING DECISION..."
 - "CALCULATING OUTCOME..."
@@ -107,26 +89,14 @@
 - Side by side dentro del frame
 - Persisten hasta que el countdown termina
 
-### Visual intent
+### Layout + position (técnica agnóstica → home canónico)
 
-- **Layout:** dos paneles horizontales paired left/right
-- **Cada button contiene:**
-  - Letra grande (A o B)
-  - Texto de la opción ("Enciendes la linterna" / "Esperas")
-  - Optional: porcentaje de "votos" (creates community feel)
-- **Color intent:**
-  - Una opción con tinte rojo/peligro (la peligrosa)
-  - Otra opción con tinte azul/cyan/neutral (la segura)
-  - O ambas neutrales blancas
-- **Border:** sutil stroke para legibilidad
-- **Animación:** entrada con fade-in o slide-in sutil
+> ⛔ **Choice buttons técnica → `../../choice-format-core/INGENIERO-CHOICE-CORE.md §2.2` (safe zones) + §2.3 (no-overlap)** + **`CHOICE-MECHANIC.md §3`** (orden hablado = orden de botones). Ahí viven: layout paired, banda/posición + safe zones IG, font monospaced, timing (~2.0-2.5s simultáneo con loading bar). No dupliques esos valores acá.
 
-### Position
-- Mitad inferior del frame, side by side
-- O centradas verticalmente con countdown arriba
-- Respetan safe zones de IG (no derecha extrema donde están likes IG)
+**Color intent (sabor horror — decisión de género):**
+- Una opción con tinte **rojo/peligro** (la peligrosa), otra con **cyan/neutral** (la segura) — o ambas neutrales blancas. Horror puede mapear color a peligro de forma CONSISTENTE entre videos (a diferencia de sport, que rota el color para no spoilear).
 
-### Variantes (decisión creativa)
+### Variantes de layout (decisión creativa)
 
 #### Variante 1 — Texto puro
 ```
@@ -160,14 +130,11 @@ ENCIENDES           ESPERAS
 - Atribución (que no roben el video sin crédito)
 - Reconocimiento serie
 
-### Visual intent
+### Visual intent (técnica agnóstica → home canónico)
 
-- **Texto:** handle del creator (e.g., "@referent-c", "referent-a", "referent-b")
-- **Posición:** bottom-left o bottom-center, fuera de UI Instagram
-- **Opacidad:** 60-80% (sutil, no compite)
-- **Font:** sans-serif simple, weight regular
-- **Color:** blanco con drop shadow sutil
-- **Persistence:** TODO el video (no parpadea, no aparece/desaparece)
+> ⛔ **Watermark técnica → `../../choice-format-core/INGENIERO-CHOICE-CORE.md §2.2`** (posición Y79% / banda 75-85% / X30% bottom-left / sans-serif / always-on / opacidad sutil 60-80% con drop-shadow). No dupliques esos valores acá.
+>
+> **Handle canónico del creator = `@elige_tucompanero`** (memoria `feedback_watermark_handle` — NUNCA `@referent-a`, que es referencia canónica, no nuestro handle). Constante entre videos.
 
 ### Anti-patterns watermark
 
@@ -179,9 +146,7 @@ ENCIENDES           ESPERAS
 
 ### Para tu identidad de creator
 
-- Decidí UN handle único (e.g., "@horror.choice.argentina", "@elige.tu.compañero", "@conspiracionobscura")
-- Mantenelo CONSTANTE entre videos (serie continuity)
-- Posición y opacidad CONSISTENTES (parte del brand visual)
+Handle canónico ya fijado: **`@elige_tucompanero`** (ver pointer arriba + memoria `feedback_watermark_handle`). Posición y opacidad CONSISTENTES entre videos (parte del brand visual).
 
 ---
 
@@ -211,16 +176,7 @@ ENCIENDES           ESPERAS
 
 ## Coordinación con captions
 
-Los UI elements coexisten con narration captions. Coordinación crítica:
-
-| Cuando hay... | Narration caption está... |
-|---------------|----------------------------|
-| Countdown 3-2-1 activo | OFF o MUY tenue (el countdown lleva atención) |
-| Loading bar 0-100% | Narration en pause (voiceover dice "decides...") |
-| Choice buttons A/B mostrados | Caption con narration ALTAS arriba/abajo |
-| Solo narration | UI elements ausentes |
-
-**Regla:** UN elemento UI dominante por vez. Si hay countdown, caption baja. Si hay loading bar, countdown se fue. No overlap visual.
+> ⛔ **Regla agnóstica → `../../choice-format-core/INGENIERO-CHOICE-CORE.md §2.1` (un UI element por banda Y a la vez) + §2.3 (no-overlap matrix completa: qué banda es dueña cuándo + qué queda prohibido).** Resumen: countdown activo → caption baja/OFF; loading bar activa → countdown ya se fue; UN elemento UI dominante por vez. No dupliques la matriz acá.
 
 ---
 
