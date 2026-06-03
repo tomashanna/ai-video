@@ -69,3 +69,9 @@ FINAL-AUDIT*-handoff.md
 !.claude/**
 !referent-analysis/**
 !creative-specs/**
+
+# ── Re-ignorar BASURA regenerable aun bajo los paths negados arriba (last-match-wins) ──
+# Sin esto, las negaciones !.claude/** y !referent-analysis/** re-incluyen .DS_Store/__pycache__.
+**/.DS_Store
+**/__pycache__/
+*.pyc
