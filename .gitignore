@@ -34,6 +34,19 @@ _archive-phase3-v3-learning/
 # Destrackeado; el repo guarda SOLO el sistema agnóstico, no los assets por-video.
 cerro-aislado-v4/
 
+# ── Dirs de PROYECTO de video (local-only, NO sistema) — guard anti-recurrencia ──
+# Cada proyecto vive en su carpeta local; el repo solo trackea el SISTEMA (.claude/, library/,
+# creative-specs/<id>.yaml, componentes, referent-analysis). El SPEC canónico de cada proyecto
+# va a creative-specs/ (tracked); el resto (assets/clips/scripts/handoffs/.venv) es local-only.
+# Proyecto NUEVO → agregar su dir acá (o el bootstrap lo hace). Evita el leak tipo cerro-aislado-v4.
+champions-arsenal-wins/
+champions-psg-wins/
+champions-sport-choice/
+invernadero-turno-riego/
+sala-limpia-bioseguridad/
+client-project-d/
+client-project-c/
+
 # Canonical reference videos kept LOCAL (too large for repo)
 videosref_elige_tu_compa/
 Videos referencia/
