@@ -29,6 +29,11 @@ _snapshot-pre-sub-fase-3A/
 _archive-legacy-projects/
 _archive-phase3-v3-learning/
 
+# Proyecto de video shipped — local-only (su SPEC canónico vive en creative-specs/).
+# Se había committeado entero por accidente (290 files incl .venv + clips mp4 + copia de scripts).
+# Destrackeado; el repo guarda SOLO el sistema agnóstico, no los assets por-video.
+cerro-aislado-v4/
+
 # Canonical reference videos kept LOCAL (too large for repo)
 videosref_elige_tu_compa/
 Videos referencia/
