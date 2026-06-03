@@ -1,0 +1,1643 @@
+# CREATIVE-SPEC — champions-final-arsenal-psg (TOPICAL REEL)
+# schema: v11.1 (HYBRID + canonical refs structural linkage)
+# Author: 🏛️ ARQUITECTO (creative-director) — TOPICAL cierre 2026-05-30
+# Genre: horror-choice × reel | Pattern P3 (Seguro era trampa) | Dyad FOOTBALLER (likeness foto-real)
+# Authority basis: PAUTA-MASTER §§ 3, 15, 24, 25 + SCRIPT-WRITING-GUIDE (framing acción-condicional)
+#   + canonical-scenes ref-08 (P3 "seguro era trampa" — Pablo traidor) + ref-09 (counterfactual OPENING 10/10)
+#   + ref-03/ref-06 (acción-condicional framing) + MODEL-CAPABILITIES-MATRIX (HR#28/#29 narration fit)
+# CONCEPTO LOCKED by user: Final Champions League 2025/26 Arsenal vs PSG (hoy 30 May 2026,
+#   Puskás Aréna Budapest, EN VIVO). POV = jugador en el minuto decisivo; eliges compañero para
+#   la jugada que define la orejona. SAKA (#7 Arsenal) = GLORIA (underdog te salva). DEMBÉLÉ (#10 PSG)
+#   = TERROR (el favorito/seguro era trampa → te mata). Arsenal gana 1-0 (gol Havertz min 6).
+# Self-audit HR#27: 3 validators corridos, 0 findings 🔴 (ver architect_annotations + reporte chat).
+
+schema_version: "v11.1"
+schema_revised: "2026-05-22"
+schema_purpose: "HYBRID architecture canonical V4+ — per-clip atomic captions burned + Layer 3 cross-clip + HyperFrames UI overlay + canonical refs structural linkage — topical football horror-choice"
+
+# ═══════════════════════════════════════════════════════════════
+# 1. PROJECT METADATA
+# ═══════════════════════════════════════════════════════════════
+
+project:
+  project_id: "champions-final-arsenal-psg"
+  format: "horror-choice"
+  delivery: "reel"
+  pattern: "P3"                          # Seguro era trampa — Dembélé el favorito OBVIO es la trampa que mata
+  pattern_rotation_check: "previous in video-log: sala-limpia=P1 (Verdad visible). Topical NOT P1 → P3 (Seguro era trampa). Compliant HR#14 (no repetir pattern consecutivo)."
+  setting: "Final de la Champions League en el Puskás Aréna de Budapest, minuto decisivo del partido en vivo, POV de un jugador de Arsenal sobre el césped"
+  total_duration_s_intent: 90            # banda 80-100s; target 90s
+  channel: "@elige_tucompanero"
+  language: "Spanish neutral"            # tú/dices/eliges — NUNCA voseo
+  topical: true
+  topical_window: "30 May 2026 — partido en vivo; publicar inmediato (caduca tras el pitido final)"
+  location: "estadio de futbol Puskás Aréna final Champions césped en vivo"
+  signature_staging: "POV de jugador de Arsenal en el círculo central del Puskás Aréna en el minuto decisivo de la final; a su lado Saka, su compañero, con la camiseta roja de mangas blancas dorsal 7 y sonrisa amplia, y frente a él Dembélé, el rival favorito, con la camiseta azul marino de franja roja dorsal 10 y bigote, ejerciendo una atracción uncanny que lo tienta a cederle el balón, mientras 67000 hinchas rugen y el marcador clava Arsenal 1 PSG 0 bajo los focos"
+
+# ═══════════════════════════════════════════════════════════════
+# 1.6 VIDEO CAPABILITIES (Pattern 7 Capability Matrix — MANDATORIO)
+# ═══════════════════════════════════════════════════════════════
+
+video_capabilities:
+  source_clips_origin: "ai_generated"
+  has_ai_generated_clips: true
+  has_tts_narration: true
+  has_human_voiceover: false
+  audio_mix_target: "lufs_-14"
+  has_sfx_layer: true
+  has_captions_baked: true
+  has_layer_2_effects: true
+  has_layer_3_music: true
+  has_layer_4_ui: true
+  format_type: "interactive_choice"
+  duration_intent_s: 90
+  target_fps: 30
+  output_resolution: "1080x1920"
+
+# ═══════════════════════════════════════════════════════════════
+# 1.5 REFERENCES CANONICAL (≥5/8 — mandatory linkage)
+# ═══════════════════════════════════════════════════════════════
+
+references_canonical:
+  - ref_id: "ref-08"                              # canonical-scenes/ref-08-hugo-pablo-acuario.md
+    informs:
+      - "project.pattern"
+      - "narrative_structure.cliffhanger_archetype"
+      - "characters.char_a"
+      - "shot_list.shot_06.narration_in_this_shot"
+    why_relevant: "ref-08 es EL referente P3 'seguro era trampa': Pablo, el compañero que parece confiable, es el traidor que te mata empujándote al tanque/anguilas. Calco esa inversión apariencia≠verdad a Dembélé: el FAVORITO obvio (PSG bicampeón, Balón de Oro) parece la apuesta segura/lógica para ganar la orejona, pero elegirlo te mata. Calco también: bueno aparente que HABLA on-screen (Hugo 'No me elijas' → Saka 'Pásamela a mí, yo la meto'), 2-3 decisiones internas compactas, body horror SPECIFIC al setting (no genérico), outro Paz-perdida laboral/deportivo cozy (vuelta olímpica con la copa)."
+
+  - ref_id: "ref-09"                              # canonical-scenes/ref-09-victor-axel-cockpit.md
+    informs:
+      - "narrative_structure.counterfactual_placement"
+      - "narrative_structure.emotional_framing"
+      - "shot_list.shot_02.narration_in_this_shot"
+    why_relevant: "ref-09 obtuvo 10/10 en comprensión narrativa con counterfactual OPENING ('Si hubieras elegido Axel, habrían hablado toda la noche...') ANTES de que el path peligroso resuelva = sube stakes (PAUTA § 24, before_choice_resolves + stakes_lift). Calco esa colocación: el cozy de Saka (levantar la orejona, vuelta olímpica) se enuncia temprano (shot_02) para crear contraste emocional antes de entrar al path fatal de Dembélé. También la cadena de 3 decisiones escaladas + cierre 'sigues con vida'."
+
+  - ref_id: "ref-03"                              # canonical-scenes/ref-03-bruno-pablo-mina.md
+    informs:
+      - "narrative_structure.canonical_constraints.consequence_framing_style"
+      - "shot_list.shot_07.narration_in_this_shot"
+      - "editing_targets.pacing_modulation"
+    why_relevant: "ref-03 fija el framing acción-condicional dominante ('Si la enciendes, Bruno te agarra del brazo') + 'Ahora decides' como gatillo universal. Calco ese estilo de consecuencia ('Si se la pasas a Dembélé...', 'Si pisas el área...') y el pacing de horror lento que estalla en el body horror. El malo TIENTA al viewer a hacer la jugada peligrosa; obedecer al instinto del favorito mata."
+
+  - ref_id: "ref-06"                              # canonical-scenes/ref-06-enzo-axel-carretera.md
+    informs:
+      - "shot_list.shot_16.narration_in_this_shot"
+      - "narrative_structure.canonical_constraints.si_elegiste_framing_required"
+    why_relevant: "ref-06 cierra el path de supervivencia donde resistir al peligro te salva 'con vida' + body horror específico del setting (choque, atropello, arrastre). Calco la dinámica del clímax: el viewer que confía en Saka (no en el favorito) sobrevive y gana; el framing acción-condicional 'Si se la das a Saka' → marca la rama. CTA verbal final ('Elige a tu compañero para...') también de ref-06."
+
+  - ref_id: "ref-10"                              # canonical-scenes/ref-10-rurik-enzo-fundicion.md
+    informs:
+      - "characters.char_a.visual_signature"
+      - "music_continuous_layers.drone_base"
+      - "shot_list.shot_05.narration_in_this_shot"
+    why_relevant: "ref-10 (Rurik, dinámica de control procedural del malo + body horror del setting industrial) informa cómo Dembélé EJERCE control sobre la jugada ('dámela, yo la llevo') antes de que su path se vuelva pesadilla. Calco la escalada de 2-3 órdenes/llamadas que el viewer obedece o resiste y el drone base de tensión sostenida bajo el rugido del estadio."
+
+  # Refs NOT usados (declaro razón):
+  # - ref-11 (@referent-c atypical, NO referent-a canon — excluido per INDEX outliers flag)
+  # - ref-12 (outro melodramático 43s + apuñalamiento — tono ajeno al topical deportivo)
+  # - ref-13 (P6 hedonismo — pattern no aplicable a este concepto P3)
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ASSEMBLY STRATEGY
+# ═══════════════════════════════════════════════════════════════
+
+assembly_strategy: "per_clip_atomic_hybrid"     # Hard Rule #25 — V4+ canonical
+
+# ═══════════════════════════════════════════════════════════════
+# 3. HYBRID LAYERS DECLARATION (Hard Rule #25)
+# ═══════════════════════════════════════════════════════════════
+
+hybrid_layers:
+  layer_1_per_clip_atomic:
+    description: "Per-shot mp4 con visual + audio clip-scoped + captions BURNED en frame data"
+    captions_source: "whisper_from_clip_audio"
+    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    audio_bundled_per_clip:
+      - "narrator_segments_within_this_clip"
+      - "character_dialog_within_this_clip"        # Saka (lip-sync) + Dembélé (1-2 líneas)
+      - "diegetic_sfx_within_this_clip"            # crowd roar / whistle / net / chants + screams en muertes
+      - "clip_scoped_ambient_short"
+    output_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_atomic.mp4"
+    manifest_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_manifest.yaml"
+
+  layer_2_effects_between_clips:
+    description: "Transiciones + stings en boundaries (hard-cut+whoosh, white-flash en body horror, freeze-filter en decisión)"
+    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/transitions/"
+    transition_variety_min: 3
+    non_diegetic_sfx_placement: "effect_layer"
+
+  layer_3_cross_clip_continuous:
+    description: "Audio que NO corta en boundaries — overlaid post-concat con sidechain duck"
+    layers:
+      - "narrator_master_continuous"
+      - "music_drone_base"
+      - "ambient_stadium_crowd_continuous"
+    sidechain_target_db: -6
+    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+
+  layer_4_hyperframes_ui_overlay:
+    description: "Countdown film-leader + decision UI (loading Y52 / countdown Y46) + name labels LARGE + outro card"
+    elements:
+      - "countdown_3_2_1_hook"
+      - "decision_freeze_d1"
+      - "decision_freeze_d2"
+      - "decision_freeze_d3"
+      - "outro_card_cliffhanger"
+      - "watermark_handle_persistent"
+
+# ═══════════════════════════════════════════════════════════════
+# 4. CHARACTERS (footballers — likeness foto-real descriptor-based)
+# ═══════════════════════════════════════════════════════════════
+
+characters:
+  - character_id: "char_a"
+    name: "Dembélé"
+    name_validation:
+      is_real_invented_name: false                 # EXCEPCIÓN topical: persona real (jugador). NO nombre inventado.
+      blacklist_check_passed: true                 # NO job description
+      canonical_8_refs_pattern: "real_world_public_figure_topical_exception"
+      topical_real_person_exception: true          # concepto LOCKED user: jugadores reales del partido en vivo
+    role: "malo_aparente"
+    archetype: "P3 — Seguro era trampa (el favorito obvio/lógico para ganar es la elección que te mata)"
+    visual_signature: |
+      Futbolista profesional, extremo derecho del PSG. Piel oscura, pelo negro
+      rapado muy corto, BIGOTE/mostacho característico, expresión seria e intensa,
+      mirada penetrante. Complexión atlética explosiva, ≈178 cm, 29 años. Viste el
+      KIT DEL PSG: camiseta azul marino con una franja roja vertical central,
+      pantalón azul marino, dorsal NÚMERO 10 grande en la espalda y al frente.
+      Postura de delantero confiado, gestos rápidos que reclaman el balón.
+      NOTA likeness: describir por RASGOS FOTO-REALES reconocibles (extremo PSG,
+      piel oscura, rapado, bigote, kit azul franja roja #10) — NO el nombre de
+      celebridad literal en el prompt (los modelos t2i no reproducen personas reales
+      nombradas; ver production_risk). Iterar en CP1 hasta likeness aceptable.
+    voice_id_canonical: "K3TeN3ZVK8WnOeJ0NYqZ"     # 1-2 líneas reclamando el balón (lip-sync simple)
+    anchor_image_id: "char_a_v1"
+    locus_anchor_required: false                   # likeness vive en cara/kit (rasgos coherentes), no en anatomía rara aislada
+
+  - character_id: "char_b"
+    name: "Saka"
+    name_validation:
+      is_real_invented_name: false                 # EXCEPCIÓN topical: persona real (jugador). NO nombre inventado.
+      blacklist_check_passed: true
+      canonical_8_refs_pattern: "real_world_public_figure_topical_exception"
+      topical_real_person_exception: true
+    role: "bueno_aparente"
+    archetype: "P3 dyad partner — el underdog que parece la apuesta arriesgada pero ES la salvación"
+    visual_signature: |
+      Futbolista profesional, extremo derecho del Arsenal. Piel marrón, pelo negro
+      muy corto/rapado, BARBA corta, SONRISA amplia y cálida característica.
+      Complexión atlética compacta, ≈178 cm, 24 años. Viste el KIT DEL ARSENAL:
+      camiseta ROJA con mangas BLANCAS, pantalón blanco, dorsal NÚMERO 7 grande en
+      la espalda y al frente. Postura juvenil, enérgica, pide el balón con la mano
+      abierta y sonríe. NOTA likeness: describir por RASGOS FOTO-REALES (extremo
+      Arsenal, piel marrón, rapado, barba corta, sonrisa amplia, kit rojo mangas
+      blancas #7) — NO el nombre literal en el prompt. Iterar en CP1.
+    voice_id_canonical: "K3TeN3ZVK8WnOeJ0NYqZ"     # Saka HABLA on-screen (variabilidad ref-08): 1 línea + outro
+    anchor_image_id: "char_b_v1"
+    locus_anchor_required: false
+
+narrator_voice: "K3TeN3ZVK8WnOeJ0NYqZ"            # David C2 (157.2 WPM medido; engineer aplica atempo ×1.05 → ~165 WPM)
+
+# ═══════════════════════════════════════════════════════════════
+# 5. NARRATIVE STRUCTURE (counterfactual + emotional framing)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_structure:
+  model_constraints_acknowledged: true                  # HR#28/#29 — narración@165 ≤ min(dur, clip_max tier) por shot
+  counterfactual_placement: "before_choice_resolves"   # CANONICAL preferred (ref-09 10/10, PAUTA § 24)
+  emotional_framing: "stakes_lift"
+  cliffhanger_archetype: "P3"                          # Seguro era trampa — Dembélé el favorito mata; Saka el underdog salva
+  pattern: "P3"
+
+  canonical_constraints:
+    no_retrospective_counterfactual: true
+    si_elegiste_framing_required: true                 # marcar la rama vía acción condicional ("Si se la pasas a Dembélé")
+    consequence_framing_style: "accion_condicional"    # NO bare label "Si elegiste A"
+    visual_matches_narration_literal: true
+    first_person_pov_locked: true
+
+  hook_sub_beats:                                      # PAUTA § 19.5 ordering canonical (countdown LAST)
+    - beat_id: "name_labels_intro"
+      timestamp_intent_s: [0.0, 2.0]
+      content: "Dyad simultánea Saka + Dembélé con name labels monospaced GRANDES (Y11.5) — name_label_fontsize_intent=large (TASTE-LOG #2.1)"
+    - beat_id: "caption_setting_warning"
+      timestamp_intent_s: [2.0, 4.5]
+      content: "Narrator framing 'Final de la Champions. Minuto decisivo. Elige a tu compañero.' + caption marcador ARSENAL 1 - PSG 0"
+    - beat_id: "push_in_micro_motion"
+      timestamp_intent_s: [4.5, 6.0]
+      content: "POV slow push-in hacia el dyad sobre el césped (NO zoom-cut — feedback_hook_continuity_no_zoom_cut)"
+    - beat_id: "countdown_3_2_1"
+      timestamp_intent_s: [6.0, 9.0]
+      content: "Film Leader Academy countdown vía AVU clip (digit 1.0s c/u)"
+      avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+
+# ═══════════════════════════════════════════════════════════════
+# 6. NARRATIVE SECTIONS (cross-shot audio + LUT continuity)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_sections:
+  - section_id: "hook"
+    shot_ids: ["shot_01"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+  - section_id: "counterfactual_opening"
+    shot_ids: ["shot_02"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+  - section_id: "setup_pre_decision"
+    shot_ids: ["shot_03", "shot_04", "shot_05"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+  - section_id: "decision_1"
+    shot_ids: ["shot_06"]
+    audio_layer_continuity_within_section: ["drone_base"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+  - section_id: "consequence_d1"
+    shot_ids: ["shot_07", "shot_08", "shot_09"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+  - section_id: "decision_2"
+    shot_ids: ["shot_10", "shot_11"]
+    audio_layer_continuity_within_section: ["drone_base"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+  - section_id: "consequence_d2"
+    shot_ids: ["shot_12", "shot_13", "shot_14"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+  - section_id: "decision_3_climax"
+    shot_ids: ["shot_15", "shot_16"]
+    audio_layer_continuity_within_section: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+  - section_id: "consequence_d3"
+    shot_ids: ["shot_17", "shot_18", "shot_19"]
+    audio_layer_continuity_within_section: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_horror_v1"
+  - section_id: "resolution_b"
+    shot_ids: ["shot_20", "shot_21"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+  - section_id: "cliffhanger_outro"
+    shot_ids: ["shot_22"]
+    audio_layer_continuity_within_section: ["outro_drone", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 7. MUSIC LAYERS (3 mandatory — PAUTA § 25)
+# ═══════════════════════════════════════════════════════════════
+
+music_continuous_layers:
+  - layer_id: "drone_base"                             # LAYER 1 drone (continuous 80-100%)
+    scope: "cross_clip_continuous"
+    sections: [{from: 0, to: 90, intent: "drone subharmónico de tensión sostenida bajo el rugido del estadio"}]
+    eleven_labs_prompt: "low subharmonic drone, sustained deep bass tension, no melody, dark cinematic sports-thriller bed, faint orchestral swell undertone"
+    compose_strategy: "single_continuous_90s"
+    target_lufs_pre_mix: -27
+    sidechain_duck_target: true
+  - layer_id: "ambient_celebration_warm"               # LAYER 2 ambient cozy (counterfactual/resolution/outro)
+    scope: "cross_clip_continuous"
+    sections: [{from: 9, to: 16, intent: "celebración gloriosa cálida"}, {from: 76, to: 90, intent: "vuelta olímpica + outro copa"}]
+    eleven_labs_prompt: "triumphant stadium celebration ambience, distant euphoric crowd cheering warm, confetti rustle, victory tone, uplifting, no horror"
+    compose_strategy: "single_8s_reusable"
+    target_lufs_pre_mix: -26
+  - layer_id: "accent_climax"                           # LAYER 3 accent (event-driven D3 clímax)
+    scope: "clip_scoped_or_effect"
+    sections: [{from: 58, to: 70, intent: "tensión rising en decisión 3 + body horror clímax"}]
+    eleven_labs_prompt: "rising dark cinematic strings tension, pounding low pulse building, climax buildup, dread crescendo, no resolution"
+    compose_strategy: "single_12s"
+    target_lufs_pre_mix: -25
+  - layer_id: "outro_drone"
+    scope: "cross_clip_continuous"
+    sections: [{from: 82, to: 90, intent: "cliffhanger sostenido final sobre la celebración"}]
+    eleven_labs_prompt: "sustained low hum gradual fade blended with faint triumphant swell, cliffhanger atmospheric, loop cue"
+    compose_strategy: "single_8s_fade_in"
+    target_lufs_pre_mix: -27
+
+cross_clip_continuous_audio_layers:
+  layer_3_continuous:
+    - "drone_base"
+    - "ambient_stadium_crowd_continuous"
+    - "ambient_celebration_warm"
+    - "outro_drone"
+    - "narrator_master_continuous"
+  layer_1_clip_scoped:
+    - "saka_dialog_within_clip"
+    - "dembele_dialog_within_clip"
+    - "diegetic_sfx_within_clip"        # whistle / net / chants / boot-strike / scream
+    - "accent_climax"
+
+# Nota: ambient_stadium_crowd_continuous = LAYER 2 ambient principal (rugido de 67000 hinchas
+# del Puskás, cánticos, eco del estadio) — continuo casi todo el video (la final NO calla nunca).
+ambient_continuous_environment:
+  layer_id: "ambient_stadium_crowd_continuous"
+  scope: "cross_clip_continuous"
+  sections: [{from: 0, to: 90, intent: "rugido continuo de hinchada llena del Puskás Aréna, cánticos lejanos, eco de estadio cerrado"}]
+  eleven_labs_prompt: "packed football stadium crowd roar continuous, distant chanting ultras, echoing closed-roof arena ambience, tension murmur, no music"
+  compose_strategy: "loop_10s_stretched"
+  target_lufs_pre_mix: -28
+
+# ═══════════════════════════════════════════════════════════════
+# 8. PACING + EDITING TARGETS (PAUTA § 23 — band 14-22 cuts/min)
+# ═══════════════════════════════════════════════════════════════
+
+editing_targets:
+  target_cuts_per_min: [18, 22]
+  target_total_cuts: [27, 33]                          # 22 shots base + mini-cuts/reaction inserts → ~28-30 perceived cuts en 90s
+  transition_variety_min: 3
+  pacing_modulation:
+    hook: [10, 13]
+    counterfactual_opening: [12, 15]
+    setup_pre_decision: [16, 20]
+    decision_1: [10, 13]
+    consequence_d1: [22, 28]
+    decision_2: [10, 13]
+    consequence_d2: [22, 28]
+    decision_3_climax: [25, 30]
+    consequence_d3: [25, 30]
+    resolution_b: [12, 16]
+    cliffhanger_outro: [10, 14]
+
+# ═══════════════════════════════════════════════════════════════
+# 9. NARRATION SCRIPT (texto canónico exacto — Spanish neutral)
+# ═══════════════════════════════════════════════════════════════
+# Estilo: 2ª persona presente, framing acción-condicional ("Si se la pasas..."), "Ahora decides"
+# gatillo, body horror nominal específico al estadio. Total ≈ 185 palabras → ~67s narrados en 90s.
+# Cada segmento: palabras/165*60 ≤ duración del shot ancla (HR#28/#29).
+
+narration_script:
+  - segment_id: "narrator_hook"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Final de la Champions. Minuto decisivo. A tu lado, Saka. Frente a ti, Dembélé."
+    timestamp_intent_s: [2.0, 5.5]
+    shot_id_anchor: "shot_01"
+    lip_sync_required: false
+
+  - segment_id: "narrator_cozy_counterfactual"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dembélé te sonríe y te muestra la gloria. Dámela a mí, te susurra, y la copa es tuya."
+    timestamp_intent_s: [9.0, 16.0]
+    shot_id_anchor: "shot_02"
+    lip_sync_required: false
+
+  - segment_id: "narrator_setup"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Ganas uno a cero. Dembélé, el Balón de Oro, tira de ti."
+    timestamp_intent_s: [16.0, 24.0]
+    shot_id_anchor: "shot_03"
+    lip_sync_required: false
+
+  - segment_id: "dembele_d1_call"
+    speaker: "char_a"                                  # Dembélé tienta reclamando el balón (lip-sync simple)
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dámela a mí, yo la meto."
+    timestamp_intent_s: [25.5, 27.0]
+    shot_id_anchor: "shot_05"
+    lip_sync_required: true
+
+  - segment_id: "narrator_d1_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dembélé te llama y no puedes apartar la vista. Ahora decides. Cedes o resistes."
+    timestamp_intent_s: [27.0, 32.0]
+    shot_id_anchor: "shot_06"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_a"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si cedes a Dembélé, la luz del estadio se apaga."
+    timestamp_intent_s: [33.0, 38.0]
+    shot_id_anchor: "shot_07"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_b"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si resistes, Saka se abre al espacio y pide la pared."
+    timestamp_intent_s: [39.0, 44.0]
+    shot_id_anchor: "shot_09"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dembélé tira más fuerte de ti. Ahora decides. Cedes a él o resistes."
+    timestamp_intent_s: [45.0, 51.0]
+    shot_id_anchor: "shot_11"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_a"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si cedes de nuevo, el césped se abre y miles de manos te arrastran abajo."
+    timestamp_intent_s: [52.0, 58.0]
+    shot_id_anchor: "shot_12"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_b"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si resistes de nuevo, encaras al arco con Saka libre."
+    timestamp_intent_s: [60.0, 65.0]
+    shot_id_anchor: "shot_14"
+    lip_sync_required: false
+
+  - segment_id: "saka_d3_call"
+    speaker: "char_b"                                  # Saka habla pidiendo el balón (lip-sync, variabilidad ref-08)
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Confía en mí. Pásamela, la meto."
+    timestamp_intent_s: [65.5, 67.0]
+    shot_id_anchor: "shot_15"
+    lip_sync_required: true
+
+  - segment_id: "narrator_d3_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Última jugada. Ahora decides. Cedes a Dembélé o confías en Saka."
+    timestamp_intent_s: [67.0, 72.0]
+    shot_id_anchor: "shot_16"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_a"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si cedes a Dembélé y se la das, el estadio entero te traga."
+    timestamp_intent_s: [72.0, 78.0]
+    shot_id_anchor: "shot_17"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_b"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si confías en Saka, la clava al ángulo. Arsenal campeón. Sigues con vida."
+    timestamp_intent_s: [78.0, 84.0]
+    shot_id_anchor: "shot_20"
+    lip_sync_required: false
+
+  - segment_id: "saka_warm_line"
+    speaker: "char_b"                                  # Saka HABLA on-screen — lip-sync (variabilidad ref-08)
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Te lo dije, hermano."
+    timestamp_intent_s: [85.0, 86.5]
+    shot_id_anchor: "shot_22"
+    lip_sync_required: true
+
+  - segment_id: "narrator_outro_cta"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Elige bien a tu compañero. Y vuelve mañana."
+    timestamp_intent_s: [87.0, 90.0]
+    shot_id_anchor: "shot_22"
+    lip_sync_required: false
+
+# ═══════════════════════════════════════════════════════════════
+# 10. SHOT LIST (storyboard-level — Hard Rule #21 — 22 shots)
+# ═══════════════════════════════════════════════════════════════
+# camera_intent = frases descriptivas (NO label-prefix — MODEL-BEHAVIOR-LOG Entry 2).
+# ≤3 props por shot (MODEL-BEHAVIOR-LOG Entry 1 stability budget).
+
+shot_list:
+
+  - shot_id: "shot_01"
+    section_id: "hook"
+    description: "POV first-person de un jugador de Arsenal frente al dyad Saka + Dembélé en el círculo central del Puskás Aréna, focos del estadio, gradas llenas"
+    duration_intent_s: 6.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "El viewer (jugador de Arsenal) enfrenta a Saka (izquierda, kit rojo mangas blancas #7, sonriendo) y a Dembélé (derecha, kit azul franja roja #10, serio) sobre el césped en el minuto decisivo"
+      why_this_shot_exists: "Establecer dyad simultánea + setting final Champions en vivo + premisa P3 (el favorito vs el underdog)"
+      camera_intent: "Primera persona, plano medio-amplio, leve micro-bob de cámara, mirando de frente a los dos jugadores a unos pocos metros sobre el césped iluminado"
+    motion_bridge_intent:
+      from_previous: "N/A — primer shot, cámara establece en reposo"
+      to_next: "Cross-fade cálido hacia el counterfactual glorioso de Saka"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1", char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"   # countdown LAST 6.0-9.0s
+    narration_in_this_shot: "Final de la Champions. Minuto decisivo. A tu lado, Saka. Frente a ti, Dembélé."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Plano medio-amplio POV sobre el césped del Puskás Aréna. Saka a la izquierda:
+      camiseta roja de mangas blancas, dorsal 7, piel marrón, rapado, barba corta,
+      sonrisa amplia, pide el balón con la mano abierta. Dembélé a la derecha:
+      camiseta azul marino con franja roja central, dorsal 10, piel oscura, rapado,
+      bigote, expresión seria. Gradas llenas desenfocadas al fondo, focos del estadio,
+      césped verde brillante.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["crowd_blur_motion_background", "stadium_floodlight_bloom", "saka_hand_calling_for_ball", "dembele_shifting_weight"]
+    setting_ambient_creature_or_object: "banderas y bengalas de las gradas ondeando desenfocadas al fondo (elemento ambient vivo del estadio)"
+    character_active_gesture_per_shot: "Saka sonríe y pide el balón con la mano; Dembélé mira fijo y golpea el césped con el tacón"
+    ui_active:
+      - {element_id: "name_label_char_b", timestamp_visible_s: [0.0, 4.5], position: {y_pct: 11.5}, text: "SAKA", font: "monospaced", fontsize_intent: "large"}
+      - {element_id: "name_label_char_a", timestamp_visible_s: [0.0, 4.5], position: {y_pct: 11.5}, text: "DEMBÉLÉ", font: "monospaced", fontsize_intent: "large"}
+      - {element_id: "warning_caption_setting", timestamp_visible_s: [2.0, 4.5], position: {y_pct: 62}, text: "ARSENAL 1 - PSG 0  ·  MINUTO DECISIVO", font: "drop_shadow_canonical", color: "red"}
+
+  - shot_id: "shot_02"
+    section_id: "counterfactual_opening"
+    description: "Tentación OPENING — Dembélé (rival favorito) seduce al viewer con una visión de gloria (la copa) para que se la dé a ÉL, ANTES de la 1ª decisión. NO revela el resultado real (anti-spoiler F3); plantea la trampa P3."
+    duration_intent_s: 8.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Dembélé (rival #10), como una presencia uncanny, le sonríe al viewer y le hace ver una visión seductora: el viewer alzando la orejona; le susurra que esa gloria es suya si le da el balón a él"
+      why_this_shot_exists: "Tentación del rival favorito ANTES del choice → sube stakes + instala la trampa P3 (la copa que el rival te promete). NO spoilea quién salva (F3)."
+      camera_intent: "Primera persona cálida y onírica: Dembélé al frente sonriendo, y sobre él una visión dorada del viewer alzando la orejona entre confeti, como un espejismo que el rival proyecta"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde el dyad — cambio tonal a warm glory"
+      to_next: "Hard cut con whoosh de vuelta al campo en tensión (contraste cool)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Dembélé te sonríe y te muestra la gloria. Dámela a mí, te susurra, y la copa es tuya."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Plano POV cálido y onírico. Dembélé (kit azul franja roja #10, bigote) al frente
+      sonriendo de forma uncanny y extendiendo la mano hacia la cámara; sobre él, como
+      un espejismo dorado, una visión de las manos del viewer alzando la copa de la
+      Champions (orejas plateadas) entre confeti dorado. Luz cálida seductora,
+      irreal — una promesa, no un recuerdo.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["golden_confetti_falling", "warm_floodlight_glow", "trophy_vision_shimmer"]
+    setting_ambient_creature_or_object: "espejismo dorado de la copa flotando sobre Dembélé como una promesa irreal"
+    character_active_gesture_per_shot: "Dembélé sonríe y extiende la mano hacia el viewer, ofreciéndole la gloria"
+    ui_active:
+      - {element_id: "caption_counterfactual", timestamp_visible_s: [0.5, 4.5], position: {y_pct: 62}, text: "DEMBÉLÉ TE PROMETE LA COPA", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_03"
+    section_id: "setup_pre_decision"
+    description: "Setup — POV en el campo, vas ganando 1-0, marcador y reloj en pantalla, Dembélé el favorito reclamando"
+    duration_intent_s: 5.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer avanza con el balón; al fondo el marcador clava Arsenal 1 PSG 0 y el reloj casi en 90; Dembélé el favorito gesticula reclamando el balón"
+      why_this_shot_exists: "Establecer stakes (final por ganar) + premisa P3 (Dembélé el favorito = la apuesta lógica) + dinámica de control del malo"
+      camera_intent: "Primera persona avanzando con el balón a los pies sobre el césped, leve balanceo, Dembélé adelantándose y reclamando con los brazos"
+    motion_bridge_intent:
+      from_previous: "Hard cut con whoosh desde la gloria cálida al campo en tensión"
+      to_next: "POV continúa, baja la mirada al balón en los pies"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Ganas uno a cero. Dembélé, el Balón de Oro, tira de ti."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV avanzando con el balón a los pies sobre el césped del Puskás. Al fondo el
+      marcador electrónico muestra ARSENAL 1 - PSG 0 y el reloj cerca del 90. Dembélé
+      (kit azul franja roja #10), rival, se adelanta hacia el viewer con la mano
+      extendida y una intensidad magnética, como atrayéndolo. Gradas llenas, focos. Tensión.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["scoreboard_clock_ticking", "crowd_blur_motion_background", "dembele_arms_demanding_ball", "floodlight_flare"]
+    setting_ambient_creature_or_object: "marcador electrónico del estadio con el reloj corriendo hacia el 90"
+    character_active_gesture_per_shot: "Dembélé se adelanta y abre los brazos exigiendo el balón"
+    ui_active:
+      - {element_id: "caption_setup_1", timestamp_visible_s: [0.5, 5.0], position: {y_pct: 62}, text: "GANAS 1-0  ·  DEMBÉLÉ TE LLAMA", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_04"
+    section_id: "setup_pre_decision"
+    description: "Reaction insert — POV mira sus propias botas y el balón en el césped (mini-cut pacing § 23)"
+    duration_intent_s: 2.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer baja la mirada al balón entre sus botas de tacos sobre el césped recortado; gotas de sudor caen"
+      why_this_shot_exists: "POV body-part visibility (PAUTA § 22.3) + mini-cut para subir cuts/min + meter al viewer dentro de la jugada"
+      camera_intent: "Primera persona mirando hacia abajo a las botas y el balón sobre el césped, breve, luego sube hacia los jugadores"
+    motion_bridge_intent:
+      from_previous: "Continúa el avance — la mirada baja al balón"
+      to_next: "La mirada sube hacia Dembélé en el área"
+    pov_traversal: "looking_around"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "looking_around"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV close-up de las botas de tacos del viewer y el balón blanco oficial de la
+      Champions sobre el césped recortado bajo los focos. Gotas de sudor caen al
+      césped. Sombras largas de los focos del estadio.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["sweat_drops_falling", "grass_blade_micro_motion", "ball_slight_roll"]
+    setting_ambient_creature_or_object: "balón oficial de la Champions rodando apenas sobre el césped iluminado"
+    character_active_gesture_per_shot: "El pie del viewer apoya la suela sobre el balón (gesto POV de control)"
+    ui_active: []
+
+  - shot_id: "shot_05"
+    section_id: "setup_pre_decision"
+    description: "Dembélé (rival favorito) tienta al viewer y reclama el balón (lip-sync simple) — setup del D1"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Dembélé, frente al viewer, levanta la mano y le susurra 'Dámela a mí, yo la meto' con una sonrisa magnética que tira de él"
+      why_this_shot_exists: "Setup del D1 + Slot D dinámica de control del malo (PAUTA § 10) — el rival favorito te tienta a cederle el balón"
+      camera_intent: "Primera persona, plano medio sobre Dembélé desmarcado en el área levantando la mano, gradas y portería al fondo"
+    motion_bridge_intent:
+      from_previous: "La mirada llega a Dembélé en el área"
+      to_next: "Freeze + filtro de decisión D1 (decision_freeze)"
+    pov_traversal: "approaching_character"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "approaching_character"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""   # Dembélé entrega la línea vía dialog_text (lip-sync); narrador NO repite (HR#27 fix Opción A)
+    has_lip_sync_required: true
+    dialog_text: "Dámela a mí, yo la meto."
+    visual_intent: |
+      POV plano medio sobre Dembélé (kit azul franja roja #10, bigote), rival, frente
+      al viewer, levantando la mano y susurrando con una sonrisa magnética que tira de
+      la cámara hacia él. Portería y red al fondo, gradas llenas, focos. Tensión.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["dembele_hand_raised_calling", "crowd_blur_motion_background", "net_slight_sway"]
+    setting_ambient_creature_or_object: "red de la portería ondeando levemente con el viento del estadio"
+    character_active_gesture_per_shot: "Dembélé levanta la mano y reclama el balón mirando a la cámara"
+    ui_active: []
+
+  - shot_id: "shot_06"
+    section_id: "decision_1"
+    description: "DECISIÓN 1 — freeze + filtro + countdown film-leader + loading bar. Categoría: confianza en el favorito"
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Frame congelado de Dembélé reclamando en el área + el balón en los pies del viewer; el viewer debe decidir"
+      why_this_shot_exists: "Decision UI editorial moment (PAUTA § 18): freeze + filtro + countdown + loading bar Y52"
+      camera_intent: "Primera persona congelada sobre Dembélé y el balón, leve grano de filtro"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_05 con filtro de decisión aplicado"
+      to_next: "White-flash a la rama A (consecuencia)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "Dembélé te llama y no puedes apartar la vista. Ahora decides. Cedes o resistes."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado de Dembélé (rival) tentando al frente + el balón en los pies del
+      viewer. Filtro de grano + leve viñeta (decision moment). Countdown film-leader
+      academy 3-2-1 centrado (Y46) + loading bar (Y52) + opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "vignette_pulse", "frozen_crowd_shimmer"]
+    setting_ambient_creature_or_object: "balón congelado como foco visual de la decisión (objeto del setting)"
+    character_active_gesture_per_shot: "El pie del viewer titubea sobre el balón (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d1", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d1", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 52}, text: "", font: "n/a"}
+      - {element_id: "choice_a_d1", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 75}, text: "A. CEDES A DEMBÉLÉ", font: "monospaced"}
+      - {element_id: "choice_b_d1", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 82}, text: "B. RESISTES", font: "monospaced"}
+
+  - shot_id: "shot_07"
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA A1 (cedes a Dembélé) — el estadio se apaga de golpe, body horror inicia"
+    duration_intent_s: 4.9
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer cede a la tentación y le da el balón a Dembélé; en cuanto lo toca, los focos del estadio se apagan de golpe y todo queda en negro salvo siluetas"
+      why_this_shot_exists: "Body horror específico al setting (el estadio se vuelve pesadilla) — P3: ceder a la tentación del rival te condena"
+      camera_intent: "Primera persona, el balón sale hacia Dembélé y de golpe los focos se apagan, la cámara queda en penumbra entre siluetas, leve sacudida"
+    motion_bridge_intent:
+      from_previous: "White-flash desde la decisión D1"
+      to_next: "Hard cut al horror creciente (gritos)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: false
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si cedes a Dembélé, la luz del estadio se apaga."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el balón sale del pie del viewer hacia Dembélé; al instante en que lo toca,
+      los focos del estadio se APAGAN de golpe y todo cae en penumbra rojiza. Las
+      siluetas de la grada quedan inmóviles como recortes negros. Halo residual de
+      luz en el césped. Dembélé como sombra negra al frente.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["floodlights_cutting_to_black", "red_emergency_glow", "crowd_silhouettes_freezing", "ball_rolling_into_dark"]
+    setting_ambient_creature_or_object: "focos del estadio apagándose en cascada uno tras otro"
+    character_active_gesture_per_shot: "El pie del viewer suelta el pase; Dembélé se convierte en silueta negra inmóvil"
+    ui_active:
+      - {element_id: "caption_cons_a1", timestamp_visible_s: [0.3, 5.0], position: {y_pct: 62}, text: "SI CEDISTE A DEMBÉLÉ…", font: "drop_shadow_canonical", color: "red"}
+
+  - shot_id: "shot_08"
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA A1 climax — la grada en penumbra se vuelve un muro de bocas gritando, el viewer cae (body horror + scream SFX). Cierre rama A1"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Las siluetas de la grada se transforman en un muro de rostros con bocas abiertas gritando; el viewer retrocede y cae al césped, la vista se distorsiona"
+      why_this_shot_exists: "Climax body horror D1 + cierre de rama A1 (fade) + scream SFX (TASTE-LOG #2.2)"
+      camera_intent: "Primera persona retrocediendo y cayendo al césped, la cámara tiembla, las gradas se vuelven rostros gritando, fade a negro"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el apagón"
+      to_next: "Fade a negro → cross-fade a la rama B1 (la guardas)"
+    pov_traversal: "descending_stairs"   # caída al césped (downward POV motion)
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "descending_stairs"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Sesenta mil bocas se abren gritando tu nombre."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV cayendo de espaldas al césped: las gradas en penumbra se transforman en un
+      muro infinito de rostros pálidos con bocas abiertas gritando hacia el viewer. La
+      cámara tiembla y se ladea, halo rojo en los bordes, fade progresivo a negro.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["screaming_faces_wall_pulsing", "camera_fall_shake", "fade_to_black_progressive"]
+    setting_ambient_creature_or_object: "muro de rostros gritando en la grada en penumbra (criatura ambient del horror)"
+    character_active_gesture_per_shot: "El POV del viewer retrocede y cae (sacudida de cámara)"
+    ui_active: []
+
+  - shot_id: "shot_09"
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA B1 (resistes) — apartas la vista de Dembélé y Saka corre al espacio para la pared, armando la jugada (bridge a D2). Saka aparece aquí (≥2 shots: shot_01+shot_09+shot_14+shot_15+shot_20+shot_22)"
+    duration_intent_s: 4.2
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "El viewer resiste la tentación y aparta la vista de Dembélé; Saka (tu compañero, kit rojo #7) corre al espacio y pide la pared con la mano, sonriendo — la jugada buena empieza a tomar forma"
+      why_this_shot_exists: "Rama B1 (resistir) — NO un no-evento: la resistencia activa a Saka y construye la jugada hacia el payoff (PAUTA § 3 rama B) + bridge embebido al D2"
+      camera_intent: "Primera persona protegiendo el balón mientras Saka corre al espacio libre y señala pidiendo la pared, gradas iluminadas al fondo"
+    motion_bridge_intent:
+      from_previous: "Cross-fade desde el fade negro de la rama A1"
+      to_next: "Freeze + filtro de decisión D2"
+    pov_traversal: "looking_around"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "looking_around"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si resistes, Saka se abre al espacio y pide la pared."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV apartando la vista de Dembélé y protegiendo el balón; Saka (tu compañero, kit
+      rojo mangas blancas #7) hace un desmarque diagonal al espacio libre, señala con la
+      mano pidiendo la pared y sonríe. Césped iluminado, gradas llenas, focos. Tono
+      cinemático frío estable — la jugada buena empieza.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["saka_diagonal_run", "crowd_blur_motion_background", "floodlight_flare"]
+    setting_ambient_creature_or_object: "líneas de cal del área brillando bajo los focos"
+    character_active_gesture_per_shot: "Saka corre al espacio y señala pidiendo la pared"
+    ui_active:
+      - {element_id: "caption_cons_b1", timestamp_visible_s: [0.3, 5.0], position: {y_pct: 62}, text: "SI RESISTES…", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_10"
+    section_id: "decision_2"
+    description: "Reaction insert pre-D2 — POV close-up de Dembélé volviendo a tentar con más fuerza (mini-cut pacing)"
+    duration_intent_s: 2.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Close-up de Dembélé que vuelve hacia el viewer, ahora más cerca e insistente, tirando de él para que le ceda el balón"
+      why_this_shot_exists: "Mini-cut de detalle (subir cuts/min § 23) + la tentación del rival se intensifica (escalada P3)"
+      camera_intent: "Primera persona, close-up de Dembélé acercándose y abriendo los brazos hacia la cámara"
+    motion_bridge_intent:
+      from_previous: "Continúa desde Saka pidiendo la pared"
+      to_next: "Freeze + filtro de decisión D2"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV close-up de Dembélé (kit azul franja roja #10, bigote) volviendo hacia la
+      cámara con los brazos abiertos reclamando el último pase, expresión intensa.
+      Fondo de gradas desenfocado, focos. Reflejo del estadio en sus ojos.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["dembele_arms_opening_demand", "crowd_blur_background", "floodlight_flare_soft"]
+    setting_ambient_creature_or_object: "destellos de cámaras de fotógrafos parpadeando en el fondo desenfocado"
+    character_active_gesture_per_shot: "Dembélé abre los brazos reclamando el balón de frente al viewer"
+    ui_active: []
+
+  - shot_id: "shot_11"
+    section_id: "decision_2"
+    description: "DECISIÓN 2 — freeze + filtro + countdown + loading. Categoría: confianza/desconfianza (distinta de D1)"
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Frame congelado de Dembélé reclamando el último pase; el viewer decide confiar en él o no"
+      why_this_shot_exists: "Decision UI editorial moment D2 (PAUTA § 18) — categoría confianza/desconfianza distinta a D1"
+      camera_intent: "Primera persona congelada sobre Dembélé y el balón, filtro de grano"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_10 con filtro de decisión"
+      to_next: "White-flash a la rama A2 (confías en él)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "Dembélé tira más fuerte de ti. Ahora decides. Cedes a él o resistes."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado de Dembélé (rival) tentando con la mano extendida + el balón en
+      los pies del viewer. Filtro de grano + viñeta (decision moment). Countdown
+      film-leader 3-2-1 (Y46) + loading bar (Y52) + opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "vignette_pulse", "frozen_crowd_shimmer"]
+    setting_ambient_creature_or_object: "Dembélé congelado como foco de la decisión (personaje del setting)"
+    character_active_gesture_per_shot: "El pie del viewer se apoya en el balón dudando (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d2", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d2", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 52}, text: "", font: "n/a"}
+      - {element_id: "choice_a_d2", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 75}, text: "A. CEDES A DEMBÉLÉ", font: "monospaced"}
+      - {element_id: "choice_b_d2", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 82}, text: "B. RESISTES", font: "monospaced"}
+
+  - shot_id: "shot_12"
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA A2 (cedes de nuevo) — el césped se abre y miles de manos te arrastran abajo (body horror + scream SFX)"
+    duration_intent_s: 5.3
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer cede otra vez y le da el pase a Dembélé; el césped frente al viewer se abre como una boca y miles de manos pálidas surgen y le agarran las piernas arrastrándolo hacia abajo"
+      why_this_shot_exists: "Body horror específico (el campo se vuelve abismo) — P3 ceder de nuevo a la tentación del rival mata"
+      camera_intent: "Primera persona mirando hacia abajo al césped que se agrieta y se abre, manos pálidas surgen y agarran las piernas del viewer tirando hacia el hueco"
+    motion_bridge_intent:
+      from_previous: "White-flash desde la decisión D2"
+      to_next: "Hard cut al colapso (cierre rama A2)"
+    pov_traversal: "looking_around"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "looking_around"
+    hero: true
+    anchor_consistency_strict: false
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si cedes de nuevo, el césped se abre y miles de manos te arrastran abajo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el viewer suelta el pase; el césped frente a él se agrieta y se abre como
+      una boca oscura. Decenas de manos pálidas surgen del hueco y agarran las piernas
+      y botas del viewer, tirando hacia abajo. Dembélé inmóvil al borde, indiferente.
+      Penumbra rojiza, focos titilando.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["grass_cracking_open", "pale_hands_grabbing_legs", "dembele_standing_indifferent"]
+    setting_ambient_creature_or_object: "grieta en el césped abriéndose con manos pálidas emergiendo"
+    character_active_gesture_per_shot: "El viewer patalea contra las manos; Dembélé observa quieto al borde"
+    ui_active:
+      - {element_id: "caption_cons_a2", timestamp_visible_s: [0.3, 5.0], position: {y_pct: 62}, text: "SI CEDISTE OTRA VEZ…", font: "drop_shadow_canonical", color: "red"}
+
+  - shot_id: "shot_13"
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA A2 climax — el viewer es tragado por el hueco del césped, la vista colapsa (body horror + scream SFX). Cierre rama A2"
+    duration_intent_s: 2.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Las manos arrastran al viewer dentro del hueco del césped; la luz del estadio se aleja arriba mientras cae a la oscuridad"
+      why_this_shot_exists: "Climax body horror D2 + cierre rama A2 (fade) + scream SFX"
+      camera_intent: "Primera persona mirando hacia arriba mientras es arrastrado al hueco, el círculo de luz del estadio se encoge arriba, fade a negro"
+    motion_bridge_intent:
+      from_previous: "Continúa desde las manos arrastrando"
+      to_next: "Cross-fade desde negro a la rama B2 (no confías)"
+    pov_traversal: "descending_stairs"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "descending_stairs"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "El campo se abre y traga."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV mirando hacia arriba mientras las manos lo arrastran al hueco del césped; el
+      círculo de luz de los focos del estadio se encoge arriba hasta un punto, la
+      oscuridad lo cubre desde los bordes, fade a negro total.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["light_circle_shrinking_above", "edge_darkness_closing", "fade_to_black_progressive"]
+    setting_ambient_creature_or_object: "círculo de luz del estadio encogiéndose arriba conforme el viewer cae"
+    character_active_gesture_per_shot: "La mano del viewer se estira hacia la luz que se aleja (gesto POV terminal)"
+    ui_active: []
+
+  - shot_id: "shot_14"
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA B2 (vuelves a resistir) — encaras al arco y Saka queda libre a tu lado, armando la jugada decisiva (bridge a D3 clímax)"
+    duration_intent_s: 4.6
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "El viewer vuelve a resistir a Dembélé y encara hacia la portería; el portero del PSG sale a achicar y queda de frente; Saka (tu compañero) corre libre al costado pidiendo el balón — la jugada buena está casi armada"
+      why_this_shot_exists: "Rama B2 (resistir de nuevo) construye hacia el payoff — la jugada final se arma con Saka libre + bridge al clímax D3"
+      camera_intent: "Primera persona encarando hacia la portería del PSG, el portero sale a achicar de frente, Saka corre libre por el costado señalando"
+    motion_bridge_intent:
+      from_previous: "Cross-fade desde el negro de la rama A2"
+      to_next: "POV ve a Saka pidiendo el balón → freeze D3"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_stadium_crowd_continuous"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si resistes de nuevo, encaras al arco con Saka libre."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV encarando con el balón hacia la portería del PSG; el portero (kit verde
+      fosforescente, guantes) sale a achicar y queda de frente. Saka (tu compañero, kit
+      rojo #7) corre libre por el costado izquierdo señalando que le den el pase. Césped
+      iluminado, gradas, focos. Tensión máxima.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["goalkeeper_rushing_out", "saka_overlapping_run", "crowd_blur_motion_background", "floodlight_flare"]
+    setting_ambient_creature_or_object: "portero del PSG saliendo a achicar abriendo los brazos"
+    character_active_gesture_per_shot: "Saka corre libre por el costado y señala pidiendo el pase"
+    ui_active:
+      - {element_id: "caption_cons_b2", timestamp_visible_s: [0.3, 4.5], position: {y_pct: 62}, text: "SI VUELVES A RESISTIR…", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_15"
+    section_id: "decision_3_climax"
+    description: "Setup D3 clímax — Saka (tu compañero) libre frente al arco te pide confianza (lip-sync), Dembélé el rival tienta por última vez; la jugada que define la orejona"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Saka (tu compañero, kit rojo #7) está libre frente al arco y dice 'Confía en mí. Pásamela, la meto'; Dembélé (rival, kit azul #10) tienta por última vez desde el otro lado; el viewer tiene la jugada decisiva"
+      why_this_shot_exists: "Setup del D3 clímax (la elección final: ceder al rival favorito o confiar en tu compañero) + dyad presente en el clímax"
+      camera_intent: "Primera persona con el balón, Saka libre a la izquierda gritando que le pase, Dembélé reclamando a la derecha, la portería del PSG al fondo"
+    motion_bridge_intent:
+      from_previous: "POV terminó de encarar, ve a Saka libre"
+      to_next: "Freeze + filtro de decisión D3"
+    pov_traversal: "approaching_character"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_cinematic_stadium_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "approaching_character"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1", char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""   # Saka entrega la línea vía dialog_text (lip-sync); narrador NO repite (HR#27 fix Opción A)
+    has_lip_sync_required: true
+    dialog_text: "Confía en mí. Pásamela, la meto."
+    visual_intent: |
+      POV con el balón a los pies. Saka (tu compañero, kit rojo mangas blancas #7) libre
+      a la izquierda frente al arco, levanta la mano y grita pidiendo confianza,
+      sonriendo. Dembélé (rival, kit azul franja roja #10) tienta desde la derecha con
+      la mano extendida. Portería del PSG al fondo con el portero. Gradas, focos. Clímax.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["saka_calling_for_ball", "dembele_demanding_right", "crowd_blur_motion_background", "floodlight_flare"]
+    setting_ambient_creature_or_object: "portero del PSG ajustándose en la línea del arco al fondo"
+    character_active_gesture_per_shot: "Saka levanta la mano y grita pidiendo el pase; Dembélé reclama desde el otro lado"
+    ui_active: []
+
+  - shot_id: "shot_16"
+    section_id: "decision_3_climax"
+    description: "DECISIÓN 3 (clímax) — freeze + filtro + countdown + loading. Categoría: la elección final entre los dos"
+    duration_intent_s: 3.8
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "Frame congelado con el balón en los pies del viewer, Saka libre a un lado y Dembélé al otro; el viewer decide a quién darle la jugada decisiva"
+      why_this_shot_exists: "Decision UI editorial D3 clímax (PAUTA § 18) — la elección final que define la orejona"
+      camera_intent: "Primera persona congelada con el balón y los dos jugadores a ambos lados, filtro de grano + viñeta más intensa (clímax)"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_15 con filtro de decisión"
+      to_next: "White-flash a la rama A3 (se la das a Dembélé)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_cinematic_stadium_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1", char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "Última jugada. Ahora decides. Cedes a Dembélé o confías en Saka."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado con el balón en los pies del viewer, Dembélé (rival) tentando a la
+      izquierda y Saka (compañero) libre a la derecha, portería al fondo. Filtro de grano
+      + viñeta intensa (clímax). Countdown film-leader 3-2-1 (Y46) + loading bar (Y52) +
+      opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "vignette_pulse_strong", "frozen_crowd_shimmer"]
+    setting_ambient_creature_or_object: "balón congelado entre los dos jugadores como foco de la decisión"
+    character_active_gesture_per_shot: "El pie del viewer titubea sobre el balón mirando a uno y otro (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d3", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d3", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 52}, text: "", font: "n/a"}
+      - {element_id: "choice_a_d3", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 75}, text: "A. CEDES A DEMBÉLÉ", font: "monospaced"}
+      - {element_id: "choice_b_d3", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 82}, text: "B. CONFÍAS EN SAKA", font: "monospaced"}
+
+  - shot_id: "shot_17"
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA A3 (cedes a Dembélé) — el estadio entero se vuelve negro y el rugido te traga (body horror + scream SFX)"
+    duration_intent_s: 4.9
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer cede por última vez y le da el pase definitivo a Dembélé; el estadio entero se vuelve negro, las gradas se transforman en una boca gigante y el rugido se vuelve un grito que engulle al viewer"
+      why_this_shot_exists: "Body horror clímax específico (el estadio devora) — clímax P3, ceder al rival favorito condena"
+      camera_intent: "Primera persona, el pase sale hacia Dembélé y el estadio colapsa en negro, las gradas se vuelven una boca enorme, el rugido sube como ola hacia la cámara"
+    motion_bridge_intent:
+      from_previous: "White-flash desde la decisión D3"
+      to_next: "Hard cut al colapso final (cierre rama A3)"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: true
+    anchor_consistency_strict: false
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.5, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si cedes a Dembélé y se la das, el estadio entero te traga."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el pase sale hacia Dembélé; al instante el estadio entero colapsa en negro.
+      Las gradas se deforman en una boca gigante de sombra que se abre hacia el viewer,
+      el rugido sube como una ola oscura. Dembélé como silueta negra que se disuelve.
+      Halo rojo crudo en los bordes.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["stadium_collapsing_to_black", "grandstand_morphing_into_mouth", "red_glow_pulsing", "dembele_silhouette_dissolving"]
+    setting_ambient_creature_or_object: "las gradas del estadio deformándose en una boca gigante de sombra"
+    character_active_gesture_per_shot: "El pie del viewer suelta el pase fatal; Dembélé se disuelve en sombra"
+    ui_active:
+      - {element_id: "caption_cons_a3", timestamp_visible_s: [0.3, 5.0], position: {y_pct: 62}, text: "SI CEDISTE A DEMBÉLÉ…", font: "drop_shadow_canonical", color: "red"}
+
+  - shot_id: "shot_18"
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA A3 climax — la boca de sombra se cierra sobre el viewer, todo a negro (body horror + scream SFX). Cierre rama A3"
+    duration_intent_s: 2.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "La boca de sombra de las gradas se cierra sobre el viewer; el grito se vuelve ensordecedor y la vista colapsa a negro"
+      why_this_shot_exists: "Climax body horror D3 + cierre rama A3 (fade negro) + scream SFX peak"
+      camera_intent: "Primera persona engullida por la sombra, la cámara cae y gira, fade desde el rojo saturado a negro total"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el colapso del estadio"
+      to_next: "Cross-fade a la rama B3 (resolución de gloria)"
+    pov_traversal: "descending_stairs"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "descending_stairs"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la boca de sombra de las gradas se cierra sobre el viewer, el rojo crudo
+      satura todo el cuadro y se funde a negro total. Sin detalle reconocible salvo
+      el último destello de los focos apagándose.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["shadow_mouth_closing", "red_saturation_overload", "fade_to_black_progressive"]
+    setting_ambient_creature_or_object: "último destello de los focos del estadio disolviéndose en negro"
+    character_active_gesture_per_shot: "POV del viewer es engullido (cámara cae y gira)"
+    ui_active: []
+
+  - shot_id: "shot_19"
+    section_id: "consequence_d3"
+    description: "Reaction insert — Dembélé silueta inmóvil entre la oscuridad mientras se disipa (mini-cut + transición a B3)"
+    duration_intent_s: 2.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Entre la oscuridad residual, la silueta de Dembélé permanece quieta de espaldas mientras la sombra se disipa"
+      why_this_shot_exists: "Mini-cut + reforzar la traición P3 de Dembélé (indiferente) + transición visual a la rama B3 de gloria"
+      camera_intent: "Primera persona desde el suelo, la silueta de Dembélé inmóvil de espaldas en la penumbra mientras la sombra se disipa"
+    motion_bridge_intent:
+      from_previous: "Cross-fade desde el negro del colapso A3"
+      to_next: "Cross-fade cálido a la resolución B3 (gol + gloria)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cool_horror_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV desde el césped: la silueta de Dembélé (kit oscuro #10, bigote) permanece
+      perfectamente inmóvil de espaldas en la penumbra rojiza mientras la sombra del
+      estadio se disipa lentamente. Reflejo tenue de focos residuales.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["shadow_dissipating", "residual_floodlight_flicker", "dembele_silhouette_static"]
+    setting_ambient_creature_or_object: "humo/sombra residual del estadio disipándose sobre el césped"
+    character_active_gesture_per_shot: "Dembélé inmóvil de espaldas (indiferencia P3 del traidor)"
+    ui_active: []
+
+  - shot_id: "shot_20"
+    section_id: "resolution_b"
+    description: "RESOLUCIÓN B3 (confías en Saka) — Saka la clava al ángulo, Arsenal campeón; sales con vida. Payoff de gloria REVELADO AQUÍ (no en la apertura, anti-spoiler F3) (paleta cool→warm)"
+    duration_intent_s: 5.7
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "El viewer confía en Saka (su compañero) y le da el pase; Saka la clava al ángulo de la portería del PSG; el estadio estalla en luz cálida, Arsenal es campeón, el viewer sigue con vida"
+      why_this_shot_exists: "Resolución de supervivencia + gloria (rama B3) — P3: resistir al rival favorito y confiar en tu compañero salva y consagra. Aquí se PAGA la promesa que el rival prometía en falso (paleta shift cool→warm, ref-06/ref-08)"
+      camera_intent: "Primera persona: el pase llega a Saka que la clava al ángulo, la red se infla, el estadio explota en luz dorada y celebración"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde la silueta de Dembélé"
+      to_next: "POV avanza hacia la celebración → corte al outro de Saka con la copa"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si confías en Saka, la clava al ángulo. Arsenal campeón. Sigues con vida."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el pase llega a Saka (kit rojo mangas blancas #7) que engancha y la CLAVA
+      al ángulo de la portería del PSG; la red se infla. El estadio explota en luz
+      dorada cálida, las gradas estallan en celebración, confeti empieza a caer.
+      Paleta vira de frío cinemático a cálido gloria.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["ball_hitting_top_corner_net", "stadium_lights_warm_burst", "crowd_explosion_celebration", "confetti_starting_to_fall"]
+    setting_ambient_creature_or_object: "red de la portería inflándose con el remate al ángulo"
+    character_active_gesture_per_shot: "Saka clava el balón al ángulo y corre celebrando con los brazos abiertos"
+    ui_active:
+      - {element_id: "caption_resolution", timestamp_visible_s: [0.3, 5.0], position: {y_pct: 62}, text: "SI CONFÍAS EN SAKA…", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_21"
+    section_id: "resolution_b"
+    description: "Reaction insert — POV corriendo hacia Saka entre el confeti y la celebración (mini-cut + paleta warm)"
+    duration_intent_s: 2.0
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer corre hacia Saka y los compañeros entre confeti dorado mientras el estadio celebra"
+      why_this_shot_exists: "Mini-cut de transición + sellar la gloria antes del counterfactual outro"
+      camera_intent: "Primera persona corriendo hacia la celebración entre confeti dorado y compañeros de rojo, focos cálidos"
+    motion_bridge_intent:
+      from_previous: "Continúa el avance hacia la celebración"
+      to_next: "Cross-fade cálido al outro de Saka con la copa"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "walking_forward"
+    hero: false
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV corriendo hacia Saka y los compañeros de rojo entre una lluvia de confeti
+      dorado, el estadio entero celebrando bajo luz cálida. Banderas del Arsenal
+      ondeando en las gradas. Transición tonal cool→warm completa.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["golden_confetti_rain", "warm_floodlight_glow", "teammates_running_celebration"]
+    setting_ambient_creature_or_object: "confeti dorado lloviendo sobre el césped bajo los focos cálidos"
+    character_active_gesture_per_shot: "El POV corre hacia los compañeros (paso hacia adelante)"
+    ui_active: []
+
+  - shot_id: "shot_22"
+    section_id: "cliffhanger_outro"
+    description: "CLIFFHANGER counterfactual — Saka abraza al viewer con la copa de la Champions, confeti, vuelta olímpica. Saka habla 1 línea (lip-sync). CTA de marca"
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "Saka abraza al viewer sosteniendo juntos la orejona entre confeti dorado en la vuelta olímpica; Saka dice 'Te lo dije, hermano'"
+      why_this_shot_exists: "Counterfactual cozy/gloria específico al setting (PAUTA § 13) + Saka ≥2 shots (shot_01 + shot_02 + shot_09 + shot_22) + CTA de marca"
+      camera_intent: "Primera persona cálida frente a Saka que abraza al viewer y alza la copa de la Champions juntos, confeti dorado cayendo, gradas celebrando"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde la carrera de celebración"
+      to_next: "Outro card + loop (fin del video)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["outro_drone", "ambient_celebration_warm"]
+    visual_style_lut: "warm_glory_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: true
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "outro-card-template.mp4"
+    narration_in_this_shot: "Te lo dije, hermano. Elige bien a tu compañero. Y vuelve mañana."
+    has_lip_sync_required: true                       # Saka HABLA on-screen — lip-sync (variabilidad ref-08)
+    dialog_text: "Te lo dije, hermano."
+    visual_intent: |
+      Plano medio POV cálido. Saka (kit rojo mangas blancas #7, sonrisa amplia) abraza
+      al viewer y juntos alzan la copa de la Champions (orejas plateadas) entre confeti
+      dorado. Gradas estallando en celebración al fondo, luz cálida dorada. Contraste
+      total vs el horror del estadio negro previo.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["golden_confetti_falling", "warm_celebration_glow", "trophy_lift_shimmer"]
+    setting_ambient_creature_or_object: "copa de la Champions reflejando los focos cálidos del estadio"
+    character_active_gesture_per_shot: "Saka abraza al viewer, alza la copa y mueve los labios diciendo 'Te lo dije, hermano' (lip-sync)"
+    ui_active:
+      - {element_id: "outro_card", timestamp_visible_s: [2.0, 5.0], position: {y_pct: 50}, text: "ELIGE BIEN A TU COMPAÑERO", font: "drop_shadow_canonical", color: "white"}
+
+# ═══════════════════════════════════════════════════════════════
+# 11. TRANSITIONS (Layer 2 effects between clips — variety ≥3)
+# ═══════════════════════════════════════════════════════════════
+
+transitions:
+  - {from_shot_id: "shot_01", to_shot_id: "shot_02", transition_type: "cross_fade_warm_0.5s", duration_s: 0.5, rationale: "Hook tenso → counterfactual glorioso (cool→warm)"}
+  - {from_shot_id: "shot_02", to_shot_id: "shot_03", transition_type: "hard_cut_with_whoosh", sting_audio: "whoosh-cold.mp3", duration_s: 0.3, rationale: "Gloria → vuelta al campo en tensión (contraste, sube stakes)"}
+  - {from_shot_id: "shot_03", to_shot_id: "shot_04", transition_type: "hard_cut", duration_s: 0.0, rationale: "Setup → reaction insert botas/balón (mini-cut pacing)"}
+  - {from_shot_id: "shot_04", to_shot_id: "shot_05", transition_type: "hard_cut", duration_s: 0.0, rationale: "Insert → Dembélé reclama el balón"}
+  - {from_shot_id: "shot_05", to_shot_id: "shot_06", transition_type: "freeze_filter_decision", duration_s: 0.2, rationale: "Setup → freeze de decisión D1 (PAUTA § 18 editorial)"}
+  - {from_shot_id: "shot_06", to_shot_id: "shot_07", transition_type: "white_flash_impact", sting_audio: "flash-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A1 (white flash)"}
+  - {from_shot_id: "shot_07", to_shot_id: "shot_08", transition_type: "hard_cut_with_whoosh", duration_s: 0.2, rationale: "Apagón → muro de gritos (scream)"}
+  - {from_shot_id: "shot_08", to_shot_id: "shot_09", transition_type: "cross_fade_from_black_0.5s", duration_s: 0.5, rationale: "Fade negro rama A1 → rama B1"}
+  - {from_shot_id: "shot_09", to_shot_id: "shot_10", transition_type: "hard_cut", duration_s: 0.0, rationale: "Bridge → reaction insert Dembélé"}
+  - {from_shot_id: "shot_10", to_shot_id: "shot_11", transition_type: "freeze_filter_decision", duration_s: 0.2, rationale: "Insert → freeze de decisión D2"}
+  - {from_shot_id: "shot_11", to_shot_id: "shot_12", transition_type: "white_flash_impact", sting_audio: "flash-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A2"}
+  - {from_shot_id: "shot_12", to_shot_id: "shot_13", transition_type: "hard_cut", duration_s: 0.0, rationale: "Manos → colapso A2 (scream)"}
+  - {from_shot_id: "shot_13", to_shot_id: "shot_14", transition_type: "cross_fade_from_black_0.5s", duration_s: 0.5, rationale: "Fade negro rama A2 → rama B2"}
+  - {from_shot_id: "shot_14", to_shot_id: "shot_15", transition_type: "hard_cut_with_whoosh", sting_audio: "tension-sting.mp3", duration_s: 0.2, rationale: "Encara → setup clímax D3"}
+  - {from_shot_id: "shot_15", to_shot_id: "shot_16", transition_type: "freeze_filter_decision", duration_s: 0.2, rationale: "Setup → freeze de decisión D3 clímax"}
+  - {from_shot_id: "shot_16", to_shot_id: "shot_17", transition_type: "white_flash_impact", sting_audio: "flash-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A3"}
+  - {from_shot_id: "shot_17", to_shot_id: "shot_18", transition_type: "hard_cut", duration_s: 0.0, rationale: "Estadio negro → boca de sombra (scream peak)"}
+  - {from_shot_id: "shot_18", to_shot_id: "shot_19", transition_type: "cross_fade_from_black_0.5s", duration_s: 0.5, rationale: "Negro → silueta de Dembélé"}
+  - {from_shot_id: "shot_19", to_shot_id: "shot_20", transition_type: "cross_fade_warm_0.5s", duration_s: 0.5, rationale: "Horror → resolución B3 gloria (cool→warm)"}
+  - {from_shot_id: "shot_20", to_shot_id: "shot_21", transition_type: "hard_cut", duration_s: 0.0, rationale: "Gol → carrera de celebración"}
+  - {from_shot_id: "shot_21", to_shot_id: "shot_22", transition_type: "cross_fade_warm_0.6s", duration_s: 0.6, rationale: "Celebración → outro copa con Saka"}
+
+# ═══════════════════════════════════════════════════════════════
+# 12. HYPERFRAMES UI OVERLAY (Layer 4)
+# ═══════════════════════════════════════════════════════════════
+
+hyperframes_ui_overlay:
+  countdown_3_2_1_hook:
+    enabled: true
+    timeline_position_s: [6.0, 9.0]
+    avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    digit_duration_s: 1.0                              # user Rule D PRECEDENCE (PAUTA § 18.9)
+    z_index: 60
+
+  decision_freeze_d1:
+    enabled: true
+    timeline_position_s: [28.0, 32.0]
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "A. CEDES A DEMBÉLÉ", color: "white", y_pct: 75}
+      button_b: {text: "B. RESISTES", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    overlay_countdown: {y_pct: 46, digit_duration_s: 1.0}
+    z_index: 60
+
+  decision_freeze_d2:
+    enabled: true
+    timeline_position_s: [46.0, 50.0]
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "A. CEDES A DEMBÉLÉ", color: "white", y_pct: 75}
+      button_b: {text: "B. RESISTES", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    overlay_countdown: {y_pct: 46, digit_duration_s: 1.0}
+    z_index: 60
+
+  decision_freeze_d3:
+    enabled: true
+    timeline_position_s: [68.0, 72.0]
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "A. CEDES A DEMBÉLÉ", color: "white", y_pct: 75}
+      button_b: {text: "B. CONFÍAS EN SAKA", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    overlay_countdown: {y_pct: 46, digit_duration_s: 1.0}
+    z_index: 60
+
+  outro_card_cliffhanger:
+    enabled: true
+    timeline_position_s: [87.0, 90.0]
+    avu_clip: "outro-card-template.mp4"
+    text_overlay: "ELIGE BIEN A TU COMPAÑERO"
+    z_index: 65
+
+  watermark_handle_persistent:
+    enabled: true
+    timeline_position_s: [0.0, 90.0]
+    text: "@elige_tucompanero"
+    position: {y_pct: 4, x_pct: 50, anchor: "top_center"}
+    z_index: 68
+
+# ═══════════════════════════════════════════════════════════════
+# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# ═══════════════════════════════════════════════════════════════
+# ⭐ TASTE-LOG #2.2 — densidad SFX ALTA + gritos en cada muerte (camino Dembélé).
+
+asset_list:
+  sfx_prompts_to_generate:
+    # --- SFX de fútbol / estadio (densidad alta) ---
+    - {sfx_id: "stadium_roar_swell", prompt: "massive packed football stadium crowd roar swelling, ultras chanting, euphoric tension", duration_s: 3.0, uses_shots: ["shot_01", "shot_03", "shot_05"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "referee_whistle", prompt: "sharp football referee whistle blast, single, crisp", duration_s: 0.6, uses_shots: ["shot_03"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "ball_boot_strike", prompt: "football boot striking ball hard, clean leather thump", duration_s: 0.4, uses_shots: ["shot_07", "shot_12", "shot_17", "shot_20"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "net_ripple_goal", prompt: "football hitting the back of the net, net ripple, then crowd explosion", duration_s: 1.5, uses_shots: ["shot_02", "shot_20"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "crowd_chant_loop", prompt: "rhythmic football ultras chant loop, drums and voices, distant", duration_s: 4.0, uses_shots: ["shot_09", "shot_14"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "confetti_burst", prompt: "confetti cannons bursting, paper rustle shower, celebration", duration_s: 1.2, uses_shots: ["shot_02", "shot_20", "shot_21", "shot_22"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "trophy_celebration_cheer", prompt: "triumphant stadium cheer as trophy is lifted, euphoric roar", duration_s: 2.5, uses_shots: ["shot_22"], layer_destination: "layer_1_clip_scoped"}
+    # --- SFX de horror + GRITOS al morir (camino Dembélé) ---
+    - {sfx_id: "floodlights_power_down", prompt: "stadium floodlights powering down with electrical hum drop and ominous boom", duration_s: 1.5, uses_shots: ["shot_07"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "crowd_scream_agony_1", prompt: "crowd of thousands screaming in horror and agony, distorted, terrifying wall of voices", duration_s: 3.0, uses_shots: ["shot_08"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "grass_tear_rumble", prompt: "ground tearing open, deep earth rumble, soil and grass ripping", duration_s: 1.5, uses_shots: ["shot_12"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "player_scream_swallowed", prompt: "single male scream of terror fading as if dragged underground, reverb tail", duration_s: 2.5, uses_shots: ["shot_13"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "stadium_collapse_roar", prompt: "stadium roar twisting into a monstrous deep distorted roar swallowing everything", duration_s: 3.0, uses_shots: ["shot_17"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "final_scream_peak", prompt: "deafening overlapping screams reaching a terrifying peak then cut to silence", duration_s: 2.5, uses_shots: ["shot_18"], layer_destination: "layer_1_clip_scoped"}
+    # --- SFX de transición (Layer 2) ---
+    - {sfx_id: "white_flash_whoosh", prompt: "white flash impact whoosh, sharp transient with reverb tail", duration_s: 0.4, uses_shots: ["shot_07", "shot_12", "shot_17"], layer_destination: "layer_2_effects"}
+    - {sfx_id: "tension_sting", prompt: "rising cinematic tension sting, brass and strings stab, dread", duration_s: 0.8, uses_shots: ["shot_15"], layer_destination: "layer_2_effects"}
+
+  music_to_generate:
+    - "drone_base"
+    - "ambient_stadium_crowd_continuous"
+    - "ambient_celebration_warm"
+    - "accent_climax"
+    - "outro_drone"
+
+  ambient_continuous_to_generate:
+    - "drone_base"
+    - "ambient_stadium_crowd_continuous"
+    - "ambient_celebration_warm"
+
+  anchors_to_generate:
+    - "char_a_v1"                                       # Dembélé — full body anchor (kit PSG #10, likeness foto-real)
+    - "char_b_v1"                                       # Saka — full body anchor (kit Arsenal #7, likeness foto-real)
+    - "viewer_boots_pov_v1"                             # botas + balón del viewer (POV) para inserts/consequences
+
+  avu_clips_to_generate:
+    - "countdown-3-2-1-film-leader-with-ticks.mp4"      # ya existe (matadero AVU library founding)
+    - "decision-freeze-with-tick-3-2-1.mp4"             # AVU library template
+    - "outro-card-template.mp4"
+
+# ═══════════════════════════════════════════════════════════════
+# 14. CHANNEL IDENTITY
+# ═══════════════════════════════════════════════════════════════
+
+channel_signature:
+  watermark_handle: "@elige_tucompanero"
+  caption_style_canonical:
+    name_labels: {font: "monospaced", position_y_pct: 11.5, color: "white", fontsize_intent: "large"}   # TASTE-LOG #2.1
+    narration_captions: {font: "drop_shadow_canonical", position_y_pct: 62, color: "white"}
+    warning_captions: {font: "drop_shadow_canonical", position_y_pct: 62, color: "red"}
+  audio_signature:
+    target_lufs: -14
+    true_peak_max: -1
+    music_layers_min: 3
+  visual_signature:
+    aspect_ratio: "9:16"
+    resolution: "1080x1920"
+    frame_rate: 30
+
+# ═══════════════════════════════════════════════════════════════
+# 15. ENFORCEMENT SCRIPT INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+enforcement_integration:
+  script_a_build_clip_atomic:
+    invoked_per_shot: true
+    flag: "--bake-captions"
+    requires: ["clip_raw_mp4", "narration_segment_or_silence", "spec_text_canonical_optional"]
+    emits: ["clip_atomic_mp4", "manifest_yaml", "bake_report_json"]
+  script_b_audit_shot_spec_compliance:
+    invoked_per_shot_during_cp4_audit: true
+    dimensions_8: ["dim0_scope_creep", "dim1_narrator_vs_spec", "dim2_caption_vs_spec", "dim3_caption_vs_narrator_sync", "dim4_5_visual_vs_intent", "dim6_characters_vs_anchor", "dim7_action_vs_narration"]
+    halt_on_any_fail: true
+    regen_anchors_if_dim6_fails_cp1: true
+  script_c_orchestrator:
+    enforces_cp_by_cp: true
+    cost_cap_default_usd: 8.0
+    cost_alert_threshold_usd: 6.0
+    forbids_engineer_multi_cp_prompts: true
+    architectural_decisions_log: ".claude/skills/creative-director/master-flow-v2/ARCHITECTURAL-DECISIONS.md"
+
+# ═══════════════════════════════════════════════════════════════
+# 16. ARCHITECT ANNOTATIONS
+# ═══════════════════════════════════════════════════════════════
+
+architect_annotations:
+  - timestamp: "2026-05-30"
+    track: "TOPICAL concepto LOCKED por Tomás"
+    note: "Final Champions League 2025/26 Arsenal vs PSG (30 May 2026, Puskás Aréna Budapest, partido EN VIVO). POV jugador Arsenal en minuto decisivo elige compañero para la jugada que define la orejona. SAKA #7 Arsenal = GLORIA (underdog te salva). DEMBÉLÉ #10 PSG = TERROR. Pattern P3 'seguro era trampa': Dembélé el favorito/Balón de Oro = apuesta obvia/lógica → elegirlo MATA; Saka el underdog salva (apariencia favorito ≠ verdad trampa). Atado al partido real: Arsenal 1-0 (gol Havertz min 6). Narrator David C2 K3TeN3ZVK8WnOeJ0NYqZ. Reel 9:16 90s, español neutral, POV 1ra persona, watermark @elige_tucompanero."
+  - timestamp: "2026-05-30"
+    track: "TASTE-LOG #2 ajustes user (obligatorios)"
+    note: "(1) name_label_fontsize_intent=large en el hook — SAKA / DEMBÉLÉ en letra grande (shot_01 ui_active + channel_signature.name_labels). (2) MÁS SFX + gritos al morir: densidad SFX alta de fútbol (rugido hinchada, silbato, redes, cánticos, confeti, eco Puskás) + GRITOS de agonía en CADA consecuencia fatal del camino Dembélé (shot_08 crowd_scream_agony_1, shot_13 player_scream_swallowed, shot_17 stadium_collapse_roar, shot_18 final_scream_peak). 15 SFX declarados en asset_list."
+  - timestamp: "2026-05-30"
+    track: "PRODUCTION RISK — likeness celebridad real (CRÍTICO)"
+    note: "Saka y Dembélé son PERSONAS REALES. Los anchor_prompt describen RASGOS FOTO-REALES reconocibles (extremo Arsenal piel marrón rapado barba sonrisa kit rojo mangas blancas #7 / extremo PSG piel oscura rapado bigote kit azul franja roja #10) SIN nombrar la celebridad literal — los modelos t2i (gemini flash) NO reproducen fielmente personas reales nombradas y pueden rechazar/distorsionar. La likeness EXACTA depende del modelo y PUEDE requerir iteración descriptor-based en CP1 (varias regens ajustando rasgos) o aceptar un parecido aproximado. name_validation.topical_real_person_exception=true documenta que el bloque is_real_invented_name=false es intencional (NO un fallo del catálogo de nombres). RIESGO residual: si la likeness aproximada no satisface, escalar a Tomás en CP1 antes de animar."
+  - timestamp: "2026-05-30"
+    track: "counterfactual placement decision"
+    note: "before_choice_resolves (gloria de Saka en shot_02, ANTES de que el path de Dembélé resuelva) calcando ref-09 (10/10 narrativa, PAUTA § 24). emotional_framing=stakes_lift. Saka aparece en shot_01 + shot_02 + shot_09 + shot_14 + shot_15 + shot_20 + shot_22 (≥2 shots pre/peri-cliffhanger cumplido con amplio margen)."
+  - timestamp: "2026-05-30"
+    track: "lip-sync solution"
+    note: "Dembélé (shot_05 'Dámela, yo la meto') y Saka (shot_15 'Pásamela a mí, la meto' + shot_22 'Te lo dije, hermano') tienen boca → lip_sync_required=true en esos shots (variabilidad ref-08, los personajes hablan on-screen). Lip-sync deferred Phase 3 (Hedra/Sync.so). En esos shots narration_in_this_shot='' para evitar doble-conteo narrador+diálogo (HR#27 fix Opción A); el diálogo va en dialog_text."
+  - timestamp: "2026-05-30"
+    track: "HR#27 self-validation"
+    note: "Corrí los 3 validators (narrative-coherence + narration-fits-duration + lip-sync-marks) contra este SPEC. 0 findings 🔴. Output completo en reporte de chat al auditor."
+  - timestamp: "2026-05-31"
+    track: "LOGIC REWRITE — auditor findings F0-F7 resueltos (dirección 'compañero comprometido')"
+    note: "RAÍZ F0: Dembélé (#10 PSG) es RIVAL, no compañero — imposible 'pasarle el balón'. FIX: el rival favorito (Dembélé) NO es un compañero literal sino una TENTACIÓN-TRAMPA sobrenatural/uncanny (presencia que te seduce en la cancha); tu compañero del propio equipo (Saka #7 Arsenal) = la salvación. Las 3 decisiones = ¿cedes a la atracción del rival favorito (muerte, el estadio te traga) o resistes y confías en tu compañero (sobrevives + gol + campeón)? F1: las 3 ramas ahora SON el eje ceder/resistir, no 3 pases random. F2: dilema genuino porque el rival es el Balón de Oro (tentación plausible del mejor del mundo). F3: shot_02 ya NO spoilea — es la PROMESA falsa que Dembélé planta ('la copa es tuya si me la das'); el payoff de gloria real se revela en shot_20. F4: ramas B (resistir) construyen progresivamente (B1 activa a Saka, B2 lo deja libre, B3 paga). F5: cada rama A lleva bridge-caption 'SI CEDISTE…'. F6: orden hablado D3 ('Cedes a Dembélé o confías en Saka') == botones (A. CEDES A DEMBÉLÉ / B. CONFÍAS EN SAKA). F7: stakes = la jugada que DEFINE la final + la tentación de buscar al favorito (no 'conservá el 1-0'). Solo se reescribió narración/dialog/captions/botones/counterfactual + visual_intent mínimo (Dembélé como presencia seductora, shot_02 espejismo de copa); 22 shot_ids/duraciones/transiciones/SFX/UI timeline INTACTOS (no re-animar)."
+
+# ═══════════════════════════════════════════════════════════════
+# 17. ENGINEER NOTES
+# ═══════════════════════════════════════════════════════════════
+
+engineer_notes:
+  pipeline_strategy: "per_clip_atomic_hybrid"
+  primary_model_target: "hailuo_pro"
+  fallback_model: "hailuo_std"
+  lip_sync_strategy: "deferred_phase_3"               # Dembélé shot_05 + Saka shot_15/shot_22 requieren lip-sync
+  narrator_atempo: "×1.05 sobre David C2 157.2 WPM medido → ~165 WPM (INGENIERO-PAUTA § 1.1 band 153-180)"
+  likeness_iteration_note: "CP1: iterar anchors descriptor-based hasta likeness aceptable de Saka/Dembélé; NO nombrar celebridad literal en prompt. Si no satisface → escalar a Tomás antes de CP3."
+  sfx_density_note: "Densidad SFX alta (15 SFX) — fútbol permite capas densas (rugido, silbato, redes, cánticos, confeti) + gritos de agonía en muertes. Mix per Hard Rule #9 (SFX 0.20-0.35, flash 0.55-0.65)."
+  topical_note: "PUBLICAR INMEDIATO — caduca tras el pitido final del partido. Priorizar velocidad de pipeline."
+  veo_quota_observations: "NOT enterprise free — billing confirmed. Avoid Veo forward."
+
+# ═══════════════════════════════════════════════════════════════
+# END SCHEMA v11.1
+# ═══════════════════════════════════════════════════════════════
