@@ -36,7 +36,7 @@ Todo proyecto de video se define por DOS ejes ortogonales (ver `DELIVERY-FORMATS
 
 **⚠️ Gates obligatorios del flow** (cubierto en `video-director/WORKFLOW.md` Sub-loop HTML/GSAP):
 
-Todo proyecto de video pasa por **7 gates bloqueantes** antes del stop point pre-animation:
+Todo proyecto de video pasa por **8 gates bloqueantes** antes del stop point pre-animation:
 0. ⛔ `scripts/audit-spec-completeness.py` (Gate 0 BLOQUEANTE PRIORIDAD ABSOLUTA — SPEC asset_list + ui_active inventory vs actual filesystem + index.html. Falla = STOP point INVÁLIDO. Caso disparador: matadero CP5 2026-05-19 gap #13)
 1. `npx hyperframes lint` (sintaxis)
 2. `scripts/audit-narrative.py` (visibilidad <1s, z-index, orphans)

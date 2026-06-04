@@ -107,7 +107,7 @@ ITER PATTERN:
 │   • Read fuentes primarias DIRECT (NO trust intermediate docs)     │
 │   • Verify engineer claims via independent measurement              │
 │   • Cross-validate architect verdicts against canonical refs        │
-│   • Run audit scripts (6 gates + S1-S6 sentinels)                  │
+│   • Run audit scripts (8 gates + S1-S6 sentinels)                  │
 │   • Issue verdict (🟢/🟡/🔴/⛔) per CP                              │
 │   • Codify gaps detected → GAPS-LOG anti-recurrencia                │
 │                                                                     │
@@ -142,7 +142,7 @@ ITER PATTERN:
 │   CLAUDE.md (project root)                                          │
 │   • Hard Rule #1-#22 (canonical compliance + quality bar + dual gate)│
 │   • Bootstrap canonical procedure                                   │
-│   • Pre-render gate 7 gates                                         │
+│   • Pre-render gate 8 gates                                         │
 └─────────────────────────────────────────────────────────────────────┘
                               │
                               ▼

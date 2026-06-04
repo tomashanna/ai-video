@@ -1141,7 +1141,7 @@ Invocados **per clip** después de Quality Gate PASS, ANTES de concat:
 | Per clip atomic PASS (step 6) | Quality Gate exit 0 | `audits/shot_NN_gemini.json` |
 | Pre-concat checkpoint | All clips PASS individually | `audits/pre-concat-summary.md` |
 | Post-concat pre-effects | After step 8 concat | `audits/post-concat-fullvideo.json` |
-| Post-final (existing) | Step 13 final render | Existing 7 gates (sin cambios) |
+| Post-final (existing) | Step 13 final render | Existing 8 gates (canónico CLAUDE.md § Pre-render gate) |
 
 **Por qué mid-execution**: caso matadero iter 7 — caption fragmentation D1+D2 detectada en final render = re-build TODOS los clips. Con mid-execution hook = detectado per clip = solo re-build shot_NN (10x más barato).
 
