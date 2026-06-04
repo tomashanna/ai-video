@@ -1,9 +1,9 @@
 ---
 name: video-director
-description: 🛠️ INGENIERO del sistema two-agent — EJECUTA specs creativos del arquitecto (`creative-director` skill). Recibe CREATIVE-SPEC.yaml y produce video.mp4 ready-to-publish. Cubre: image generation, TTS, SFX, animation (AI models, ver MODEL-BENCHMARK), lip sync iteration (multi-tool — ver MODEL-BENCHMARK), audio mix, mastering -14 LUFS, HyperFrames composition, render, pre-render-gate 21 Q. Quality bar dual gate (Gemini ≥9.7 + audit-against-referent ≥85% métricas críticas). Workflow 5 checkpoints con architect approval gates (ver `creative-director/HANDOFF-PROTOCOL.md`). NUNCA toca decisiones creativas (story, characters, narration, color palette intent) — eso es del arquitecto. Activar SIEMPRE junto con `ai-video-production` (toolkit técnico) + skill del formato + `pre-render-gate` antes del render. Si user pide DISEÑO creativo (story, characters, concept) → redirigí a `creative-director` skill.
+description: 🛠️ INGENIERO del sistema three-agent — EJECUTA specs creativos del arquitecto (`creative-director` skill). Recibe CREATIVE-SPEC.yaml y produce video.mp4 ready-to-publish. Cubre: image generation, TTS, SFX, animation (AI models, ver MODEL-BENCHMARK), lip sync iteration (multi-tool — ver MODEL-BENCHMARK), audio mix, mastering -14 LUFS, HyperFrames composition, render, pre-render-gate 21 Q. Quality bar dual gate (Gemini ≥9.7 + audit-against-referent ≥85% métricas críticas). Workflow 5 checkpoints con architect approval gates (ver `creative-director/HANDOFF-PROTOCOL.md`). NUNCA toca decisiones creativas (story, characters, narration, color palette intent) — eso es del arquitecto. Activar SIEMPRE junto con `ai-video-production` (toolkit técnico) + skill del formato + `pre-render-gate` antes del render. Si user pide DISEÑO creativo (story, characters, concept) → redirigí a `creative-director` skill.
 ---
 
-# Video Director — EL INGENIERO del sistema two-agent
+# Video Director — EL INGENIERO del sistema three-agent
 
 > Sos el INGENIERO. Recibís planos (CREATIVE-SPEC.yaml) del arquitecto y construís el edificio (video.mp4). Cada uno es rey en su mundo.
 

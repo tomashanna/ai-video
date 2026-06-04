@@ -1,14 +1,15 @@
 ---
 name: ai-video-production
-description: TOOLKIT TÉCNICO base para CUALQUIER video con IA (HyperFrames + ElevenLabs + Gemini + GSAP). Cubre TTS, imágenes, SFX, motion (Ken Burns/parallax/flicker/glow), captions Whisper, variantes -a/-b/-c, mix volumes, bootstrap, QA Gemini, character consistency, HyperFrames gotchas. Activar SIEMPRE para ejecución técnica concreta — y SIEMPRE en combo con `video-director` (orquestador/INGENIERO) + skill del formato si aplica (`horror-choice-format`, etc.). NUNCA activar sola. En sistema two-agent (post-2026-05-13): este skill es parte del lado INGENIERO que ejecuta CREATIVE-SPEC.yaml del arquitecto (`creative-director`).
+description: TOOLKIT TÉCNICO base para CUALQUIER video con IA (HyperFrames + ElevenLabs + Gemini + GSAP). Cubre TTS, imágenes, SFX, motion (Ken Burns/parallax/flicker/glow), captions Whisper, variantes -a/-b/-c, mix volumes, bootstrap, QA Gemini, character consistency, HyperFrames gotchas. Activar SIEMPRE para ejecución técnica concreta — y SIEMPRE en combo con `video-director` (orquestador/INGENIERO) + skill del formato si aplica (`horror-choice-format`, etc.). NUNCA activar sola. En sistema three-agent (arquitecto + ingeniero + auditor): este skill es parte del lado INGENIERO que ejecuta CREATIVE-SPEC.yaml del arquitecto (`creative-director`).
 ---
 
 # AI Video Production — Toolkit técnico del lado INGENIERO
 
-> **Sistema two-agent (post-2026-05-13):** este skill es parte del lado INGENIERO. El INGENIERO recibe CREATIVE-SPEC.yaml del ARQUITECTO (`creative-director` skill) y ejecuta técnicamente sin tocar decisiones creativas.
+> **Sistema three-agent (post-2026-05-17, AUDITOR formalizado):** este skill es parte del lado INGENIERO. El INGENIERO recibe CREATIVE-SPEC.yaml del ARQUITECTO (`creative-director` skill) y ejecuta técnicamente sin tocar decisiones creativas.
 >
 > - **Arquitecto** diseña: story, characters, script, intent visual/audio
 > - **Ingeniero (vos)** ejecuta: TTS, image gen, SFX, animation, render
+> - **Auditor** verifica: handoffs del ingeniero vs autoridad canónica, independiente (ver `creative-director/AUDITOR-PROTOCOL.md`)
 >
 > Si user activa solo este skill sin haber pasado por el arquitecto + sin CREATIVE-SPEC.yaml, **flag al user**: "Necesito un CREATIVE-SPEC. ¿Querés que active `creative-director` skill primero?"
 
@@ -16,7 +17,7 @@ description: TOOLKIT TÉCNICO base para CUALQUIER video con IA (HyperFrames + El
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — hard rules globales + arquitectura two-agent
+1. **`<repo-root>/CLAUDE.md`** — hard rules globales + arquitectura three-agent
 2. **`<repo-root>/.claude/skills/video-director/SKILL.md`** — rol del INGENIERO + workflow 5 checkpoints + SPEC ingestion
 3. **`<repo-root>/.claude/skills/creative-director/HANDOFF-PROTOCOL.md`** — protocolo de los 5 checkpoints con architect approval gates
 4. Este archivo (`SKILL.md`) entero — toolkit + hard rules técnicas
