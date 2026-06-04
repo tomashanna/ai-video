@@ -167,7 +167,7 @@ Desde la raíz del proyecto nuevo:
 ```bash
 SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
 
-# Scripts de producción (general) — incluye los 6 gates obligatorios + Phase 2 per-clip atomic (2026-05-20):
+# Scripts de producción (general) — incluye los 8 gates obligatorios + Phase 2 per-clip atomic (2026-05-20):
 #   - tts.py, image.py, sfx.py, captions.py, video.py (generación)
 #   - audit-spec-completeness.py (⛔ gate 0 PRIORIDAD ABSOLUTA — SPEC inventory diff, added 2026-05-19)
 #   - audit-narrative.py (gate 2 — visibilidad <1s, z-index, orphans)

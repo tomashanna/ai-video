@@ -345,7 +345,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ### CP5 — Render Draft + Final
 
 1. ✅ **Dual quality gate**: Gemini holístico ≥9.7 + `audit-against-referent.py` ≥85% métricas críticas
-2. ✅ **7 gates pre-render** ejecutados (lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate)
+2. ✅ **8 gates pre-render** ejecutados = Gate 0 spec-completeness (= C-INVENTORY-WIRED §9, corre 1º) + los 7 de calidad (lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate)
 3. ✅ **Pre-render-gate 20 Q** completo
 4. ✅ **UI safe zones** banda exclusive per INGENIERO-PAUTA § 7.2
 5. ✅ **Cuts/min 2-7**, **LUFS -14 ±0.5**, **vignette**, **monospaced fonts** name labels
@@ -453,7 +453,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 9. ⛔ **C-INVENTORY-WIRED — SPEC asset_list + ui_active completeness gate (BLOQUEANTE, añadido 2026-05-19 post matadero CP5 STOP gap #13)**:
 
-   **Audit MUST run BEFORE cualquier otro gate CP5**. Si C-INVENTORY-WIRED falla → 🔴 NO-GO bloqueante, NO continuar a Gemini holístico ni audit-against-referent ni 7 gates pre-render. Razón: esos audits miden CALIDAD de lo que existe, NO INVENTORY contra SPEC — pueden dar PASS sobre un render estructuralmente incompleto.
+   **Audit MUST run BEFORE cualquier otro gate CP5**. Si C-INVENTORY-WIRED falla → 🔴 NO-GO bloqueante, NO continuar a Gemini holístico ni audit-against-referent ni los 7 gates de calidad pre-render (este C-INVENTORY-WIRED ES el Gate 0 del canónico de 8). Razón: esos audits miden CALIDAD de lo que existe, NO INVENTORY contra SPEC — pueden dar PASS sobre un render estructuralmente incompleto.
 
    **9.1 Audio inventory** (assets/ folder):
    ```bash
