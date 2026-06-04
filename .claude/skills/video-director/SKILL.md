@@ -250,7 +250,7 @@ SELF-AUDIT CHECKPOINT N:
 5. Solo entonces: reportar al arquitecto con output + self-audit
 ```
 
-**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 7 gates post-render NO cubren los checkpoints intermedios — sin self-audit hay un valle ciego.
+**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 8 gates pre-render (ver `CLAUDE.md § Pre-render gate`) NO cubren los checkpoints intermedios per-CP — sin self-audit hay un valle ciego.
 
 ---
 

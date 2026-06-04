@@ -124,7 +124,9 @@ Asset que no se midió = asset que va a salir mal en el render.
 Edit → Lint → AUDIT → render-lock acquire → Render draft → release → ffprobe specs
 ```
 
-**5 gates OBLIGATORIOS — 3 antes del render + 2 después** (regla 2026-05-13 — actualizado para incluir qa-gate y audit-frames):
+> ⛔ **Autoridad canónica = `CLAUDE.md § Pre-render gate` = 8 gates obligatorios.** Los 5 de abajo son el núcleo histórico (2026-05-13); el canónico AGREGA 3 BLOQUEANTES que NO están detallados acá: **Gate 0 `audit-spec-completeness.py`** (corre ANTES de todo — inventario SPEC asset_list/ui vs filesystem), **audit-audio** (coverage narración/música) y **continuity-check** (NARRATIVE.md vs index.html). Corré los **8**, no estos 5 solos.
+
+**Los 5 gates núcleo — 3 antes del render + 2 después** (subset del canónico de 8):
 
 **ANTES de `npx hyperframes render`:**
 
