@@ -1,6 +1,6 @@
 ---
 name: pre-render-gate
-description: ⛔ INVOCAR OBLIGATORIO antes de cualquier render o reporte al usuario en proyectos de video. Skill bloqueante que ejecuta checklist Y/N de 24 puntos críticos (16 base + 4 referent-validated post 2026-05-13 + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU post-2026-05-19; numeración llega a Q25, Q23 ausente). Si CUALQUIER respuesta es No → PARAR, completar, re-invocar. Sin esto los videos fallan reproduciblemente (casos cabana-tormenta + isla-faro + pueblo-fantasma-desierto). Cubre: scripts QA copiados (7 gates), video-log.md consultado, pattern rotado, NARRATIVE.md cumple Show 70/30, plot twist coherente, primeros 30s = animation AI planeada, TTS sin "..." antes proper nouns, narración coverage >40%, sin gaps narrativos >2s, música coverage >85%, 7 gates obligatorios ejecutados, video-log.md learnings appended, human-checklist ejecutado, Q17 cuts/min 2-7, Q18 LUFS -14 ±0.5, Q19 vignette aplicado, Q20 monospaced fonts para character names, Q21 audit-against-referent ≥85% métricas críticas en p25-p75 bands.
+description: ⛔ INVOCAR OBLIGATORIO antes de cualquier render o reporte al usuario en proyectos de video. Skill bloqueante que ejecuta checklist Y/N de 24 puntos críticos (16 base + 4 referent-validated post 2026-05-13 + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU post-2026-05-19; numeración llega a Q25, Q23 ausente). Si CUALQUIER respuesta es No → PARAR, completar, re-invocar. Sin esto los videos fallan reproduciblemente (casos cabana-tormenta + isla-faro + pueblo-fantasma-desierto). Cubre: scripts QA copiados (8 gates), video-log.md consultado, pattern rotado, NARRATIVE.md cumple Show 70/30, plot twist coherente, primeros 30s = animation AI planeada, TTS sin "..." antes proper nouns, narración coverage >40%, sin gaps narrativos >2s, música coverage >85%, 8 gates obligatorios ejecutados, video-log.md learnings appended, human-checklist ejecutado, Q17 cuts/min 2-7, Q18 LUFS -14 ±0.5, Q19 vignette aplicado, Q20 monospaced fonts para character names, Q21 audit-against-referent ≥85% métricas críticas en p25-p75 bands.
 ---
 
 # pre-render-gate — Checklist bloqueante pre-render
@@ -27,7 +27,7 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 > **Q-count nota** (corregido post long-doc-audit): el checklist tiene **24 preguntas reales** numeradas **Q1–Q25** — la numeración **salta Q23** (slot vacío, nunca asignado). Breakdown: 16 base (Q1-Q16) + 4 referent-validated (Q17-Q20) + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU. El body manda sobre cualquier conteo legacy.
 >
-> ⚠️ **Discrepancia gates** (anotada, NO resuelta acá): este doc dice "7 gates" (Q11 + breakdown), pero el canónico (`CLAUDE.md` § Pre-render gate + `video-director/WORKFLOW.md`) define **8 gates obligatorios** (Gate 0 `audit-spec-completeness.py` + Lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate). La secuencia de Q11 NO se reescribe en este pass conservador — pendiente reconciliar a 8 en un pass dedicado.
+> **Gates = 8** (canónico `CLAUDE.md` § Pre-render gate): Gate 0 `audit-spec-completeness.py` (BLOQUEANTE, corre 1º) + Lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate. Q11 abajo los lista los 8 (Gate 0 incluido).
 
 ### Setup técnico (verificar primero)
 
@@ -92,7 +92,8 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 ### Render + QA (verificar antes de reportar al usuario)
 
-11. **¿Los 7 gates pasaron exit 0 después del render draft?**
+11. **¿Los 8 gates pasaron exit 0 después del render draft?**
+    - **⛔ `scripts/audit-spec-completeness.py --spec ../creative-specs/<id>.yaml --cp 5` → exit 0 (Gate 0 BLOQUEANTE — inventario SPEC asset_list/ui vs filesystem, corre ANTES de todo)**
     - `npx hyperframes lint` → 0 errors reales
     - `scripts/audit-narrative.py` → 0 issues críticos
     - `scripts/render-lock.py acquire <proyecto>` → lock obtenido
