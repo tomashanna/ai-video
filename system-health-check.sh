@@ -85,8 +85,17 @@ for tgt in \
 done
 if [ -z "$PT_MISS" ]; then ok "homes canónicos presentes"; else bad "pointer-targets AUSENTES (punteros rotos):"; list $PT_MISS; fi
 
-# ── [8] (INFO) ephemera local en proyectos activos — no afecta el repo ──
-echo "[8] (info) ephemera local en proyectos activos"
+# ── [8] Consistencia de gate-count (canónico = 8 pre-render gates) ──
+# Caza el cascade 5/6/7→8: cualquier doc que diga "N gates" (N≠8) sin contextualizar como
+# subset. El canónico es CLAUDE.md § Pre-render gate = 8 (Gate 0 + 7). Reconciliado 2026-06.
+echo "[8] Consistencia gate-count (canónico = 8, sin counts contradictorios)"
+GC=$(grep -rniE '\b[567] gates\b' .claude/skills --include='*.md' 2>/dev/null \
+  | grep -viE 'canónico de 8|subset|núcleo|de calidad|binarios|V4-LAUNCH|los 3 gates' || true)
+if [ -z "$GC" ]; then ok "sin counts de gates contradictorios (todo = 8 o subset marcado)"
+else bad "gate-count ≠8 sin contextualizar (cascade — reconciliar al canónico de 8):"; printf '       %s\n' "$GC"; fi
+
+# ── [9] (INFO) ephemera local en proyectos activos — no afecta el repo ──
+echo "[9] (info) ephemera local en proyectos activos"
 LOCAL_HO=$(find . -path ./.git -prune -o \( -name 'CP*-handoff.md' -o -name 'CP*-AUDIT-verdict.md' \) -print 2>/dev/null \
   | grep -vE '_archive|/.venv/' | wc -l | tr -d ' ')
 info "$LOCAL_HO handoffs/verdicts locales en proyectos activos (gitignored — limpialos cuando el proyecto shippee)"
