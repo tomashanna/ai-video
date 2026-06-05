@@ -145,18 +145,15 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 19. **¿Vignette aplicado en composición?** (universal 7/7 referentes)
     ```bash
-    grep -q "vignette-overlay\|inset.*box-shadow\|radial-gradient" index.html && echo "✓" || echo "✗"
+    # ⭐ Fase 0 (2026-06-04): gate determinístico reemplaza el grep manual — cubre Q19 Y Q20 en una corrida
+    .venv/bin/python scripts/audit-style-markup.py --format <format> \
+      --spec ../creative-specs/<id>.yaml --html index.html
+    # Exit 0 → ✓ ambas · Exit 1 → falta vignette markup (Q19) o mono font en names (Q20) · Exit 2 → can't-measure
     ```
     Si no hay vignette → agregar `<div id="vignette-overlay">` con CSS según `ai-video-production/COLOR-GRADING.md`.
 
 20. **¿Font monospaced presente para character names (si archetype usa nombres)?**
-    ```bash
-    # Si el video usa archetype con nombres (BRUNO, AXEL, etc.)
-    grep -E "BRUNO|PABLO|AXEL|ENZO|KRAVEN|MARCO|HUGO|SANTI|DANTE|MATEO|TOMAS|LEO|NICO" index.html >/dev/null && {
-      grep -E "caption-name|VT323|Space Mono|monospace" index.html >/dev/null && echo "✓ monospaced font aplicado" \
-        || echo "✗ Falta clase caption-name o font monospaced"
-    } || echo "N/A — sin archetype nombrado"
-    ```
+    ⭐ Cubierto por la MISMA corrida de `audit-style-markup.py` de Q19 (lee `characters[]` del SPEC — ya no hace falta el grep manual con lista hardcodeada de nombres; detecta labels por selector canónico O por texto matching los nombres del SPEC; sin name labels → not_applicable automático).
     Ver `horror-choice-format/CHARACTER-NAMES-CATALOG.md` y `ai-video-production/CAPTIONS.md` sistema 3 clases.
 
 ### Referent profile matching (post 2026-05-15 — dual gate hard rule #1)
@@ -246,9 +243,15 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 | **Q22 No (decision UI editorial pacing)** | ⛔ BLOQUEA en formato horror-choice — falla canonical signature decision moment. Fix per `PAUTA-MASTER § decision-UI-pacing` + `INGENIERO-PAUTA § 7.X`. NB en otros formatos. |
 | **Q24 No (AVU + sync_contract)** | ⛔ BLOQUEA ship — compose-time fragility risk demonstrated (matadero iter 3-4). Build AVU pre-rendered .mp4 OR declare sync_contract explicit en SPEC. |
 | **Q25 No (countdown FILM LEADER ACADEMY)** | 🟡 NB style drift — acceptable si justified per video tone, sino fix con AVU template canonical. |
-| **Q26 No (background ambient creature/object animated per shot — GAP #23)** | ⛔ BLOQUEA — setting feels DEAD. Each shot SPEC must declare `setting_ambient_creature_or_object` non-empty + engineer Hailuo prompt must request animation. Canonical refs 100% have ≥1 animated background element. |
-| **Q27 No (atmospheric motions ≥3 per shot — GAP #26)** | ⛔ BLOQUEA — setting less "alive" than canonical. Each shot SPEC must declare `atmospheric_motions_count ≥3` with list (smoke/vapor/dust/light_flicker/water_drip/insect/etc.). Engineer prompt request 3+ atmospheric elements. |
-| **Q28 No (POV traversal continuity — GAP #25)** | 🟡 NB — acceptable some shots `static` PERO must NOT have ALL shots static framing throughout video (viewer teleports between cuts = anti-canonical). Each shot SPEC `pov_traversal_intent` enum. Auditor S10 sentinel automated detection forward. |
+| **Q26 No (background ambient creature/object animated per shot — GAP #23)** | ⛔ BLOQUEA — setting feels DEAD. Each shot SPEC must declare `setting_ambient_creature_or_object` non-empty + engineer Hailuo prompt must request animation. Canonical refs 100% have ≥1 animated background element. ⭐ Fase 0: scripted — `audit-spec-declarations.py --checks q26`. |
+| **Q27 No (atmospheric motions ≥3 per shot — GAP #26)** | ⛔ BLOQUEA — setting less "alive" than canonical. Each shot SPEC must declare `atmospheric_motions_count ≥3` with list (smoke/vapor/dust/light_flicker/water_drip/insect/etc.). Engineer prompt request 3+ atmospheric elements. ⭐ Fase 0: scripted — `audit-spec-declarations.py --checks q27`. |
+| **Q28 No (POV traversal continuity — GAP #25)** | 🟡 NB — acceptable some shots `static` PERO must NOT have ALL shots static framing throughout video (viewer teleports between cuts = anti-canonical). Each shot SPEC `pov_traversal_intent` enum. ⭐ Fase 0: el sentinel automated ya existe — `audit-spec-declarations.py --checks q28` (all-static check). |
+
+> ⭐ **Fase 0 (2026-06-04) — corrida consolidada de los 4 checks de declaración del SPEC** (Q26+Q27+Q28+status de validación canónica HR#19):
+> ```bash
+> .venv/bin/python scripts/audit-spec-declarations.py --format <format> --spec ../creative-specs/<id>.yaml
+> # Exit 0 → los 4 ✓ · Exit 1 → FAIL con offenders por shot · Exit 2 → can't-measure (Bug #9)
+> ```
 | **Q29 No (character active gesture per shot — GAP #27)** | 🟡 NB — character on-screen MUST have ONE active gesture per shot (hand reach/breath/blink/turn). If character signature limits (e.g. cleaver helmet), compensate alive signals (light, breath visible, environmental interaction). |
 | **Q30 No (lip-sync verification per character speech — GAP #24)** | ⛔ BLOQUEA si `lip_sync_required: true` declared in SPEC. Engineer must verify Hailuo output frame extract OR use Hedra/Sync.so retarget. Auditor S9 sentinel flags character speech segments needing verification. |
 
