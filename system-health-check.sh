@@ -100,6 +100,65 @@ LOCAL_HO=$(find . -path ./.git -prune -o \( -name 'CP*-handoff.md' -o -name 'CP*
   | grep -vE '_archive|/.venv/' | wc -l | tr -d ' ')
 info "$LOCAL_HO handoffs/verdicts locales en proyectos activos (gitignored — limpialos cuando el proyecto shippee)"
 
+# ── [10] Membresía del gate-set (canónico = los 8 nombres exactos) ──
+# El invariante #8 caza la literal '5/6/7 gates' pero NO la MEMBRESÍA: un doc puede decir
+# "8 gates" y listar un set divergente (incluir audit-frames-granular como gate, u omitir
+# audit-audio/continuity-check) — así sobrevivió el BOOTSTRAP.md (findings M3/M4). Para los
+# docs CLAVE, dentro de cada ventana ±15 líneas de un "8 gates" con LISTA nombrada (≥4 nombres
+# canónicos, sin marca subset/pointer) chequeamos las DOS señales concretas de divergencia:
+#   A) audit-frames-granular presentado COMO gate numerado ("gate N") → es red adicional, no gate.
+#   B) la enumeración OMITE audit-audio o continuity-check (los dos que M3/M4 dejaron caer).
+# Matching case-insensitive y con alias (spec-completeness ≡ audit-spec-completeness, Lint ≡ lint)
+# para no false-positivear las variantes legítimas de nombre.
+echo "[10] Membresía del gate-set (8 nombres canónicos, no listas divergentes)"
+# pares "nombre-canónico|regex-de-detección" (alias incluidos)
+GATE_PROBES="audit-spec-completeness|spec-completeness lint|lint audit-narrative|audit-narrative render-lock|render-lock audit-frames|audit-frames(\.py)?[^-] audit-audio|audit-audio continuity-check|continuity-check qa-gate|qa-gate"
+GATESET_BAD=""
+for doc in \
+  CLAUDE.md \
+  .claude/skills/ai-video-production/BOOTSTRAP.md \
+  .claude/skills/video-director/WORKFLOW.md \
+  .claude/skills/pre-render-gate/SKILL.md \
+  .claude/skills/creative-director/AUDITOR-PROTOCOL.md; do
+  [ -f "$doc" ] || continue
+  # líneas que mencionan "8 gates"/"8 gate"/"ocho gates"
+  for ln in $(grep -niE '\b(8 gates?|ocho gates)\b' "$doc" 2>/dev/null | cut -d: -f1); do
+    lo=$((ln-15)); [ "$lo" -lt 1 ] && lo=1; hi=$((ln+15))
+    WIN=$(sed -n "${lo},${hi}p" "$doc")
+    # excluir mentions pointer/subset (legítimas: "subset del canónico", "núcleo", "Autoridad canónica")
+    echo "$WIN" | grep -qiE 'subset|núcleo|nucleo|Autoridad canónica|autoridad canonica' && continue
+    # ¿es contexto de LISTA enumerada? (≥4 nombres canónicos presentes, case-insensitive + alias)
+    NAMES_PRESENT=0; MISSING_AC=""
+    for probe in $GATE_PROBES; do
+      canon="${probe%%|*}"; rx="${probe#*|}"
+      if echo "$WIN" | grep -qiE "$rx"; then NAMES_PRESENT=$((NAMES_PRESENT+1))
+      elif [ "$canon" = "audit-audio" ] || [ "$canon" = "continuity-check" ]; then MISSING_AC="$MISSING_AC $canon"; fi
+    done
+    [ "$NAMES_PRESENT" -lt 4 ] && continue   # mención suelta, no lista → no exigir membresía
+    # Señal A — audit-frames-granular presentado como gate NUMERADO ("gate N")
+    EXTRA=""
+    echo "$WIN" | grep -iE 'audit-frames-granular' | grep -qiE 'gate [0-9]' && EXTRA="audit-frames-granular(como gate numerado)"
+    if [ -n "$MISSING_AC" ] || [ -n "$EXTRA" ]; then
+      MSG="$doc:$ln — lista de 8 gates divergente:"
+      [ -n "$MISSING_AC" ] && MSG="$MSG omite:$MISSING_AC"
+      [ -n "$EXTRA" ]      && MSG="$MSG extra-no-canónico: $EXTRA"
+      GATESET_BAD="${GATESET_BAD}${MSG}"$'\n'
+    fi
+  done
+done
+if [ -z "$GATESET_BAD" ]; then ok "gate-set canónico {audit-spec-completeness,lint,audit-narrative,render-lock,audit-frames,audit-audio,continuity-check,qa-gate} en docs clave"
+else bad "gate-set divergente en docs clave (reconciliar a los 8 nombres canónicos):"; printf '%s' "$GATESET_BAD" | while IFS= read -r l; do [ -n "$l" ] && list "$l"; done; fi
+
+# ── [11] Q-count del pre-render-gate (canónico = 24 Q, Q1-Q25 salta Q23) ──
+# Ningún doc activo puede decir "20 Q"/"21 Q"/"20 preguntas"/"21 preguntas" del pre-render-gate.
+# Scope: .claude/skills/ + root .md (CLAUDE.md INCLUIDO — reconciliado completo 2026-06-04), sin _archive*.
+echo "[11] Q-count del pre-render-gate (canónico = 24 Q, no '20/21 Q' stale)"
+QC=$(grep -rniE '\b(20|21)[ -]?(Q|preguntas)\b' .claude/skills *.md --include='*.md' 2>/dev/null \
+  | grep -vE '/_archive|(^|/)_archive' \
+  | grep -iE 'pre-render|pregunta|gate|técnic|[^A-Za-z]Q[^A-Za-z]' || true)
+if [ -z "$QC" ]; then ok "sin Q-counts '20/21 Q' stale del pre-render-gate (todo = 24, Q1-Q25 salta Q23)"
+else bad "Q-count stale del pre-render-gate (reconciliar a '24 Q, Q1-Q25 salta Q23'):"; printf '       %s\n' "$QC"; fi
+
 echo "════════════════════════════════════════════════════"
 if [ "$FAIL" -eq 0 ]; then
   printf "  \033[32m✅ SISTEMA LIMPIO — %d/%d invariantes OK\033[0m\n" "$PASS" "$PASS"

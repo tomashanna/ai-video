@@ -1,6 +1,6 @@
 ---
 name: video-director
-description: 🛠️ INGENIERO del sistema three-agent — EJECUTA specs creativos del arquitecto (`creative-director` skill). Recibe CREATIVE-SPEC.yaml y produce video.mp4 ready-to-publish. Cubre: image generation, TTS, SFX, animation (AI models, ver MODEL-BENCHMARK), lip sync iteration (multi-tool — ver MODEL-BENCHMARK), audio mix, mastering -14 LUFS, HyperFrames composition, render, pre-render-gate 21 Q. Quality bar dual gate (Gemini ≥9.7 + audit-against-referent ≥85% métricas críticas). Workflow 5 checkpoints con architect approval gates (ver `creative-director/HANDOFF-PROTOCOL.md`). NUNCA toca decisiones creativas (story, characters, narration, color palette intent) — eso es del arquitecto. Activar SIEMPRE junto con `ai-video-production` (toolkit técnico) + skill del formato + `pre-render-gate` antes del render. Si user pide DISEÑO creativo (story, characters, concept) → redirigí a `creative-director` skill.
+description: 🛠️ INGENIERO del sistema three-agent — EJECUTA specs creativos del arquitecto (`creative-director` skill). Recibe CREATIVE-SPEC.yaml y produce video.mp4 ready-to-publish. Cubre: image generation, TTS, SFX, animation (AI models, ver MODEL-BENCHMARK), lip sync iteration (multi-tool — ver MODEL-BENCHMARK), audio mix, mastering -14 LUFS, HyperFrames composition, render, pre-render-gate (24 Q, Q1-Q25 salta Q23). Quality bar dual gate (Gemini ≥9.7 + audit-against-referent ≥85% métricas críticas). Workflow 5 checkpoints con architect approval gates (ver `creative-director/HANDOFF-PROTOCOL.md`). NUNCA toca decisiones creativas (story, characters, narration, color palette intent) — eso es del arquitecto. Activar SIEMPRE junto con `ai-video-production` (toolkit técnico) + skill del formato + `pre-render-gate` antes del render. Si user pide DISEÑO creativo (story, characters, concept) → redirigí a `creative-director` skill.
 ---
 
 # Video Director — EL INGENIERO del sistema three-agent
@@ -16,7 +16,7 @@ description: 🛠️ INGENIERO del sistema three-agent — EJECUTA specs creativ
 | Define color palette dual | Elige BPM exacto + dB ducking + CSS values |
 | Define lip sync requirement | Itera lip sync tools (Hedra/Sync.so/Veo/Kling Omni) |
 | Define animation tier per shot | Elige model específico según tier |
-| Validación creativa (architect-final-review) | Pre-render-gate técnico (20 Q) |
+| Validación creativa (architect-final-review) | Pre-render-gate técnico (24 Q, Q1-Q25 salta Q23) |
 | Itera con USER | Itera CON arquitecto via feedback_protocol |
 
 ## Cuándo activarte

@@ -55,7 +55,7 @@ INGENIERO (CP4 animation) → CP4-handoff.md → arq+audit gates
               ↓
 INGENIERO (CP5 render) → renders/draft.mp4
               ↓
-        Pre-render-gate (20 Q técnicas)
+        Pre-render-gate (24 Q técnicas)
               ↓
        🔍 AUDITOR final: Gemini ≥9.7 + audit-against-referent ≥85%
               ↓
@@ -138,7 +138,7 @@ Antes de modificar archivos, llamar APIs externas (ElevenLabs, Gemini, Replicate
    - Color grading intent (paleta dual)       - CSS filters + LUTs implementation
    - Audio direction (genre + ducking)        - Audio mix + ducking + mastering -14 LUFS
    - Counterfactual punchline                 - HyperFrames composition + render
-   - Cliffhanger pattern                      - Pre-render-gate 20 Q
+   - Cliffhanger pattern                      - Pre-render-gate 24 Q
    - User interview + iteration               - Asset list production
                                               - Architect feedback loop
    Output: CREATIVE-SPEC.yaml                 Output: video.mp4 ready

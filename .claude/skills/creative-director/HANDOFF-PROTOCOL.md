@@ -52,7 +52,7 @@ USER ─[describe video]──> ARQUITECTO
         ║                                                  ║
         ║  CHECKPOINT 5: Draft Render                      ║
         ║      Ingeniero → compone en HyperFrames + render ║
-        ║      Ingeniero → pre-render-gate (20 Q Y/N)      ║
+        ║      Ingeniero → pre-render-gate (24 Q Y/N)      ║
         ║      Arquitecto → review creativo final         ║
         ║      User → HUMAN-CHECKLIST                      ║
         ║      [NO] → re-componer + iterar                 ║
@@ -366,7 +366,7 @@ Post-CP4: render incremental sin captions (validar animation AI + audio sync nar
   - UI elements overlays (countdown, loaders, buttons, watermark)
   - Color grading aplicado (CSS filters + LUTs)
   - Vignette + film grain overlays
-- Pre-render-gate (20 Q Y/N) PASADO
+- Pre-render-gate (24 Q, Q1-Q25 salta Q23) PASADO
 
 ### Qué valida el arquitecto (creative review)
 Ver `architect-final-review.md` checklist creativa. Resumen:

@@ -1,6 +1,6 @@
 # architect-final-review.md — Checklist creativa post-draft
 
-> Después de que el ingeniero rinde el draft.mp4 + pasa pre-render-gate (20 Q técnicos), el arquitecto valida las dimensiones CREATIVAS. Esto complementa el gate técnico — no lo reemplaza.
+> Después de que el ingeniero rinde el draft.mp4 + pasa pre-render-gate (24 Q, Q1-Q25 salta Q23), el arquitecto valida las dimensiones CREATIVAS. Esto complementa el gate técnico — no lo reemplaza.
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Después de:**
 - ✅ CHECKPOINT 5 completed (draft.mp4 generated)
-- ✅ Pre-render-gate 20 Q PASSED (engineer validation técnica)
+- ✅ Pre-render-gate (24 Q, Q1-Q25 salta Q23) PASSED (engineer validation técnica)
 
 **Antes de:**
 - ❌ User HUMAN-CHECKLIST
@@ -188,7 +188,7 @@ Once D6 + D7 fixed → proceder a user HUMAN-CHECKLIST.
 
 | Pre-render-gate (engineer) | Architect final review (este doc) |
 |----------------------------|-----------------------------------|
-| 20 Q técnicas Y/N | 12 dimensiones creativas Y/N |
+| 24 Q técnicas Y/N (Q1-Q25 salta Q23) | 12 dimensiones creativas Y/N |
 | Verifica scripts QA copiados | Verifica intent creativo se logró |
 | Verifica LUFS -14 ±0.5 | Verifica AUDIO se entiende en móvil |
 | Verifica cuts/min 2-7 | Verifica felt cadence 18-30 events/min |

@@ -42,10 +42,11 @@ Todo proyecto de video pasa por **8 gates bloqueantes** antes del stop point pre
 2. `scripts/audit-narrative.py` (visibilidad <1s, z-index, orphans)
 3. `scripts/render-lock.py acquire <project>` (coordinación)
 4. `scripts/audit-frames.py` (Gemini Vision frame-by-frame — UI overlaps, frames negros, etc.)
-5. `scripts/audit-frames-granular.py` (sentinel patterns NEW 2026-05-19: audio-visual character mismatch + duplicate text + AVU sync + caption Y canonical + watermark IG safe zone. Forward: Gemini Vision integration for render-time visual deduplication. Caso disparador: matadero iter 5 D1+D2 user catches)
-6. `scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>` (bloquea sub-9.7)
+5. `scripts/audit-audio.py` (narración coverage >40% + música presente + sin gaps narrativos >2s — detecta lo que Gemini holístico NO ve. Caso disparador: pueblo-fantasma-desierto v2 2026-05-13)
+6. `scripts/continuity-check.py` (NARRATIVE.md vs index.html — caminos narrativos rotos, hitos under-narrated, balance temporal)
+7. `scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>` (bloquea sub-9.7)
 
-Los 6 scripts (audit-spec-completeness, audit-narrative, render-lock, audit-frames, audit-frames-granular, qa-gate) se copian del `templates/scripts/` en el paso 2 abajo. Sin estos scripts copiados al proyecto, el flow NO puede llegar al stop point.
+Los 8 scripts (audit-spec-completeness, lint, audit-narrative, render-lock, audit-frames, audit-audio, continuity-check, qa-gate) se copian del `templates/scripts/` en el paso 2 abajo. Sin estos scripts copiados al proyecto, el flow NO puede llegar al stop point.
 
 **Learnings post-render** (reemplaza POST-MORTEM standalone, deprecated 2026-05-15): al stop point pre-animation, append 2-3 bullets al `<format>-format/video-log.md` con pattern usado, score final, qué funcionó, qué no, costo total. El video-log.md SE CONSULTA antes de cada video nuevo (rotación + cross-video lessons).
 
@@ -170,11 +171,14 @@ SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
 # Scripts de producción (general) — incluye los 8 gates obligatorios + Phase 2 per-clip atomic (2026-05-20):
 #   - tts.py, image.py, sfx.py, captions.py, video.py (generación)
 #   - audit-spec-completeness.py (⛔ gate 0 PRIORIDAD ABSOLUTA — SPEC inventory diff, added 2026-05-19)
+#   - (gate 1 = `npx hyperframes lint` — sintaxis HTML, NO es script copiado)
 #   - audit-narrative.py (gate 2 — visibilidad <1s, z-index, orphans)
 #   - render-lock.py    (gate 3 — coordinación entre agentes)
 #   - audit-frames.py   (gate 4 — Gemini Vision frame-by-frame)
-#   - audit-frames-granular.py (gate 5 — sentinel patterns: audio-visual mismatch, dup text, AVU sync, caption Y canonical)
-#   - qa-gate.py        (gate 6 — bloquea sub-9.7 pre-animation)
+#   - audit-audio.py    (gate 5 — narración coverage >40% + música presente + sin gaps >2s)
+#   - continuity-check.py (gate 6 — NARRATIVE.md vs index.html: caminos rotos, hitos under-narrated)
+#   - qa-gate.py        (gate 7 — bloquea sub-9.7 pre-animation)
+#   - audit-frames-granular.py (red adicional, NO es uno de los 8 gates canónicos — sentinel patterns: audio-visual mismatch, dup text, AVU sync, caption Y canonical)
 #   ⭐ NEW Phase 2 per-clip atomic (2026-05-20, Hard Rule #23):
 #   - build_clip_atomic.py        (steps 2-5 atomic builder per clip: TTS + SFX + ambient + mix + mux + caption sidecar)
 #   - quality_gate_per_clip.py    (Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate)

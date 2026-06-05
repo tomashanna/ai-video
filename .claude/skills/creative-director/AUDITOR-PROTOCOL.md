@@ -163,7 +163,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 | CP2 Script | `SCRIPT-WRITING-GUIDE.md` + INGENIERO-PAUTA § pace WPM + memorias `feedback_si_elegiste_framing` + `feedback_narration_coherence` + `feedback_narrative_simplicity` |
 | CP3 Shot images | `CHARACTER-CONSISTENCY.md` + `IMAGE-VARIETY.md` + memoria `feedback_visual_matches_narration` |
 | CP4 Animation | `video-animation/ANIMATION-LAYER.md` + `MODEL-BENCHMARK.md` § animation + memoria `animation_30s_rule` |
-| CP5 Render | INGENIERO-PAUTA § completo (UI safe zones + LUFS + cuts/min) + `AUDIO-MASTERING.md` + `COLOR-GRADING.md` + `PACING-MARKERS.md` + `pre-render-gate/SKILL.md` 21 Q |
+| CP5 Render | INGENIERO-PAUTA § completo (UI safe zones + LUFS + cuts/min) + `AUDIO-MASTERING.md` + `COLOR-GRADING.md` + `PACING-MARKERS.md` + `pre-render-gate/SKILL.md` (24 Q, Q1-Q25 salta Q23) |
 
 **Si el SPEC referencia un ref-XX que no leíste todavía**, lo leés completo antes de auditar. NO basta con scan.
 
@@ -176,7 +176,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 | Ingeniero entrega `CP[N]-handoff.md` con arquitecto GO | ✅ SÍ |
 | Ingeniero entrega `CP[N]-handoff-vN.md` con fixes aplicados | ✅ SÍ (re-audit focused) |
 | Arquitecto entrega `creative-specs/<id>.yaml` aprobado por user | ✅ SÍ (auditar SPEC mismo vs PAUTA-MASTER + D14-D22 — el arquitecto puede haber pasado D14-D22 con compliance superficial) |
-| Pre-render-gate (20 Q técnicas) corrió Y pasó | ✅ SÍ — auditor agrega validation creativa final |
+| Pre-render-gate (24 Q, Q1-Q25 salta Q23) corrió Y pasó | ✅ SÍ — auditor agrega validation creativa final |
 | Render draft listo | ✅ SÍ — `audit-against-referent.py` ≥85% + verificación visual |
 
 **NO se activa** cuando: el ingeniero corre self-audit sin entregar handoff formal, fixes triviales engineer-domain (typos, paths).
@@ -346,7 +346,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 1. ✅ **Dual quality gate**: Gemini holístico ≥9.7 + `audit-against-referent.py` ≥85% métricas críticas
 2. ✅ **8 gates pre-render** ejecutados = Gate 0 spec-completeness (= C-INVENTORY-WIRED §9, corre 1º) + los 7 de calidad (lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate)
-3. ✅ **Pre-render-gate 20 Q** completo
+3. ✅ **Pre-render-gate (24 Q, Q1-Q25 salta Q23)** completo
 4. ✅ **UI safe zones** banda exclusive per INGENIERO-PAUTA § 7.2
 5. ✅ **Cuts/min 2-7**, **LUFS -14 ±0.5**, **vignette**, **monospaced fonts** name labels
 6. ⭐ **Per-clip duration matches SPEC duration_intent_s post-trim** (añadido 2026-05-18 post matadero Hailuo 6s constraint): ffmpeg trim per-clip output_path → SPEC target. Verify ffprobe duration match ±0.1s tolerance.
@@ -573,7 +573,7 @@ Después de la tabla, el auditor concluye con UNO de:
 
 1. **Delegar verificación al self-audit del arq/ing**. Si el handoff dice "rotation_check: ok per video-log.md", el auditor lee video-log.md y verifica independientemente. NO accept "ok".
 2. **Confiar en citaciones del handoff sin leer la fuente**. El handoff cita SPEC L412 — el auditor abre SPEC y verifica L412 existe + dice lo que el handoff dice.
-3. **Audit superficial cuando hay cambios mayores**. Si el deliverable es CP5 render, leer todo el SPEC + 21 Q pre-render-gate + medir LUFS — no scan rápido.
+3. **Audit superficial cuando hay cambios mayores**. Si el deliverable es CP5 render, leer todo el SPEC + pre-render-gate (24 Q, Q1-Q25 salta Q23) + medir LUFS — no scan rápido.
 4. **Maquillar findings para acelerar GO**. Si una pauta canónica se violó, FAIL aunque retrase 1 día. El sistema dual-gate existe para detectar esto.
 5. **Compartir contexto con arq/ing**. NO leer el HANDOFF-PROTOCOL del arquitecto antes de auditar (eso te biasea con su lens). Leer SOLO autoridad canónica + handoff del ingeniero.
 6. **Inventar findings sin authority quote**. Cada FAIL/NB debe tener pointer a doc § línea.
