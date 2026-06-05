@@ -101,11 +101,11 @@ En cualquier resultado: los rails construidos en Fase 0 quedan (sirven a ambos).
 ## 7. Estado
 
 - [ ] Fase 0 wave 1 shipped (7 gates + lib) ✅ 2026-06-04
-- [ ] Fase 0 wave 2 shipped (decision-UI + AVU + videolog + invariantes health-check)
-- [ ] Branch `v2-identity` + worktree creado
-- [ ] `agents/ARCHITECT.md` + `ENGINEER.md` + `AUDITOR.md` escritos (destilación 2026-06-04)
-- [ ] CLAUDE.md router slim en v2
-- [ ] `.env` copiado al worktree
+- [x] Fase 0 wave 2 shipped (decision-UI + AVU + videolog + invariantes health-check) ✅ 2026-06-04
+- [x] Branch `v2-identity` + worktree creado ✅
+- [x] `agents/ARCHITECT.md` + `ENGINEER.md` + `AUDITOR.md` escritos (destilación 2026-06-04) ✅ 2026-06-04
+- [x] CLAUDE.md router slim en v2 ✅
+- [x] `.env` copiado al worktree ✅
 - [ ] Video 1 del experimento: brief definido → corrido en ambos brazos → evaluado ciego
 - [ ] Video 2 (orden invertido)
 - [ ] Decisión per §5
