@@ -85,7 +85,7 @@
 - ✅ *"Uy… se la diste al lateral, enganchó y la perdió. Salen de contra. Gol."*
 - 🟥 *"Ese jugador es malo, perdiste el partido."* (editorializar = prohibido)
 
-**Voice ID canónico**: David C2 (mismo voice_id que usa el INGENIERO-PAUTA sport — narrador grave deportivo, español neutral). Ver `library/voices-catalog.json` + `INGENIERO-PAUTA-MASTER.md §4`.
+**Voice ID canónico**: **El Faraón** (`QpDQJR3frbDwOhTIo8nW`) — relator de fútbol latinoamericano high-energy (acento colombiano), elegido por Tomás 2026-06-03 (listen test con sample de relato). Status `pending` hasta el M7 Whisper del CP2 del video #2. Ver `library/voices-catalog.json § sport_choice_narrator_strategy` + `INGENIERO-PAUTA-MASTER.md §4`.
 
 **Vocabulario**:
 - Léxico deportivo concreto (desmarcado, mano a mano, enganche, contra, achicar el ángulo, la clava)

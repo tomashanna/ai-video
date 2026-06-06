@@ -16,14 +16,14 @@
 
 | Elemento | Función | Specs (heredados) | Contenido sport-choice |
 |----------|---------|-------------------|------------------------|
-| **Name labels** | Identificar el dyad | Monospaced, Y11.5, GRANDES | Nombre del jugador (SAKA / DEMBÉLÉ) |
-| **Caption de contexto** | Decir qué equipo es cada uno | drop-shadow, Y62 | "SAKA = ARSENAL · DEMBÉLÉ = PSG" |
-| **Countdown 3-2-1** | Urgencia en decisiones | Film leader academy AVU, Y46, digit 1.0s | Igual (heredado) |
-| **Loading bar** | "tu jugada carga" | Horizontal Y52, ≥6% sep del countdown | "DECIDIENDO…" / sin label |
-| **Botones A/B** | Las 2 opciones de jugada | Paired, Y60-70, safe zones IG | Las dos jugadas (ENCARAS / DEVUELVES) |
+| **Name labels** | Identificar el dyad | Monospaced, Y11.5, GRANDES | Nombre del jugador (GIMÉNEZ / TAU) |
+| **Caption de contexto** | Decir qué equipo es cada uno | drop-shadow, **Y55** (⛔ NO Y62 — exclusivo de los captions del narrador; jamás solapados) | "GIMÉNEZ = MÉXICO · TAU = SUDÁFRICA" |
+| **Countdown del HOOK** | Urgencia en la elección de compañero | Film leader academy AVU, completo 3-2-1 | Igual (heredado) |
+| ⭐ **Countdown de COMPUERTA** | Urgencia en decisiones de jugada | **OVERRIDE SPORT (creator 2026-06-04)**: dígitos 3→2→1 ARRIBA (Y≈28-32, monospaced grandes) + **barra que se AGOTA** (llena→vacía, clara/brillante, Y≈36-38). ⛔ SIN film-leader/crosshair al centro (desconcentra sobre la jugada congelada). SIEMPRE 3-2-1 completo | Ver `../INGENIERO-PAUTA-MASTER.md § 1.5` (autoridad) |
+| **Botones A/B** | Las 2 opciones de jugada | Paired, Y75/Y82, safe zones IG. ⛔ **SIEMPRE con prefijo rotulado "A. " / "B. "** (creator 2026-06-04) | "A. DESCARGAS CON GIMÉNEZ" / "B. GIRAS SOBRE EL CENTRAL" |
 | **Watermark** | Brand | bottom, 60-80% opacity, persistente | `@elige_tucompanero` |
 
-> Specs exactos (posiciones Y, monospaced, no-overlap matrix, decision-UI editorial pacing) = los de `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 1-§ 2`. NO se redefinen acá — se heredan tal cual.
+> Specs exactos heredados (monospaced, no-overlap matrix, pacing) = `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 1-§ 2`, CON los overrides sport de `../INGENIERO-PAUTA-MASTER.md § 1.5` (countdown de compuerta + rotulado A/B + zonas exclusivas hook), que MANDAN en este formato.
 
 ---
 
@@ -57,7 +57,7 @@
 ### Visual intent
 - **Layout:** dos paneles paired left/right, Y60-70 (heredado, safe zones IG).
 - **Cada botón contiene:** letra grande (A / B) + texto de la jugada ("ENCARAS AL LATERAL" / "DEVUELVES SEGURO").
-- **Color intent (decisión creativa, NO un patrón fijo):** ⚠️ a diferencia de horror (rojo=peligrosa / cyan=segura), en sport-choice **evitar mapear siempre un color a "la correcta"** — eso entrena al viewer a predecir (PAUTA-MASTER § 6 anti-pattern #5). Opciones: ambos neutrales blancos; o tinte por riesgo (arriesgada vs conservadora) PERO rotando cuál paga entre decisiones/videos. El color NO debe spoilear la opción correcta.
+- **Color intent (decisión creativa, NO un patrón fijo):** ⚠️ a diferencia de horror (rojo=peligrosa / cyan=segura), en sport-choice **evitar mapear siempre un color a "la correcta"** — eso entrena al viewer a predecir (PAUTA-MASTER § 5 "B no siempre correcta" + § 10 anti-patterns). Opciones: ambos neutrales blancos; o tinte por riesgo (arriesgada vs conservadora) PERO rotando cuál paga entre decisiones/videos. El color NO debe spoilear la opción correcta.
 - **(Opcional) porcentaje community:** "A — 67% · B — 33%" (crea sensación de comunidad votando). Decisión creativa.
 
 ### Ejemplos de botones por decisión
@@ -115,7 +115,7 @@ ui_elements:
     - { decision: D2, option_a: "BUSCAS EL ÁNGULO", option_b: "ASISTES A TU COMPAÑERO" }
     - { decision: D3, option_a: "LA CRUZAS", option_b: "LA PICAS" }
     layout_intent: "paired side-by-side, Y60-70, safe zones IG"
-    color_intent: "NO mapear color fijo a la correcta (rotar qué paga) — evita predicción"   # ⚠️ § 6 anti-pattern #5
+    color_intent: "NO mapear color fijo a la correcta (rotar qué paga) — evita predicción"   # ⚠️ § 5 "B no siempre correcta" + § 10 anti-patterns
     order_rule: "orden de botones = orden hablado por el narrador (A=primera mencionada)"   # 🟦
     show_percentages: false   # decisión creativa
   watermark:
@@ -130,8 +130,8 @@ ui_elements:
 ## Anti-patterns en UI elements (sport)
 
 ❌ **Name labels sin caption de contexto de equipo** → no se resuelve rival/compañero.
-❌ **Color de botón que siempre marca la correcta** → el viewer predice (§ 6 anti-pattern #5).
-❌ **Orden de botones ≠ orden hablado** → el viewer se confunde sobre qué eligió (§ 6 anti-pattern #2).
+❌ **Color de botón que siempre marca la correcta** → el viewer predice (§ 5 "B no siempre correcta" + § 10).
+❌ **Orden de botones ≠ orden hablado** → el viewer se confunde sobre qué eligió (§ 10 anti-pattern "orden hablado ≠ botones").
 ❌ **Botones A/B sin texto de jugada** (solo A/B) → no se entiende qué jugada elige.
 ❌ **Watermark distinto a `@elige_tucompanero`** → rompe brand canonical.
 ❌ **UI elements amontonados** (countdown + loading + botones + caption simultáneos) → overload (heredado).

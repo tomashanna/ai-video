@@ -21,7 +21,7 @@
 
 | Métrica técnica | Valor heredado | Autoridad |
 |-----------------|----------------|-----------|
-| **Speaking rate** | 156-195 WPM (target ~165 WPM; David C2 = 157 WPM medido, atempo ×1.05) | **[A universal]** `ai-video-production/` (NARRATION) + `MODEL-CAPABILITIES-MATRIX.md` |
+| **Speaking rate** | 156-195 WPM (target ~165 WPM; narrador sport = El Faraón `QpDQJR3frbDwOhTIo8nW` — raw WPM a MEDIR en CP2 del video #2 antes de fijar atempo, HR#19) | **[A universal]** `ai-video-production/` (NARRATION) + `MODEL-CAPABILITIES-MATRIX.md` + `library/voices-catalog.json` |
 | **Narration coverage** | ≥80% | **[A universal]** `ai-video-production/` (audit-audio / coverage) |
 | **LUFS integrated** | -14 ±0.5 (Instagram) | **[A universal]** `ai-video-production/AUDIO-MASTERING.md` + CLAUDE.md HR#1/#9 |
 | **Mix de volúmenes** | narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65 | **[A universal]** CLAUDE.md HR#9 + `SFX-PIPELINE.md` |
@@ -131,6 +131,46 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 ❌ **"Estadio" genérico sin lleno/reflectores/césped** → se ve vacío y falso, no broadcast.
 ❌ **POV no establecido** → el modelo genera tercera persona (rompe HR de POV 1ª persona).
 ❌ **Falta el balón** → jugada sin balón = sin sentido futbolístico.
+❌ **Botas/piernas propias del POV visibles y ESTÁTICAS** → si las zapatillas/piernas del viewer aparecen en el frame, el motion prompt DEBE darles movimiento (peso cambiando, paso, ajuste de apoyo). Piernas POV congeladas = uncanny inmediato (regla del creator 2026-06-04, caso champions).
+
+---
+
+## 1.5 ⭐⭐ MOMENTO DE DECISIÓN — clips + UI (traducción técnica de PAUTA § 10.D, directivas del creator 2026-06-04)
+
+### Clips de COMPUERTA (los shots de decisión) — el balón espera
+
+🟦 El motion prompt de toda compuerta sigue esta plantilla (R2 de PAUTA § 10.D):
+```
+slow-motion tense hold: the ball stays in the POV's possession ([at the own boots / floating
+mid-air toward the POV]) and NEVER resolves its action; surrounding players keep moving
+([rival pressing, teammate making a run]), crowd alive in the background; camera locked at
+first-person eye level; the moment stretches as if time slowed for the decision; no talking.
+```
+- 🟦 **Cámara lenta explícita** ("slow-motion", "the moment stretches") — el clip ES la decisión sostenida.
+- 🟦 **El balón NO inicia acción** — sin pases saliendo, sin remates, sin el balón viajando al arco.
+- 🟩 El entorno SÍ vive: rivales que presionan, compañeros desmarcándose, multitud, banderas.
+- 🟥 ANTI-PATTERN: balón avanzando al arco / arquero reaccionando / jugada resolviéndose ANTES del pick del viewer (casos shots 05/13/15 draft #2 mexico-sudafrica).
+- ⛔⛔ **HANDBALL GENERADO — manos y balón JAMÁS en la misma cláusula del prompt** (caso shot_05 Kling 2026-06-05: el motion pedía "balón en posesión" + "mangas propias en el frame" → el modelo resolvió la posesión AGARRANDO el balón con las manos del POV — handball flagrante; los i2v no conocen las reglas del fútbol). Regla: (a) la posesión del balón se describe SIEMPRE con pies/botas ("at the own boots", "glued to the feet", "the ball stays on the grass"); (b) si las mangas/manos POV aparecen en el prompt, van en cláusula SEPARADA y LEJOS del balón ("hands stay down at the sides, out of frame"); (c) **negative OBLIGATORIO en todo motion de jugada de campo**: "no hands touching the ball, the ball is played with feet only". Únicas excepciones: arquero (guantes) y saque de banda explícito.
+
+### Clips de CONSECUENCIA — desde el punto de decisión, en la dirección decidida
+
+🟦 El prompt de imagen Y el motion de toda consecuencia heredan la POSICIÓN del shot de decisión (R1+R3):
+- El primer frame de la consecuencia ≈ el encuadre del freeze de la decisión (misma zona, misma orientación al arco).
+- La acción/cámara se mueve **EN LA DIRECCIÓN de la opción elegida** ("the play breaks out toward [the right where the teammate was / the near post]").
+- 🟥 ANTI-PATTERN: el desenlace visto desde FUERA de la cancha o desde otra zona del campo (caso shot_07 draft #2 — "decidí dentro del área y me veo afuera").
+
+### Decision-UI SPORT (override del estilo heredado — el film-leader queda solo para el HOOK)
+
+| Elemento | Regla sport (creator 2026-06-04, refinada post draft v4) |
+|----------|----------------------------------|
+| **Countdown de compuerta** | **ESTILO UNIFICADO con el hook** (creator post-v5): dígito **3 → 2 → 1 ARRIBA** (Y≈28-32), **~240px** monospaced + stroke/glow, **CON CÍRCULO/RING alrededor** (~400px Ø, trazo blanco grueso, estilo academy-leader) para que se note más — ⛔ pero SIN el crosshair/líneas internas (eso desconcentra sobre la jugada). 🟩 Variante válida: barra que se RELLENA al 100% ARRIBA de los números (sincronizada al countdown). SIEMPRE completo 3-2-1. ⛔ SIN barra "draining" debajo (v4, bug). |
+| ⭐ **Barra de progreso del VIDEO** | Barra **GLOBAL persistente** que muestra el avance del video completo ("cuánto le queda al video" — retention device pedido por el creator): fina (~5-7px), borde inferior (Y≈98.5-99, fuera de las safe zones de contenido), blanca semitransparente (~70%), se LLENA de izquierda a derecha con el progreso real, visible TODO el video. |
+| **Botones A/B** | ⛔ SIEMPRE rotulados con prefijo **"A. "** y **"B. "** (p.ej. "A. DESCARGAS CON GIMÉNEZ"). Y75/Y82 como siempre. |
+| **Hook countdown** | **MISMO sistema que las compuertas** (creator post-v6: el film-leader centrado TAPA los captions del dyad): dígito 240px + ring ARRIBA, completo 3-2-1. ⛔ El AVU film-leader centrado queda FUERA del formato sport (los ticks de audio se mantienen). UN solo estilo de countdown en todo el video. |
+| ⭐ **Caption muere con la voz** | ⛔ El caption del narrador DESAPARECE cuando el narrador termina de hablar (la última cue termina en el `end` real de la última palabra del words.json — JAMÁS sostenida hasta el final del clip). Bug class conocida del chunker (`chunk_caption_cues` champions outro + hook mexico-sudafrica v6): en shots con cola sin narración (hook 9s, outro), el caption fantasma queda colgado. Regla universal del formato (portar al template Capa A). |
+| **Contexto de equipo del hook** | El contexto explícito jugador=equipo (PAUTA §3) vive EN el caption estilizado clase-name del narrador ("Giménez, México." verde / "Tau, Sudáfrica." amarillo) + los name labels + los kits. ⛔ SIN banner duplicado Y55 (el "GIMÉNEZ = MÉXICO · TAU = SUDÁFRICA" del diseño v1 quedó redundante — creator post-v6: "no eliminaste los captions anteriores"). |
+| **Captions del narrador vs UI textual (TODO shot)** | ⛔ ZONAS EXCLUSIVAS universales: la narración es DUEÑA de Y62 en todo el video; cualquier UI textual concurrente (caption de contexto del hook, pregunta del outro "¿QUIÉN GANA EL PARTIDO?", warnings) va a **Y55**. JAMÁS dos textos en la misma Y en la misma ventana (bugs draft #2 hook + draft v4 outro). |
+| ⭐ **Caption del HOOK = clase "name" EMOCIONANTE** | (creator post-v5: "están muy planos… hacelos más estéticos al inicio"). En el caption de la presentación del dyad ("…Giménez, México. Tau, Sudáfrica."), los NOMBRES + EQUIPOS van **coloreados con el color del kit** (p.ej. GIMÉNEZ/MÉXICO en verde kit, TAU/SUDÁFRICA en amarillo Bafana) + **más grandes que la narración normal** (~1.3-1.5×) + stroke. La emoción del momento de elección se ve en el caption — texto plano blanco SOLO para narración corriente. (Hereda el espíritu del sistema de 3 clases de `ai-video-production/CAPTIONS.md` — clase name.) |
 
 ---
 
@@ -150,9 +190,7 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 | **Eventos de juego** | **Atajada / manotazo** (goalkeeper save) | El arquero saca/ataja |
 | **GLORIA (acierto)** | **Explosión de celebración** de la hinchada | Gol propio / campeón |
 | **GLORIA** | **Confeti** (rustle) + cánticos eufóricos | Vuelta olímpica / levantar la copa |
-| **GLORIA** | **Pings de redes positivos** (opcional) | Si se muestra el furor en redes |
 | **BURLA (error)** | ⭐ **Abucheos / "uy" decepcionado** de la hinchada | Cada error → la jugada se cae |
-| **BURLA** | ⭐ **Pings de redes / notificaciones** (meme alert) | "Eres la burla" — el furor de memes en su contra |
 | **BURLA** | **Silbidos** de la hinchada | Humillación sostenida |
 | **UI** | Tick del countdown 3-2-1 (film leader academy) + beep tick del loading bar | Cada decisión (el AVU countdown es UNIVERSAL — vive en `ai-video-production/templates/avu-library/`, NO en horror) |
 
@@ -165,18 +203,49 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 | Capa | horror | sport-choice |
 |------|--------|--------------|
 | Música (Layer 3 drone) | dark ambient drone | drone subharmónico de tensión deportiva sostenida (sports-thriller bed) |
-| Voiceover | narrador grave | narrador grave deportivo, español neutral (mismo voice_id David C2) |
+| Voiceover | narrador grave | relator play-by-play deportivo, español neutral (El Faraón `QpDQJR3frbDwOhTIo8nW` — voices-catalog) |
 | Ambient continuo (Layer 2) | hum/viento del setting | **rugido de estadio lleno** + cánticos + eco (cobertura 99-100%, cero dead zones) |
-| SFX puntuales (Layer 1 clip-scoped) | foley horror + impactos | foley deportivo (boot-strike, red, atajada) + abucheos/confeti/pings |
+| SFX puntuales (Layer 1 clip-scoped) | foley horror + impactos | foley deportivo (boot-strike, red, atajada) + abucheos/confeti |
 | Accent (clímax) | string stabs | rising strings + low pulse en D3 (mano a mano) + remate |
 
 (Detalle creativo de las 4 capas → `creative-direction/audio-direction.md`. Detalle técnico de la mecánica SFX → `ai-video-production/SFX-PIPELINE.md`.)
 
 ---
 
-## 3. CONSISTENCIA DE IDENTIDAD — kits + likeness (riesgo CP1)
+## 3. CONSISTENCIA DE IDENTIDAD — RÉGIMEN ESTRICTO (kits + 5 anchors + likeness) — RIESGO #1 CP1
 
-> Lo equivalente a "character consistency" de horror, pero centrado en KITS DE EQUIPO + likeness de jugadores reales.
+> Lo equivalente a "character consistency" de horror, pero centrado en KITS DE EQUIPO + likeness de jugadores reales. **Es el riesgo de producción #1 del formato** — por eso es un régimen ESTRICTO codificado, no un "ojalá salga parecido".
+
+### 3.0 ⭐ LOS 5 ANCHORS OBLIGATORIOS POR VIDEO
+
+> Cada video sport-choice genera estos 5 anchors en CP1 (UNA reference image por anchor, reusada en todos sus shots vía `--ref` / reference mode). El dorsal + el patrón del kit son la **visual signature** — NUNCA varían cross-shot.
+
+| Anchor | Qué es | Kit / firma | Por qué es obligatorio |
+|--------|--------|-------------|------------------------|
+| `jugador_A` | La estrella del equipo A (compañero del recorrido jugado si A es el elegido) | [KIT_A] + dorsal_A, rasgos foto-reales descriptor-based | El compañero recurrente del recorrido jugado |
+| `jugador_B` | La estrella del equipo B (el foil) | [KIT_B] + dorsal_B, rasgos foto-reales descriptor-based | Aparece SOLO en hook + su propio recorrido `counterfactual_*` + cliffhanger (PAUTA § 4) |
+| `arquero_rival` | El arquero | **[KIT_GK] DISTINTO a ambos equipos** (regla real del fútbol: guante + color diferenciado) | Evita confusión en el mano a mano; aparece en todas las definiciones |
+| `rival_npc` | Defensor/lateral genérico de campo | kit del equipo OPUESTO al recorrido en curso, **cara genérica** (NO una estrella nombrada) | ⛔⛔ **Los obstáculos del played path usan ESTE anchor, NUNCA el de `jugador_B`.** Reusar el anchor de la estrella foil para los rivales del played path es el **bug EXACTO del topical champions** (shots 05/06/07/12/17/19) → confunde quién es el compañero. Anchor `rival_npc` aparte = fix. |
+| `viewer_hands` | Las manos/botas del POV | mangas + (si visibles) botas con el **kit ELEGIDO** del recorrido en curso | El viewer ES el protagonista (POV >80%); sus mangas marcan de qué equipo juega en cada recorrido |
+
+> ⚠️ **`viewer_hands` cambia de kit entre recorridos:** en el recorrido jugado las mangas son [KIT_A]; en el recorrido del foil (la otra hipótesis) son [KIT_B]. Generar la variante de manos por kit (o un anchor de manos por kit). El PIVOTE (PAUTA § 10.A) es justamente donde el viewer ve que sus mangas cambiaron de kit.
+> ⛔ **El anchor `viewer_hands` NO se pasa como reference image a los shots de campo** (lección empírica mexico-sudafrica CP3 2026-06-04): el modelo IMPORTA LA POSE del anchor (piernas sentadas/despatarradas → tercera persona del propio cuerpo = POV roto). El color de mangas se controla TEXTUALMENTE ("mangas VERDES/AMARILLAS propias" en el visual_intent) + directiva first-person explícita. El anchor de manos sirve como REFERENCIA DE ESTILO para el humano/auditor, no como ref del modelo.
+> 🟩 Si un video tiene jugadores que hablan on-screen en shots donde se aísla una zona sin cara (raro en sport), considerar anchors locus-específicos (`MODEL-BEHAVIOR-LOG.md` entry 1) — pero en sport el riesgo locus es bajo (la firma es el kit+dorsal, no anatomía rara).
+
+### 3.1 SPEC REQUIREMENTS (el arquitecto los declara; el schema v11 ya los soporta)
+
+- 🟦 `anchor_consistency_strict: true` por shot con personas (Bryan-style strict — schema v11).
+- 🟦 `anchor_id_required` por shot: qué anchor de CP1 DEBE matchear cada persona visible (p.ej. `{ jugador_A: "jugador_A_v1", arquero_rival: "arquero_rival_v1" }`). Los obstáculos del played path → `rival_npc`, NUNCA `jugador_B`.
+- 🟦 **Kit + dorsal INVARIANTES cross-shot** (la visual signature). El color, el patrón de mangas y el número NO cambian entre shots del mismo anchor.
+- 🟦 `anchor_similarity_threshold: 0.6` (Script B dim 6 — el floor enforced del schema v11).
+
+### 3.2 ⛔ GATE CP1 — regen MANDATORY si la consistencia falla (Risk C ya codificado)
+
+> Esto NO se reinventa — es el **Risk C** ya codificado en el sistema. Citarlo, no recrearlo:
+
+- 🟦 Si la consistencia del anchor **falla el audit** (Script B **dim 6 anchor_similarity < 0.6**) → **regen MANDATORY del anchor ANTES de CP3.** No es decisión humana opcional: es auto-regen estructural (el principio canónico "si el SPEC declara X y el output produce Y, se regenera para match — no se patchea downstream").
+- 🟦 **Por qué es barato hacerlo bien en CP1:** el costo de regenerar un anchor es trivial (~$0.04-0.36) vs la propagación a CP4 Hailuo si la inconsistencia llega a la capa cara (regenerar clips animados = $3-5). Atrapar la inconsistencia en CP1 es el punto de máximo apalancamiento. (Authority: schema v11 `dim6_anchor_similarity_min: 0.6` + GAPS-LOG #44 "engineer regen anchor antes de CP3" + el costo trivial vs propagación.)
+- 🛠️ El ingeniero registra el resultado del audit de consistencia (por anchor, por shot) en el `CP1-handoff.md`.
 
 ### Kit propio vs rival — siempre legible
 
@@ -185,14 +254,16 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 - **El arquero rival viste un kit DISTINTO a ambos** (regla real del fútbol — guante + color diferenciado). Esto evita confusión en el mano a mano.
 - En cada shot, el ingeniero verifica que los 3 kits (propio / rival de campo / arquero) sean visualmente inequívocos. El kit es la señal que le dice al viewer quién es aliado y quién obstáculo.
 
-**Anchors de kit:** generar UNA reference image por jugador (anchor) con su kit exacto (color, mangas, dorsal) y reusarla en todos los shots de ese jugador (IP-Adapter / reference mode). El dorsal y el patrón del kit son la "visual signature" — NUNCA varían cross-shot.
+**Anchors de kit:** generados por los 5 anchors obligatorios de § 3.0 (UNA reference image por anchor, reusada vía `--ref` / reference mode). El dorsal y el patrón del kit = la "visual signature", NUNCA varían cross-shot. ⛔ Recordatorio del bug champions: el obstáculo de campo es `rival_npc` (cara genérica), NO el anchor de la estrella foil `jugador_B`.
 
-### Likeness de jugadores reales = descriptor-based (REGLA CRÍTICA)
+### Likeness de jugadores reales = descriptor-based (REGLA CRÍTICA — el riesgo #1 CP1)
+
+> ⭐ **Este es EL riesgo de producción #1 del formato.** La likeness descriptor-based de jugadores reales es lo más probable que requiera iteración en CP1 → **presupuestar iteración de CP1 (anchor generation) para `jugador_A` y `jugador_B`** explícitamente en el plan de costo del video.
 
 - ⛔ **NUNCA poner el nombre de la celebridad literal en el prompt de imagen.** Los modelos t2i no reproducen personas reales nombradas de forma confiable (producen caras genéricas o fallan).
-- ✅ Describir por **RASGOS FOTO-REALES reconocibles**: posición + tono de piel + corte de pelo + vello facial + gesto característico + **kit con dorsal**. Ejemplo: "extremo del Arsenal, piel marrón, rapado, barba corta, sonrisa amplia, kit rojo mangas blancas dorsal 7".
-- **Iterar en CP1** hasta likeness aceptable. Este es el **riesgo de producción #1** del formato — presupuestar iteraciones de CP1 (anchor generation) para los jugadores reales.
-- Si la likeness no converge a un nivel aceptable tras iteración razonable, escalar al arquitecto (puede decidir jugador ficticio o ajustar el descriptor).
+- ✅ Describir por **RASGOS FOTO-REALES reconocibles**: posición + tono de piel + corte de pelo + vello facial + gesto característico + **kit con dorsal**. Ejemplo: "extremo del [equipo], piel marrón, rapado, barba corta, sonrisa amplia, kit rojo mangas blancas dorsal 7".
+- **Iterar en CP1** hasta likeness aceptable (gate § 3.2: dim 6 ≥ 0.6, regen mandatory bajo el umbral).
+- Si la likeness no converge a un nivel aceptable tras iteración razonable, **escalar al arquitecto** (puede decidir jugador ficticio o ajustar el descriptor) — no forzar un anchor pobre downstream.
 
 ### Lip sync (heredado, aplicado al protagonista)
 
@@ -208,7 +279,7 @@ Si ❌ en cualquiera → reescribir el prompt antes de generar (no dejar que el 
 | Sección | Mood musical sport-choice | Ejemplo de prompt ElevenLabs |
 |---------|---------------------------|------------------------------|
 | Hook + juego en tensión | Drone subharmónico de **tensión deportiva sostenida** (sports-thriller bed) | "low subharmonic drone, sustained deep bass tension, no melody, dark cinematic sports-thriller bed, faint orchestral swell undertone" |
-| Rama corta gloriosa + resolución + outro (acierto) | **Celebración triunfal cálida** | "triumphant stadium celebration ambience, distant euphoric crowd cheering warm, confetti rustle, victory tone, uplifting, no horror" |
+| Desenlace glorioso (gol/campeón) + resolución + outro (acierto) | **Celebración triunfal cálida** | "triumphant stadium celebration ambience, distant euphoric crowd cheering warm, confetti rustle, victory tone, uplifting, no horror" |
 | Clímax D3 (mano a mano) | **Tensión rising** | "rising dark cinematic strings tension, pounding low pulse building, climax buildup, no resolution" |
 | Outro sostenido | Hum bajo + swell triunfal (loop cue) | "sustained low hum gradual fade blended with faint triumphant swell, cliffhanger atmospheric, loop cue" |
 

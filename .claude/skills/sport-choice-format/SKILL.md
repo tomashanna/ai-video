@@ -42,7 +42,7 @@ Si la tarea es animar, **también `video-animation`**.
 
 ## Qué es este skill
 
-Este skill encodea las **reglas, patterns y dirección creativa del formato sport-choice** — la versión deportiva del formato choice. El espectador vive una jugada decisiva de fútbol en POV: elige un jugador (= elige equipo), y luego toma 3 decisiones de juego reales cuyo desenlace es la gloria (gol, levantar la copa) o la humillación (fallar, perder, ser la burla en redes).
+Este skill encodea las **reglas, patterns y dirección creativa del formato sport-choice** — la versión deportiva del formato choice. El espectador vive una jugada decisiva de fútbol en POV: elige un jugador (= elige equipo), y luego recorre las compuertas (2-3 decisiones de juego reales por recorrido) cuyo desenlace es la gloria (gol, levantar la copa) o la humillación (fallar, perder, ser la burla en redes). El video muestra los DOS recorridos completos (el elegido + el del foil), uno y luego el otro.
 
 Es **un GENRE skill (Capa B)**. El toolkit técnico general (TTS, image gen, SFX gen, motion, captions, render, QA, ensamblado HYBRID per-clip atomic) vive en `ai-video-production/` (Capa A). La mecánica estructural AGNÓSTICA del formato choice (hook dyad, countdown, decisiones, counterfactual, cliffhanger) vive en `choice-format-core/` (Capa A.5) — derivada de los 8 virales (vía horror) pero género-neutro — y se HEREDA. horror-choice y sport-choice son HERMANOS que heredan de ese núcleo común. Este skill construye encima de ambas capas y aporta SOLO el sabor sport.
 
@@ -57,13 +57,13 @@ Es **un GENRE skill (Capa B)**. El toolkit técnico general (TTS, image gen, SFX
 | **Tono** | Uncanny, dread, sobrenatural | **Drama deportivo, tensión de final, humillación social** (sin nada sobrenatural) |
 | **Personajes** | Criaturas uncanny inventadas (nombres reales inventados) | **Jugadores reales** (likeness foto-real descriptor-based) o jugadores ficticios |
 | **Paleta SFX** | Drones, susurros, gritos de horror | **Rugido de hinchada, silbato, redes, cánticos, abucheos, atajada, confeti** (NUNCA gritos de horror) |
-| **Counterfactual** | "Si hubieras elegido a X (bueno), habrías tomado café" | **Rama corta del otro equipo: "Si eliges a X, juegas para el equipo A → la mete → campeón"** (foil glorioso, no cozy hogareño) |
+| **Counterfactual** | "Si hubieras elegido a X (bueno), habrías tomado café" | **El contraste entre los DOS recorridos completos** (ves las dos elecciones): el recorrido del foil es un viaje entero con su propio desenlace, no un cozy hogareño. ⤴ `PAUTA-MASTER.md § 4` + § 10.A |
 
-**Lo que NO cambia (se HEREDA tal cual de `choice-format-core` — la mecánica agnóstica común a horror y sport):** POV 1ª persona >80%, hook con dyad simultánea + name labels GRANDES, 3 decisiones binarias con countdown 3-2-1 + loading bar + botones A/B, framing acción-condicional ("Si encaras / Si devuelves"), counterfactual placement, cliffhanger + CTA verbal, duración 80-100s, español neutral, captions Whisper word-timed, decision-UI editorial pacing, UI safe zones, lip-sync rule. (El narrador grave, watermark `@elige_tucompanero`, ensamblado HYBRID per-clip atomic y los 8 gates pre-render se heredan del pipeline universal `ai-video-production` + preferencias del creator.)
+**Lo que NO cambia (se HEREDA tal cual de `choice-format-core` — la mecánica agnóstica común a horror y sport):** POV 1ª persona >80%, hook con dyad simultánea + name labels GRANDES, decisiones binarias (2-3 internas por recorrido) con countdown 3-2-1 + loading bar + botones A/B, framing acción-condicional ("Si encaras / Si devuelves"), counterfactual placement, cliffhanger + CTA verbal, duración 80-100s, español neutral, captions Whisper word-timed, decision-UI editorial pacing, UI safe zones, lip-sync rule. (El narrador grave, watermark `@elige_tucompanero`, ensamblado HYBRID per-clip atomic y los 8 gates pre-render se heredan del pipeline universal `ai-video-production` + preferencias del creator.)
 
 ## Validado en
 
-- **Video #1 (en producción) — `champions-sport-choice`** (Dembélé #10 PSG vs Saka #7 Arsenal, final de Champions en el Puskás Aréna). PRIMER video del formato. SPEC: `creative-specs/champions-sport-choice.yaml`. Pending ship.
+- **NINGÚN video shipped todavía** (HR#19: nuestras producciones NO son autoridad). El intento topical `champions-sport-choice` (+ `champions-arsenal-wins` / `champions-psg-wins`) **NO se shippeó** — falló por concepto rival/compañero roto + teleport-continuity (ver `video-log.md` #1 learnings). El diseño v0 + la capa operativa v0.2 existen para que la estructura esté lista ANTES de producir el próximo.
 
 (Hasta tener ≥1 video shipped con buena retención + el OK de Tomás, sport-choice está en **fase de validación**: la mecánica heredada está probada, pero la lógica deportiva concreta se está validando empíricamente. Los hallazgos se loguean en `video-log.md` y se promoverán a PAUTA-MASTER cuando haya patrón observado.)
 
@@ -119,21 +119,21 @@ Activar cuando el usuario:
 > Para hard rules del toolkit general (variantes -a/-b/-c, capa SFX dedicada, motion AI, ensamblado HYBRID), ver `ai-video-production/SKILL.md` + CLAUDE.md. Para la MECÁNICA del formato choice (countdown, loading bar, framing condicional, counterfactual, POV), se HEREDA de `choice-format-core/CHOICE-MECHANIC.md` + `choice-format-core/INGENIERO-CHOICE-CORE.md` (Capa A.5 agnóstica, común a horror y sport). Estas son **específicas de sport-choice**:
 
 1. **La elección del hook = EQUIPO.** Se presentan dos jugadores, uno de cada equipo. Elegir uno = jugás PARA ese equipo. **SIEMPRE dar contexto explícito** al viewer ("Si eliges a X, juegas para el equipo A; si eliges a Y, para el equipo B"). Esto resuelve de raíz la incoherencia rival/compañero. Ver PAUTA-MASTER § 1.
-2. **Ramas asimétricas en UN video:** una rama CORTA ("eliges tal equipo y ganás" — glimpse rápido, ocupa el slot del counterfactual de apertura) + una rama PROFUNDA (el viaje interactivo con las 3 decisiones). Ver PAUTA-MASTER § 2.
-3. **Decisiones = jugadas reales de fútbol.** Consecuencias = 100% del partido: acertar → la jugada de gol avanza; errar → la jugada se cae → el rival capitaliza → PIERDES y eres LA BURLA. Ver PAUTA-MASTER § 3.
-4. **SIN horror/sobrenatural.** Drama deportivo y humillación social, NO muerte, NO monstruos, NO body horror. Esta es la diferencia central vs horror-choice. Ver PAUTA-MASTER § 4.
-5. **NO pasarle el balón a un rival** (incoherencia futbolística). El compañero elegido + los de su kit son tu equipo; los del kit opuesto son obstáculos. Ver PAUTA-MASTER § 6 anti-patterns.
-6. **Orden hablado = orden de botones** (si el narrador dice "encaras o devuelves", el botón A = encaras, B = devuelves). Ver PAUTA-MASTER § 6.
-7. **Consecuencia causalmente justificada** (un pase seguro NO "pierde el balón"; una atajada implica un tiro AL arco, no afuera). Sin contradicciones físicas. Ver PAUTA-MASTER § 6.
-8. **Evitar que "B" sea siempre la correcta** (predecible). Rotar qué opción es la acertada entre decisiones y entre videos. Ver PAUTA-MASTER § 6.
+2. **DOS recorridos completos en UN video** (asimétricos por favorito): el recorrido JUGADO (el elegido) + el recorrido del FOIL (el contraste, tagueado `counterfactual_*`), cada uno con setup + compuertas (2-3 según favorito) + desenlace. Son SECUENCIALES (jamás interleaved); el orden entre ellos es 🟩 libre (el foil al inicio O al final — NO un "counterfactual opening fijo"); el foil NUNCA aparece en el played path. Ver PAUTA-MASTER § 4 + § 10.A.
+3. **Decisiones = jugadas reales de fútbol** (compuertas — catálogo por posición POV en PAUTA-MASTER § 10.B). Consecuencias = 100% del partido: acertar → la jugada de gol avanza; errar → la jugada se cae → el rival capitaliza → PIERDES y eres LA BURLA. Ver PAUTA-MASTER § 5.
+4. **SIN horror/sobrenatural.** Drama deportivo y humillación social, NO muerte, NO monstruos, NO body horror. Esta es la diferencia central vs horror-choice. Ver PAUTA-MASTER § 0 BAN + `NO-HORROR-GUARD.md`.
+5. **NO pasarle el balón a un rival** (incoherencia futbolística). El compañero elegido + los de su kit son tu equipo; los del kit opuesto son obstáculos. Ver PAUTA-MASTER § 10 anti-patterns + § 10.C eslabón 2.
+6. **Orden hablado = orden de botones** (si el narrador dice "encaras o devuelves", el botón A = encaras, B = devuelves). Ver PAUTA-MASTER § 10.
+7. **Consecuencia causalmente justificada** (un pase seguro NO "pierde el balón"; una atajada implica un tiro AL arco, no afuera). Sin contradicciones físicas. Ver PAUTA-MASTER § 10 + § 10.C eslabón 7.
+8. **Evitar que "B" sea siempre la correcta** (predecible). Rotar qué opción es la acertada entre decisiones y entre videos. Ver PAUTA-MASTER § 5.
 9. **REGLA DE AMBIENTE** (técnica, pero load-bearing creativa): cada prompt UBICA la escena ANTES de la acción en orden — POV → zona del campo → geografía (arco, kits, balón, líneas) → estadio lleno → acción. Ver INGENIERO-PAUTA-MASTER § REGLA DE AMBIENTE + `creative-direction/image-direction.md`.
 10. **Likeness de jugadores reales = descriptor-based**, NUNCA el nombre de celebridad literal en el prompt (los modelos t2i no reproducen personas reales nombradas; riesgo CP1). Ver PAUTA-MASTER § 5 + INGENIERO-PAUTA § consistencia.
-11. **Heredadas inviolables del formato choice (de `choice-format-core` — comunes a horror y sport):** POV 1ª persona >80%, hook dyad simultánea con name labels GRANDES, 3 decisiones con countdown + loading bar + botones, framing acción-condicional (NO bare label "Si elegiste A"), counterfactual placement, cliffhanger + CTA, duración 80-100s, español neutral, watermark `@elige_tucompanero`. Ver `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica).
+11. **Heredadas inviolables del formato choice (de `choice-format-core` — comunes a horror y sport):** POV 1ª persona >80%, hook dyad simultánea con name labels GRANDES, decisiones binarias (2-3 internas por recorrido) con countdown + loading bar + botones, framing acción-condicional (NO bare label "Si elegiste A"), counterfactual placement, cliffhanger + CTA, duración 80-100s, español neutral, watermark `@elige_tucompanero`. Ver `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica).
 
 ## Estado del formato
 
-- **Última actualización:** 2026-05-31 (creación del template Capa 2)
-- **Fase:** validación (mecánica heredada probada en horror-choice; lógica deportiva en su primer video)
-- **Primer video:** `champions-sport-choice` (SPEC validado en `creative-specs/champions-sport-choice.yaml`) — pending ship
+- **Fase:** validación (mecánica heredada probada en horror-choice; lógica deportiva PRE-EMPÍRICA — 0 videos shipped)
+- **PAUTA-MASTER:** v0.2 operativa (diseño v0 + capa operativa § 10.A guion beat-a-beat / § 10.B catálogo de jugadas-compuerta por posición / § 10.C plantilla de cadena causal).
+- **Videos shipped:** NINGUNO. El intento topical champions NO se shippeó (ver `video-log.md` #1). NO usar como autoridad (HR#19).
 - **Referentes virales propios:** NINGUNO todavía. Se derivarán empíricamente de nuestros primeros videos (igual que horror-choice se derivó de 8 virales). Hasta entonces, la autoridad estructural se hereda de `choice-format-core` (la mecánica agnóstica validada — derivada de los 8 virales vía horror) + la lógica deportiva se documenta en PAUTA-MASTER como diseño + se ajusta con cada video logueado en `video-log.md`.
 - **Pending:** shippear video #1 + recolectar ≥3 videos para derivar canonical-scenes propios de sport-choice + escribir patterns deportivos empíricos.

@@ -28,7 +28,7 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 
 1. **Los dos jugadores del dyad + sus equipos** (p.ej. Saka/Arsenal y Dembélé/PSG). ¿Reales (topical) o ficticios?
 2. **El partido / contexto** (final de Champions, derbi, clásico, último minuto, etc.)
-3. **El equipo de la rama PROFUNDA** (el jugable — qué jugador es el "compañero protagonista") y el de la rama CORTA (el foil)
+3. **El equipo del recorrido JUGADO** (el del jugador que elegís = protagonista) y el del recorrido del FOIL (el contraste, el camino no-elegido). Cada uno es un recorrido COMPLETO; el orden entre ellos es libre (ver estructura)
 4. **La posición del POV** (extremo / delantero centro / mediapunta / lateral / arquero) — define las jugadas
 5. **El tipo de jugada-clave del clímax** (mano a mano / penal / tiro libre / cabezazo) — rotar vs video anterior (ver `video-log.md`)
 6. **Duración objetivo** (default: 90s)
@@ -37,50 +37,47 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 
 ## LA ESTRUCTURA DEL GUION SPORT-CHOICE
 
-> 🟦 PRINCIPIO: la estructura es la del formato choice (heredada de `../choice-format-core/CHOICE-MECHANIC.md § 2` — esqueleto + invariante). Lo que cambia es el CONTENIDO de cada bloque (deportivo).
+> 🟦 PRINCIPIO: la estructura es la del formato choice (heredada de `../choice-format-core/CHOICE-MECHANIC.md § 2` — esqueleto + invariante). Lo que cambia es el CONTENIDO de cada bloque (deportivo). El timeline de diseño beat-a-beat (con bandas %) vive en `PAUTA-MASTER.md § 10.A`.
+>
+> ⚠️ **DOS RECORRIDOS COMPLETOS, no una "rama corta + rama profunda".** Un video sport-choice muestra los DOS recorridos enteros, uno y luego el otro (cada uno con su setup, sus compuertas y su desenlace). El contraste entre los dos desenlaces ES el counterfactual. El recorrido del FOIL puede ir al INICIO o al FINAL (🟩 variabilidad — NO un "counterfactual opening fijo"). Lo que NUNCA varía 🟦: son SECUENCIALES (jamás interleaved) + el foil NUNCA aparece en el played path (los rivales del played path son `rival_npc` genérico, NO el anchor de la estrella foil — ver `PAUTA-MASTER.md § 4` tagging).
 
 ```
-[BLOQUE 1 — HOOK / DYAD — 0:00 a ~0:09 (0-15%)]
-  Visual: POV frente a los DOS jugadores en el círculo central, name labels GRANDES,
-          kits contrastantes. Countdown 3-2-1 al final del hook.
+[BLOQUE 1 — HOOK / DYAD — 0-15%]
+  Visual: POV frente a los DOS cracks en el círculo central, name labels GRANDES,
+          kits contrastantes. Countdown 3-2-1 al final del hook. 🟦 0 cuts en el hook.
   Narración: "Final de la Champions. Elige tu compañero. [JUGADOR_A], [EQUIPO_A]. [JUGADOR_B], [EQUIPO_B]."
   Caption clave: "[JUGADOR_A] = [EQUIPO_A]   ·   [JUGADOR_B] = [EQUIPO_B]"   ← 🟦 contexto de equipo EXPLÍCITO
 
-[BLOQUE 2 — RAMA CORTA (foil, counterfactual opening) — ~0:09 a ~0:23 (15-25%)]
-  Visual: glimpse veloz del foil → el favorito te deja el balón → le pegas → GOL → su equipo campeón → gloria rápida.
-  Narración: "Si eliges a [FOIL], juegas para [EQUIPO_B]. Te la deja, le pegas, y la clavas.
-              Gol. [EQUIPO_B] es campeón y levantas la copa."
-  🟦 NO spoilea el resultado de la rama profunda. Es el camino-no-tomado glorioso.
+[RECORRIDO JUGADO — completo (setup + compuertas 2-3 + desenlace)]
+  El viaje POV continuo del compañero ELEGIDO. La cancha = la línea de tiempo (mediocampo → banda
+  → borde del área → mano a mano). 🟦 anti-teleporte: continuidad física shot-a-shot.
 
-[BLOQUE 3 — PIVOTE — ~0:20 a ~0:24]
-  Visual: corte de la hipótesis del foil a la realidad jugable (tus mangas son del otro equipo).
-  Narración: "Pero elegiste a [PROTAGONISTA]. Juegas para [EQUIPO_A]."
+  · SETUP: "Avanzas por la banda. El lateral de [EQUIPO_RIVAL] te cierra."
+  · COMPUERTA (×2-3 según favorito — favorito ~2 / no-favorito ~3, PAUTA § 4/§ 5):
+       Pregunta: "Ahora decides. [OPCIÓN_A] o [OPCIÓN_B]."   ← 🟦 orden hablado = orden de botones (A=primera)
+       Countdown 3-2-1 + loading bar + botones A/B.
+       Consecuencia ✗ (errada): la jugada se cae → el rival capitaliza → abucheos.   ← 🟦 causal + humillación (catálogo § 6)
+       Consecuencia ✓ (acierto): avanzas a la siguiente zona / quedas en posición de definir.
+       (Las compuertas escalan de zona: creación → área → definición. TIPOS distintos — § 5.)
+  · DESENLACE del recorrido jugado: acertar la cadena → "Gol. [EQUIPO] es campeón" (vuelta olímpica,
+       copa, confeti); errar una compuerta → la jugada se cae rotando el catálogo § 6 → "eres la burla".
+  · (Opcional) el protagonista habla con lip-sync ("Confía en ti. La metes." / "Te lo dije, hermano.")
 
-[BLOQUE 4 — SETUP + DECISIÓN 1 (banda/medio campo) — ~0:24 a ~0:44 (25-50%)]
-  Setup: "Avanzas por la banda. El lateral de [EQUIPO_B] te cierra."
-  Pregunta: "Ahora decides. [OPCIÓN_A] o [OPCIÓN_B]."   ← 🟦 orden hablado = orden de botones (A=primera, B=segunda)
-  Countdown 3-2-1 + loading bar + botones A/B.
-  Consecuencia errada: la jugada se cae → el rival sale → abucheos.   ← 🟦 causal + humillación
-  Consecuencia acierto: dejas atrás al rival → avanzas a la siguiente zona.
+[PIVOTE — el ÚNICO corte no-continuo permitido]
+  Marca el pasaje de un recorrido al otro (NO es teleporte: es un cambio de hipótesis explícito).
+  🟦 Marcarlo con un cue de bisagra (caption-puente "SI HUBIERAS ELEGIDO A [el otro]…" / línea
+  "Pero del otro lado…" / reset al círculo central con las mangas del otro kit) para que el viewer
+  NUNCA se pierda sobre en qué recorrido está. Ver PAUTA § 10.A.
 
-[BLOQUE 5 — DECISIÓN 2 (borde del área) — ~0:44 a ~0:65 (50-72%)]
-  Setup: "Llegas al borde del área."
-  Pregunta: "Ahora decides. [OPCIÓN_A] o [OPCIÓN_B]."   (TIPO de jugada distinto al D1 — ej: pase/visión)
-  Countdown + loading + botones.
-  Consecuencia errada: el arquero la saca / el rival contraataca → abucheos.
-  Consecuencia acierto: quedas en posición de definir.
+[RECORRIDO DEL FOIL — completo (counterfactual, tagueado counterfactual_*)]
+  El otro compañero/equipo: su setup → sus compuertas → su desenlace. Mismo tratamiento continuo.
+  Muestra el camino-NO-tomado entero (no un glimpse). 🟩 Puede ir ANTES del recorrido jugado
+  (counterfactual de apertura, emotional_framing stakes_lift) O DESPUÉS (relief_contrast).
+  🟦 NO spoilea el otro recorrido — son dos elecciones distintas, ambas con su desenlace propio.
 
-[BLOQUE 6 — DECISIÓN 3 / CLÍMAX (mano a mano u otra jugada-clave) — ~0:65 a ~0:83 (72-92%)]
-  (Opcional) El protagonista habla: "Confía en ti. La metes."   ← lip-sync
-  Pregunta: "[CONTEXTO clímax]. Ahora decides. [OPCIÓN_A] o [OPCIÓN_B]."   (TIPO: definición)
-  Countdown + loading + botones.
-  Consecuencia errada: el arquero la atrapa / la mandas afuera → "[EQUIPO_B] gana y eres la burla."
-  Consecuencia acierto: "Gol. [EQUIPO_A] es campeón."
-
-[BLOQUE 7 — RESOLUCIÓN + CLIFFHANGER / CTA — ~0:83 a 0:90 (92-100%)]
-  Visual: vuelta olímpica, levantar la copa, confeti, el compañero te abraza.
-  (Opcional) Protagonista: "Te lo dije, hermano."   ← lip-sync
-  CTA: "Elige bien a tu compañero. Y vuelve mañana."   ← tagline reconocible cross-video
+[OUTRO / CTA — 92-100%]
+  Resolución de ambos recorridos ya mostrada. CTA: "Elige bien a tu compañero. Y vuelve mañana."
+  ← tagline reconocible cross-video + watermark @elige_tucompanero persistente.
 ```
 
 ---
@@ -100,7 +97,7 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 - 🟦 **Orden hablado = orden de botones** (A = primera opción mencionada).
 - 🟦 **Las 3 decisiones son jugadas de TIPOS distintos** (regate/encare, pase/visión, definición) con escalada de presión.
 - 🟩 **VARIABILIDAD:** qué jugada exacta, qué opción paga (rotar — no siempre A ni siempre B), qué tono de humillación.
-- 🟥 **ANTI-PATTERNS** (correr sobre cada decisión — ver PAUTA-MASTER § 6): balón al rival, orden desalineado, consecuencia no causal, contradicción física (atajada vs tiro afuera), "B" siempre correcta, decisión sin duda real.
+- 🟥 **ANTI-PATTERNS** (correr sobre cada decisión — ver PAUTA-MASTER § 10 + plantilla § 10.C): balón al rival, orden desalineado, consecuencia no causal, contradicción física (atajada vs tiro afuera), "B" siempre correcta, decisión sin duda real.
 
 ### Duración / pace (heredado — mecánica + universal)
 - 🟦 ~90s total (banda 80-100s). ⤴ Duración total = `../choice-format-core/CHOICE-MECHANIC.md § 2`.
@@ -111,47 +108,53 @@ Antes de generar, pedile al usuario estos datos. Si faltan, pedilos primero:
 ## CHECKLIST DEL GUION (antes de pasar al SPEC)
 
 - [ ] Hook con contexto de equipo EXPLÍCITO ("X = equipo A · Y = equipo B")
-- [ ] Rama corta (foil glorioso) primero + pivote + rama profunda (3 decisiones)
-- [ ] La rama corta NO spoilea la profunda
-- [ ] 3 decisiones = jugadas de tipos distintos, escalada banda → área → clímax
-- [ ] Cada decisión: setup + pregunta (orden = botones) + consecuencia errada (causal + humillación) + consecuencia acierto
+- [ ] DOS recorridos completos (cada uno setup + compuertas + desenlace) — NO "rama corta + profunda"
+- [ ] Recorridos SECUENCIALES (jamás interleaved) + el foil tagueado `counterfactual_*` puede ir al inicio O al final
+- [ ] El foil NUNCA aparece en el played path (rivales del played path = `rival_npc` genérico, NO el anchor del foil)
+- [ ] PIVOTE marcado con cue de bisagra (el único corte no-continuo) — el viewer nunca se pierde de recorrido
+- [ ] Compuertas por recorrido = 2-3 (favorito ~2 / no-favorito ~3) = jugadas de tipos distintos, escalada de zona
+- [ ] Cada compuerta: setup + pregunta (orden = botones) + consecuencia errada (causal + humillación) + consecuencia acierto
 - [ ] Consecuencia de error = humillación deportiva (abucheos/memes/burla), NUNCA muerte/horror
-- [ ] Acierto en las 3 → gol → campeón → vuelta olímpica + CTA
-- [ ] Cadena de lógica cierra (elección → equipo → jugadas → resultado)
-- [ ] 7 anti-patterns corridos (§ PAUTA-MASTER 6)
+- [ ] Acertar la cadena → gol → campeón → vuelta olímpica + CTA
+- [ ] Cadena de lógica cierra en AMBOS recorridos (elección → equipo → jugadas → resultado) — plantilla § 10.C
+- [ ] Anti-patterns corridos sobre cada compuerta (§ PAUTA-MASTER 10)
 - [ ] "B" no siempre correcta; cada decisión genera duda real
 - [ ] Español neutral, 2ª persona presente, oraciones cortas claras
 - [ ] Framing acción-condicional (no bare label), ~90s, watermark `@elige_tucompanero`
 
 ---
 
-## EJEMPLO DE GUION (extracto — del primer video `champions-sport-choice`)
+## EJEMPLO DE GUION (ilustrativo — NO de una producción nuestra)
+
+> ⚠️ Ejemplo de enseñanza con jugadores/equipos genéricos. NO es el guion de ningún video shipped (sport-choice tiene 0 videos shipped — HR#19: nuestras producciones NO son autoridad). Muestra la estructura DOS RECORRIDOS con el recorrido del foil al FINAL (orden 🟩 variable — también válido al inicio).
 
 ```
-[HOOK] "Final de la Champions. Elige tu compañero. Saka, Arsenal. Dembélé, PSG."
-       Caption: SAKA = ARSENAL   ·   DEMBÉLÉ = PSG
+[HOOK] "Final. Elige tu compañero. [CRACK_A], [EQUIPO_A]. [CRACK_B], [EQUIPO_B]."
+       Caption: [CRACK_A] = [EQUIPO_A]   ·   [CRACK_B] = [EQUIPO_B]
 
-[RAMA CORTA] "Si eliges a Dembélé, juegas para el PSG. Te la deja, le pegas, y la clavas.
-              Gol. El PSG es campeón y levantas la copa."
+[RECORRIDO JUGADO — elegiste a [CRACK_A], juegas para [EQUIPO_A]]
+  [SETUP+C1] "Avanzas por la banda. El lateral de [EQUIPO_B] te cierra.
+              Ahora decides. Encaras al lateral o devuelves seguro."
+     (errada) "Si devuelves, la jugada se enfría: [EQUIPO_B] se reordena y la chance se apaga. La hinchada se queja."
+     (acierto) "Si encaras, dejas atrás al lateral y avanzas al borde del área."
 
-[PIVOTE] "Pero elegiste a Saka. Juegas para Arsenal."
+  [C2] "Llegas al borde del área. Ahora decides. Buscas el ángulo o asistes a [CRACK_A]."
+     (errada) "Si buscas el ángulo desde lejos, el arquero la saca. [EQUIPO_B] contraataca."
+     (acierto) "Si asistes a [CRACK_A], te la devuelve y quedas solo ante el arquero."
 
-[SETUP+D1] "Avanzas por la banda. El lateral del PSG te cierra.
-            Ahora decides. Encaras al lateral o devuelves seguro."
-   (errada) "Si devuelves, pierdes el balón y el PSG sale. La hinchada te abuchea."   ← nota: ver § anti-pattern causal abajo
-   (acierto) "Si encaras, dejas atrás al lateral y avanzas al borde del área."
+  [C3 clímax] [CRACK_A]: "Confía en ti. La metes."
+              "Mano a mano. Ahora decides. La cruzas o picas."
+     (errada) "Si la picas, el arquero la atrapa. [EQUIPO_B] gana y eres la burla."
+     (acierto) "Si la cruzas al palo lejano, gol. [EQUIPO_A] es campeón."
+  [desenlace jugado] [CRACK_A]: "Te lo dije, hermano." — vuelta olímpica, copa, confeti.
 
-[D2] "Llegas al borde del área. Ahora decides. Buscas el ángulo o asistes a Saka."
-   (errada) "Si buscas el ángulo desde lejos, el arquero la saca. El PSG contraataca."
-   (acierto) "Si asistes a Saka, te la devuelve y quedas solo ante el arquero."
+[PIVOTE] "Pero del otro lado, con [CRACK_B]…"   ← cue de bisagra (el único corte no-continuo)
 
-[D3 clímax] Saka: "Confía en ti. La metes."
-            "Mano a mano. Ahora decides. La cruzas o picas."
-   (errada) "Si la picas, el arquero la atrapa. El PSG gana y eres la burla."
-   (acierto) "Si la cruzas al palo lejano, gol. El Arsenal es campeón."
+[RECORRIDO DEL FOIL — completo (counterfactual_*)]
+  El viaje POV de [CRACK_B] para [EQUIPO_B]: su setup → sus compuertas → su desenlace propio.
+  Muestra el camino-NO-tomado entero (no un glimpse). NO spoilea el recorrido jugado.
 
-[OUTRO] Saka: "Te lo dije, hermano."
-        "Elige bien a tu compañero. Y vuelve mañana."
+[OUTRO] "Elige bien a tu compañero. Y vuelve mañana."
 ```
 
-> ⚠️ **Nota de revisión sobre el D1 del ejemplo** (anti-pattern causal #3, PAUTA-MASTER § 6): la consecuencia errada "Si devuelves, **pierdes el balón**" del primer video roza el anti-pattern de causalidad (un pase seguro normalmente NO pierde el balón — devolver mantiene posesión). El fraseo causalmente más limpio sería que devolver **mata la oportunidad / enfría la jugada** y la presión baja (el PSG sale jugando tranquilo), no una pérdida directa. Considerar este ajuste en futuros videos o en re-iteración: la opción conservadora se "castiga" perdiendo la CHANCE de gol, no con un error físicamente improbable. Este es exactamente el tipo de chequeo que el arquitecto debe correr (§ 6 anti-pattern #3) antes de emitir el SPEC.
+> ⚠️ **Nota de enseñanza sobre la C1 (anti-pattern causal, PAUTA-MASTER § 10 + § 10.C eslabón 7):** la consecuencia conservadora se "castiga" perdiendo la **CHANCE** de gol (la jugada se enfría / la presión baja), NO con un error físicamente improbable. Un pase seguro normalmente NO "pierde el balón" — devolver mantiene posesión. Por eso el ejemplo dice "la jugada se enfría / la chance se apaga", no "pierdes el balón". Este es exactamente el chequeo que el arquitecto corre (§ 10.C eslabón 7) antes de emitir el SPEC.

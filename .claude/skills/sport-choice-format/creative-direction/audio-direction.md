@@ -2,7 +2,7 @@
 
 > ⚠️ **DOC OPERACIONAL SECUNDARIO — NO ES AUTORIDAD CREATIVA.**
 >
-> La **autoridad técnica de la paleta SFX fútbol + música deportiva** vive en `sport-choice-format/INGENIERO-PAUTA-MASTER.md §§ 2, 4`. La **mecánica de audio** (4 capas, ducking, sound fabric 99%, mastering) se HEREDA de `horror-choice-format/creative-direction/audio-direction.md` + `ai-video-production/SFX-PIPELINE.md` + `AUDIO-MASTERING.md`. Si hay conflicto → gana la pauta.
+> La **autoridad técnica de la paleta SFX fútbol + música deportiva** vive en `sport-choice-format/INGENIERO-PAUTA-MASTER.md §§ 2, 4`. La **mecánica de audio** (4 capas, ducking, sound fabric 99%, mastering) se HEREDA de `ai-video-production/SFX-PIPELINE.md` + `ai-video-production/AUDIO-MASTERING.md` (técnica universal) + la mecánica de audio choice de `../../choice-format-core/INGENIERO-CHOICE-CORE.md`. ⛔ **NO se hereda de `horror-choice-format/`** (firewall de capas — `NO-HORROR-GUARD.md`): ahí viven la paleta de terror, el voice_id grave de horror y las LUTs `cool_horror`. Si hay conflicto → gana la pauta.
 >
 > Si llegaste acá sin leer las pautas, parar y leerlas primero.
 
@@ -17,7 +17,7 @@
 | Capa | Función | Coverage | Contenido sport-choice |
 |------|---------|----------|------------------------|
 | **Música** | Mood + tensión | 70-90% | Drone de tensión deportiva → celebración cálida (contraste) |
-| **Voiceover** | Narrativa + dialogue | 60-80% | Narrador grave deportivo, español neutral (David C2) |
+| **Voiceover** | Narrativa + dialogue | 60-80% | Relator play-by-play deportivo, español neutral (El Faraón `QpDQJR3frbDwOhTIo8nW`) |
 | **Ambient continuo** | Sense of place | 95-100% | **Rugido de estadio lleno** + cánticos + eco (cero dead zones — la final NO calla) |
 | **SFX puntuales** | Eventos + impact | Eventos discretos | Silbato, redes, atajada, abucheos, confeti, boot-strike |
 
@@ -38,7 +38,7 @@
 | Sección | Mood | Prompt ejemplo |
 |---------|------|----------------|
 | Hook + juego en tensión | Drone subharmónico de tensión deportiva (sports-thriller bed) | "low subharmonic drone, sustained deep bass tension, dark cinematic sports-thriller bed, faint orchestral swell undertone" |
-| Rama corta gloriosa / resolución / outro (acierto) | Celebración triunfal cálida | "triumphant stadium celebration ambience, distant euphoric crowd cheering warm, confetti rustle, victory tone, uplifting, no horror" |
+| Desenlace glorioso (gol/campeón) / resolución / outro (acierto) | Celebración triunfal cálida | "triumphant stadium celebration ambience, distant euphoric crowd cheering warm, confetti rustle, victory tone, uplifting, no horror" |
 | Clímax D3 (mano a mano) | Tensión rising | "rising dark cinematic strings tension, pounding low pulse building, climax buildup, no resolution" |
 | Outro sostenido | Hum bajo + swell triunfal (loop cue) | "sustained low hum gradual fade blended with faint triumphant swell, cliffhanger atmospheric, loop cue" |
 
@@ -48,7 +48,8 @@
 
 ## Capa 2 — VOICEOVER (intent)
 
-- **Voz:** narrador grave deportivo, autoritario pero claro (mismo registro que horror, mismo voice_id David C2).
+- **Voz:** relator deportivo play-by-play vivo, español neutral — **El Faraón** (`QpDQJR3frbDwOhTIo8nW`, ver `library/voices-catalog.json § sport_choice_narrator_strategy`). ⛔ NO el registro grave-omnisciente de horror (`NO-HORROR-GUARD.md` G3) — el relator mete al viewer en la jugada, no susurra desde la cripta.
+- 🟦 **PICO DE GOL** (directiva creator 2026-06-04): en el gol el relator **GRITA** ("¡Gooool!" moderado 3-4 oes — TTS-safe) y el estadio explota: `crowd-goal-explosion` en banda ALTA **0.55-0.65** (banda flash/impacto HR#9, NO la banda SFX normal) + `goal-net-ripple` + celebración musical entrando. El gol es el único momento donde el audio COMPITE con el narrador a propósito.
 - **Registro:** segunda persona presente ("Avanzas por la banda", "Te la deja, le pegas").
 - **Idioma:** español NEUTRAL (tú/eliges) — NUNCA voseo.
 - **Procesamiento:** compresión + presence (voz "en tu cara", clara en altavoz móvil) — heredado.
@@ -91,17 +92,64 @@ Prompt ejemplo: "packed football stadium crowd roar continuous, distant chanting
 #### C) GLORIA (acierto)
 - **Explosión de celebración** de la hinchada (gol propio / campeón)
 - **Confeti** (rustle) + cánticos eufóricos (vuelta olímpica)
-- **Pings de redes positivos** (opcional, si se muestra el furor a favor)
 
 #### D) ⭐ BURLA (error — el equivalente sport del "impacto de horror")
 - **Abucheos / "uy" decepcionado** de la hinchada — cada error
-- **Pings de redes / notificaciones** (meme alert) — "eres la burla"
 - **Silbidos** de la hinchada — humillación sostenida
 
 #### E) SFX UI (heredado)
 - Tick del countdown 3-2-1 (film leader academy AVU)
 - Beep tick del loading bar (Y52)
 - Pop sutil al aparecer botones A/B
+
+---
+
+## ⭐ PROMPTS ElevenLabs SFX EXACTOS (paquete generación-ready)
+
+> El arquitecto deja acá el prompt EXACTO en inglés (texto generación-ready) de cada SFX del catálogo (`INGENIERO-PAUTA-MASTER.md § 2`) + `duration_seconds` sugerida + capa destino + volumen target. El ingeniero los genera 1:1 después con `text_to_sound_effects` (NO los genera el arquitecto).
+>
+> **Volúmenes target** = la tabla de mix heredada (`../../choice-format-core/INGENIERO-CHOICE-CORE.md § 0` + CLAUDE.md HR#9): narración 1.0 · música 0.05-0.18 · SFX 0.20-0.35 · flash/impacto 0.55-0.65. El ambient continuo de estadio va bajo y constante (extremo bajo de la banda). Los SFX de evento NO se duckean bajo el narrador (compiten a propósito — § Ducking).
+>
+> **Floor técnico:** `text_to_sound_effects` no genera clips <0.5s (`caption_floor_s`, `MODEL-CAPABILITIES-MATRIX.md`). Para ticks ultra-cortos usar el AVU bundled (ya trae los ticks muxeados).
+
+### Ambiente base (Layer 2 — continuo, cobertura 99-100%)
+
+| SFX | Prompt ElevenLabs (EN, generación-ready) | duration_s | Capa destino | Volumen target |
+|-----|------------------------------------------|-----------|--------------|----------------|
+| **Rugido de hinchada** (base) | `packed football stadium crowd roar, continuous dense ambience, thousands of fans murmuring and surging, no music, no whistle, loopable bed` | 22 | Ambient continuo (Layer 2) | 0.20-0.26 (constante) |
+| **Cánticos lejanos de ultras** | `distant football ultras chanting in unison, muffled rhythmic terrace chant under a crowd roar, stadium reverb, no music, loopable` | 18 | Ambient continuo (Layer 2, bajo el rugido) | 0.12-0.18 |
+| **Eco de estadio cerrado** | `closed-roof arena reverb tail, large enclosed stadium room tone, faint crowd wash echoing, no music` | 12 | Ambient continuo (Layer 2, refuerzo de recinto) | 0.10-0.14 |
+
+### Eventos de juego (Layer 1 — clip-scoped, foley por acción visible)
+
+| SFX | Prompt ElevenLabs (EN, generación-ready) | duration_s | Capa destino | Volumen target |
+|-----|------------------------------------------|-----------|--------------|----------------|
+| **Silbato del árbitro** | `sharp single referee whistle blow, clean and loud, football match, no crowd` | 1.0 | Evento Layer 1 | 0.28-0.34 |
+| **Golpe al balón** (boot-strike) | `solid football boot striking a ball, sharp clean kick thud, single hit, no crowd` | 0.6 | Evento Layer 1 (cada pase/remate) | 0.26-0.32 |
+| **Red inflándose** (net ripple) | `football hitting the back of the net, rope mesh ripple and snap, goal net shake, single event, no crowd` | 1.2 | Evento Layer 1 (GOL) | 0.30-0.35 |
+| **Atajada / manotazo** | `goalkeeper glove punch save deflecting a football, leather glove smack and ball deflection, single event, no crowd` | 0.9 | Evento Layer 1 | 0.28-0.34 |
+
+### GLORIA (acierto — Layer 1 + accent)
+
+| SFX | Prompt ElevenLabs (EN, generación-ready) | duration_s | Capa destino | Volumen target |
+|-----|------------------------------------------|-----------|--------------|----------------|
+| **Explosión de celebración** | `football stadium crowd explodes into a massive roar of celebration, sudden euphoric eruption of cheering, no music` | 4.0 | Evento Layer 1 (gol propio / campeón) | 0.45-0.60 (pico de gloria) |
+| **Confeti** (rustle) | `confetti and ticker-tape rustling and fluttering down, light paper shower, celebration ambience, no music` | 5.0 | Accent (vuelta olímpica) | 0.20-0.28 |
+
+### BURLA (error — Layer 1 + accent; el equivalente sport del impacto de horror)
+
+| SFX | Prompt ElevenLabs (EN, generación-ready) | duration_s | Capa destino | Volumen target |
+|-----|------------------------------------------|-----------|--------------|----------------|
+| ⭐ **Abucheos / "uy" decepcionado** | `large football crowd groans in disappointment then boos, collective deflated 'ohh' turning to jeering, no music` | 3.5 | Evento Layer 1 (cada error) | 0.30-0.40 |
+| **Silbidos de la hinchada** | `football crowd whistling in derision, sustained disapproving stadium whistles, no music` | 3.0 | Accent (humillación sostenida) | 0.24-0.32 |
+
+### Accent de clímax (tensión)
+
+| SFX | Prompt ElevenLabs (EN, generación-ready) | duration_s | Capa destino | Volumen target |
+|-----|------------------------------------------|-----------|--------------|----------------|
+| **Tensión rising clímax** | `rising dark cinematic strings tension swell, pounding low pulse building toward a climax, sports-thriller, no resolution, no horror` | 4.5 | Accent (D-clímax / mano a mano) | 0.18-0.28 (bajo el narrador) |
+
+> ⛔ **Regla absoluta (firewall, `NO-HORROR-GUARD.md` G2):** todo prompt cierra implícita o explícitamente sin terror — `no music` donde corresponde, y JAMÁS "scream / horror / drone of dread / whisper / sub-bass jumpscare". El "rising strings tension" del clímax es **deportivo** (sports-thriller), por eso lleva "no horror" explícito. Si un prompt evoca terror → está fuera de formato.
 
 ---
 
@@ -133,8 +181,8 @@ audio_direction:
   sfx_strategy:
     foley_juego: [boot_strike_cada_pase, botines_cesped, forcejeo_duelo]
     eventos_partido: [silbato_arbitro, red_inflandose_gol, atajada_manotazo]
-    gloria: [explosion_celebracion, confeti_rustle, pings_redes_positivos]
-    burla: [abucheos_uy_decepcion, pings_redes_meme, silbidos_hinchada]   # ⭐ el equivalente sport del impacto
+    gloria: [explosion_celebracion, confeti_rustle]
+    burla: [abucheos_uy_decepcion, silbidos_hinchada]   # ⭐ el equivalente sport del impacto
     ui_sfx: [countdown_tick_film_leader, loading_beep_tick, botones_pop]
   ducking_intent: "activo (sidechain) — música+ambient bajan en narración; eventos de partido mantienen volumen"
   prohibition: "NUNCA gritos de horror, drones de terror, sub-bass jumpscare, susurros uncanny"
