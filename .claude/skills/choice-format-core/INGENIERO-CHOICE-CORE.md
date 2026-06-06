@@ -116,6 +116,8 @@
 
 **UN UI element por banda Y por vez.** Si el countdown está activo en Y 35-56%, NO pongas captions en esa banda. Si captions en Y 58-72% activos, NO pongas otro UI en Y 58-72%. Las bandas son **temporalmente exclusivas**. El video se compone en zonas temporales.
 
+🟦 **Corolario — durante un countdown ACTIVO el caption de narración se OCULTA.** La banda Y35-56 es **exclusiva del UI de decisión** (countdown + loading bar + botones) mientras la decisión está en curso. La pregunta narrada del dilema se muestra ANTES del countdown y su caption **termina al arrancar el countdown** (los cues que empezarían dentro del countdown se descartan; el que lo cruza se recorta a `countdown_start`). El audio de narración puede seguir; lo que se oculta es el **caption** sobre esa banda. (Empírico: 8/8 refs auditados no muestran caption de narración encima de un countdown activo — la atención del viewer es del UI de decisión.) Impl de referencia: el burn recorta/descarta el cue narrador al inicio del countdown en build-time.
+
 ### 2.2 Position safe zones (n=10 referentes)
 
 | UI element | Y % center | Y band | X % center | Font | Notas |
@@ -125,8 +127,12 @@
 | **Countdown 3-2-1** | **46%** | 35-56% | 50% (center) | sans-serif large | film_leader_academy |
 | **Loading bar** | **52%** (revised, era 48%) | 44-51% baseline / 52% en decision shots | 50% | — | ≥6% sep de countdown |
 | **Character name labels** | **11.5%** (anchor) / banda 12-40% | top third | sobre cada opción del dyad | **monospaced** (canónico) | white, GRANDES (~64px) |
-| **Choice buttons A/B** | stacked top | 7-20% | left-aligned | monospaced | "A. OPCIÓN 1" / "B. OPCIÓN 2" |
+| **Choice buttons A/B** | stacked top | 7-20% | left-aligned | monospaced | 🟦 SIEMPRE prefijo **"A) …" / "B) …"** (ver 2.2.1) |
 | Watermark | 79% | 75-85% | 30% (bottom-left) | sans-serif | always-on |
+
+### 2.2.1 Botones A/B — prefijo de agencia SIEMPRE presente
+
+🟦 **Todo botón de decisión lleva su prefijo literal "A) …" / "B) …"** (la letra + paréntesis antes del texto de la opción). No es cosmético: es la **señal de agencia** que le dice al viewer "esto se elige, vos decidís" y mapea la opción al orden hablado (regla "orden hablado = orden de botones"). Un botón sin prefijo se lee como texto descriptivo, no como una opción accionable. 🟩 El estilo del separador/caja varía (mayúsculas, color, box), pero el prefijo `A)` / `B)` es invariante.
 
 ### 2.3 No-overlap matrix (REGLA CRÍTICA)
 

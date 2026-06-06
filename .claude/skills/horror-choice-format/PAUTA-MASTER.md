@@ -136,7 +136,7 @@ El esqueleto + el invariante son fijos. Varía (decisión creativa del arquitect
 
 ### 2.4 ⭐ SPEC-AUDIT — las 8 perspectivas que el auditor mira en CADA guion
 
-El SPEC-AUDIT compara el guion **beat-por-beat contra este esqueleto** + chequea: (1) **Estructura** § 2.1 (🔴 si falta un bloque) · (2) **INVARIANTE § 2.2** (🔴 si el bueno-aparente está en shots de decisión/consecuencia del played path) · (3) **Recorridos secuenciales** (🔴 si se mezclan) · (4) **Pattern + rotación** (HR#14, ∈ canónicos + ≠ último video) · (5) **Name labels § 2.5** · (6) **Efecto glitch** declarado en cambios de historia (`INGENIERO-PAUTA § 9`) · (7) **Sonido** (SFX densos 30-40 matcheados a la acción + death-screams en cada consequence-A fatal + mix ducked — `INGENIERO-PAUTA § 10`; sonido = factor #1 de inmersión, TASTE-LOG #1/#2) · (8) **+ checks pre-existentes** (WPM/narración-fits HR#28/29, framing acción-condicional, visual-matches-narración, character consistency, references_canonical ≥5/8). Enforcement: `audit-spec-structure-vs-canonical.py` (§ 2.1/2.2/2.3) + `audit-spec-narrative-coherence.py` + validators existentes. Arquitecto los corre pre-emit (HR#27); auditor los re-corre (anti-pattern #17).
+El SPEC-AUDIT compara el guion **beat-por-beat contra este esqueleto** + chequea: (1) **Estructura** § 2.1 (🔴 si falta un bloque) · (2) **INVARIANTE § 2.2** (🔴 si el bueno-aparente está en shots de decisión/consecuencia del played path) · (3) **Recorridos secuenciales** (🔴 si se mezclan) · (4) **Pattern + rotación** (HR#14, ∈ canónicos + ≠ último video) · (5) **Name labels § 2.5** · (6) **Efecto glitch** declarado en cambios de historia (`INGENIERO-PAUTA § 9`) · (7) **Sonido** — ownership 3-roles: el **ARQUITECTO** hace un **SFX-pass per shot en el SPEC** (enumera TODO lo audible del frame: cada objeto/acción/ambiente que se ve, suena) + death-screams en cada consequence-A fatal; el **INGENIERO** tiene **licencia diegética** ("lo que se ve, suena" — puede sumar SFX implicados por el frame aunque no estén listados, duck bajo voz) e implementa los niveles **per-clase normalizados a dBFS ABSOLUTO** (no un multiplicador plano sobre la fuente cruda); la **audibilidad se VERIFICA EN el master** (existencia ≠ audible — un SFX "wired" puede quedar inaudible bajo el bed; gate `audit-sfx-audibility.py`). Mix ducked + niveles → `INGENIERO-PAUTA § 10`. Sonido = factor #1 de inmersión (TASTE-LOG #1/#2) · (8) **+ checks pre-existentes** (WPM/narración-fits HR#28/29, framing acción-condicional, visual-matches-narración, character consistency, references_canonical ≥5/8). Enforcement: `audit-spec-structure-vs-canonical.py` (§ 2.1/2.2/2.3) + `audit-spec-narrative-coherence.py` + validators existentes. Arquitecto los corre pre-emit (HR#27); auditor los re-corre (anti-pattern #17).
 
 ### 2.5 UI canon — name labels
 
@@ -166,6 +166,7 @@ Nombres **arriba de cada personaje** (label sobre cada char del dyad), **letra G
 - ✓ **CTA narrado al final** ("Una noche en paz" tipo tagline)
 - ✓ **Watermark del creator** visible toda la duración
 - ✓ **Caption del Reel** con pregunta directa ("¿A quién elegirías?") + hashtags
+- 🟦 **Death-shots / consequence-A fatales = SIN caption de narración.** En el shot de muerte/consecuencia fatal el **impacto visual manda**: no quemes caption de narración encima (compite con el golpe y lo diluye). La rama ya quedó marcada en el **bridge / consequence framing** que antecede al shot fatal (la consecuencia condicional "Si pisas el riel…" se narró/marcó ANTES), así que el shot fatal no necesita texto para que el viewer sepa en qué rama está. El **audio de narración se mantiene** (la voz puede seguir sobre el impacto); lo que se omite es el **caption** sobre el frame de muerte. 🟩 Cuáles shots son fatales y qué muestra cada uno es de género/por-video.
 
 ### Transiciones narrativas — RAMA B EXPLÍCITA (regla añadida 2026-05-15)
 - ✓ **Después de cada decisión binaria, debe haber transición narrativa explícita** entre rama elegida y rama no-elegida — NO solo cliffhanger final
@@ -454,6 +455,12 @@ Los dilemas dentro de un video **deben ser de categorías diferentes** (no todos
 ```
 
 Validado en 8/8.
+
+### Regla del objeto + del espacio (V7+, req Tomás 2026-06-04)
+
+- 🟦 **Todo objeto / prop sobre el que se decide necesita PROPÓSITO narrado.** Si la decisión gira en torno a un objeto (una linterna, una barra, una válvula, una llave), la narración tiene que establecer **para qué sirve / qué pasa si lo usás** ANTES o EN la pregunta — el viewer no puede decidir sobre un prop cuyo propósito no entiende. Un objeto sin propósito narrado = decisión arbitraria (el viewer elige a ciegas y el dilema no carga).
+- 🟦 **La consecuencia ocurre EN el espacio donde se tomó la decisión.** La consecuencia (✗ fatal o ✓ continúa) se desarrolla en el MISMO lugar/encuadre donde el viewer decidió — no teletransportada a otro escenario sin transición. 🟥 **Anti-pattern: consecuencia espacialmente desconectada** — decidís en un túnel y la consecuencia pasa en una sala que nunca vimos; rompe la causalidad espacial y se siente como dos clips pegados. (Si la consecuencia SÍ cambia de espacio, hay que mostrar el tránsito — caminar/caer/cruzar — que conecta los dos.)
+- 🟩 Qué objeto, qué espacio y qué consecuencia concreta son de género/por-video.
 
 ---
 

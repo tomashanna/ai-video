@@ -209,6 +209,95 @@ related_gaps:
 
 ---
 
+## Entry 3 — Gemini `--ref` con LOCUS anchor en composición full-scene inserta el locus como OBJETO duplicado
+
+```yaml
+model: gemini-3.1-flash-image-preview (Nano Banana / Gemini Pro 3.1 Image)
+date_discovered: 2026-06-04
+discovered_by: 🔍 Auditor (V7 ultimo-tren-carga CP3 audit — sweep visual 40 shots)
+behavior: |
+  Cuando un shot full-scene (personaje de cuerpo entero + entorno) usa como `--ref` un
+  LOCUS anchor (imagen del rasgo AISLADO — p.ej. una máscara flotando sola, generada per
+  Entry 1 workaround), Gemini inserta el locus COMO OBJETO INDEPENDIENTE en el frame
+  además del personaje: una segunda máscara gigante flotando en el foreground, sin
+  pertenecer a ninguna cara. El modelo interpreta el ref aislado como "este objeto debe
+  estar en la escena", no como "este rasgo pertenece al personaje".
+validation_evidence:
+  - V7 shot_05 (Dario full-scene señalando el piso, --ref char_a_v1_mask): máscara
+    duplicada gigante en foreground inferior + Dario completo arriba. FAIL audit.
+  - V7 shot_15 (Dario arriba de escalera vertical, --ref char_a_v1_mask): misma máscara
+    suelta flotante en foreground. FAIL audit. (2/2 full-scene con locus ref = bug)
+  - Contraejemplo: CP1 char_a_v1_mask como TARGET de generación (close-up del locus solo)
+    → correcto; el bug es solo cuando el locus es REF de una composición mayor.
+workaround_validated:
+  - Full-scene con personaje → `--ref <full_body_anchor>` + REINFORCE el rasgo EN el
+    personaje vía prompt ("his face covered by the antique twin-filter respirator mask
+    he WEARS"). Validado V7 regen shot_05 (1 iter) + shot_15 (2 iter): máscara única
+    puesta, cero objetos duplicados.
+  - LOCUS anchor como --ref SOLO para close-ups donde el rasgo ocupa el frame SIN
+    cuerpo/escena (uso original Entry 1).
+implications_forward:
+  architect_CP0:
+    - SPEC `anchor_id_required` per shot debe asignar el locus anchor SOLO a shots cuyo
+      encuadre aísla el rasgo (close-up del locus); shots full-scene del personaje llevan
+      el full anchor aunque el rasgo deba leerse nítido (se refuerza por prompt).
+  engineer_CP3:
+    - Pre-batch check: si anchor_id_required = locus anchor Y el shot es full-scene →
+      flag al auditor (probable error de asignación) antes de generar.
+  auditor_CP3:
+    - Sweep visual: buscar el rasgo/locus DUPLICADO como objeto suelto en foreground —
+      firma visual de esta clase de bug.
+status: **VALIDATED** (2026-06-04). Workaround production-ready (V7 shots 05+15 regen OK).
+related_gaps:
+  - Entry 1 (locus-anchor methodology — este entry acota su scope de uso como --ref)
+```
+
+---
+
+## Entry 4 — i2v NO preserva rasgos del personaje no visibles en el frame fuente; al girar/revelar, alucina
+
+```yaml
+model: i2v image-to-video class (validado en Hailuo; aplica a la clase image-to-video — ver MODEL-BENCHMARK)
+date_discovered: 2026-06-04
+discovered_by: 🔍 Auditor (V7 ultimo-tren-carga CP4 animation audit)
+behavior: |
+  Un modelo i2v solo "conoce" lo que la imagen fuente MUESTRA. Cualquier rasgo del personaje que
+  NO sea visible en el frame de entrada (una cara tapada/de espaldas, un detalle fuera de cuadro)
+  el modelo NO lo tiene — y si el motion prompt pide girar / revelar / mostrar ese rasgo, el modelo
+  lo ALUCINA: inventa lo que falta en vez de respetar la identidad del personaje. No hay "memoria"
+  del diseño del personaje más allá del píxel fuente.
+validation_evidence:
+  - Personaje enmascarado filmado de espaldas + motion prompt que pedía un giro hacia cámara →
+    el i2v inventó un ROSTRO HUMANO bajo/en lugar de la máscara (rasgo nunca presente en la fuente).
+    FAIL audit de consistencia.
+  - Contraejemplo: cuando el rasgo SÍ era visible en el frame fuente (close-up del rasgo de frente)
+    y el motion era sutil (push-in / parallax sin revelar), el i2v lo preservó correctamente.
+workaround_validated:
+  - Motion prompts NUNCA piden revelar lo que la fuente no muestra (sin giros que expongan una cara
+    tapada/de espaldas, sin "se da vuelta y vemos…").
+  - Cuando el rasgo SÍ es visible en la fuente → REINFORCE explícito del rasgo en el motion prompt
+    (nómbralo: "the mask he wears stays on", etc.) para que no derive entre frames.
+  - En personajes con un rasgo OCULTO por diseño, LOCK explícito ("face/feature never shown") en el
+    motion prompt — el rasgo se mantiene fuera de cuadro durante toda la animación.
+implications_forward:
+  architect_CP0:
+    - Al especificar shot direction de un personaje con rasgo oculto, el motion intent del SPEC NO
+      debe pedir un reveal de ese rasgo vía i2v; si la historia necesita el reveal, resolverlo con
+      un shot/anchor nuevo que YA muestre el rasgo (no confiar en que el i2v lo invente bien).
+  engineer_CP4:
+    - Antes de animar: verificar que el motion prompt no exija exponer un rasgo ausente del frame
+      fuente; agregar el reinforce (rasgo visible) o el lock (rasgo oculto) según corresponda.
+  auditor_CP4:
+    - Sweep de consistencia en los frames del clip animado: buscar rasgos ALUCINADOS en giros/reveals
+      (una cara aparecida donde la fuente no la mostraba) — firma visual de esta clase de bug.
+status: **VALIDATED** (2026-06-04, V7). Workaround production-ready.
+related_gaps:
+  - Entry 1 / Entry 3 (consistencia de rasgos de anatomía rara — acá la pérdida ocurre en el paso i2v,
+    no en image gen).
+```
+
+---
+
 ## How to use this log
 
 **Architect at CP0**: scan entries for any model behavior that affects the SPEC you're designing. If your SPEC includes shots that hit a known behavior pattern (e.g., feature-only composition + character with anatomical signature), flag in `architect_annotations[]` + structure SPEC accordingly (locus anchors, composition rewrites, etc.).

@@ -199,6 +199,26 @@ ffmpeg -i output.wav -af ebur128 -f null - 2>&1 | grep "I:"
 # Debe estar entre -14.3 y -13.6
 ```
 
+### 2.6 SFX — normalización per-clase a dBFS absoluto + duck + gate de audibilidad
+
+> Ownership creativo (qué suena per shot + SFX-pass del arquitecto + licencia diegética del ingeniero) → `PAUTA-MASTER § 2.4` perspectiva 7. Acá viven los **valores técnicos** de mezcla.
+
+- 🟦 **Normalización per-CLASE a dBFS ABSOLUTO, NO multiplicador plano sobre el raw.** Un multiplicador plano (p.ej. `0.28 × fuente`) asume que toda fuente SFX está al mismo nivel — no lo está (las fuentes ElevenLabs/TTS pueden abarcar ~50 dB: un goteo muerto a -67 dBFS vs un golpe metálico a -16). `0.28 × -67 dB = silencio` en el master (clase de bug "SFX wired pero inaudible"). **Fix:** medir el mean dBFS de cada fuente y aplicar `gain = target_clase − mean` (clamp ±26 dB) ANTES de mezclar, de modo que la banda HR#9 quede expresada en dBFS absoluto audible contra el bed -14 LUFS. Impl: `sfx_norm_gain()` en `build_clip_atomic.py` (Capa A).
+
+  | Clase SFX | Target mean dBFS | Qué cubre |
+  |-----------|------------------|-----------|
+  | event | **-19** | eventos diegéticos del protagonista (impactos, splashes, rejas, electricidad) |
+  | diegetic | **-20** | sonido de mundo claramente audible (radio, pájaros, viento, tetera) |
+  | texture | **-23** | ambiente recurrente (goteos, pasos, zumbidos) — bajo eventos/voz |
+  | scream | **-16** | death-screams (dominan su beat) |
+  | transition | **-16** | whoosh / flash / glitch en los cortes |
+  | ui | **-17** | tick de countdown / loading / heartbeat |
+  | flash | **-16** | white-flash impact (banda HR#9 0.55-0.65, anclada a dBFS absoluto) |
+
+- 🟦 **Duck del SFX bajo la VOZ (build-time, scoped al clip):** **−6 dB (×0.50) bajo el NARRADOR**, **−12 dB (×0.25) bajo DIÁLOGO de personaje**. El diálogo necesita el duck más profundo porque comparte el bus Layer-1 del clip con los SFX (no tiene sidechain key propio); el narrador es más leve porque además recibe el sidechain duck de Layer 3 río abajo. (Disparador V7: eventos de electricidad dentro de la línea de Dario a −6 dB → Whisper devolvía garbage; −12 dB lo despejó.)
+- 🟦 **Gate de audibilidad — existencia ≠ audible.** Cada evento SFX debe **levantar el master sobre su bed local** por un delta mínimo: **Δ ≥ +2 dB** para eventos protagonistas (event/scream/transition/diegetic/ui/flash) y **Δ ≥ +1 dB** para texture. El gate (`scripts/audit-sfx-audibility.py`) mide `rms(evento) − rms(bed limpio adyacente)` per evento; la PRIMERA ocurrencia de cada (shot, sfx) es crítica (debe pasar su floor de clase), los repeats de texture/ui solo deben seguir presentes (Δ ≥ 0). Verificar EN el master, no en 1 frame.
+- 🟩 Qué SFX concretos por shot, onsets y rel_scale within-class (0..1 para leer más cerca/lejos) son de género/por-video.
+
 ---
 
 ## 3. PACING / CUTS

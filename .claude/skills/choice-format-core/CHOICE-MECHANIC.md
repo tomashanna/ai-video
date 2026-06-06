@@ -62,6 +62,7 @@ Validado 8/8 (vía horror): ningún video viral rompe la estructura. Toda la var
 ```
 
 - 🟦 **Decisiones por video: 2-3 internas + la decisión inicial "elegir compañero" = 3-4 total.** Cada decisión SIEMPRE muestra ambas ramas (✗ dead-end + ✓ continúa).
+- 🟦 **El hook SIEMPRE incluye el CTA narrado de elección** — la invocación verbal de agencia "Elige a tu compañero, [X] o [Y]" (con los dos nombres del dyad). NO es decorativo: **es LA mecánica del formato** — convierte al viewer de espectador en decisor desde el segundo 1, y nombra explícitamente las dos opciones que verá en pantalla. Un hook que solo muestra el dyad sin invocar la elección hablada rompe el contrato del formato. 🟩 El fraseo exacto del CTA es libre (y de género — ver §6 + el skill del género).
 - 🟩 Qué decisiones, qué consecuencias y el orden del counterfactual (final = default / inicio = variante) varían por video.
 
 ### 2.2 ⛔ EL INVARIANTE (validado 5/5 refs vía horror) — el check más importante del SPEC-AUDIT
@@ -230,6 +231,7 @@ El diferenciador NO es el timestamp sino el **emotional framing**:
 ```
 
 - 🟦 **CTA loop = tagline reconocible cross-video** + watermark persistente. (La frase concreta es de género — "Elige a tu compañero para…" / "Elige bien a tu compañero. Y vuelve mañana.")
+- 🟦 **El cierre SIEMPRE repite el CTA de elección.** El video abre invocando la agencia (hook §2.1) y cierra repitiéndola — el bookend "Elige a tu compañero" es lo que hace al formato loopear (re-arma la decisión para el próximo video). Apertura sin cierre = se pierde el loop; cierre sin apertura = el viewer no entró como decisor. 🟩 fraseo libre / de género.
 
 ---
 

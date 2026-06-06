@@ -1089,3 +1089,24 @@ SPEC schema v12+ incluye `video_capabilities` block **mandatorio**. SPEC sin cap
 #### 13.10.6 Backward compat — V4 SPEC
 
 V4 cerro-aislado-v4.yaml (SHIPPED bajo assumptions previas) queda historical sin `video_capabilities` block. Forward V5+ SPECs lo incluyen mandatorio. Validators leyendo V4 SPEC sin capabilities → asume defaults horror-choice paradigm (backward-compat clause).
+
+---
+
+## 14. VOICE EXCLUSIVITY (4 capas) — Capa A, agnóstica
+
+**LEY (universal, todo formato con voz hablada):** en cualquier instante `t`, como **máximo UNA voz hablada** puede sonar (el narrador **o** un personaje, nunca dos simultáneas). Entre dos ventanas de voz **DISTINTAS** (un handoff narrador↔personaje) el buffer mínimo es **0.30s** — un *floor técnico*, NO una pausa dramática (solo evita que dos voces se peguen al milisegundo). Dos segmentos del **mismo** speaker (narración continua cortada entre shots) **pueden** abutar: es una sola voz, no dos compitiendo. **Música / SFX / ambient conviven libremente** con la voz — la ley solo gobierna voces habladas.
+
+**Por qué:** dos voces simultáneas = artefacto uncanny + señal AI-detect. Disparador V7 `ultimo-tren-carga` v2: `narrator_hook` (12 palabras @165WPM ≈ 4.36s desde 1.8s → fin ~6.16s) se solapaba con `tobias_hook_lure` (arranca 3.2s) por ~2.96s. Caso reconstruido en el test adversarial.
+
+La ley se enforce en **4 capas** (defense-in-depth):
+
+| Capa | Dónde | Qué chequea | Cuándo |
+|------|-------|-------------|--------|
+| **L1 SPEC** | `audit-spec-voice-exclusivity.py --mode spec --format <f> --spec <yaml>` | Parsea §9 `narration_script` (TODOS los speakers). `ventana = [timestamp_intent_s[0], start + palabras/pace_wpm*60]` con `pace_wpm` = `canonical_pace_wpm` de `MODEL-CAPABILITIES-MATRIX.md` (fallback 165). FAIL si dos ventanas se intersectan, o si el gap entre dos speakers DISTINTOS < 0.30s. | Pre-emit del SPEC (arquitecto) + SPEC-audit (auditor). |
+| **L2 TTS** | `audit-spec-voice-exclusivity.py --mode tts --manifest <json> [--spec <yaml>] [--atomic-dir <dir>] [--exclude-segments <ids>]` | Ídem pero con **duraciones REALES** del manifest CP2. El `start` se reconstruye como el del assembly: `shot_start` reconciliado (de `--atomic-dir`) + lead per-speaker (narrador 0.10s / diálogo 0.45s), o `timestamp_intent_s` del SPEC si no hay atomic-dir. `--exclude-segments` para voces que un fix-pack muteó en el corte (presentes como dato en el manifest pero NO en el render). | Post-TTS, pre-assembly + pre-render-gate. |
+| **L3 assembly assertion** | `assert_voice_exclusivity()` en el driver per-clip-atomic (`cp5b_run_all.py` phase3) | Sobre los cues de voz FINALES, antes del mix Layer1+Layer3. En colisión entre speakers DISTINTOS intenta **desplazar la voz de menor prioridad** (diálogo cede; en el hook el narrador va primero → prioridad 0) **±1s MÁX dentro de su shot**. Si no cabe → **ABORT** con error claro (NUNCA desplaza >1s ni a aire muerto). Same-speaker overlap → ABORT (bug de assembly). | En cada render del driver. |
+| **L4 render audit** *(forward)* | `audit-render-voice-overlap.py` | Mediría sobre el MP4 final (VAD / diarización) que ningún instante tenga dos voces. Red de seguridad post-render. | Forward — aún no implementado. |
+
+**Companion test** (HR#26): `test_audit-spec-voice-exclusivity.py` — adversarial (FAIL sobre el solape v2 narrador+personaje, PASS sobre el layout v3 separado) + fixtures sintéticas + unit tests del shift/abort de `assert_voice_exclusivity()`.
+
+**Forward (Capa A):** portar `assert_voice_exclusivity()` al driver canónico `build-video-hybrid.py` (cualquier per-clip-atomic que mezcle voces en Layer 3) + implementar L4.
