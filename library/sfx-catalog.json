@@ -1,9 +1,20 @@
 {
-  "version": "1.0",
-  "updated": "2026-05-10",
-  "total_sfx": 53,
+  "version": "1.2",
+  "updated": "2026-06-04",
+  "total_sfx": 71,
   "description": "Catálogo machine-readable de SFX reutilizables. Antes de generar nuevo SFX, buscar acá.",
   "categories": {
+    "general": {
+      "description": "Biblioteca global de sonidos genéricos reutilizables cross-video (agua, electricidad, amanecer, radio). Mandato permanente: poblar acá lo que sirva a futuros videos. Copiar a tu proyecto (cp), no mover.",
+      "items": [
+        {"id": "water_drip_pipe", "file": "general/water_drip_pipe.mp3", "duration_s": 0.6, "duration": 0.6, "use": "gotas de tubería / filtración", "uses": "gotas de tubería / filtración", "volume": [0.20, 0.30], "source": "V7 ultimo-tren-carga", "canonical_validation_status": "validated"},
+        {"id": "walking_in_water", "file": "general/walking_in_water.mp3", "duration_s": 1.0, "duration": 1.0, "use": "caminar / correr en agua", "uses": "caminar / correr en agua", "volume": [0.24, 0.32], "source": "V7 ultimo-tren-carga", "canonical_validation_status": "validated"},
+        {"id": "sinking_underwater", "file": "general/sinking_underwater.mp3", "duration_s": 1.2, "duration": 1.2, "use": "hundirse / ser arrastrado bajo el agua (sin grito, limpio reusable)", "uses": "hundirse / ser arrastrado bajo el agua (sin grito, limpio reusable)", "volume": [0.28, 0.36], "source": "V7 ultimo-tren-carga", "canonical_validation_status": "validated"},
+        {"id": "electrocution_strong", "file": "general/electrocution_strong.mp3", "duration_s": 1.0, "duration": 1.0, "use": "electricidad fuerte audible / arco eléctrico", "uses": "electricidad fuerte audible / arco eléctrico", "volume": [0.28, 0.34], "source": "V7 ultimo-tren-carga", "canonical_validation_status": "validated"},
+        {"id": "dawn_birds_singing", "file": "general/dawn_birds_singing.mp3", "duration_s": 5.0, "duration": 5.0, "use": "supervivencia / amanecer — pájaros suaves tras sobrevivir la noche", "uses": "supervivencia / amanecer — pájaros suaves tras sobrevivir la noche", "volume": [0.18, 0.26], "loopable": true, "source": "V7 ultimo-tren-carga (generado ElevenLabs)", "canonical_validation_status": "validated"},
+        {"id": "tango_am_radio", "file": "general/tango_am_radio.mp3", "duration_s": 2.0, "duration": 2.0, "use": "tango en radio AM (caseta/interior cálido)", "uses": "tango en radio AM (caseta/interior cálido)", "volume": [0.18, 0.26], "source": "V7 ultimo-tren-carga", "canonical_validation_status": "validated"}
+      ]
+    },
     "cuts": {
       "description": "Sistema de 7 cortes NARRATIVE-LED-EDITING. Universales a cualquier formato.",
       "ref_doc": "ai-video-production/NARRATIVE-LED-EDITING.md",
@@ -112,6 +123,26 @@
       "description": "Sonidos de countdown 3-2-1.",
       "items": [
         {"file": "countdown/tick.mp3", "duration": 0.1, "use": "tick countdown reutilizable triple", "volume": [0.75, 0.85]}
+      ]
+    },
+    "sport-football": {
+      "description": "Paquete SFX futbol para sport-choice (generado 2026-06-03 1:1 de los prompts canonicos). Reusable cross-video durante el Mundial. NUNCA usar en horror.",
+      "ref_doc": "sport-choice-format/creative-direction/audio-direction.md § PROMPTS ElevenLabs SFX EXACTOS",
+      "canonical_validation_status": "pending",
+      "canonical_validation_note": "Pre-empirico (formato 0 videos shipped) — prompts canonicos del doc + duraciones ffprobe-verificadas. Flip a validated con el primer video sport shipped + user perceptual PASS.",
+      "items": [
+        {"file": "sport/crowd-roar-bed-22s.mp3", "duration": 22, "use": "rugido hinchada base — ambient continuo Layer 2, cobertura 99-100%", "volume": [0.20, 0.26], "loopable": true},
+        {"file": "sport/ultras-chant-distant-18s.mp3", "duration": 18, "use": "canticos lejanos ultras bajo el rugido — ambient Layer 2", "volume": [0.12, 0.18], "loopable": true},
+        {"file": "sport/stadium-room-echo-12s.mp3", "duration": 12, "use": "eco recinto estadio cerrado — refuerzo ambient Layer 2", "volume": [0.10, 0.14], "loopable": true},
+        {"file": "sport/referee-whistle.mp3", "duration": 1.0, "use": "silbato arbitro — inicio/falta/penal, evento Layer 1", "volume": [0.28, 0.34]},
+        {"file": "sport/boot-strike.mp3", "duration": 0.6, "use": "golpe al balon — cada pase/remate, evento Layer 1", "volume": [0.26, 0.32]},
+        {"file": "sport/goal-net-ripple.mp3", "duration": 1.2, "use": "red inflandose — GOL, evento Layer 1", "volume": [0.30, 0.35]},
+        {"file": "sport/goalkeeper-save.mp3", "duration": 0.88, "use": "atajada/manotazo arquero — evento Layer 1", "volume": [0.28, 0.34]},
+        {"file": "sport/crowd-goal-explosion.mp3", "duration": 4.0, "use": "explosion celebracion hinchada — gol propio/campeon, pico de gloria", "volume": [0.45, 0.60]},
+        {"file": "sport/confetti-rustle.mp3", "duration": 5.0, "use": "confeti — vuelta olimpica/copa, accent GLORIA", "volume": [0.20, 0.28]},
+        {"file": "sport/crowd-boos-disappointed.mp3", "duration": 3.48, "use": "abucheos + uy decepcionado — cada error, evento BURLA Layer 1", "volume": [0.30, 0.40]},
+        {"file": "sport/crowd-derisive-whistles.mp3", "duration": 3.0, "use": "silbidos hinchada — humillacion sostenida, accent BURLA", "volume": [0.24, 0.32]},
+        {"file": "sport/tension-rising-strings.mp3", "duration": 4.48, "use": "tension rising clímax — D-climax/mano a mano, accent bajo narrador (sports-thriller, no horror)", "volume": [0.18, 0.28]}
       ]
     }
   },

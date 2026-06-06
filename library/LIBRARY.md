@@ -15,6 +15,7 @@ library/
 ├── sfx-catalog.json              ← Machine-readable de SFX
 ├── voices-catalog.json           ← Machine-readable de voces
 ├── sfx/                          ← SFX organizados por categoría
+│   ├── general/                  ← Sonidos genéricos reusables cross-video (agua, electricidad, amanecer, radio)
 │   ├── cuts/                     ← 7 cortes NARRATIVE-LED-EDITING (universales)
 │   ├── impacts/                  ← Flash, stab, shatter
 │   ├── drones/                   ← Tension, build, cave
@@ -74,6 +75,21 @@ cp "<repo-root>/library/sfx/cuts/"*.mp3 \
 ---
 
 ## CATÁLOGO — SFX por categoría
+
+### 🌐 General (genéricos reusables cross-video)
+
+> Sonidos genéricos que sirven a cualquier formato (agua, electricidad, amanecer, radio). Mandato permanente: cuando un proyecto pague un SFX reusable, copiarlo acá. Todos `validated` (user-approved en V7 ultimo-tren-carga shipped).
+
+| Archivo | Duración | Uso |
+|---|---|---|
+| `general/water_drip_pipe.mp3` | 0.6s | Gotas de tubería / filtración |
+| `general/walking_in_water.mp3` | 1.0s | Caminar / correr en agua |
+| `general/sinking_underwater.mp3` | 1.2s | Hundirse / ser arrastrado bajo el agua (sin grito, limpio) |
+| `general/electrocution_strong.mp3` | 1.0s | Electricidad fuerte audible / arco eléctrico |
+| `general/dawn_birds_singing.mp3` | 5s | Supervivencia / amanecer — pájaros suaves. Loopable. |
+| `general/tango_am_radio.mp3` | 2s | Tango en radio AM (caseta / interior cálido) |
+
+---
 
 ### 🎬 Cuts (NARRATIVE-LED-EDITING — sistema universal)
 

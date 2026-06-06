@@ -1,6 +1,6 @@
 {
-  "version": "1.2",
-  "updated": "2026-05-18",
+  "version": "1.3",
+  "updated": "2026-06-03",
   "provider": "ElevenLabs",
   "description": "Catálogo de voice IDs ElevenLabs para TTS. Cada voice ID se referencia por string en tts.py -v <ID>.",
   "default_voice": "2gPFXx8pN3Avh27Dw5Ma",
@@ -99,6 +99,19 @@
     ],
     "discovery_uncertainty": "Voice IDs alfanumericos NO surfaced en WebSearch 2026-05-27. Tomas toma del library web cuando ejecute A/B. Catalog se actualiza con voice_id real post-test (flip TBD_from_library_web → actual ID).",
     "role_separation_note": "Oxley (2gPFXx8pN3Avh27Dw5Ma) actual default es creepy character + LatAm baseline 96 WPM — apto matarife/character. Para narrator-tier (TikTok-energetic V5+) NO matchea perfil objetivo. Pre-V5 narrator default = TBD post A/B test (Eleguar / Jose). Matarife OXLEY stays canonical. Cocinera Kate qWWAqFomnJ99VwQLREfT stays canonical."
+  },
+  "sport_choice_narrator_strategy_2026_06_03_WINNER": {
+    "winner": "El Faraón — Energetic Commentator (QpDQJR3frbDwOhTIo8nW)",
+    "decided_at": "2026-06-03",
+    "decision_context": "Tomás pidió 'voice de animador de fútbol latinoamericano' para el formato sport-choice (pre video #2 México vs Sudáfrica, Mundial 2026). Búsqueda shared voice library ElevenLabs (~9 términos) → 2 candidatos es-LatAm audicionados con sample de relato real ('Minuto noventa en el Estadio Azteca... ¡GOOOOOL!'). Tomás listen test pick: El Faraón (Rule D PRECEDENCE).",
+    "candidates_tested": {
+      "el_faraon_QpDQJR3frbDwOhTIo8nW": "WINNER — colombiano, 'High-energy Latin American soccer and sports commentator', perfil relator play-by-play nativo",
+      "jose_y2ijeTfmnXjzheHO6zeN": "Reserva — mexicano, deep powerful announcer (no relator específico)",
+      "diego_tN4nkw7MBnGYAwQ71zQp": "No agregable vía API (voice_not_found en /v1/voices/add — restricción del owner)"
+    },
+    "audition_samples": "library/voice-auditions-sport/audition-{faraon-relator-colombiano,jose-profundo-mexicano}.mp3",
+    "audition_settings": "multilingual_v2, language=es, stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost true",
+    "next_step_codification": "1. Entry El Faraón en voices[] status pending (perceptual PASS / M7 programmatic pendiente CP2 video #2). 2. Docs sport (INGENIERO-PAUTA § capas + audio-direction + NO-HORROR-GUARD G3) referencian QpDQJR3frbDwOhTIo8nW como narrador canónico sport — reemplaza el placeholder David C2. 3. M7 WPM measure en CP2 del primer video sport → flip a validated si banda canónica + intelligibility PASS."
   },
   "atempo_rule": "Aplicar atempo per INGENIERO-PAUTA-MASTER § 1.7 measured (per-segment raw_dur/target_dur clamped [0.7, 2.5]) + per-speaker SPEC L660-672 multipliers when applicable (narrator 1.15 / cocinera 1.23 / matarife 1.28 ceiling). Verify post-TTS measure_F1.py methodology vs canonical p25-p75 bands [152.71, 179.84].",
   "atempo_rule_DEPRECATED_2026_05_18": "Aplicar atempo 2.0 con ffmpeg después de generar TTS si la voz es lenta por naturaleza (canónico para Tj9l48J9AJbry5yCP5eW). DEPRECATED — derived from our productions, not canonical refs.",
@@ -254,6 +267,38 @@
         "jose_HdHf5loDYrvGJRrbzbUX": "REJECTED — WPM 143.3 debajo canonical p25 + perfil 'muy plana' pattern Vicente rejected. NO usar horror."
       },
       "notes": "Canonical narrator V5+ default. Combinable con voice-effects presets (ultratumba_cavernoso natural pair given deep mysterious profile). NUNCA usar para cocinera (Kate canonical) ni matarife (Oxley canonical)."
+    },
+    {
+      "id": "QpDQJR3frbDwOhTIo8nW",
+      "label": "El Faraón — Energetic Commentator (relator fútbol LatAm) [SPORT-CHOICE NARRATOR]",
+      "characteristics": "High-energy Latin American soccer/sports commentator. Colombiano, male middle-aged, professional category, use_case entertainment_tv. Perfil relator play-by-play vivo — match exacto de sport PAUTA-MASTER § 8 (narra la consecuencia, nunca juzga) + NO-HORROR-GUARD G3 (relator deportivo, NO grave omnisciente).",
+      "status": "validated_sport_choice_narrator",
+      "canonical_validation_status": "validated_sport_narrator_2026_06_04",
+      "validated_at": "2026-06-04",
+      "validated_in": ["voice-audition sport 2026-06-03 (Tomás pick)", "mexico-sudafrica CP2 2026-06-04 (producción real: raw 206.9 WPM → atempo 0.8 → 161.6-165.5 en banda [156,195]; M7.7 14/17 ≥0.90 + 2 flags resueltos por Tomás listen test PASS 'Muy bien' — Rule D)"],
+      "validation_context": {
+        "sport_audition_2026_06_03": {
+          "user_pick": "El Faraón sobre José (y2ije) — Rule D perceptual",
+          "sample": "library/voice-auditions-sport/audition-faraon-relator-colombiano.mp3 (texto relato: tensión + explosión de gol)",
+          "settings_audition": "multilingual_v2 es / stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost",
+          "pending_for_validated": "M7 programmatic en CP2 video sport #2 (Whisper WPM banda canónica F1 [152.71, 179.84] + intelligibility ≥0.90). Sport NO tiene refs virales propios → validación canónica plena post primeros videos shipped (igual que el resto del formato pre-empírico)."
+        }
+      },
+      "use_primary": "Narrator sport-choice (relator play-by-play, español neutral). Reemplaza el placeholder David C2 que INGENIERO-PAUTA sport § 2 heredó de horror.",
+      "atempo_strategy": "MEDIDO en producción (mexico-sudafrica CP2): raw = 206.9 WPM (cadence relator rápida) → atempo uniforme ×0.7975 → 165 target. Canonical multiplier para este voice: ~0.80 (re-medir per proyecto, no asumir).",
+      "gol_scream_rule": "En goles el relator GRITA '¡Gooool!' (3-4 oes moderadas, TTS-safe — NO caps interminables que glitchean). Settings de la audición (stab 0.35/style 0.45) validados con grito por Tomás. PAUTA sport §8 + audio-direction § pico de gol.",
+      "notes": "NUNCA usar para horror narrator (perfil opuesto — David C2 canonical horror). Existen 4 variantes más del mismo voice actor en la shared library (Natural Conversations / Powerful Mysterious / Fresh Dynamic / Full Clear Mellow) si se necesita otro registro."
+    },
+    {
+      "id": "y2ijeTfmnXjzheHO6zeN",
+      "label": "José — Pleasant announcer mexicano (≠ José HdHf5l rejected-horror)",
+      "characteristics": "Mexicano joven, deep powerful voice, announcer/narrative_story. Audicionado para narrador sport-choice 2026-06-03 — perdió vs El Faraón (menos 'relator', más announcer).",
+      "status": "reserved_sport_alternative",
+      "canonical_validation_status": "pending",
+      "validated_at": null,
+      "validated_in": ["voice-audition sport 2026-06-03 (sample library/voice-auditions-sport/audition-jose-profundo-mexicano.mp3)"],
+      "use_alternative": "Reserva sport: announcer de apertura/cierre, promos topical México, o si un SPEC pide registro profundo no-relator. Ya agregado a la cuenta ElevenLabs.",
+      "notes": "NO confundir con José HdHf5loDYrvGJRrbzbUX (rejected horror 'muy plana'). Este es y2ije — voz distinta."
     }
   ],
   "deprecated": [
