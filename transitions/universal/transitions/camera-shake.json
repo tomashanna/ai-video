@@ -1,0 +1,38 @@
+{
+  "id": "camera-shake",
+  "type": "transition",
+  "category": "impact-shake",
+  "duration_s": 0.25,
+  "duration_range_s": [0.2, 0.3],
+  "xfade_transition": "hardcut",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "Pure concat (hard cut) + per-frame random crop jitter on the first {duration_s} of clip_b (5% overscan via scale 1.1x), con amplitud DECAYENTE lineal (jitter {shake_px} -> 0). LEY DE ACOPLE (directiva Tomas 2026-06-05): el movimiento dura lo que dura el SONIDO audible — duration_s derivada del envelope del sting (snap @ 120ms, inaudible ~300ms post-inicio => 0.25s de shake post-corte). Si se cambia el sting, REMEDIR el envelope y re-derivar duration_s. xfade has no shake primitive — chained-xfade approximates as hardcut.",
+  "description": "Hard cut where the incoming clip lands with a violent handheld shake that decays into stillness in sync with the whoosh sting decay (movimiento y sonido mueren JUNTOS, 0.25s). Reads as physical impact / hit / sudden arrival. Energy bump without changing scene luminance.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/whoosh-badminton-shake.mp3 -filter_complex \"[1:v]scale=iw*1.1:ih*1.1,crop=iw/1.1:ih/1.1:x='(in_w-out_w)/2+(random(1)-0.5)*2*{shake_px}*max(0,1-t/{duration_s})':y='(in_h-out_h)/2+(random(2)-0.5)*2*{shake_px}*max(0,1-t/{duration_s})'[bshake];[0:v][bshake]concat=n=2:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1[base];[2:a]adelay={sting_start_ms}|{sting_start_ms},volume=0.55[w];[base][w]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "duration_s": "Shake window on clip_b start = duracion AUDIBLE del sting post-corte (LEY DE ACOPLE). Default 0.25 (envelope medido del whoosh-badminton: snap @ 120ms, decay inaudible ~300ms). Amplitud decae linealmente a 0 dentro del window.",
+    "shake_px": "Jitter amplitude inicial in px (default 25, max 45 — overscan headroom at 1080w is 54px). Decae a 0 junto al sonido.",
+    "sting_start_ms": "= duration(clip_a)*1000 - 120. El peak RMS del sting esta a 120ms del inicio (medido 2026-06-05) — asi el snap del whoosh aterriza EXACTO en el corte y el shake decae con el decay del sonido.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "Sting BUNDLED (parte de la transicion): whoosh-badminton-shake.mp3 (0.63s, SoundBits Focused Sports Badminton Racket Whoosh Swing, user-uploaded 2026-06-05) a volume 0.55 (banda impacts HR#9), peak @ el corte. Base = concat duro de los dos audios.",
+  "audio_sting_path": "audio-stings/whoosh-badminton-shake.mp3",
+  "audio_sting_volume": 0.55,
+  "use_cases": [
+    "Impact moments: golpe, caida, puerta que revienta, choque, tackle/entrada fuerte (sport)",
+    "Consecuencia negativa que aterriza fisicamente (error & burla en sport-choice)",
+    "Jump-scare landing (horror) sin recurrir a flash blanco",
+    "Cut a POV del viewer cuando algo lo empuja/agarra"
+  ],
+  "avoid_for": [
+    "Transiciones suaves dentro del mismo beat emocional (use cross-fade-0.5s)",
+    "Mas de 2-3x por reel — el shake pierde significado por repeticion",
+    "Shots con texto/UI critica en el window del shake (legibilidad)",
+    "Combinar con light-flash-impact en el mismo seam (doble enfasis = ruido)"
+  ],
+  "hyperframes_alternative": "GSAP on incoming scene wrapper: gsap.fromTo('.scene-in', {x:0,y:0}, {x:'random(-25,25)', y:'random(-25,25)', duration:0.05, repeat:7, yoyo:true, ease:'none', clearProps:'x,y'}) — 8 jitter steps ~= 0.4s decay window.",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Authored 2026-06-05 por directiva del creator, 2 iteraciones: v1 shake 0.4s amplitud constante (rechazado: 'muy largo — lo que dura el sonido debe durar el movimiento') -> v2 APROBADO por Tomas 2026-06-05: 0.25s acoplado al envelope del sting + amplitud decayente. Learning generalizable: en transiciones con sting bundled, la duracion del movimiento se DERIVA del envelope audible del sonido, no se elige independiente. Sin medicion F1 contra referentes todavia — candidato natural: impactos sincronizados con audio observados en ref-08/ref-11/ref-13 (§7 audio-visual sync).",
+  "validated_notes": "User-directed primitive. Validar contra >=3 referentes antes de promover de pending (HR#19)."
+}

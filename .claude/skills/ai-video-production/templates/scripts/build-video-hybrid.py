@@ -59,9 +59,36 @@ def load_spec(spec_path):
         return yaml.safe_load(f)
 
 
+def _find_transitions_root():
+    """Walk up from this script to the repo-root global transitions/ (marker: catalog.json).
+
+    Works both when the script lives in templates/scripts/ and when it's been
+    copied into <proyecto>/scripts/ at bootstrap.
+    """
+    for base in [SCRIPT_DIR] + list(SCRIPT_DIR.parents):
+        cand = base / "transitions" / "catalog.json"
+        if cand.exists():
+            return cand.parent
+    return None
+
+
 def resolve_effects_dirs(fmt):
-    """Tiered catalogs (PRE-4.K): Capa A universal + Capa B <format> sub-genre (if exists)."""
+    """Tiered catalogs via global transitions/ root (2026-06-05): universal + <fmt> per-format.
+
+    Fallback: legacy effects-library paths (pre-migration trees / detached copies).
+    """
     dirs = []
+    root = _find_transitions_root()
+    if root is not None:
+        universal = root / "universal" / "transitions"
+        if universal.exists():
+            dirs.append(universal)
+        per_format = root / fmt / "transitions"
+        if per_format.exists():
+            dirs.append(per_format)
+        if dirs:
+            return dirs
+    # Legacy fallback (PRE-4.K layout)
     capa_a = SCRIPT_DIR.parent / "effects-library" / "transitions"
     if capa_a.exists():
         dirs.append(capa_a)

@@ -586,7 +586,7 @@ Benefits:
 
 ### 13.5 Effects library reference
 
-Between-clip transitions live en effects-library catalogs **TIERED** (post-PRE-4.K, principio "Disponibilidad ≠ Uso"): **Capa A** universal primitives `ai-video-production/templates/effects-library/transitions/` (7: cross-fade ×2, hard-cut-with-whoosh, black-screen, fade-to-black, light-flash, glitch) + **Capa B** format sub-genre `<format>-format/effects-library/transitions/` (horror-choice: film-burn, projector-cue-cinema, static-noise). Caption burn styles → `templates/caption-styles/caption-burn-template.css`. Catálogo autoritativo = los JSON specs + READMEs de cada capa (la tabla de abajo es un sketch Phase 2 histórico):
+Between-clip transitions live en la carpeta **GLOBAL root `transitions/`** (migrada 2026-06-05; principio "Disponibilidad ≠ Uso" intacto): **universal** `transitions/universal/transitions/` (11: cross-fade ×2, hard-cut-with-whoosh, black-screen, fade-to-black, light-flash, glitch, camera-shake, pan-left, brightness-flash, zoom-in) + **per-format** `transitions/<format>/transitions/` (horror-choice: film-burn, projector-cue-cinema, static-noise, old_screen_glitch_error). **Índice transición→formato = `transitions/catalog.json`** (consultar PRIMERO); autoridad = `transitions/README.md`. Los paths viejos effects-library quedan como symlinks de compat. Caption burn styles → `templates/caption-styles/caption-burn-template.css`. (La tabla de abajo es un sketch Phase 2 histórico):
 
 | Effect | File | Use case |
 |--------|------|----------|
@@ -657,7 +657,7 @@ Output: 5 dimensions per clip (UI overlap, frame negros, AVU detect, character c
 │     projector-cue (cambio de carrete), glitch-static               │
 │   • Drone-tail crescendo across boundary                           │
 │   • Audio sting bundled per effect recipe                          │
-│     (effects-library/transitions/<name>.json `audio_sting_volume`) │
+│     (transitions/<layer>/transitions/<name>.json `audio_sting_volume`) │
 │ Audit: NEW Q22 gate post-concat — `audit-effects-audio.py` ✅       │
 └─────────────────────────────────────────────────────────────────────┘
 
@@ -823,10 +823,10 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 │      Output: assets/concat/clips_concat_only.mp4                     │
 │    Step 2 — 4.4 apply-effects-between-clips.py:                      │
 │      xfade filter at boundaries per SPEC.shot_list[].transition_in   │
-│      + sting audio overlaid per effects-library/transitions/*.json   │
+│      + sting audio overlaid per transitions/<layer>/transitions/*.json│
 │      Output: assets/concat/clips_with_effects.mp4                    │
 │                                                                      │
-│  Transition recipes available (effects-library/transitions/):        │
+│  Transition recipes available (transitions/ global — catalog.json):  │
 │    - B&W TV static interference (NEW 2026-05-21 user request)        │
 │    - Cross-fade, hard-cut-whoosh, light-flash, film-burn, glitch     │
 │    - Each recipe bundles audio_sting + visual filter params          │

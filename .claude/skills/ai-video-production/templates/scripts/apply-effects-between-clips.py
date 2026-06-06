@@ -12,10 +12,11 @@ reads the ATOMIC CLIPS (V4 empirical cp5-layer2-concat.py reads N atomic clips +
 with cumulative offsets). The 4.2 output (clips_concat_only.mp4) is used for the PASSTHROUGH
 branch (has_layer_2_effects: false → copy concat'd stream as final 4.4 output).
 
-Tiered effects-library (PRE-4.K, "Disponibilidad ≠ Uso"): Capa A universal primitives
-(ai-video-production/templates/effects-library/transitions/) + Capa B format sub-genre
-(<format>-format/effects-library/transitions/). --effects-dir accepts ONE OR MORE catalog
-dirs (searched in order). It is REQUIRED in the effects branch — no silent format default
+Tiered global transitions/ root (2026-06-05, "Disponibilidad ≠ Uso"): universal primitives
+(<repo>/transitions/universal/transitions/) + per-format sub-genre
+(<repo>/transitions/<format>/transitions/). Index: <repo>/transitions/catalog.json.
+Legacy effects-library paths remain as compat symlinks. --effects-dir accepts ONE OR MORE
+catalog dirs (searched in order). It is REQUIRED in the effects branch — no silent format default
 (agnostic-by-design). Per-shot transition schema is canonical (PRE-4.J); legacy top-level
 transitions[] arrays are normalized via lib/spec_transitions_adapter.normalize_transitions.
 

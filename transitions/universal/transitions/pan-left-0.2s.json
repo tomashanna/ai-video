@@ -1,0 +1,41 @@
+{
+  "id": "pan-left-0.2s",
+  "type": "transition",
+  "category": "whip-pan",
+  "duration_s": 0.2,
+  "xfade_transition": "slideleft",
+  "xfade_fidelity": "approximate",
+  "native_mechanism_note": "Whip pan tecnica de editor (NO xfade): (1) ultimos 0.2s de A + primeros 0.2s de B montados lado a lado (hstack), (2) la 'camara' panea sobre la tira via crop x animado con EASING CUBICO in-out (velocidad pico = 3x la media, ~540px/frame a 30fps), (3) tmix frames=4 = motion blur TEMPORAL real proporcional a velocidad (smear enorme en el pico, se afina solo al frenar) + avgblur horizontal de refuerzo en 2 ventanas. Blur en format=gbrp -> yuv420p (en yuv420 directo aparece linea verde 1px de chroma, medido 2026-06-05). El chained-xfade slideleft aproxima solo el slide lineal — pierde easing + blur (de ahi approximate).",
+  "description": "Whip pan a la izquierda estilo editor: la camara ACELERA, gira violentamente (pico ~media pantalla por frame, smear total de motion blur temporal) y FRENA aterrizando en el siguiente shot — 0.2s. Reads as movimiento fisico real de camara hacia el siguiente lugar/personaje. La velocidad es eased (curva cubica), NO lineal.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/whoosh-badminton-pan.mp3 -filter_complex \"[0:v]trim=0:{dur_a_minus_0.2},setpts=PTS-STARTPTS[a_main];[0:v]trim={dur_a_minus_0.2}:{dur_a},setpts=PTS-STARTPTS[a_tail];[1:v]trim=0:0.2,setpts=PTS-STARTPTS[b_head];[a_tail][b_head]hstack=inputs=2[strip];[strip]crop={width}:{height}:x='{width}*if(lt(t/0.2,0.5),4*pow(t/0.2,3),1-4*pow(1-t/0.2,3))':y=0[whipraw];[whipraw]format=gbrp,tmix=frames=4,avgblur=sizeX=70:sizeY=1:enable='between(t,0.05,0.15)',avgblur=sizeX=25:sizeY=1:enable='between(t,0.02,0.18)',format=yuv420p[whip];[1:v]trim=0.2,setpts=PTS-STARTPTS[b_main];[a_main][whip][b_main]concat=n=3:v=1:a=0[v];[0:a][1:a]acrossfade=d=0.2[base];[2:a]adelay={sting_start_ms}|{sting_start_ms},volume=0.35[w];[base][w]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "dur_a": "duration(clip_a) exacta (ffprobe)",
+    "dur_a_minus_0.2": "= dur_a - 0.2 (donde arranca el whip)",
+    "width": "1080 (o ancho real del clip)",
+    "height": "1920 (o alto real del clip)",
+    "tmix_frames": "4 default (motion blur temporal). Mas smear: 5-6. Menos: 3.",
+    "sting_start_ms": "= dur_a*1000 - 268. Peak RMS del sting a 168ms (medido 2026-06-05); centro del whip = dur_a - 0.1 -> start = (dur_a - 0.1 - 0.168)*1000.",
+    "output": "Output .mp4 path. Duracion final = dur_a + dur_b - 0.2 (el whip consume 0.2s de cada clip)."
+  },
+  "audio_recipe": "Sting BUNDLED (parte de la transicion): whoosh-badminton-pan.mp3 (0.70s, SoundBits Focused Sports Badminton Racket Swing Whoosh, user-uploaded 2026-06-05) a volume 0.35 (banda SFX HR#9), peak en el CENTRO del whip (velocidad maxima). Base = acrossfade d=0.2.",
+  "audio_sting_path": "audio-stings/whoosh-badminton-pan.mp3",
+  "audio_sting_volume": 0.35,
+  "use_cases": [
+    "Cambio de personaje/lugar manteniendo continuidad espacial (dyad A -> dyad B)",
+    "Recorrido de opciones en decision shots (de un boton/personaje al otro)",
+    "Secuencias de jugada en sport-choice (pase -> receptor, jugador -> arco)",
+    "Beat-a-beat tours dentro de la misma locacion con energia alta"
+  ],
+  "avoid_for": [
+    "Saltos temporales (usa cross-fade-1.0s — el whip implica continuidad ESPACIAL, no temporal)",
+    "Climax/twist (usa light-flash-impact o camera-shake)",
+    "Mas de 3-4x por reel en la misma direccion — patron mecanico detectable",
+    "Shots con paneo interno hacia la DERECHA (direcciones en conflicto marea)",
+    "Texto/captions criticos en el window del blur (ilegibles durante ~0.28s)"
+  ],
+  "hyperframes_alternative": "GSAP con easing agresivo (clave: NO linear): gsap.to('.scene-out', {xPercent:-100, duration:0.2, ease:'power3.in'}) + gsap.fromTo('.scene-in', {xPercent:100}, {xPercent:0, duration:0.2, ease:'power3.out'}) + blur direccional via SVG filter feGaussianBlur stdDeviation='18,0' animado 0->18->0 en el mismo window (CSS blur() es isotropico — evitarlo).",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Authored 2026-06-05 por directiva del creator, 3 iteraciones: v1 slideleft limpio 0.3s (rechazado: poco dinamico) -> v2 slideleft 0.2s + avgblur estatico (rechazado: 'no es un paneo, mas rapido y mas dinamico' — el slide lineal de xfade no lee como camara fisica) -> v3 APROBADA por Tomas 2026-06-05: hstack + crop eased cubico + tmix temporal (tecnica de editor real). Learning: para whip pans la velocidad EASED es lo que vende el efecto, no el blur solo. Sin medicion F1 contra referentes todavia.",
+  "validated_notes": "User-directed primitive. Validar contra >=3 referentes antes de promover de pending (HR#19)."
+}

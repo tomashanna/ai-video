@@ -161,7 +161,7 @@ hybrid_layers:
 
   layer_2_effects_between_clips:
     description: "Transitions + stings + B&W TV static / cross-fade / flash applied AT shot boundaries"
-    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/transitions/"   # Capa A universal primitives (7). TIERED post-PRE-4.K — format sub-genre en <format>-format/effects-library/transitions/ (horror-choice: film-burn / projector-cue-cinema / static-noise). Principio "Disponibilidad ≠ Uso": ambos catálogos disponibles, este SPEC elige en shot_list[].transition_in/out. Caption styles → templates/caption-styles/caption-burn-template.css
+    effects_library_ref: "transitions/universal/transitions/"   # Carpeta GLOBAL root (2026-06-05). Universal primitives (11) + per-format en transitions/<format>/transitions/ (horror-choice: film-burn / projector-cue-cinema / static-noise / old_screen_glitch_error). Índice transición→formato: transitions/catalog.json. Principio "Disponibilidad ≠ Uso": catálogos disponibles, este SPEC elige en shot_list[].transition_in/out. Caption styles → templates/caption-styles/caption-burn-template.css
     transition_variety_min: 3                    # at least 3 unique transition types per video
     non_diegetic_sfx_placement: "effect_layer"   # transition stings live HERE, not in clip audio
 
@@ -492,7 +492,7 @@ transitions:
   #                     projector_cue_cinema | film_burn_transition | old_screen_glitch_error
   #   ⭐ old_screen_glitch_error = glitch "pantalla antigua/pixelada/con error" para CAMBIOS DE HISTORIA
   #     (transición de recorrido, decisión→consecuencia, bridges entre ramas, played↔counterfactual).
-  #     horror-choice ONLY (PAUTA-MASTER § 2.4 perspectiva 6). Recipe: horror-choice-format/effects-library/transitions/old_screen_glitch_error.json
+  #     horror-choice ONLY (PAUTA-MASTER § 2.4 perspectiva 6). Recipe: transitions/horror-choice/transitions/old_screen_glitch_error.json
   - from_shot_id: "shot_01"
     to_shot_id: "shot_02"
     transition_type: "hard_cut_with_whoosh"

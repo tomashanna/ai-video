@@ -1,0 +1,36 @@
+{
+  "id": "zoom-in-0.3s",
+  "type": "transition",
+  "category": "punch-zoom",
+  "duration_s": 0.3,
+  "xfade_transition": "zoomin",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "Native xfade=transition=zoomin (0.3s): the seam zooms into the frame while blending into clip_b — punch-in feel.",
+  "description": "Punch zoom-in: la camara 'se lanza' hacia adelante en 0.3s y aterriza en el siguiente shot. Reads as focus/atencion subita — acercarse a un detalle, una cara, una decision. Aggressive forward energy.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/whoosh-blade-swipe-double.mp3 -filter_complex \"[0:v][1:v]xfade=transition=zoomin:duration=0.3:offset={offset_clip_a_minus_0.3}[v];[0:a][1:a]acrossfade=d=0.3[base];[2:a]adelay={sting_start_ms}|{sting_start_ms},volume=0.35[w];[base][w]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "offset_clip_a_minus_0.3": "Set offset = duration(clip_a) - 0.3",
+    "sting_start_ms": "= dur_a*1000 - 294. Peak RMS del 1er swipe a 144ms (medido 2026-06-05); alineado a mitad del zoom (dur_a - 0.15) -> el 2do swipe del 'double' aterriza justo en el landing.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "Sting BUNDLED (parte de la transicion): whoosh-blade-swipe-double.mp3 (0.56s, Cyberwave Orchestra Weapons of War Blade Swipe Fast Double, user-uploaded 2026-06-05) a volume 0.35 (banda SFX HR#9) — doble swipe: el 1ro acompana el zoom, el 2do aterriza en el landing. Base = acrossfade d=0.3.",
+  "audio_sting_path": "audio-stings/whoosh-blade-swipe-double.mp3",
+  "audio_sting_volume": 0.35,
+  "use_cases": [
+    "Wide -> close-up de cara/objeto que importa (dirigir atencion)",
+    "Entrada a decision shot (zoom hacia los botones A/B)",
+    "Detalle revelador: la mano, la marca, el objeto del twist (setup element)",
+    "Escalada de tension beat a beat (cada zoom acerca mas)"
+  ],
+  "avoid_for": [
+    "Shots cuyo clip ya termina en push-in de camara (doble zoom marea)",
+    "Transiciones de salida/cierre (el zoom-in pide continuar, no cerrar — usa fade-to-black-1.0s)",
+    "Mas de 3x por reel — fatiga el efecto punch",
+    "Seams donde el siguiente shot abre en wide (direccion de energia contradictoria)"
+  ],
+  "hyperframes_alternative": "GSAP: gsap.to('.scene-out', {scale:1.25, opacity:0, duration:0.3, ease:'power3.in'}) + gsap.fromTo('.scene-in', {scale:1.1, opacity:0.6}, {scale:1.0, opacity:1, duration:0.3, ease:'power3.out'}).",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Authored 2026-06-05 por directiva del creator (timing 0.3s explicito). Sin medicion F1 contra referentes todavia — candidato natural: push-ins rapidos pre-decision observables en refs de alta cut-density (ref-09, ref-13).",
+  "validated_notes": "User-directed primitive. Validar contra >=3 referentes antes de promover de pending (HR#19)."
+}

@@ -1,0 +1,38 @@
+{
+  "id": "brightness-flash",
+  "type": "transition",
+  "category": "luma-blend",
+  "duration_s": 0.4,
+  "duration_range_s": [0.3, 0.5],
+  "xfade_transition": "fadewhite",
+  "xfade_fidelity": "literal",
+  "native_mechanism_note": "Native xfade=transition=fadewhite ({duration_s}): luminance ramps up through white and resolves into clip_b. Softer/longer than light-flash-impact (0.2s overlay + SFX sting).",
+  "description": "Exposure bloom: the outgoing shot brightens to white and the incoming shot emerges from it over 0.3-0.5s. Reads as revelation / despertar / cambio de estado. General-purpose energetic seam — a diferencia de light-flash-impact NO lleva sting y NO esta restringido al climax.",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/swoosh-quick-stereo.mp3 -filter_complex \"[0:v][1:v]xfade=transition=fadewhite:duration={duration_s}:offset={offset_clip_a_minus_duration}[v];[0:a][1:a]acrossfade=d={duration_s}[base];[2:a]adelay={sting_start_ms}|{sting_start_ms},volume=0.35[w];[base][w]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_params": {
+    "duration_s": "Range 0.3-0.5 (default 0.4). 0.3 = punchy reveal; 0.5 = dreamy bloom.",
+    "offset_clip_a_minus_duration": "Set offset = duration(clip_a) - {duration_s}",
+    "sting_start_ms": "= (dur_a - duration_s/2 - 0.192)*1000. Peak RMS del sting a 192ms (medido 2026-06-05); pico blanco del fadewhite = mitad de la transicion. Para D=0.4: dur_a*1000 - 392.",
+    "output": "Output .mp4 path"
+  },
+  "audio_recipe": "Sting BUNDLED (parte de la transicion): swoosh-quick-stereo.mp3 (0.32s, InspectorJ Swoosh Quick Stereo Whoosh, user-uploaded 2026-06-05) a volume 0.35 (banda SFX HR#9), peak en el PICO BLANCO del fade. Base = acrossfade d={duration_s}. Para impacto fisico con flash usa light-flash-impact.",
+  "audio_sting_path": "audio-stings/swoosh-quick-stereo.mp3",
+  "audio_sting_volume": 0.35,
+  "use_cases": [
+    "Transicion a counterfactual ('si hubieras elegido...') — cambio de realidad",
+    "Despertar / recuperar consciencia / abrir los ojos (POV 1a persona)",
+    "Salto a momento de gloria en sport-choice (gol, celebracion)",
+    "Cambio de paleta narrative warm -> choice cool entre secciones"
+  ],
+  "avoid_for": [
+    "Climax peak con impacto fisico (usa light-flash-impact: 0.2s + sting, max 1-2x/reel)",
+    "Seams ordinarios entre beats — el blanco gasta su valor si aparece >2-3x/reel",
+    "Escenas oscuras donde el bloom rompe el grade eerie (revisa COLOR-GRADING.md)",
+    "Encadenar dos brightness-flash consecutivos (estrobo no intencional)"
+  ],
+  "hyperframes_alternative": "White overlay div z-index alto: gsap.timeline().to('.flash-white', {opacity:1, duration:0.18, ease:'power2.in'}).to('.flash-white', {opacity:0, duration:0.22, ease:'power2.out'}) con el scene swap en el peak.",
+  "canonical_validation_status": "pending",
+  "validated_against_canonical_refs": [],
+  "canonical_observations": "Authored 2026-06-05 por directiva del creator (timing 0.3-0.5s explicito). Pariente del light-flash-impact (validated_4/8) — la variante larga sin sting NO esta medida por separado contra referentes.",
+  "validated_notes": "User-directed primitive. Validar contra >=3 referentes antes de promover de pending (HR#19)."
+}

@@ -1589,7 +1589,7 @@ phase_1_forward:
 |---|---|---|---|---|
 | **1. Drone** | Continuous 80-100% | 0.05-0.13 (peak 0.13 in horror sections) | 40-200 Hz dominant | ElevenLabs SFX "subharmonic horror tonal pad" or curated library file |
 | **2. Ambient** | Per-section (changes with setting beat) | 0.10-0.18 | 200-2000 Hz | ElevenLabs SFX setting-specific (e.g. "projector reel mechanism + dust hum", "mine drip echo + wind") |
-| **3. Accent** | Event-driven (countdown ticks, dilemma locks, climax peaks) | 0.20-0.35 (impacts 0.55-0.65) | Wide-spectrum | ElevenLabs SFX or `effects-library/audio-stings/*.mp3` |
+| **3. Accent** | Event-driven (countdown ticks, dilemma locks, climax peaks) | 0.20-0.35 (impacts 0.55-0.65) | Wide-spectrum | ElevenLabs SFX or `transitions/universal/audio-stings/*.mp3` |
 
 ### 8.11.2 ffmpeg recipe for layer mixing
 
@@ -1772,7 +1772,7 @@ When architect adds mini-cuts to SPEC, engineer implements:
 
 ### 8.12.4 Effects library transitions counted as cuts (per § 8.13 NEW)
 
-When using `effects-library/transitions/`:
+When using `transitions/` (carpeta global root — catálogo `transitions/catalog.json`):
 - `hard-cut-with-whoosh` = +1 cut
 - `light-flash-impact` = +1 cut (use max 1-2 per reel per existing library README)
 - `glitch-transition` = +1 cut
@@ -1805,10 +1805,10 @@ phase_2_forward:
 
 ## § 8.13 — EFFECTS LIBRARY USAGE TABLE (NEW 2026-05-21 — Phase 2 forward usage rules)
 
-> **Authority**: `ai-video-production/templates/effects-library/README.md` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
+> **Authority**: `transitions/README.md` (carpeta global root) + índice `transitions/catalog.json` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
 > **Trigger**: cinema-abandonado iter 1-6 used only hard cuts + zoom transitions — Gemini editing dimension 8/10 (predictable). Canonical refs use varied transitions per beat type.
 
-> ⭐ **TIERED catalogs (PRE-4.K 2026-05-27, "Disponibilidad ≠ Uso")**: las transitions de la tabla viven en DOS capas. **Capa A** (`ai-video-production/templates/effects-library/transitions/`) = primitivas universales: `cross-fade-0.5s`, `cross-fade-1.0s`, `hard-cut-with-whoosh`, `black-screen-0.3s`, `fade-to-black-1.0s`, `light-flash-impact`, `glitch-transition`. **Capa B** (`horror-choice-format/effects-library/transitions/`) = sub-genre horror: `film-burn-transition`, `projector-cue-cinema`, `static-noise-transition`. El engineer pasa `--effects-dir` con AMBOS catálogos (Capa A + Capa B) al correr `apply-effects-between-clips.py`. Disponibilidad ≠ prescripción: el SPEC `shot_list[].transition_out` elige. Cada recipe declara `xfade_transition` + `xfade_fidelity` (Option D PRE-4.J): los 5 `approximate` (light-flash/black-screen/fade-to-black/film-burn/static-noise) emiten WARNING en producción (chained-xfade lossy).
+> ⭐ **TIERED catalogs (global root `transitions/` desde 2026-06-05, "Disponibilidad ≠ Uso")**: las transitions de la tabla viven en DOS capas de la carpeta global. **Universal** (`transitions/universal/transitions/`) = primitivas: `cross-fade-0.5s`, `cross-fade-1.0s`, `hard-cut-with-whoosh`, `black-screen-0.3s`, `fade-to-black-1.0s`, `light-flash-impact`, `glitch-transition`, `camera-shake` (0.25s acoplado al sting), `pan-left-0.2s` (whip+blur), `brightness-flash` (0.3-0.5s), `zoom-in-0.3s`. **Per-format** (`transitions/horror-choice/transitions/`) = sub-genre horror: `film-burn-transition`, `projector-cue-cinema`, `static-noise-transition`, `old_screen_glitch_error`. Índice transición→formato: `transitions/catalog.json`. El engineer pasa `--effects-dir` con AMBOS catálogos al correr `apply-effects-between-clips.py` (o deja que `build-video-hybrid.py` los resuelva vía catalog.json). Disponibilidad ≠ prescripción: el SPEC `shot_list[].transition_out` elige. Cada recipe declara `xfade_transition` + `xfade_fidelity` (Option D PRE-4.J): los `approximate` (light-flash/black-screen/fade-to-black/film-burn/static-noise/old_screen_glitch/camera-shake/pan-left) emiten WARNING en producción (chained-xfade lossy).
 
 ### 8.13.1 When to use which transition (by beat type)
 
@@ -1849,9 +1849,9 @@ shot_list:
     type: dilemma_lock_in
     transition_out:
       effect: "light_flash_impact"
-      effects_library_ref: "effects-library/transitions/light-flash-impact.json"
+      effects_library_ref: "transitions/universal/transitions/light-flash-impact.json"
       duration_s: 0.2
-      sting_audio: "effects-library/audio-stings/whoosh-warm.mp3"
+      sting_audio: "transitions/universal/audio-stings/whoosh-warm.mp3"
 ```
 
 Until v10 lands, engineer reads SPEC `shot_list[].transition_out.effect` field if present, else defaults to `hard-cut-with-whoosh` for scene changes + `cross-fade-0.5s` for within-scene beats.
@@ -2633,7 +2633,7 @@ phase_3_forward:
 
 ## 9. EFECTO GLITCH `old_screen_glitch_error` — cambios de historia (req Tomás 2026-06-01 — horror-choice ONLY)
 
-> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 6 del SPEC-AUDIT). Recipe completa (cadena ffmpeg + CSS + sting): `horror-choice-format/effects-library/transitions/old_screen_glitch_error.json` (**Capa B sub-género horror-choice — NO universal**, NO bleed a sport-choice/editorial).
+> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 6 del SPEC-AUDIT). Recipe completa (cadena ffmpeg + CSS + sting): `transitions/horror-choice/transitions/old_screen_glitch_error.json` (carpeta global root; **capa per-format horror-choice — NO universal**, NO bleed a sport-choice/editorial).
 
 - **Cuándo**: en los **cambios de historia/recorrido** — específicamente (a) **cambios de recorrido A↔B de personajes** (transiciones de recorrido, bridges entre ramas, played↔counterfactual) Y (b) **momentos de MUERTE (consequence-A fatal)** (el corte hacia el body-horror fatal). También en decisión→consecuencia. NO en cortes normales (el default sigue siendo `hard-cut-with-whoosh`, 8/8 canónico). NO en el freeze de decisión (eso es D29 freeze+sepia, la versión MENOS pronunciada).
 - **Look**: base parque-acuatico V3 = sepia/grano/contraste + glitch xfade + sting `glitch_warm`; filtro CSS `sepia(0.45) contrast(1.22) hue-rotate(-12deg) saturate(0.85)`. **V7+ lo lleva más digital-error**: pixelación (downscale→upscale neighbor) + chromatic aberration (RGB split ±6-10px) + scanlines (1px @0.18 cada 3px) + frame-tear/datamosh-lite (banda horizontal ~12-20% desplazada ±20-40px por 1-2 frames).

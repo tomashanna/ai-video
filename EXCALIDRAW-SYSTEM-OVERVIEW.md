@@ -91,7 +91,7 @@
 [L1.p7_capability]  ⊳ [Layer 2 validators]  : "applicable/not_applicable/pass/fail per cap flag"
 [L1.bug9]           ⊳ [Layer 2 validators]  : "exit 2 if video_capabilities missing"
 [L1.hr14_rotation]  ⊳ [Layer 4 video-log]   : "no repeat pattern 2 videos consecutivos"
-[L1.disponibilidad_uso] ⊳ [Layer 3 effects-library tiered] : "Capa A available ≠ prescribed"
+[L1.disponibilidad_uso] ⊳ [Layer 3 transitions/ global tiered] : "universal available ≠ prescribed"
 ```
 
 ---
@@ -294,8 +294,8 @@
 #### Subgroup: Templates + assets agnostic
 ```
 [L3.A.spec_template]   CREATIVE-SPEC-TEMPLATE-v11.yaml (DOC 🔵, SPEC v11.1 schema canonical)
-[L3.A.effects_universal] effects-library/transitions/ (7 primitives) (ASSET 🔵)
-[L3.A.audio_stings_A]    effects-library/audio-stings/ (whoosh + drone + flash-sharp) (ASSET 🔵)
+[L3.A.effects_universal] transitions/universal/transitions/ (11 primitives, global root) (ASSET 🔵)
+[L3.A.audio_stings_A]    transitions/universal/audio-stings/ (whoosh + drone + flash-sharp) (ASSET 🔵)
 [L3.A.caption_styles]    caption-styles/caption-burn-template.css (DOC 🔵, 3 classes universal mechanism)
 [L3.A.calibrated_prompt] calibrated-gemini-prompt-v4.txt (DOC 🔵)
 [L3.A.bootstrap]         BOOTSTRAP.md (DOC 🔵, §1.1 asset layout convention NEW)
@@ -316,8 +316,8 @@
 [L3.B.taste_log]         TASTE-LOG.md (DOC 🟢, Tomás gusto codificado)
 [L3.B.creative_direction] creative-direction/ (aesthetic/animation/audio/camera/captions/etc) (DOC 🟢)
 [L3.B.lip_sync_workflow] lip-sync-workflow.md (DOC 🟢, BUILD 8 — Hailuo Std + Sync.so workflow)
-[L3.B.effects_subgenre]  effects-library/transitions/ (3 sub-genre: film-burn/projector/static-noise) (ASSET 🟢)
-[L3.B.audio_stings_B]    effects-library/audio-stings/ (projector-cue + drone-tension copy) (ASSET 🟢)
+[L3.B.effects_subgenre]  transitions/horror-choice/transitions/ (4 sub-genre: film-burn/projector/static-noise/old_screen_glitch) (ASSET 🟢)
+[L3.B.audio_stings_B]    transitions/horror-choice/audio-stings/ (projector-cue + drone-tension copy) (ASSET 🟢)
 [L3.B.intro_formula]     INTRO-FORMULA.md (DOC 🟢, receta 9s canonical)
 [L3.B.patterns]          PATTERNS.md (DOC 🟢, reglas técnicas)
 [L3.B.character_names]   CHARACTER-NAMES-CATALOG.md (DOC 🟢)

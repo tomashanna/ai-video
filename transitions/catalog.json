@@ -1,0 +1,175 @@
+{
+  "_meta": {
+    "description": "Catálogo GLOBAL de transiciones — índice único consultable que mapea cada transición a los formatos donde sirve. Los recipes JSON self-contained viven en <layer>/transitions/; este catálogo NO duplica su contenido (ffmpeg_recipe/audio_recipe viven en el recipe). Principio canónico: 'Disponibilidad ≠ Uso' — el SPEC (Capa C, shot_list[].transition_in/out) decide qué se aplica en cada video.",
+    "authority": "transitions/README.md (decision matrix + how-to-add)",
+    "schema": {
+      "layer": "universal (todo formato) | <format> (solo ese formato)",
+      "formats": "['*'] = disponible para cualquier formato | lista explícita = solo esos",
+      "recipe": "path relativo a transitions/ — el JSON self-contained con ffmpeg_recipe + audio_recipe",
+      "canonical_validation_status": "HR#19 — validated_N/8 (medido contra refs F1) | pending (autorizado pero no medido) | candidate_deprioritize"
+    }
+  },
+  "format_resolution": {
+    "_note": "Qué capas resuelve cada formato al buscar una transición declarada en el SPEC. Orden = precedencia (si un id existe en ambas, gana la capa del formato).",
+    "horror-choice": ["horror-choice", "universal"],
+    "sport-choice": ["sport-choice", "universal"],
+    "editorial": ["universal"],
+    "reel-generic": ["universal"],
+    "b2b-commercial": ["universal"],
+    "tutorial": ["universal"]
+  },
+  "transitions": [
+    {
+      "id": "hard-cut-with-whoosh",
+      "layer": "universal",
+      "recipe": "universal/transitions/hard-cut-with-whoosh.json",
+      "formats": ["*"],
+      "duration_s": 0.0,
+      "default_for": "Cambio de escena workhorse — preserva cuts/min 2-7 (banda canónica)",
+      "avoid_for": "Dentro de un mismo momento emocional; climax peak; outro",
+      "canonical_validation_status": "validated_8/8"
+    },
+    {
+      "id": "cross-fade-0.5s",
+      "layer": "universal",
+      "recipe": "universal/transitions/cross-fade-0.5s.json",
+      "formats": ["*"],
+      "duration_s": 0.5,
+      "default_for": "Conectar dos beats dentro de la MISMA escena (blend invisible)",
+      "avoid_for": "Cambios de escena con energía; pacing short-form como default",
+      "canonical_validation_status": "validated_0/8_candidate_deprioritize"
+    },
+    {
+      "id": "cross-fade-1.0s",
+      "layer": "universal",
+      "recipe": "universal/transitions/cross-fade-1.0s.json",
+      "formats": ["*"],
+      "duration_s": 1.0,
+      "default_for": "Salto temporal / memory dissolve / flashback (SOLO con intent narrativo explícito)",
+      "avoid_for": "Default de pacing; beats adyacentes; climax",
+      "canonical_validation_status": "validated_1/8"
+    },
+    {
+      "id": "black-screen-0.3s",
+      "layer": "universal",
+      "recipe": "universal/transitions/black-screen-0.3s.json",
+      "formats": ["*"],
+      "duration_s": 0.3,
+      "default_for": "Coma narrativa / respiro entre beats",
+      "avoid_for": "Repetición frecuente (corta el flow); primeros 30s",
+      "canonical_validation_status": "validated_2/8"
+    },
+    {
+      "id": "fade-to-black-1.0s",
+      "layer": "universal",
+      "recipe": "universal/transitions/fade-to-black-1.0s.json",
+      "formats": ["*"],
+      "duration_s": 1.0,
+      "default_for": "Outro / cierre antes del cliffhanger card",
+      "avoid_for": "Seams intermedios (mata retention a mitad de reel)",
+      "canonical_validation_status": "validated_2/8"
+    },
+    {
+      "id": "light-flash-impact",
+      "layer": "universal",
+      "recipe": "universal/transitions/light-flash-impact.json",
+      "formats": ["*"],
+      "duration_s": 0.2,
+      "default_for": "Climax peak / plot twist reveal (white flash + SFX sting) — máx 1-2x/reel",
+      "avoid_for": "Seams ordinarios; >2x por reel; combinar con camera-shake en el mismo seam",
+      "canonical_validation_status": "validated_4/8"
+    },
+    {
+      "id": "glitch-transition",
+      "layer": "universal",
+      "recipe": "universal/transitions/glitch-transition.json",
+      "formats": ["*"],
+      "duration_s": 0.3,
+      "default_for": "Glitches de realidad (digital) — primitiva xfade=hlslice",
+      "avoid_for": "Formatos sin lógica glitch; variantes VHS-styled (eso es Capa B horror)",
+      "canonical_validation_status": "validated_0/8_candidate_deprioritize"
+    },
+    {
+      "id": "camera-shake",
+      "layer": "universal",
+      "recipe": "universal/transitions/camera-shake.json",
+      "formats": ["*"],
+      "duration_s": 0.25,
+      "duration_range_s": [0.2, 0.3],
+      "default_for": "Impacto físico: golpe, caída, choque, tackle, jump-scare landing — máx 2-3x/reel",
+      "avoid_for": "Seams suaves; repetición >3x; shots con UI crítica en el window del shake",
+      "canonical_validation_status": "pending"
+    },
+    {
+      "id": "pan-left-0.2s",
+      "layer": "universal",
+      "recipe": "universal/transitions/pan-left-0.2s.json",
+      "formats": ["*"],
+      "duration_s": 0.2,
+      "default_for": "Whip pan con motion blur direccional: continuidad espacial energética (dyad A → dyad B, pase → receptor)",
+      "avoid_for": "Saltos temporales; climax; >3-4x misma dirección por reel; texto crítico en el window del blur",
+      "canonical_validation_status": "pending"
+    },
+    {
+      "id": "brightness-flash",
+      "layer": "universal",
+      "recipe": "universal/transitions/brightness-flash.json",
+      "formats": ["*"],
+      "duration_s": 0.4,
+      "duration_range_s": [0.3, 0.5],
+      "default_for": "Revelación / despertar / cambio de realidad (counterfactual, gloria sport) — bloom sin sting",
+      "avoid_for": "Climax con impacto físico (eso es light-flash-impact); >2-3x/reel; escenas con grade eerie oscuro",
+      "canonical_validation_status": "pending"
+    },
+    {
+      "id": "zoom-in-0.3s",
+      "layer": "universal",
+      "recipe": "universal/transitions/zoom-in-0.3s.json",
+      "formats": ["*"],
+      "duration_s": 0.3,
+      "default_for": "Punch de atención: wide → detalle/cara/botones de decisión; escalada de tensión",
+      "avoid_for": "Clips que ya terminan en push-in; cierres; >3x/reel",
+      "canonical_validation_status": "pending"
+    },
+    {
+      "id": "film-burn-transition",
+      "layer": "horror-choice",
+      "recipe": "horror-choice/transitions/film-burn-transition.json",
+      "formats": ["horror-choice"],
+      "duration_s": 0.6,
+      "default_for": "Cinema bloom — settings de cine/proyección en horror",
+      "avoid_for": "Settings sin lógica fílmica; otros formatos",
+      "canonical_validation_status": "validated_0/8_candidate_deprioritize"
+    },
+    {
+      "id": "old_screen_glitch_error",
+      "layer": "horror-choice",
+      "recipe": "horror-choice/transitions/old_screen_glitch_error.json",
+      "formats": ["horror-choice"],
+      "duration_s": 0.4,
+      "default_for": "Error de pantalla vieja / CRT glitch — variante styled de glitch-transition",
+      "avoid_for": "Settings sin pantallas/tecnología; otros formatos",
+      "canonical_validation_status": "validated_0/8_capa_b_horror_choice_authored"
+    },
+    {
+      "id": "projector-cue-cinema",
+      "layer": "horror-choice",
+      "recipe": "horror-choice/transitions/projector-cue-cinema.json",
+      "formats": ["horror-choice"],
+      "duration_s": 1.0,
+      "default_for": "Cambio de rollo de proyector — settings de cine en horror",
+      "avoid_for": "Settings sin lógica de proyección; otros formatos",
+      "canonical_validation_status": "validated_0/8_candidate_deprioritize"
+    },
+    {
+      "id": "static-noise-transition",
+      "layer": "horror-choice",
+      "recipe": "horror-choice/transitions/static-noise-transition.json",
+      "formats": ["horror-choice"],
+      "duration_s": 0.4,
+      "default_for": "Estática VHS analógica — variante styled para horror",
+      "avoid_for": "Estéticas no-analógicas; otros formatos",
+      "canonical_validation_status": "validated_0/8_candidate_deprioritize"
+    }
+  ]
+}

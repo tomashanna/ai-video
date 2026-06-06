@@ -103,7 +103,7 @@ Activar cuando el usuario:
 - **Rotación entre videos** (no repetir pattern/dyad consecutivo) → `choice-format-core/ROTATION-RULES.md`.
 - **Técnica universal** (pace WPM, LUFS, mix, captions Whisper, HYBRID per-clip atomic, MODEL-CAPABILITIES-MATRIX, motion, mastering, 8 gates) → `ai-video-production/` (la apunta `INGENIERO-CHOICE-CORE.md`, no la duplica).
 - `templates/scripts/` (tts.py, image.py, sfx.py, captions.py, video.py, los 8 gates, build_clip_atomic.py, etc.) → se heredan de `ai-video-production/templates/`.
-- `effects-library/` → se hereda de `ai-video-production/templates/effects-library/` (transiciones, voice-effects). Los presets de voz de horror NO se usan; se usa narrador deportivo limpio.
+- Transiciones → carpeta GLOBAL root `transitions/` (índice `transitions/catalog.json`): sport resuelve `universal/` + `sport-choice/` (esta última bootstrapped vacía 2026-06-05). Voice-effects se heredan de `ai-video-production/templates/effects-library/voice-effects/` — los presets de voz de horror NO se usan; se usa narrador deportivo limpio.
 - `canonical-scenes/` → ⚠️ sport-choice aún no tiene canonical-scenes propios. Hasta entonces se consultan los de `horror-choice-format/canonical-scenes/` **solo por su valor ESTRUCTURAL** (placement del counterfactual, framing acción-condicional, dyad, escalada de 3 decisiones, outro) — son refs virales HORROR-específicos, no de sport. Se derivarán los propios empíricamente de nuestros primeros videos.
 - CREATIVE-SPEC schema (v11.1) → se hereda de `creative-director/templates/`.
 
