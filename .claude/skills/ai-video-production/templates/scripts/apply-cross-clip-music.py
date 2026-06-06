@@ -93,7 +93,12 @@ def resolve_music_files(music_dir, layers):
 
 def build_mix(input_video, music_files, narrator, out_wav):
     """Build Layer 3 mix (clip audio + music + narrator, music/clip ducked under narrator).
-    Returns (returncode, stderr, duck_applied)."""
+    Returns (returncode, stderr, duck_applied).
+
+    The final mix is padded with apad=whole_dur to the FULL video duration before output: amix ends
+    at the longest INPUT, so if narrator/music end before the video the audio cola se corta (the V7
+    audio-tail fix — and per HR#16 data-duration > clip → negro). apad guarantees coverage [0,dur]."""
+    vdur = ffprobe_duration(input_video)
     inputs = ["-i", str(input_video)]
     fc = []
     narr_idx = None
@@ -126,13 +131,19 @@ def build_mix(input_video, music_files, narrator, out_wav):
             fc.append("[0:a]anull[bed]")
         fc.append(f"[{narr_idx}:a]asplit=2[nkey][nmix]")
         fc.append("[bed][nkey]sidechaincompress=threshold=0.05:ratio=8:attack=20:release=300[bedduck]")
-        fc.append("[nmix][bedduck]amix=inputs=2:duration=longest:normalize=0[mixout]")
+        fc.append("[nmix][bedduck]amix=inputs=2:duration=longest:normalize=0[mixraw]")
         duck_applied = True
     else:
         if music_bed:
-            fc.append(f"[0:a]{music_bed}amix=inputs=2:duration=longest:normalize=0[mixout]")
+            fc.append(f"[0:a]{music_bed}amix=inputs=2:duration=longest:normalize=0[mixraw]")
         else:
-            fc.append("[0:a]anull[mixout]")
+            fc.append("[0:a]anull[mixraw]")
+
+    # pad the final bus to the full video duration so the audio tail is never truncated (V7 fix).
+    if vdur:
+        fc.append(f"[mixraw]apad=whole_dur={vdur:.3f},atrim=0:{vdur:.3f},asetpts=N/SR/TB[mixout]")
+    else:
+        fc.append("[mixraw]apad=pad_dur=0.05,asetpts=N/SR/TB[mixout]")
 
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"] + inputs + [
         "-filter_complex", ";".join(fc), "-map", "[mixout]",

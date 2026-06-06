@@ -77,9 +77,69 @@ MIX_SFX_EVENT_DEFAULT = 0.28          # within 0.20-0.35 band
 MIX_FLASH_IMPACT_DEFAULT = 0.60       # within 0.55-0.65 band
 MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14 # within 0.10-0.18 band
 
+# ── SFX AUDIBILITY: per-CLASS absolute-dBFS normalization (replaces flat raw-multiplier) ──────
+# A flat relative multiplier (vol × source) assumes every SFX source sits at a UNIFORM loudness.
+# It does NOT — TTS/ElevenLabs sources can span ~50 dB (a dead -67 dBFS drip vs a -16 dBFS metal
+# clang). 0.28 × a -67 dB source = silence in the master (the "SFX wired but inaudible" bug class).
+# THE FIX: normalize every clip-scoped SFX to a per-CLASS target mean dBFS BEFORE it enters the mix,
+# so the HR#9 band is expressed in absolute dBFS (audible against the -14 LUFS bed) instead of a
+# meaningless multiplier on wildly-varying sources. Companion gate: audit-sfx-audibility.py (delta
+# vs local bed). Per-event override = a 0..1 WITHIN-CLASS fraction (1.0 = full class target).
+SFX_TARGET_DBFS = {
+    "event":      -19.0,   # protagonist diegetic events (impacts, splashes, gates, electricity)
+    "diegetic":   -20.0,   # scene-world sound clearly meant to be heard (radio, birds, wind, kettle)
+    "texture":    -23.0,   # recurring ambience (drips, footsteps, buzz) — present under events/voice
+    "scream":     -16.0,   # death screams dominate their beat
+    "transition": -16.0,   # whoosh / flash / glitch stings at cut boundaries
+    "ui":         -17.0,   # countdown tick / loading / heartbeat
+    "flash":      -16.0,   # white-flash impact stings (HR#9 0.55-0.65 band, absolute-anchored)
+}
+SFX_GAIN_CLAMP_DB = 26.0   # never push a source by more than ±26 dB (above this = surfacing floor noise)
+# Duck applied to clip-scoped SFX DURING a character-dialog window so voices stay clearly on top.
+# -12 dB (×0.25) vs the narrator's lighter -6 dB sidechain duck: a character line shares the clip's
+# Layer-1 bus with diegetic SFX (no sidechain key), so it needs the deeper build-time duck for
+# intelligibility (V7: electricity events inside Dario's line → Whisper returned garbage at -6 dB).
+SFX_DUCK_UNDER_DIALOG = 0.25   # ≈ -12 dB
+SFX_DUCK_UNDER_NARRATOR = 0.50  # ≈ -6 dB (lighter — narrator also has the L3 sidechain duck)
+
 # LUFS target (Instagram Reels standard)
 LUFS_TARGET = -14.0
 LUFS_TOLERANCE = 1.5  # ±1.5 dB acceptable per-clip (final master tightens to ±0.5)
+
+_SFX_MEAN_CACHE: dict = {}
+
+
+def _measure_mean_dbfs(path: Path) -> float:
+    """Measure (cached) the mean volume (dBFS) of an audio source via ffmpeg volumedetect."""
+    key = str(path)
+    if key in _SFX_MEAN_CACHE:
+        return _SFX_MEAN_CACHE[key]
+    r = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-i", str(path), "-af", "volumedetect", "-f", "null", "-"],
+        capture_output=True, text=True,
+    )
+    mean = None
+    for line in r.stderr.splitlines():
+        if "mean_volume:" in line:
+            try:
+                mean = float(line.split("mean_volume:")[1].strip().split()[0])
+            except (ValueError, IndexError):
+                pass
+    if mean is None:
+        mean = -23.0
+    _SFX_MEAN_CACHE[key] = mean
+    return mean
+
+
+def sfx_norm_gain(path: Path, sfx_class: str = "texture", rel_scale: float = 1.0) -> float:
+    """Linear `volume=` factor that brings an SFX source to its CLASS target mean dBFS (audibility
+    expressed in absolute dBFS, not a raw multiplier). `rel_scale` (0..1) ducks WITHIN the class band
+    for a farther/quieter read. Gain clamped to ±SFX_GAIN_CLAMP_DB to avoid surfacing the noise floor."""
+    target = SFX_TARGET_DBFS.get(sfx_class, SFX_TARGET_DBFS["texture"])
+    mean = _measure_mean_dbfs(Path(path))
+    gain_db = max(-SFX_GAIN_CLAMP_DB, min(SFX_GAIN_CLAMP_DB, target - mean))
+    lin = 10 ** (gain_db / 20.0)
+    return lin * max(0.3, min(1.0, rel_scale))
 
 
 # ----------------------------------------------------------------------------
@@ -265,6 +325,80 @@ def resolve_narration_segments(spec: dict, shot_start: float, shot_end: float) -
     return out
 
 
+# ── VOICE-EXCLUSIVITY LAW (L1 atomic assertion, agnóstica) ───────────────────
+# LEY: en cualquier instante t, máx UNA voz hablada (narrador o personaje); buffer mínimo
+# VOICE_BUFFER_FLOOR_S entre dos voces DISTINTAS. Música/SFX/ambient conviven. Companion validators
+# a nivel SPEC/TTS: scripts/audit-spec-voice-exclusivity.py. Acá la red de seguridad de ASSEMBLY:
+# si dos voces distintas colisionan dentro de un mismo clip atómico, se corre la de MENOR prioridad
+# (diálogo cede ante narrador) ≤VOICE_SHIFT_MAX_S; si no entra → ABORT (NUNCA shift silencioso >1s).
+VOICE_BUFFER_FLOOR_S = 0.30
+VOICE_SHIFT_MAX_S = 1.0
+_NARRATOR_LABELS = {"narrator", "narrador", "voz", "voz en off", "", None}
+
+
+def _is_narrator(speaker) -> bool:
+    return (speaker or "").strip().lower() in {"narrator", "narrador", "voz", "voz en off", ""}
+
+
+def assert_voice_exclusivity_in_clip(audio_sources: list[dict], clip_dur: float) -> list[dict]:
+    """Enforce one-voice-at-a-time on the SPOKEN-voice audio sources of a single atomic clip.
+
+    `audio_sources` items must carry: offset_s, dur_s, speaker, label. Only spoken voices participate
+    (SFX/music/ambient are skipped — they coexist). On a different-speaker collision (overlap OR gap
+    < VOICE_BUFFER_FLOOR_S) the lower-priority voice (dialog cedes to narrator) is shifted to abut the
+    anchor (±VOICE_SHIFT_MAX_S, staying inside [0, clip_dur]); if it cannot fit → raise SystemExit
+    (assembly bug needing an architect/SPEC decision, NOT a silent >1s shift). Returns sources in place."""
+    voices = [s for s in audio_sources if s.get("is_voice")]
+    if len(voices) < 2:
+        return audio_sources
+
+    def end(v):
+        return v["offset_s"] + v.get("dur_s", 0.0)
+
+    def prio(v):  # narrator wins (lower number = higher priority); dialog cedes
+        return 0 if _is_narrator(v.get("speaker")) else 1
+
+    guard = 0
+    changed = True
+    while changed and guard < 200:
+        changed = False
+        guard += 1
+        voices.sort(key=lambda v: v["offset_s"])
+        for i in range(len(voices)):
+            for j in range(i + 1, len(voices)):
+                a, b = voices[i], voices[j]
+                lo, hi = (a, b) if a["offset_s"] <= b["offset_s"] else (b, a)
+                same = _is_narrator(a.get("speaker")) == _is_narrator(b.get("speaker"))
+                collide = (hi["offset_s"] < end(lo) - 1e-6) if same else \
+                          (hi["offset_s"] < end(lo) + VOICE_BUFFER_FLOOR_S - 1e-6)
+                if not collide:
+                    continue
+                if same:
+                    raise SystemExit(
+                        f"VOICE-EXCLUSIVITY ABORT: same-speaker overlap {a['label']} vs {b['label']} "
+                        f"— assembly bug, cannot resolve by ±{VOICE_SHIFT_MAX_S}s shift.")
+                mover = a if prio(a) >= prio(b) else b
+                anchor = b if mover is a else a
+                after = end(anchor) + VOICE_BUFFER_FLOOR_S
+                before = anchor["offset_s"] - VOICE_BUFFER_FLOOR_S - mover.get("dur_s", 0.0)
+                cands = [c for c in (after, before)
+                         if abs(c - mover["offset_s"]) <= VOICE_SHIFT_MAX_S + 1e-6
+                         and c >= -1e-6 and c + mover.get("dur_s", 0.0) <= clip_dur + 1e-6]
+                if not cands:
+                    raise SystemExit(
+                        f"VOICE-EXCLUSIVITY ABORT: cannot deconflict {mover['label']} vs "
+                        f"{anchor['label']} within ±{VOICE_SHIFT_MAX_S}s inside the clip "
+                        f"[0,{clip_dur:.2f}s]. Needs an architect/SPEC decision (NOT a silent >1s shift).")
+                mover["offset_s"] = round(min(cands, key=lambda c: abs(c - mover["offset_s"])), 3)
+                changed = True
+                break
+            if changed:
+                break
+    if guard >= 200:
+        raise SystemExit("VOICE-EXCLUSIVITY ABORT: deconfliction did not converge (cyclic collisions).")
+    return audio_sources
+
+
 def resolve_sfx_events(sfx_events: list[dict], shot_start: float, shot_end: float) -> list[dict]:
     """Return SFX events whose start_s falls within shot window."""
     out = []
@@ -374,16 +508,26 @@ def build_audio_mix_filter(
         )
         mix_labels.append(f"[{out_label}]")
 
-    # amix N inputs, normalize=0 keeps absolute volumes
+    # amix N inputs, normalize=0 keeps absolute volumes. duration=longest + apad=whole_dur PADS
+    # the mix bus to the FULL clip duration BEFORE trimming — the V7 audio-tail fix: amix alone
+    # ends at the longest INPUT, so if every source is shorter than the clip the audio cola se
+    # corta (silencio o, peor, negro si data-duration > clip). apad garantiza cobertura [0,dur].
     n = len(mix_labels)
-    filter_parts.append(
-        f"{''.join(mix_labels)}amix=inputs={n}:duration=longest:normalize=0[amix]"
-    )
-    # trim final to shot duration + light fade-out to avoid clicks
+    if n == 1:
+        filter_parts.append(
+            f"{mix_labels[0]}apad=whole_dur={total_duration_s:.3f},"
+            f"atrim=0:{total_duration_s:.3f},asetpts=N/SR/TB[apadded]"
+        )
+    else:
+        filter_parts.append(
+            f"{''.join(mix_labels)}amix=inputs={n}:duration=longest:normalize=0[amix];"
+            f"[amix]apad=whole_dur={total_duration_s:.3f},"
+            f"atrim=0:{total_duration_s:.3f},asetpts=N/SR/TB[apadded]"
+        )
+    # light fade-out to avoid end clicks
     fade_start = max(0.0, total_duration_s - 0.05)
     filter_parts.append(
-        f"[amix]atrim=duration={total_duration_s},"
-        f"afade=t=out:st={fade_start:.3f}:d=0.05[aout]"
+        f"[apadded]afade=t=out:st={fade_start:.3f}:d=0.05[aout]"
     )
 
     return input_args, ";".join(filter_parts)
@@ -640,6 +784,48 @@ def _classify_caption(speaker: str | None, text: str) -> str:
 CAPTION_MAX_WORDS_PER_CUE = 6
 
 
+def retime_canonical(canonical_text: str, whisper_words: list[dict]) -> list[dict]:
+    """Estrategia `spec_text_override_with_whisper_timing` (HR#30 nivel B).
+
+    Whisper a veces mis-transcribe (palabras pegadas / divididas / acentos perdidos). El caption
+    debe mostrar el texto CANÓNICO del SPEC, NUNCA el transcript crudo. Esta función conserva los
+    WORD TIMESTAMPS de Whisper (el ritmo hablado es correcto) y superpone los tokens canónicos:
+
+      - mismo conteo de palabras → override POSICIONAL 1:1 (timing exacto, solo cambia el texto).
+      - conteos distintos (Whisper dividió/unió) → mapeo PROPORCIONAL: el token canónico k posee la
+        fracción [k/nc, (k+1)/nc] del span hablado; se toma start/end de la palabra Whisper que cubre
+        esa fracción (timing anclado al habla real). Starts forzados monótonos no-decrecientes.
+
+    Devuelve una lista [{word,start,end}, ...] con tokens canónicos sobre timing Whisper, lista para
+    alimentar a las funciones de chunking word-timed (mantiene intacto el chunking progresivo HR#30)."""
+    cwords = (canonical_text or "").split()
+    if not whisper_words:
+        return []
+    if not cwords:
+        return whisper_words
+    nw, nc = len(whisper_words), len(cwords)
+    span_start = float(whisper_words[0]["start"])
+    span_end = float(whisper_words[-1]["end"])
+    if nc == nw:
+        return [{"word": cwords[i], "start": float(whisper_words[i]["start"]),
+                 "end": float(whisper_words[i]["end"])} for i in range(nc)]
+    out = []
+    for k in range(nc):
+        i0 = min(nw - 1, int((k / nc) * nw))
+        i1 = min(nw - 1, max(i0, int(((k + 1) / nc) * nw - 1e-9)))
+        s = float(whisper_words[i0]["start"])
+        e = float(whisper_words[i1]["end"])
+        if e <= s:
+            e = min(span_end, s + (span_end - span_start) / max(1, nc))
+        out.append({"word": cwords[k], "start": s, "end": e})
+    for k in range(1, nc):
+        if out[k]["start"] < out[k - 1]["start"]:
+            out[k]["start"] = out[k - 1]["start"]
+        if out[k]["end"] < out[k]["start"]:
+            out[k]["end"] = out[k]["start"]
+    return out
+
+
 def _chunk_text_over_word_timestamps(
     spec_text: str, words: list[dict], speaker: str | None,
     max_words: int = CAPTION_MAX_WORDS_PER_CUE,
@@ -647,25 +833,25 @@ def _chunk_text_over_word_timestamps(
     """Distribuye el wording del SPEC sobre los word-timestamps de Whisper como cues
     PROGRESIVOS word-timed (<= max_words c/u), para que el burn muestre TODA la narración
     en el tiempo — no un bloque estático que el wrap trunca a la 1ª línea (bug V5/V6, HR#30).
-    El SPEC es autoridad del wording; Whisper aporta solo el timing (alineación POSICIONAL/
-    proporcional, robusta a drift de conteo SPEC-vs-audio)."""
+    El SPEC es autoridad del wording; Whisper aporta solo el timing.
+
+    Primero re-timea el texto canónico sobre los timestamps Whisper (`retime_canonical`):
+    cuando el conteo de palabras coincide, el cue lleva timing EXACTO per-palabra (no bucketed);
+    cuando difiere, mapeo proporcional robusto a drift. Luego agrupa de a `max_words` por cue."""
     spec_words = spec_text.split()
     if not spec_words or not words:
         return []
-    n_spec, n_whis = len(spec_words), len(words)
+    retimed = retime_canonical(spec_text, words)  # canonical tokens on Whisper timing (1:1 or proportional)
     cues: list[dict] = []
-    for i in range(0, n_spec, max_words):
-        chunk = spec_words[i:i + max_words]
-        last_idx = i + len(chunk) - 1
-        ws = min(round(i * n_whis / n_spec), n_whis - 1)
-        we = max(min(round(last_idx * n_whis / n_spec), n_whis - 1), ws)
-        start_s = float(words[ws]["start"])
-        end_s = float(words[we]["end"])
+    for i in range(0, len(retimed), max_words):
+        group = retimed[i:i + max_words]
+        start_s = float(group[0]["start"])
+        end_s = float(group[-1]["end"])
         if cues and start_s < cues[-1]["end_s"]:
             start_s = cues[-1]["end_s"]
         if end_s <= start_s:
             end_s = start_s + 0.4
-        text = " ".join(chunk)
+        text = " ".join(w["word"] for w in group)
         cues.append({
             "start_s": start_s, "end_s": end_s, "text": text,
             "class": _classify_caption(speaker, text), "speaker": speaker,
@@ -1161,11 +1347,18 @@ def build_clip_atomic(
     for seg in narration_segments:
         tts_path = find_tts_segment(project_root, seg["id"])
         if tts_path:
+            try:
+                seg_dur = ffprobe_duration(tts_path)
+            except Exception:
+                seg_dur = seg["local_end_s"] - seg["local_start_s"]
             audio_sources.append({
                 "path": tts_path,
                 "offset_s": seg["local_start_s"],
                 "volume": MIX_NARRATION_DEFAULT,
                 "label": f"tts_{seg['id']}",
+                "is_voice": True,
+                "speaker": seg.get("speaker", "narrator"),
+                "dur_s": seg_dur,
             })
             if not quiet:
                 print(f"  TTS:        +{seg['local_start_s']:.2f}s  {seg['id']}.mp3 @ {MIX_NARRATION_DEFAULT}")
@@ -1173,23 +1366,50 @@ def build_clip_atomic(
             if not quiet:
                 print(f"  TTS MISSING: {seg['id']}.mp3 — skipping")
 
-    # 3. SFX events in window
+    # 3. SFX events in window.
+    #   Volume resolution (SFX-audibility fix):
+    #     - event declares a `class` (event/diegetic/texture/scream/transition/ui/flash) → per-CLASS
+    #       absolute-dBFS normalization via sfx_norm_gain (audible regardless of raw source level);
+    #       `rel_scale` (0..1) optionally ducks WITHIN the class band.
+    #     - else legacy flat multiplier `volume` (back-compat).
+    #   A clip-scoped SFX inside a voice window is ducked so the voice stays on top:
+    #     -12 dB during a CHARACTER-DIALOG window (shares the L1 bus, no sidechain key),
+    #     -6 dB during NARRATION (lighter — narrator also gets the L3 sidechain duck downstream).
+    has_dialog = any((s.get("speaker") or "narrator").lower() not in
+                     {"narrator", "narrador", "voz", "voz en off"} for s in narration_segments)
+    has_narration = any((s.get("speaker") or "narrator").lower() in
+                        {"narrator", "narrador", "voz", "voz en off"} for s in narration_segments)
+    voice_duck = (SFX_DUCK_UNDER_DIALOG if has_dialog
+                  else SFX_DUCK_UNDER_NARRATOR if has_narration else 1.0)
     shot_sfx = resolve_sfx_events(sfx_events, shot_start, shot_end)
     for ev in shot_sfx:
         sfx_path_str = ev["path"]
         sfx_asset = find_sfx_asset(project_root, base_root, sfx_path_str)
         if sfx_asset:
+            sfx_class = ev.get("class")
+            if sfx_class:
+                rel = float(ev.get("rel_scale", ev.get("volume", 1.0)))
+                vol = sfx_norm_gain(sfx_asset, sfx_class, rel_scale=rel) * voice_duck
+            else:
+                vol = float(ev.get("volume", MIX_SFX_EVENT_DEFAULT)) * voice_duck
             audio_sources.append({
                 "path": sfx_asset,
                 "offset_s": ev["local_start_s"],
-                "volume": ev.get("volume", MIX_SFX_EVENT_DEFAULT),
+                "volume": vol,
                 "label": f"sfx_{Path(sfx_path_str).stem}",
             })
             if not quiet:
-                print(f"  SFX:        +{ev['local_start_s']:.2f}s  {Path(sfx_path_str).name} @ {ev.get('volume', MIX_SFX_EVENT_DEFAULT)}")
+                print(f"  SFX:        +{ev['local_start_s']:.2f}s  {Path(sfx_path_str).name} "
+                      f"@ {vol:.3f}{f' [class={sfx_class}]' if sfx_class else ''}"
+                      f"{f' duck×{voice_duck}' if voice_duck != 1.0 else ''}")
         else:
             if not quiet:
                 print(f"  SFX MISSING: {sfx_path_str} — skipping")
+
+    # 3.5 Voice-exclusivity assertion (L1 assembly safety net): if two DIFFERENT spoken voices land
+    #     in this clip, deconflict by ≤1s shift (dialog cedes to narrator) or ABORT — never a silent
+    #     >1s shift. SFX/music coexist (not flagged is_voice).
+    assert_voice_exclusivity_in_clip(audio_sources, shot_dur)
 
     # 4. Compose atomic mp4
     atomic_path = output_dir / f"{shot_id}_atomic.mp4"
@@ -1267,16 +1487,24 @@ def load_sfx_events_from_pythonfile(py_path: Path) -> list[dict]:
         if isinstance(entry, (list, tuple)) and len(entry) >= 3:
             out.append({"path": entry[0], "start_s": float(entry[1]), "volume": float(entry[2])})
         elif isinstance(entry, dict):
-            out.append({
+            ev = {
                 "path": entry.get("path") or entry.get("out") or "",
                 "start_s": float(entry.get("start_s", 0)),
                 "volume": float(entry.get("volume", MIX_SFX_EVENT_DEFAULT)),
-            })
+            }
+            if entry.get("class"):  # opt-in per-class absolute-dBFS audibility
+                ev["class"] = entry["class"]
+            if entry.get("rel_scale") is not None:
+                ev["rel_scale"] = float(entry["rel_scale"])
+            out.append(ev)
     return out
 
 
 def load_sfx_events_from_json(json_path: Path) -> list[dict]:
-    """Load SFX events from JSON: [{"path": ..., "start_s": ..., "volume": ...}, ...]"""
+    """Load SFX events from JSON: [{"path": ..., "start_s": ..., "volume"|"class"|"rel_scale": ...}, ...].
+
+    `class` (event/diegetic/texture/scream/transition/ui/flash) opts a source into per-CLASS
+    absolute-dBFS normalization (audibility fix); without it the flat `volume` multiplier applies."""
     if not json_path.exists():
         return []
     with open(json_path) as f:
@@ -1286,11 +1514,16 @@ def load_sfx_events_from_json(json_path: Path) -> list[dict]:
     out = []
     for entry in raw:
         if isinstance(entry, dict) and "path" in entry and "start_s" in entry:
-            out.append({
+            ev = {
                 "path": entry["path"],
                 "start_s": float(entry["start_s"]),
                 "volume": float(entry.get("volume", MIX_SFX_EVENT_DEFAULT)),
-            })
+            }
+            if entry.get("class"):
+                ev["class"] = entry["class"]
+            if entry.get("rel_scale") is not None:
+                ev["rel_scale"] = float(entry["rel_scale"])
+            out.append(ev)
     return out
 
 

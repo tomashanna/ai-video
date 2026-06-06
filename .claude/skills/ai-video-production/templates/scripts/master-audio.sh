@@ -1,11 +1,12 @@
 #!/bin/bash
-# master-audio.sh — 2-pass LUFS normalization to Instagram Reels standard (-14 LUFS)
+# master-audio.sh — 2-pass LUFS normalization to Instagram Reels standard (-14 LUFS / TP -1.5)
 #
-# Generado 2026-05-13 desde análisis empírico de 7 referentes (LUFS -13.76 a -14.45).
+# Empírico: 7 referentes (LUFS -13.76 a -14.45). True-peak ceiling -1.5 dBTP da headroom de
+# inter-sample peaks para el re-encode AAC de la plataforma. Output siempre 48 kHz (delivery std).
 #
 # Pipeline:
 #   Pass 1: medir input loudness (loudnorm print_format=json)
-#   Pass 2: aplicar corrección lineal (preserva dinámica vs single-pass dinámico)
+#   Pass 2: aplicar corrección lineal (preserva dinámica vs single-pass dinámico), -ar 48000
 #
 # Usage:
 #   master-audio.sh renders/draft.mp4                  # outputs renders/draft-mastered.mp4
@@ -34,7 +35,7 @@ echo ""
 # Pass 1: measure
 echo "📊 Pass 1 — measuring input loudness..."
 PASS1_OUTPUT=$(ffmpeg -hide_banner -i "$INPUT" \
-  -af "loudnorm=I=-14:TP=-1:LRA=11:print_format=json" \
+  -af "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json" \
   -f null - 2>&1)
 
 # Extract JSON block (loudnorm prints to stderr)
@@ -60,16 +61,21 @@ ABS_DELTA=$(echo "$DELTA" | tr -d '-')
 IN_RANGE=$(echo "$ABS_DELTA <= 0.5" | bc -l)
 
 if [ "$IN_RANGE" = "1" ]; then
-  echo "✓ Already in target (-14 ±0.5 dB). Copying without normalization."
-  cp "$INPUT" "$OUTPUT"
+  echo "✓ Already in target (-14 ±0.5 dB). Re-muxing audio @ 48 kHz (no loudness change)."
+  # NOTE: still force -ar 48000 — Instagram/H.264 delivery is 48 kHz; some sources arrive at
+  # 44.1/96 kHz and a bare `cp` would ship the wrong sample rate. Re-encode audio only, copy video.
+  ffmpeg -y -hide_banner -loglevel warning -i "$INPUT" \
+    -c:v copy -c:a aac -b:a 192k -ar 48000 \
+    "$OUTPUT"
   exit 0
 fi
 
-# Pass 2: apply linear correction
-echo "🎚  Pass 2 — applying linear correction to -14 LUFS..."
+# Pass 2: apply linear correction. Output forced to 48 kHz (delivery standard) — a missing -ar lets
+# loudnorm emit its internal 192 kHz / source rate (the 96 kHz output bug).
+echo "🎚  Pass 2 — applying linear correction to -14 LUFS (TP -1.5, 48 kHz)..."
 ffmpeg -y -hide_banner -loglevel warning -i "$INPUT" \
-  -af "loudnorm=I=-14:TP=-1:LRA=11:measured_I=$MEASURED_I:measured_TP=$MEASURED_TP:measured_LRA=$MEASURED_LRA:measured_thresh=$MEASURED_THRESH:linear=true:print_format=summary" \
-  -c:v copy -c:a aac -b:a 192k \
+  -af "loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=$MEASURED_I:measured_TP=$MEASURED_TP:measured_LRA=$MEASURED_LRA:measured_thresh=$MEASURED_THRESH:linear=true:print_format=summary" \
+  -c:v copy -c:a aac -b:a 192k -ar 48000 \
   "$OUTPUT"
 
 echo ""
@@ -79,7 +85,7 @@ echo ""
 # Verify
 echo "🔍 Verifying output..."
 VERIFY=$(ffmpeg -hide_banner -i "$OUTPUT" \
-  -af "loudnorm=I=-14:TP=-1:LRA=11:print_format=json" \
+  -af "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json" \
   -f null - 2>&1 | sed -n '/^{/,/^}/p' | grep input_i | grep -oE '"-?[0-9.]+"' | tail -1 | tr -d '"')
 
 echo "  Final LUFS: $VERIFY (target -14 ±0.5)"

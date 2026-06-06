@@ -186,5 +186,35 @@ class TestFullMixProperties(unittest.TestCase):
                              "Duck dB must be recorded when narrator present + has_tts_narration")
 
 
+class TestAudioTailNotTruncated(unittest.TestCase):
+    """apad=whole_dur tail fix: when narrator + music are SHORTER than the video, the mastered audio
+    must still span the FULL video duration (amix alone would end early → cola de audio cortada)."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.music_dir = Path(self.tmp) / "music"
+        self.music_dir.mkdir(parents=True)
+        self.inp = Path(self.tmp) / "clips_with_effects.mp4"
+        self.narr = Path(self.tmp) / "narrator.mp3"
+        self.out = Path(self.tmp) / "master_final.mp4"
+        _make_video(self.inp, duration=5.0)              # full video 5s
+        _make_audio(self.narr, duration=2.0, freq=220)   # narrator ends at 2s
+        _make_audio(self.music_dir / "drone_base.mp3", duration=2.5, freq=80)  # music ends at 2.5s
+        self.spec = Path(self.tmp) / "spec.yaml"
+        _write_spec(self.spec, has_l3_music=True, has_tts=True, layers=("drone_base",))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_output_audio_spans_full_video_despite_short_sources(self):
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
+                  "--input", str(self.inp), "--music-dir", str(self.music_dir),
+                  "--narrator", str(self.narr), "--output", str(self.out)])
+        self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
+        self.assertTrue(self.out.exists())
+        self.assertAlmostEqual(_duration(self.out), 5.0, delta=0.2,
+                               msg="audio tail truncated — apad=whole_dur fix missing")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

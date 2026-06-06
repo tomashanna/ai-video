@@ -5,10 +5,12 @@ audit-against-referent.py — Compare our video against F1 canonical n=10 refere
 Tolerance per metric: p25-p75 bands (interquartile range).
 
 Critical metrics (failure relevant — must ≥85% in range to pass):
-  - pace.wpm_total            (sweet spot ~153-180 wpm)
   - audio.lufs_integrated     (-14 ±0.5 Instagram target)
-  - pacing.cuts_per_min       (2-7 horror-narrativo target)
+  - pacing.cuts_per_min       (PAUTA § 23 band 14-22 — Gemini-perceived, matches raw scene count)
   - pace.coverage_pct         (≥70% narration coverage)
+  - pace.wpm_total            INFORMATIONAL only (whole-render WPM dips below the spoken-WPM band when
+                              there are long non-narrated decision windows — does NOT block; the real
+                              WPM gate is over SPOKEN time in audit-tts-vs-spec-duration / INGENIERO § 1)
 
 Non-critical (informational):
   - pace.avg_block_s
@@ -60,9 +62,37 @@ INFO_METRICS = [
 
 PASS_THRESHOLD_PCT = 85.0  # ≥85% critical metrics in band = pass
 
+# ── BAND OVERRIDES (recalibrated) ─────────────────────────────────────────────────────────────
+# Some F1-derived bands don't match what THIS script's measurement method produces:
+#
+#  cuts_per_min: the F1 `cuts_per_min` value is DE-CLUSTERED (flash bursts collapsed into 1 perceptual
+#    cut → p25-p75 ≈ [2.45, 5.31]). But measure_our_video() counts RAW scene cuts via
+#    `select='gt(scene,0.3)'`, which inflates 2-4× (every flash burst = several cuts). Comparing a RAW
+#    measurement against a DE-CLUSTERED band is apples-to-oranges → false FAILs. Use the architect's
+#    PAUTA-MASTER § 23 canonical band (Gemini-PERCEIVED cuts/min ~14-22), which is what a raw
+#    scene-detector actually reads for a canonical-energy edit. Authority: horror PAUTA-MASTER § 23.
+#
+#  wpm_total: see WPM_INFORMATIONAL note below.
+BAND_OVERRIDE = {
+    ("pacing", "cuts_per_min"): (14.0, 22.0),  # PAUTA § 23 (Gemini-perceived band; matches raw count)
+}
+
+# wpm_total is measured over the FULL render, including non-narrated windows (countdowns, decision
+# beats, silent traversal). In choice formats with long decision UI the spoken-WPM can be in-band yet
+# the whole-render wpm_total reads LOW (≈120-146) — an EXPECTED structural artifact, not a slow voice.
+# So wpm_total is treated as INFORMATIONAL (never blocks): we still print band + status, but it does
+# NOT count toward the ≥85% critical pass. The genuine WPM gate lives in audit-tts-vs-spec-duration.py
+# / the INGENIERO-PAUTA § 1 speaking-rate check (measured over SPOKEN time, the right denominator).
+WPM_INFORMATIONAL = True
+WPM_INFORMATIONAL_FLOOR = 120.0  # documented context only (a render below this likely IS too slow)
+
 
 def compute_bands(referent_data, section, key, tolerance="p25-p75"):
-    """Compute p25-p75 (or p5-p95) band from n=10 referent values."""
+    """Compute p25-p75 (or p5-p95) band from n=10 referent values, or a hard-coded BAND_OVERRIDE
+    when the F1 value's measurement basis doesn't match this script's measurement method."""
+    if (section, key) in BAND_OVERRIDE:
+        lo, hi = BAND_OVERRIDE[(section, key)]
+        return lo, hi, "override"
     values = []
     for ref_id, ref in referent_data.items():
         try:
@@ -237,25 +267,34 @@ def main():
     crit_total = 0
 
     for label, section, key in CRITICAL_METRICS:
-        crit_total += 1
+        # wpm_total measured over the FULL render (incl. non-narrated decision windows) → INFORMATIONAL
+        # only (does NOT block). The real WPM gate is over SPOKEN time elsewhere. See WPM_INFORMATIONAL.
+        is_wpm_info = WPM_INFORMATIONAL and (section, key) == ("pace", "wpm_total")
+        if not is_wpm_info:
+            crit_total += 1
         ours_val = ours.get(section, {}).get(key)
         lo, hi, n = compute_bands(per_referent, section, key, tolerance=args.tolerance)
+        tag = " (info)" if is_wpm_info else ""
         if ours_val is None:
             status = "N/A"
             band_str = f"[{lo:.2f}, {hi:.2f}]" if lo is not None else "?"
-            print(f"{label:<28} {'?':>10} {band_str:>20} {status:>8}")
+            print(f"{label + tag:<28} {'?':>10} {band_str:>20} {status:>8}")
             continue
         if lo is None or hi is None:
             status = "NO-REF"
             band_str = "n<4 referents"
-            print(f"{label:<28} {ours_val:>10.2f} {band_str:>20} {status:>8}")
+            print(f"{label + tag:<28} {ours_val:>10.2f} {band_str:>20} {status:>8}")
             continue
         in_band = lo <= ours_val <= hi
-        status = "PASS ✓" if in_band else "FAIL ✗"
-        if in_band:
-            crit_in_band += 1
+        if is_wpm_info:
+            below_floor = ours_val < WPM_INFORMATIONAL_FLOOR
+            status = "INFO" + ("⚠" if below_floor else "")  # never PASS/FAIL — does not block
+        else:
+            status = "PASS ✓" if in_band else "FAIL ✗"
+            if in_band:
+                crit_in_band += 1
         band_str = f"[{lo:.2f}, {hi:.2f}]"
-        print(f"{label:<28} {ours_val:>10.2f} {band_str:>20} {status:>8}")
+        print(f"{label + tag:<28} {ours_val:>10.2f} {band_str:>20} {status:>8}")
 
     # Info metrics
     print()
