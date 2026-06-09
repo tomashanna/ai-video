@@ -28,7 +28,7 @@ echo "════════════════════════�
 echo "[1] Solo el sistema agnóstico en el repo (no proyectos de video)"
 STRAY=$(git ls-files | sed 's#/.*##' | sort -u | grep -vxF \
   -e ".agents" -e ".claude" -e ".gitignore" \
-  -e "AB-TEST-PROTOCOL.md" -e "AUTONOMOUS-FACTORY-ROADMAP.md" -e "CLAUDE.md" -e "EXCALIDRAW-SYSTEM-OVERVIEW.md" \
+  -e "AB-TEST-PROTOCOL.md" -e "AB-VIDEO-1-BRIEF.md" -e "AUTONOMOUS-FACTORY-ROADMAP.md" -e "CLAUDE.md" -e "EXCALIDRAW-SYSTEM-OVERVIEW.md" \
   -e "FEEDBACK-LOOP.md" -e "HARD-RULES.md" -e "README.md" -e "V4-LAUNCH-CHECKLIST.md" \
   -e "_archive-deprecated-docs" -e "_freeze-manifests" \
   -e "countdown-glitch" -e "countdown-pulse" -e "countdown-slam" \
