@@ -263,7 +263,7 @@ cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
 cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
 # 4. Verificación obligatoria (NO continuar si falla):
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py audit-variant-coverage.py audit-anchor-coverage.py qa-gate.py audit-ui-safe-zones.py audit-first30s-animation.py audit-mix-volumes.py audit-sfx-layer.py audit-spec-declarations.py audit-language-style.py audit-style-markup.py master-audio.sh check-pacing.sh lib/empirical_bands.py; do
+for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py audit-variant-coverage.py audit-anchor-coverage.py qa-gate.py audit-ui-safe-zones.py audit-first30s-animation.py audit-mix-volumes.py audit-sfx-layer.py audit-spec-declarations.py audit-language-style.py audit-style-markup.py audit-decision-ui-pacing.py audit-avu-sync-contract.py audit-videolog-appended.py audit-spec-voice-exclusivity.py audit-sfx-audibility.py audit-engineer-brief-vs-spec.py master-audio.sh check-pacing.sh lib/empirical_bands.py; do
   [ -f scripts/$f ] && echo "✓ scripts/$f" || echo "✗ MISSING scripts/$f"
 done
 
