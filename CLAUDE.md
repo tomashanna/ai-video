@@ -218,6 +218,7 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | `library/voices-catalog.json` | `<repo-root>/library/voices-catalog.json` | ElevenLabs voice IDs validados |
 | `library/sfx-catalog.json` | `<repo-root>/library/sfx-catalog.json` | SFX reusables |
 | ⭐ `transitions/` | `<repo-root>/transitions/` (root) | **Carpeta GLOBAL de transiciones** (migrada de effects-library 2026-06-05). `catalog.json` = índice transición→formato (consultar PRIMERO); `README.md` = decision matrix + how-to-add; `universal/` + `horror-choice/` + `sport-choice/`. Paths viejos effects-library = symlinks compat. |
+| ⭐ `filters/` | `<repo-root>/filters/` (root) | **Carpeta GLOBAL de filtros de video** (LUTs .cube + futuros grain/vignettes/overlays; creada 2026-06-05). `catalog.json` = índice filtro→formato; `luts/wildebeast.cube` 1er LUT físico. Autoridad de aplicación per formato = `COLOR-GRADING.md`. |
 | ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
 | `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
 | `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
