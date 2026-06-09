@@ -32,7 +32,7 @@ STRAY=$(git ls-files | sed 's#/.*##' | sort -u | grep -vxF \
   -e "FEEDBACK-LOOP.md" -e "HARD-RULES.md" -e "README.md" -e "V4-LAUNCH-CHECKLIST.md" \
   -e "_archive-deprecated-docs" -e "_freeze-manifests" \
   -e "countdown-glitch" -e "countdown-pulse" -e "countdown-slam" \
-  -e "creative-specs" -e "elements.json" -e "library" \
+  -e "creative-specs" -e "elements.json" -e "library" -e "transitions" -e "filters" \
   -e "loader-bar" -e "loader-radial" -e "loader-segments" \
   -e "lower-blackletter" -e "lower-distressed" -e "lower-handwritten" \
   -e "lower-stamp" -e "lower-typewriter" \

@@ -50,10 +50,15 @@ ultimo-tren-carga/
 mexico-sudafrica/
 client-project-a/
 Videos german/
+client-project-b/
 
 # Canonical reference videos kept LOCAL (too large for repo)
 videosref_elige_tu_compa/
 Videos referencia/
+
+# Stray descargas sueltas en root (tutoriales/material que no es sistema)
+/3 Automatizaciones De Manychat.mp4
+/*.mp4
 
 # ── Secrets — NEVER commit (si alguna se pusheó, ROTAR la key) ──
 .env
