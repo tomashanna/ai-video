@@ -22,6 +22,8 @@ El sistema tiene **TRES roles** que NUNCA se mezclan, cada uno en su propio term
 
 **Por qué 3 roles** (no 2): sin auditor independiente, el self-audit del ingeniero + Gemini holístico inflado (caso pueblo-v2 9.9 vs 7/10 real) deja pasar bugs sistemáticos. Tercer ojo lee fuentes primarias sin contexto compartido = independencia de juicio estructural.
 
+> **➕ Rol aparte — 🎬 EDITOR (footage YA grabado).** El triángulo de arriba es para videos **generados con IA** (imágenes/voz/animación desde cero). Para **editar material ya grabado** (testimonios, ads, entrevistas, screen-recordings — casos German, editorial, Palti) hay un **cuarto rol independiente y paralelo**: el **EDITOR** (`video-editor` skill). NO genera ni diseña; **ensambla y pule lo que existe** (cortes, velocidad, captions, música/mezcla/−14 LUFS, transiciones, textos, color). Vive en su propia terminal como los otros. Ver § 0.1 + `video-editor/SKILL.md` + `video-editor/TOOLBOX.md`.
+
 ### Trigger por rol
 
 | User dice... | Activá... |
@@ -29,6 +31,7 @@ El sistema tiene **TRES roles** que NUNCA se mezclan, cada uno en su propio term
 | "Diseñá una historia", "necesito un concepto", "qué hacemos para el próximo reel", "iteremos con el creativo" | 🏛️ **creative-director** |
 | "Producí spec X", "renderizá", "armá las imágenes", "haz el video", "componé en HyperFrames", "ejecutá el spec" | 🛠️ **video-director** + technical stack |
 | "Auditá CP[N]", "verificá el handoff del ingeniero", "audit independiente del SPEC", "revisá el render contra autoridad", "actuá como auditor" | 🔍 **AUDITOR** — leer `creative-director/AUDITOR-PROTOCOL.md` + autoridad canónica DIRECTA |
+| "Editá este video", "agregá captions/música/transiciones/texto a esto", "cambiá la velocidad", "juntá/cortá estos clips", "armá un reel con estas grabaciones", o traés footage YA grabado | 🎬 **video-editor** (EDITOR) — footage real, NO generación IA |
 
 **Si user dice "hagamos un video nuevo"** → empezar con creative-director (diseño). Una vez SPEC aprobado → handoff a engineer. Cada handoff CP[N] del ingeniero pasa por auditor independiente antes de ejecutar el siguiente CP.
 
@@ -76,6 +79,7 @@ Identificá la tarea y activá las skills correspondientes (sin esto, fallás):
 | Trigger | Skills obligatorias |
 |---|---|
 | video, render, captions, SFX, narración, TTS, imagen, motion, animar, Kling, Gemini, Whisper | `video-director` (ingeniero) + `ai-video-production` |
+| **footage YA grabado** (editar, NO generar): "editá este video", agregar captions/música/transiciones/texto, cambiar velocidad, juntar/cortar clips, color/LUTs, "armá un reel con estas grabaciones" | 🎬 `video-editor` (EDITOR) — STANDALONE; reusa `ai-video-production`. NO genera imágenes/voz/historia |
 | diseñar historia, concepto, idear, "qué hacemos", "iteremos con creativo" | 🏛️ `creative-director` (arquitecto) — STANDALONE para diseño |
 | choice / dilema / "elige a tu compañero" / countdown / botones A/B / counterfactual (familia choice) | **+ `choice-format-core` + el skill del GÉNERO** |
 | horror, hito, twist, cliffhanger, malo/bueno aparente, body-horror | **+ `horror-choice-format`** |
@@ -83,7 +87,7 @@ Identificá la tarea y activá las skills correspondientes (sin esto, fallás):
 | animar, Kling, Replicate, image-to-video, "darle vida" | **+ `video-animation`** |
 | hyperframes lint/render/init/preview | **+ `hyperframes` + `hyperframes-cli`** |
 
-**Regla:** tarea de DISEÑO = solo arquitecto. Tarea de EJECUCIÓN = ingeniero (3+ skills). NUNCA mezclar roles.
+**Regla:** tarea de DISEÑO = solo arquitecto. Tarea de EJECUCIÓN (generar con IA) = ingeniero (3+ skills). Tarea de EDICIÓN (footage YA grabado) = editor (`video-editor`, standalone). NUNCA mezclar roles.
 
 ### 0.2 Si es video NUEVO: identificar GENRE + DELIVERY FORMAT
 
@@ -220,6 +224,7 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | ⭐ `transitions/` | `<repo-root>/transitions/` (root) | **Carpeta GLOBAL de transiciones** (migrada de effects-library 2026-06-05). `catalog.json` = índice transición→formato (consultar PRIMERO); `README.md` = decision matrix + how-to-add; `universal/` + `horror-choice/` + `sport-choice/`. Paths viejos effects-library = symlinks compat. |
 | ⭐ `filters/` | `<repo-root>/filters/` (root) | **Carpeta GLOBAL de filtros de video** (LUTs .cube + futuros grain/vignettes/overlays; creada 2026-06-05). `catalog.json` = índice filtro→formato; `luts/wildebeast.cube` 1er LUT físico. Autoridad de aplicación per formato = `COLOR-GRADING.md`. |
 | ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
+| 🎬 `video-editor/` | `<repo-root>/.claude/skills/video-editor/` | **Rol EDITOR** (footage YA grabado, NO generación IA). `SKILL.md` = system prompt (identidad/triggers/principios/workflow); `TOOLBOX.md` = paleta de herramientas (ffmpeg: cortes/velocidad/captions/transiciones/color/mezcla/-14 LUFS — no recetas fijas); `scripts/` = `make_ass.py` + `burn-captions.sh` (captions validados en Palti). Reusa `ai-video-production`. Creada 2026-06-10. |
 | `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
 | `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
 | `creative-specs/<id>.yaml` | `<repo-root>/creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
@@ -395,6 +400,7 @@ Para cada tema crítico, hay UN doc autoritativo. **NO buscar en otros docs ni e
 
 | Tema | Doc autoritativo |
 |---|---|
+| **Edición de footage YA grabado** (rol EDITOR) | 🎬 `video-editor/SKILL.md` (manual) + `video-editor/TOOLBOX.md` (paleta de herramientas) |
 | **Autoridad CREATIVA del formato activo** (arquitecto) | ⭐ `<format>-format/PAUTA-MASTER.md` (ej. horror-choice, sport-choice) |
 | **Autoridad TÉCNICA del formato activo** (ingeniero) | ⭐ `<format>-format/INGENIERO-PAUTA-MASTER.md` |
 | **Mecánica AGNÓSTICA de la familia choice** | ⭐ `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `INGENIERO-CHOICE-CORE.md` (técnica) |

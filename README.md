@@ -4,7 +4,8 @@
 > (imagen → TTS → SFX → animación i2v → lip-sync → composición HyperFrames → master -14 LUFS → render).
 > Está construido como una jerarquía de **capas agnósticas** + un equipo de **tres roles** con
 > autoridad separada, de modo que agregar un formato nuevo no toca el núcleo y cada decisión
-> tiene UNA sola fuente de verdad.
+> tiene UNA sola fuente de verdad. Para **editar footage YA grabado** (testimonios, ads, entrevistas —
+> no generar desde cero) hay además un rol **Editor** (`video-editor`) — ver "Los tres roles".
 
 > **Front-door operativo.** Este README explica *qué es* el sistema y *cómo está organizado*.
 > Para las reglas de trabajo vivas — hard rules, gates obligatorios, triggers de skills, paths
@@ -66,6 +67,12 @@ ingeniero — ese tercer ojo independiente es lo que evita que pase un bug sist�
 El handoff entre roles y los gates por checkpoint están en
 `creative-director/HANDOFF-PROTOCOL.md` y `creative-director/AUDITOR-PROTOCOL.md`.
 
+**➕ Un rol aparte: 🎬 el Editor.** El triángulo de arriba **fabrica** videos con IA (desde cero). Para
+**editar footage YA grabado** (testimonios, ads, entrevistas, screen-recordings — casos German, editorial,
+Palti) hay un cuarto rol independiente y paralelo, el **Editor** (`.claude/skills/video-editor/`): no genera
+ni diseña, **ensambla y pule lo que existe** (cortes, velocidad, captions, música/mezcla/−14 LUFS,
+transiciones, textos, color). Vive en su propia terminal como los otros y reusa el toolkit de `ai-video-production`.
+
 ---
 
 ## Cómo navegar — dónde vive la autoridad de cada tema
@@ -77,6 +84,7 @@ Para cada tema hay **un solo** doc autoritativo. La fuente maestra de este mapa 
 |---------|---------|
 | Reglas de trabajo vivas (hard rules, gates, **triggers → skill**, paths) | **`CLAUDE.md`** (auto-load) + detalle en `HARD-RULES.md` |
 | Toolkit técnico universal (TTS, imagen, SFX, motion, captions, QA) | `.claude/skills/ai-video-production/` (`SKILL.md`, `PIPELINE.md`, `CAPTIONS.md`, …) |
+| Editar footage YA grabado (captions, música, velocidad, transiciones, color) | `.claude/skills/video-editor/` (`SKILL.md` + `TOOLBOX.md`) |
 | Arquitectura de pipeline (HYBRID per-clip, Layers 1-4) | `.claude/skills/ai-video-production/PIPELINE.md` |
 | Mecánica agnóstica de los formatos choice | `.claude/skills/choice-format-core/` |
 | Autoridad CREATIVA de un formato | `.claude/skills/<formato>-format/PAUTA-MASTER.md` |
