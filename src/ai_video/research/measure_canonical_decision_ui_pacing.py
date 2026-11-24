@@ -28,6 +28,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 from statistics import median
@@ -319,7 +320,7 @@ def measure_ref(ref_id, easyocr_reader):
     for wi, win in enumerate(decision_windows[:3]):  # cap 3 per ref
         print(f"  window {wi+1}: '{win['segment_text'][:50]}' end={win['narration_end_s']:.2f}s")
         # Dense frames at 0.1s in narration_end → +5s window
-        tmp_frames = Path(f"/tmp/canonical_pacing/{ref_id}_w{wi}")
+        tmp_frames = Path(tempfile.mkdtemp(prefix=f"ai-video-pacing-{ref_id}-w{wi}-"))
         try:
             frame_paths = extract_frames_dense(
                 source_mp4,

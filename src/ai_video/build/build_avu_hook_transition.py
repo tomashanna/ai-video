@@ -9,6 +9,7 @@ Spec:
 - Purpose: shot-to-shot warm transition signal (matadero→cliffhanger cut at ~67s)
 """
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -21,8 +22,8 @@ SUBPROCESS_TIMEOUT_S = 1800
 
 PROJECT_ROOT = repo_root()
 AVU_DIR = avu_dir()
-TMP = Path("/tmp/avu_hook_transition")
-TMP.mkdir(exist_ok=True)
+# Unique, private work dir (was a fixed /tmp path shared across runs/users).
+TMP = Path(tempfile.mkdtemp(prefix="ai-video-avu_hook_transition-"))
 
 W, H = 1080, 1920
 FPS = 30

@@ -17,6 +17,7 @@ For project-specific use, run with --text "..." to generate per-video outro.
 import argparse
 import math
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -29,8 +30,8 @@ SUBPROCESS_TIMEOUT_S = 1800
 
 PROJECT_ROOT = repo_root()
 AVU_DIR = avu_dir()
-TMP = Path("/tmp/avu_outro_card")
-TMP.mkdir(exist_ok=True)
+# Unique, private work dir (was a fixed /tmp path shared across runs/users).
+TMP = Path(tempfile.mkdtemp(prefix="ai-video-avu_outro_card-"))
 
 W, H = 1080, 1920
 FPS = 30
