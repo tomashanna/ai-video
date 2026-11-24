@@ -244,7 +244,11 @@ def check_orphan_assets(html_dir: Path, content: str):
 
 
 def main():
-    html_path = Path(sys.argv[1] if len(sys.argv) > 1 else "index.html").resolve()
+    import argparse
+
+    ap = argparse.ArgumentParser(description="Pre-render narrative + structural audit of a HyperFrames index.html")
+    ap.add_argument("html", nargs="?", default="index.html", help="Path to index.html (default ./index.html)")
+    html_path = Path(ap.parse_args().html).resolve()
     if not html_path.exists():
         print(f"audit-narrative: file not found: {html_path}", file=sys.stderr)
         sys.exit(2)
