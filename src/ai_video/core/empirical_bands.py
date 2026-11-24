@@ -32,8 +32,12 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Iterable
 from pathlib import Path
 from statistics import quantiles
+from typing import Any
+
+BandResult = tuple[float | None, float | None, int]
 
 # Element types presentes en F1-UI-SAFE-ZONES.json per_referent
 UI_ELEMENT_TYPES = (
@@ -46,7 +50,7 @@ UI_ELEMENT_TYPES = (
 _MIN_VALUES_FOR_BAND = 4  # mismo umbral que audit-against-referent.compute_bands
 
 
-def compute_band(values, tolerance: str = "p25-p75"):
+def compute_band(values: Iterable[Any], tolerance: str = "p25-p75") -> BandResult:
     """PURO. Banda (lo, hi, n) desde una lista de valores numéricos.
 
     tolerance: 'p25-p75' (default, interquartile) | 'p5-p95'.
@@ -91,7 +95,7 @@ def find_referent_analysis_root(start: Path | None = None) -> Path | None:
     return None
 
 
-def _load_json(path: Path):
+def _load_json(path: Path) -> Any:
     try:
         with open(path) as f:
             return json.load(f)
@@ -107,7 +111,9 @@ def _format_dir(format_name: str, base: Path | None) -> Path | None:
     return d if d.is_dir() else None
 
 
-def load_measurements(format_name: str, base: Path | None = None, fallback_format: str | None = None):
+def load_measurements(
+    format_name: str, base: Path | None = None, fallback_format: str | None = None
+) -> dict[str, Any] | None:
     """per_referent de F1-INGENIERO-MEASUREMENTS.json del formato, o None.
 
     Sin fallback silencioso: si el formato no tiene F1 propio devuelve None
@@ -124,7 +130,9 @@ def load_measurements(format_name: str, base: Path | None = None, fallback_forma
     return None
 
 
-def load_ui_safe_zones(format_name: str, base: Path | None = None, fallback_format: str | None = None):
+def load_ui_safe_zones(
+    format_name: str, base: Path | None = None, fallback_format: str | None = None
+) -> dict[str, Any] | None:
     """per_referent de F1-UI-SAFE-ZONES.json del formato, o None (sin fallback silencioso)."""
     d = _format_dir(format_name, base)
     if d is not None:
@@ -144,7 +152,7 @@ def band(
     tolerance: str = "p25-p75",
     base: Path | None = None,
     fallback_format: str | None = None,
-):
+) -> BandResult:
     """Banda (lo, hi, n) de una métrica F1-INGENIERO (ej. 'pacing','cuts_per_min').
 
     ⚠️ cuts: F1 trae 'cuts_per_min' (curated) Y 'cuts_per_min_raw' — elegí la key
@@ -172,7 +180,7 @@ def ui_band(
     tolerance: str = "p25-p75",
     base: Path | None = None,
     fallback_format: str | None = None,
-):
+) -> BandResult:
     """Banda (lo, hi, n) de un campo de UI safe zone (ej. 'captions_narration','y_pct').
 
     Maneja la variante '<field>_avg' que usan algunos elementos

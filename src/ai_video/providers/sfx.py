@@ -112,9 +112,13 @@ def run_jobs(
     ok = failed = 0
     for job in jobs:
         try:
+
+            def _call(job: SFXJob = job) -> int:
+                return generate_one(client, job, model_id=model_id)
+
             with guard.charge("elevenlabs", "sfx", cost):
                 size = retry_call(
-                    lambda job=job: generate_one(client, job, model_id=model_id),
+                    _call,
                     attempts=settings.max_retries + 1,
                     describe=f"sfx {job.out.name}",
                 )

@@ -150,13 +150,22 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 check_untyped_defs = true
 
-# Legacy tool modules: type-checked loosely until they are refactored.
+# Legacy tool modules that still carry inferred-dict typing debt (heterogeneous
+# dict literals). Everything else under ai_video/ is type-checked. Shrink this list.
 [[tool.mypy.overrides]]
 module = [
-  "ai_video.audits.*",
-  "ai_video.build.*",
-  "ai_video.research.*",
-  "ai_video.editor.*",
+  "ai_video.audits.audit_audio",
+  "ai_video.audits.audit_clip_timing_vs_audio",
+  "ai_video.audits.audit_engineer_brief_vs_spec",
+  "ai_video.audits.audit_frames_granular",
+  "ai_video.audits.audit_narrative",
+  "ai_video.audits.audit_render_audio_coverage",
+  "ai_video.audits.audit_shot_spec_compliance",
+  "ai_video.audits.audit_ui_safe_zones",
+  "ai_video.audits.continuity_check",
+  "ai_video.audits.quality_gate_per_clip",
+  "ai_video.build.build_clip_atomic",
+  "ai_video.build.orchestrator_cp_by_cp",
   "ai_video.spec.migrate_enums",
 ]
 ignore_errors = true

@@ -63,6 +63,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 try:
     import google.genai as genai  # noqa: F401  (availability check)
@@ -214,7 +215,7 @@ def gemini_query_image(client, prompt: str, image_path: str) -> str:
 
 def gemini_query_images(client, prompt: str, image_paths: list[str]) -> str:
     """Send multiple images in one Gemini call for cross-frame consistency check."""
-    parts = [{"text": prompt}]
+    parts: list[dict[str, Any]] = [{"text": prompt}]
     for ip in image_paths:
         with open(ip, "rb") as f:
             parts.append({"inline_data": {"mime_type": "image/png", "data": f.read()}})

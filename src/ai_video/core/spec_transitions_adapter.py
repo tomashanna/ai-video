@@ -15,6 +15,7 @@ Build PRE-4.J (2026-05-27) + companion test_spec_transitions_adapter.py (Hard Ru
 from __future__ import annotations
 
 import copy
+from typing import Any
 
 # Legacy V4 transition_type → canonical recipe id (catalog filename stem).
 # Covers the transition_type vocabulary observed in V4 cp5-layer2-concat.py.
@@ -41,13 +42,13 @@ LEGACY_TYPE_TO_RECIPE = {
 }
 
 
-def _has_per_shot_transitions(shot_list):
+def _has_per_shot_transitions(shot_list: list[Any]) -> bool:
     return any(
         isinstance(s, dict) and bool(s.get("transition_in") or s.get("transition_out")) for s in shot_list
     )
 
 
-def normalize_transitions(spec):
+def normalize_transitions(spec: Any) -> Any:
     """Return spec with transitions in canonical per-shot form.
 
     - Already canonical (any shot has transition_in/out) → return spec as-is.
