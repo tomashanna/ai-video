@@ -116,6 +116,19 @@ def compute_bands(referent_data, section, key, tolerance="p25-p75"):
 
 
 def measure_our_video(video_path, html_path=None):
+    # Private temp dir per run: the old fixed /tmp/audit-referent-audio.wav was shared
+    # between runs, so when extraction failed librosa measured a *previous* video.
+    import shutil
+    import tempfile
+
+    tmpdir = tempfile.mkdtemp(prefix="ai-video-referent-")
+    try:
+        return _measure_our_video(video_path, tmpdir, html_path)
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def _measure_our_video(video_path, tmpdir, html_path=None):
     """
     Measure our video using same tools as F1 (whisper + ffmpeg + librosa).
     Returns dict matching F1 structure (pace/audio/pacing keys).
@@ -177,7 +190,7 @@ def measure_our_video(video_path, html_path=None):
     try:
         import whisper
         # Extract audio
-        audio_tmp = "/tmp/audit-referent-audio.wav"
+        audio_tmp = os.path.join(tmpdir, "audio.wav")
         subprocess.run(
             ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
              audio_tmp, "-loglevel", "error"],
@@ -204,8 +217,9 @@ def measure_our_video(video_path, html_path=None):
     # Music BPM (librosa optional)
     try:
         import librosa
-        if os.path.exists("/tmp/audit-referent-audio.wav"):
-            y, sr = librosa.load("/tmp/audit-referent-audio.wav", sr=None)
+        audio_wav = os.path.join(tmpdir, "audio.wav")
+        if os.path.exists(audio_wav):
+            y, sr = librosa.load(audio_wav, sr=None)
             tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
             out["audio"]["music_bpm"] = float(tempo)
     except ImportError:
