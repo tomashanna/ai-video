@@ -1,6 +1,9 @@
-# AI Video 1 — Manual operativo canónico
+# Manual operativo canónico
 
-> **Este archivo se inyecta automáticamente al system prompt en cada sesión.** Es la **única source of truth garantizada** que ves siempre. Las skills/sub-docs requieren decisión activa de lectura — este NO.
+> **Lectura obligatoria antes de producir un video.** `CLAUDE.md` / `AGENTS.md` (auto-cargados) son el
+> resumen; este manual es la fuente de verdad de roles, hard rules, gates por checkpoint y triggers.
+> La tabla de Hard Rules de abajo la parsea `qa-gate` en runtime (`ai_video.core.hard_rules_parser`):
+> mantené su formato.
 >
 > Si algo está acá, es **regla operativa imperativa**. Si está en sub-docs, es referencia detallada para implementación.
 
@@ -214,23 +217,25 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 
 ---
 
-## 📍 Paths canónicos (cierre hidden gap path-clarification 2026-05-23)
+## 📍 Paths canónicos
 
-| Recurso | Path canonical | Notes |
-|---------|----------------|-------|
-| `templates/hyperframes/elements.json` | `templates/hyperframes/elements.json` (root, NOT inside assets/library/ ni skills/) | Components UI catalog (countdown/loader/lower-third). Codificado post inventory 2026-05-23 (Hidden gap 3). |
-| `assets/library/voices-catalog.json` | `assets/library/voices-catalog.json` | ElevenLabs voice IDs validados |
-| `assets/library/sfx-catalog.json` | `assets/library/sfx-catalog.json` | SFX reusables |
-| ⭐ `assets/transitions/` | `assets/transitions/` (root) | **Carpeta GLOBAL de transiciones** (migrada de effects-library 2026-06-05). `catalog.json` = índice transición→formato (consultar PRIMERO); `README.md` = decision matrix + how-to-add; `universal/` + `horror-choice/` + `sport-choice/`. Paths viejos effects-library = symlinks compat. |
-| ⭐ `filters/` | `filters/` (root) | **Carpeta GLOBAL de filtros de video** (LUTs .cube + futuros grain/vignettes/overlays; creada 2026-06-05). `catalog.json` = índice filtro→formato; `luts/wildebeast.cube` 1er LUT físico. Autoridad de aplicación per formato = `COLOR-GRADING.md`. |
-| ⭐ `choice-format-core/` | `.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
-| 🎬 `video-editor/` | `.claude/skills/video-editor/` | **Rol EDITOR** (footage YA grabado, NO generación IA). `SKILL.md` = system prompt (identidad/triggers/principios/workflow); `TOOLBOX.md` = paleta de herramientas (ffmpeg: cortes/velocidad/captions/transiciones/color/mezcla/-14 LUFS — no recetas fijas); `scripts/` = `ai-video make-ass` + `scripts/burn-captions.sh` (captions validados en producción). Reusa `ai-video-production`. Creada 2026-06-10. |
-| `videosref_elige_tu_compa/` | `videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
-| `data/referent-analysis/` | `data/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
-| `creative-specs/<id>.yaml` | `creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
-| `_archive-deprecated-docs (retirado; ver historial git)` | `_archive-deprecated-docs (retirado; ver historial git)` | DEPRECATED docs preserved as historical reference (CREATIVE-BRIEF + POST-MORTEM-TEMPLATE + ARCHITECT-BRIEFING-VIDEO-3 + plain/v10 SPEC templates) |
-| `_archive-legacy-projects/` | `_archive-legacy-projects/` | Pre-V1 dev projects archived (cabina-14 + bosque-abandonado + mina-abandonada + pueblo-fantasma + maikol-crucero + cabana-tormenta + calabozo-catacumbas + isla-faro + elige-companero) |
-| `_archive-phase3-v3-learning/` | `_archive-phase3-v3-learning/` | V3 parque-acuatico learning archive |
+| Recurso | Path | Notas |
+|---------|------|-------|
+| Toolkit (gates, builders, providers) | `src/ai_video/` → `uv run ai-video <tool>` | `uv run ai-video list`; tests en `tests/unit/` |
+| Schema del SPEC | `src/ai_video/spec/schema.py` + `.claude/skills/creative-director/templates/CREATIVE-SPEC-TEMPLATE-v11.yaml` | `uv run ai-video validate-spec` |
+| Componentes UI (countdown/loader/lower-third) | `templates/hyperframes/` + `templates/hyperframes/elements.json` | Paths de `elements.json` relativos a su carpeta |
+| Voice IDs validados | `assets/library/voices-catalog.json` | `default_voice` = default de `ai-video tts` |
+| SFX / música reusables | `assets/library/` + `assets/library/sfx-catalog.json` | |
+| ⭐ Transiciones (global) | `assets/transitions/` | `catalog.json` = índice transición→formato (consultar PRIMERO); `universal/` + `horror-choice/` + `sport-choice/` |
+| Presets de voz | `assets/voice-effects/presets-catalog.json` | `ai-video apply-voice-preset` |
+| AVUs pre-renderizadas | `assets/avu/` | countdown / decision-freeze / hook-transition / outro |
+| ⭐ `choice-format-core/` | `.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice; la heredan horror-choice + sport-choice |
+| 🎬 `video-editor/` | `.claude/skills/video-editor/` | Rol EDITOR (footage ya grabado). Captions: `ai-video make-ass` + `scripts/burn-captions.sh` |
+| Mediciones empíricas de referentes | `data/referent-analysis/<formato>/` | Solo números sanitizados (bandas F1); los videos/transcripciones de referencia son locales y no se versionan |
+| Videos de referencia del formato | `videosref_<formato>/` (local, git-ignored) | Nunca commitear material de terceros |
+| SPECs de trabajo | `creative-specs/<id>.yaml` (local, git-ignored) | Ejemplos versionados en `examples/specs/` |
+| Proyectos de video | `projects/<id>/` (local, git-ignored) | assets, renders, handoffs por CP |
+| Filtros / LUTs | `filters/` (local, opcional; no versionado) | Autoridad de aplicación por formato = `COLOR-GRADING.md` |
 
 ---
 
