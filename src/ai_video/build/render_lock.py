@@ -1,192 +1,213 @@
-#!/usr/bin/env python3
-"""
-render-lock.py — Coordinate long renders across multiple Claude instances.
+"""Coordinate long renders across multiple agents/terminals with a global lockfile.
 
-Prevents the EPIPE / FFmpeg SIGTERM failures that happen when two agents
-launch `npx hyperframes render` simultaneously and starve each other of CPU.
-
-Mechanism:
-  - A global lockfile at ~/.claude-render-lock.json holds:
-      { pid, project, started_at, expected_duration_min, agent_label }
-  - `acquire` checks if the lock exists and the holder pid is alive.
-    If alive → exit 1 (caller must wait or retry). If stale → take it.
-  - `release` deletes the lockfile if pid matches current process.
-  - `wait` polls until acquire succeeds (with optional timeout).
-  - `status` prints current lock holder.
+Prevents the EPIPE / FFmpeg SIGTERM failures that happen when two agents launch
+``npx hyperframes render`` at the same time and starve each other of CPU.
 
 Usage:
-    # Before render
-    python scripts/render-lock.py acquire mina-abandonada --duration 15 || \
-      python scripts/render-lock.py wait mina-abandonada --timeout 1800
-
-    # Run the render
+    ai-video render-lock acquire <project> --duration 15 \\
+      || ai-video render-lock wait <project> --timeout 1800
     npx hyperframes render --output renders/v8.mp4
+    ai-video render-lock release <project>
+    ai-video render-lock status
 
-    # After render
-    python scripts/render-lock.py release
+Exit codes: 0 ok · 1 held by another live holder · 2 stale lock recovered (still ok) · 3 wait timeout
 
-    # Anytime
-    python scripts/render-lock.py status
-
-Exit codes:
-  0 = success (lock acquired / released / waited / status shown)
-  1 = lock held by another live process
-  2 = stale lock cleaned and re-acquired (still ok, just informative)
-  3 = timeout while waiting
-
-Aprendizajes amargos que originaron este script:
-  - Sesión 2026-05-10 (mina-abandonada): 3 renders consecutivos fallaron con
-    "FFmpeg exited with code 255 / signal 15" porque otro agente estaba a
-    12-25% CPU. Diagnóstico tardó ~45 min porque el mensaje de error no
-    sugiere "wait for the other agent".
-
-Documentado en: .claude/skills/video-director/ANTI-PATTERNS.md y
-                .claude/skills/ai-video-production/PIPELINE.md
+Design (fixes over the original script):
+* The holder is identified by project + the *parent* pid (the long-lived shell/agent),
+  and a lock also counts as live until ``started_at + 1.5 x expected duration`` — the old
+  version stored the pid of the short-lived CLI process itself, so every lock looked stale
+  the moment ``acquire`` returned and never actually protected a render.
+* ``acquire`` creates the file atomically (``O_CREAT | O_EXCL``), closing the
+  check-then-write race between two agents.
+* ``release`` accepts the project name (as the docs always used) and refuses to release
+  someone else's live lock without ``--force``.
+* Lock location is configurable with ``AIVIDEO_RENDER_LOCK``.
 """
+
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
-LOCK_PATH = Path.home() / ".claude-render-lock.json"
+EXIT_OK, EXIT_HELD, EXIT_STALE_RECOVERED, EXIT_TIMEOUT = 0, 1, 2, 3
+MIN_TTL_MIN = 5.0
+TTL_FACTOR = 1.5
+
+
+def lock_path() -> Path:
+    env = os.environ.get("AIVIDEO_RENDER_LOCK")
+    return Path(env).expanduser() if env else Path.home() / ".claude-render-lock.json"
 
 
 def is_pid_alive(pid: int) -> bool:
-    """POSIX-only check. Returns True if process exists."""
+    """POSIX check. True if the process exists (EPERM also means it exists)."""
     if pid <= 0:
         return False
     try:
         os.kill(pid, 0)
-        return True
-    except (OSError, ProcessLookupError):
+    except ProcessLookupError:
         return False
+    except PermissionError:
+        return True
+    except OSError:
+        return False
+    return True
 
 
-def read_lock():
-    if not LOCK_PATH.exists():
-        return None
+def read_lock(path: Path | None = None) -> dict[str, Any] | None:
+    p = path or lock_path()
     try:
-        return json.loads(LOCK_PATH.read_text())
-    except (json.JSONDecodeError, OSError):
+        data = json.loads(p.read_text())
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
         return None
+    return data if isinstance(data, dict) else None
 
 
-def write_lock(project: str, duration_min: float, agent_label: str):
-    payload = {
-        "pid": os.getpid(),
+def is_live(lock: dict[str, Any], *, now: datetime | None = None) -> bool:
+    """A lock is live if its holder pid is alive OR it is still within its TTL."""
+    if is_pid_alive(int(lock.get("pid", 0) or 0)):
+        return True
+    try:
+        started = datetime.fromisoformat(str(lock["started_at"]))
+        minutes = max(MIN_TTL_MIN, float(lock.get("expected_duration_min", 0)) * TTL_FACTOR)
+    except (KeyError, ValueError, TypeError):
+        return False
+    return (now or datetime.now(UTC)) < started + timedelta(minutes=minutes)
+
+
+def _payload(project: str, duration_min: float, agent: str, pid: int) -> dict[str, Any]:
+    return {
+        "pid": pid,
         "project": project,
-        "started_at": datetime.now(timezone.utc).isoformat(),
+        "started_at": datetime.now(UTC).isoformat(),
         "expected_duration_min": duration_min,
-        "agent_label": agent_label or "unknown",
+        "agent_label": agent or "unknown",
     }
-    LOCK_PATH.write_text(json.dumps(payload, indent=2))
 
 
-def cmd_acquire(args):
-    existing = read_lock()
-    if existing:
-        holder_pid = existing.get("pid", 0)
-        if is_pid_alive(holder_pid):
-            print(f"render-lock: held by pid={holder_pid} project={existing.get('project')} "
-                  f"started={existing.get('started_at')}", file=sys.stderr)
-            sys.exit(1)
-        # stale → clean
-        print(f"render-lock: stale lock from dead pid={holder_pid}, taking it", file=sys.stderr)
-        LOCK_PATH.unlink(missing_ok=True)
-        write_lock(args.project, args.duration, args.agent)
-        print(f"render-lock: acquired (stale recovered) pid={os.getpid()}")
-        sys.exit(2)
-    write_lock(args.project, args.duration, args.agent)
-    print(f"render-lock: acquired pid={os.getpid()} project={args.project}")
-    sys.exit(0)
+def try_create(path: Path, payload: dict[str, Any]) -> bool:
+    """Atomically create the lockfile. False if it already exists."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError:
+        return False
+    with os.fdopen(fd, "w") as f:
+        json.dump(payload, f, indent=2)
+    return True
 
 
-def cmd_release(args):
-    existing = read_lock()
-    if not existing:
-        print("render-lock: no lock to release")
-        sys.exit(0)
-    held_pid = existing.get("pid", 0)
-    if held_pid == os.getpid() or args.force:
-        LOCK_PATH.unlink(missing_ok=True)
-        print(f"render-lock: released (was pid={held_pid})")
-        sys.exit(0)
-    if not is_pid_alive(held_pid):
-        LOCK_PATH.unlink(missing_ok=True)
-        print(f"render-lock: cleaned stale lock from pid={held_pid}")
-        sys.exit(0)
-    print(f"render-lock: cannot release — held by live pid={held_pid} (not us). "
-          f"Use --force only if you know what you're doing.", file=sys.stderr)
-    sys.exit(1)
+def acquire(project: str, duration_min: float = 15, agent: str = "", *, pid: int | None = None,
+            path: Path | None = None) -> int:
+    p = path or lock_path()
+    payload = _payload(project, duration_min, agent, pid if pid is not None else os.getppid())
+    if try_create(p, payload):
+        return EXIT_OK
+    existing = read_lock(p)
+    if existing is not None and is_live(existing):
+        return EXIT_HELD
+    p.unlink(missing_ok=True)  # stale (or corrupt) lock
+    return EXIT_STALE_RECOVERED if try_create(p, payload) else EXIT_HELD
 
 
-def cmd_wait(args):
-    deadline = time.time() + args.timeout
-    poll_interval = 5  # seconds — render times are minutes, no point polling fast
-    while time.time() < deadline:
-        existing = read_lock()
-        if not existing or not is_pid_alive(existing.get("pid", 0)):
-            # stale or absent → take it
-            if existing:
-                LOCK_PATH.unlink(missing_ok=True)
-            write_lock(args.project, args.duration, args.agent)
-            print(f"render-lock: acquired after wait pid={os.getpid()}")
-            sys.exit(0)
-        time.sleep(poll_interval)
-    existing = read_lock() or {}
-    print(f"render-lock: timeout after {args.timeout}s waiting for "
-          f"pid={existing.get('pid')} project={existing.get('project')}",
-          file=sys.stderr)
-    sys.exit(3)
+def release(project: str | None, *, force: bool = False, path: Path | None = None) -> int:
+    p = path or lock_path()
+    existing = read_lock(p)
+    if existing is None:
+        p.unlink(missing_ok=True)
+        return EXIT_OK
+    ours = project is not None and existing.get("project") == project
+    if ours or force or not is_live(existing):
+        p.unlink(missing_ok=True)
+        return EXIT_OK
+    return EXIT_HELD
 
 
-def cmd_status(args):
-    existing = read_lock()
-    if not existing:
+def _cmd_acquire(a: argparse.Namespace) -> int:
+    rc = acquire(a.project, a.duration, a.agent)
+    if rc == EXIT_HELD:
+        lk = read_lock() or {}
+        print(f"render-lock: held by project={lk.get('project')} pid={lk.get('pid')} "
+              f"started={lk.get('started_at')}", file=sys.stderr)
+    else:
+        print(f"render-lock: acquired project={a.project}" + (" (stale lock recovered)" if rc else ""))
+    return rc
+
+
+def _cmd_release(a: argparse.Namespace) -> int:
+    rc = release(a.project, force=a.force)
+    if rc == EXIT_HELD:
+        lk = read_lock() or {}
+        print(f"render-lock: cannot release — live lock held by project={lk.get('project')}. "
+              f"Use --force only if you know what you're doing.", file=sys.stderr)
+    else:
+        print("render-lock: released")
+    return rc
+
+
+def _cmd_wait(a: argparse.Namespace) -> int:
+    deadline = time.monotonic() + a.timeout
+    while True:
+        rc = acquire(a.project, a.duration, a.agent)
+        if rc != EXIT_HELD:
+            print(f"render-lock: acquired after wait project={a.project}")
+            return EXIT_OK
+        if time.monotonic() >= deadline:
+            lk = read_lock() or {}
+            print(f"render-lock: timeout after {a.timeout}s waiting for project={lk.get('project')}",
+                  file=sys.stderr)
+            return EXIT_TIMEOUT
+        time.sleep(a.poll)
+
+
+def _cmd_status(_: argparse.Namespace) -> int:
+    lk = read_lock()
+    if lk is None:
         print("render-lock: free")
-        sys.exit(0)
-    holder_pid = existing.get("pid", 0)
-    alive = is_pid_alive(holder_pid)
-    started = existing.get("started_at", "?")
-    project = existing.get("project", "?")
-    duration = existing.get("expected_duration_min", "?")
-    agent = existing.get("agent_label", "?")
-    state = "ALIVE" if alive else "STALE"
-    print(f"render-lock: {state} pid={holder_pid} project={project} "
-          f"agent={agent} started={started} expected_min={duration}")
-    sys.exit(0 if alive else 2)
+        return EXIT_OK
+    live = is_live(lk)
+    print(f"render-lock: {'LIVE' if live else 'STALE'} project={lk.get('project')} pid={lk.get('pid')} "
+          f"agent={lk.get('agent_label')} started={lk.get('started_at')} "
+          f"expected_min={lk.get('expected_duration_min')}")
+    return EXIT_OK if live else EXIT_STALE_RECOVERED
 
 
-def main():
+def main() -> int:
     p = argparse.ArgumentParser(description="Coordinate long renders across agents")
     sub = p.add_subparsers(dest="action", required=True)
 
     a = sub.add_parser("acquire")
     a.add_argument("project")
-    a.add_argument("--duration", type=float, default=15, help="Expected duration in minutes (default 15)")
-    a.add_argument("--agent", default="", help="Optional label for the agent holding the lock")
-    a.set_defaults(func=cmd_acquire)
+    a.add_argument("--duration", type=float, default=15, help="Expected minutes (default 15)")
+    a.add_argument("--agent", default="", help="Optional label for the holder")
+    a.set_defaults(func=_cmd_acquire)
 
     r = sub.add_parser("release")
+    r.add_argument("project", nargs="?", default=None)
     r.add_argument("--force", action="store_true")
-    r.set_defaults(func=cmd_release)
+    r.set_defaults(func=_cmd_release)
 
     w = sub.add_parser("wait")
     w.add_argument("project")
     w.add_argument("--timeout", type=int, default=1800, help="Max seconds to wait (default 1800)")
     w.add_argument("--duration", type=float, default=15)
     w.add_argument("--agent", default="")
-    w.set_defaults(func=cmd_wait)
+    w.add_argument("--poll", type=float, default=5.0, help=argparse.SUPPRESS)
+    w.set_defaults(func=_cmd_wait)
 
     s = sub.add_parser("status")
-    s.set_defaults(func=cmd_status)
+    s.set_defaults(func=_cmd_status)
 
     args = p.parse_args()
-    args.func(args)
+    rc: int = args.func(args)
+    return rc
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
