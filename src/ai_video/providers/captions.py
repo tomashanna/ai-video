@@ -6,17 +6,16 @@ groups words into caption segments and outputs ready-to-paste GSAP set() calls.
 
 Usage:
     # Single file
-    .venv/bin/python scripts/captions.py -a assets/h3-narr1-raw.mp3 -t 22.7
+    ai-video captions -a assets/h3-narr1-raw.mp3 -t 22.7
 
     # Batch from a JSON spec
-    .venv/bin/python scripts/captions.py --spec captions-spec.json
+    ai-video captions --spec captions-spec.json
 
 Output:
-    GSAP tl.set() / tl.to() calls printed to stdout, ready to paste into index.html.
+    GSAP tl.set() calls printed to stdout, ready to paste into index.html.
 
 Dependencies:
-    pip install openai-whisper
-    (ffmpeg must be on PATH)
+    uv sync --extra media   (openai-whisper; ffmpeg must be on PATH)
 """
 
 import argparse
@@ -25,26 +24,24 @@ import re
 import sys
 from pathlib import Path
 
-try:
-    import whisper
-except ImportError:
-    sys.exit(
-        "error: openai-whisper not installed.\n"
-        "Run: .venv/bin/pip install openai-whisper"
-    )
-
 
 MAX_WORDS_PER_CAPTION = 6   # max words before splitting a new caption
 MIN_GAP_S = 0.08            # minimum silence gap to force a split
 FADE_DURATION = 0.0         # instant set (no fade) — keep captions sharp
 
 
-def transcribe(audio_path: Path) -> list[dict]:
+def transcribe(audio_path: Path, *, language: str = "es", model_name: str = "base") -> list[dict]:
     """Return list of {word, start, end} dicts via Whisper."""
-    model = whisper.load_model("base")
+    try:
+        import whisper
+    except ImportError:
+        sys.exit("error: openai-whisper not installed. Run: uv sync --extra media")
+    if not audio_path.is_file():
+        sys.exit(f"error: audio not found: {audio_path}")
+    model = whisper.load_model(model_name)
     result = model.transcribe(
         str(audio_path),
-        language="es",
+        language=language,
         word_timestamps=True,
         verbose=False,
     )
@@ -99,7 +96,9 @@ def emit_gsap(captions: list[dict], element_id: str, audio_offset: float) -> str
     for cap in captions:
         t_on  = round(audio_offset + cap["start"], 3)
         t_off = round(audio_offset + cap["end"] + 0.05, 3)  # tiny hold after end
-        lines.append(f'      tl.set("#{element_id}", {{ opacity: 1, innerHTML: "{cap["text"]}" }}, {t_on});')
+        # json.dumps escapes quotes/backslashes so caption text cannot break the JS literal.
+        text_js = json.dumps(cap["text"], ensure_ascii=False)
+        lines.append(f'      tl.set("#{element_id}", {{ opacity: 1, textContent: {text_js} }}, {t_on});')
         lines.append(f'      tl.set("#{element_id}", {{ opacity: 0 }}, {t_off});')
     return "\n".join(lines)
 
@@ -130,7 +129,7 @@ def process_spec(spec_path: Path) -> None:
         process_single(audio_path, entry["offset"], entry["element"])
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description="Auto-generate GSAP captions from narration audio")
     parser.add_argument("-a", "--audio", type=Path, help="Single audio file")
     parser.add_argument("-t", "--offset", type=float, default=0.0,
@@ -146,8 +145,9 @@ def main() -> None:
         process_single(args.audio, args.offset, args.element)
     else:
         parser.print_help()
-        sys.exit(1)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
