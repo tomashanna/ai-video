@@ -73,7 +73,7 @@ Estos docs que existían antes ahora están eliminados porque duplicaban conteni
 - ❌ `stakes-catalog.md` → ver PAUTA-MASTER § 12 Slot F body horror
 - ❌ `narrator-voice.md` → ver PAUTA-MASTER § 3 reglas + SCRIPT-WRITING-GUIDE
 - ❌ `anti-patterns.md` → ver PAUTA-MASTER § 16 checklist + AUDITOR-PROTOCOL § 6
-- ❌ `brand-and-cliffhanger.md` → ver PAUTA-MASTER § 13 cliffhanger + BRAND.md
+- ❌ `brand-and-cliffhanger.md` → ver PAUTA-MASTER § 13 cliffhanger + VISUAL-STYLE.md
 - 📂 `referent-analysis.md` → movido a `/referent-analysis/REFERENT-ANALYSIS-13-VIDEOS-SYNTHESIS.md`
 
 ---

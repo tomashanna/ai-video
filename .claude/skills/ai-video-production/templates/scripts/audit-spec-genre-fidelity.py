@@ -25,7 +25,7 @@ What it does NOT cover (stays human/visual in NO-HORROR-GUARD.md):
 Authority:
   sport-choice-format/PAUTA-MASTER.md §0 BAN + §6 (failure = deportivo, NO daño físico)
   sport-choice-format/INGENIERO-PAUTA-MASTER.md §2 (SFX palette absolute rule) + §4 (LUTs / música)
-  horror-choice-format/BRAND.md §3 (grave narrator voice) + §4 (lúgubre preset = OPPOSITE)
+  horror-choice-format/VISUAL-STYLE.md (lúgubre preset = OPPOSITE)
 
 Capability-aware: has_ai_generated_clips required for a meaningful scan; video_capabilities
 missing → Bug #9 (exit 2). Agnostic-by-design: --format REQUIRED. The scan only runs for

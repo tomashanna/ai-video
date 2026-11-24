@@ -165,6 +165,6 @@
  *    fromTo on each <span> per word. Never hand-time.
  *
  * D) Per-class color overrides per project:
- *    Override .caption-narration color in project's local CSS to match BRAND.md.
+ *    Override .caption-narration color in project's local CSS to match the format's VISUAL-STYLE.md.
  *    Default colors here are the canonical horror-choice palette.
  * ============================================================================= */

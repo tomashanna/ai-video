@@ -1,5 +1,5 @@
 """
-Generate narration MP3 via ElevenLabs for Afluence videos.
+Generate narration MP3 via ElevenLabs for narration.
 
 Usage:
     .venv/bin/python scripts/tts.py                              # reads script.txt, writes narration.mp3
@@ -7,7 +7,7 @@ Usage:
     .venv/bin/python scripts/tts.py -t "Frase corta a narrar"
     .venv/bin/python scripts/tts.py --model eleven_v3            # for expressive delivery
 
-Defaults are tuned for Afluence: male voice, Spanish, highest-quality multilingual_v2.
+Defaults: catalogued default voice, Spanish, highest-quality multilingual_v2.
 """
 
 import argparse
@@ -39,7 +39,7 @@ def read_text(text_arg: str | None, input_path: Path) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Afluence ElevenLabs TTS")
+    parser = argparse.ArgumentParser(description="ElevenLabs TTS")
     parser.add_argument("-t", "--text", help="Inline text (overrides --input)")
     parser.add_argument("-i", "--input", type=Path, default=DEFAULT_INPUT, help="Input .txt file")
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT, help="Output .mp3 path")

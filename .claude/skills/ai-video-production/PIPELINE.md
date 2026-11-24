@@ -90,7 +90,7 @@ Flag `--no-mono-suffix` desactiva el suffix (útil para escenas en colores natur
 
 **Scope**: 🌐 **Universal** — aplica a CUALQUIER genre/delivery combination.
 
-Además del `STYLE_SUFFIX` (que afecta la generación de imágenes), todo genre o delivery format DEBE definir su **preset CSS filter canónico** en su `BRAND.md` (o equivalente). Este filter se aplica a TODOS los `.scene-image` del video para garantizar consistencia visual entre proyectos del mismo genre/marca.
+Además del `STYLE_SUFFIX` (que afecta la generación de imágenes), todo genre o delivery format DEBE definir su **preset CSS filter canónico** en su `VISUAL-STYLE.md`. Este filter se aplica a TODOS los `.scene-image` del video para garantizar consistencia visual entre proyectos del mismo genre/marca.
 
 ```css
 .scene-image {
@@ -112,8 +112,8 @@ Presets canónicos:
 
 **Workflow en proyecto nuevo**:
 1. Confirmar `genre` + `delivery_format` en bootstrap
-2. Buscar preset canónico en `<genre>-format/BRAND.md`
-3. Si NO existe → definir preset y documentarlo en `BRAND.md` del nuevo genre
+2. Buscar preset canónico en `<genre>-format/VISUAL-STYLE.md`
+3. Si NO existe → definir preset y documentarlo en `VISUAL-STYLE.md` del nuevo genre
 4. Aplicar en CSS `.scene-image` del `index.html`
 5. Validar con 3 frames de escenas distintas — ¿se ve consistente?
 

@@ -423,7 +423,6 @@ Si el usuario empieza un formato nuevo sin skill propio: vos creás el plan, per
 | `WORKFLOW.md` | Disciplina secuencial paso a paso, incluyendo cómo iterar tras Gemini QA |
 | `DECISION-FRAMEWORK.md` | Cuándo preguntar al usuario vs ejecutar directo (reversibility, blast radius) |
 | `ANTI-PATTERNS.md` | Cosas que NUNCA hace. Aprendizajes amargos de proyectos previos. |
-| `META-BRAND.md` | Identidad del creador (Toby Hanna). Estrategia multi-cuenta. Decisiones diferidas con criterio. |
 | `PERFORMANCE.md` | Feedback loop: cómo capturar métricas reales de IG y promover patterns a reglas. |
 | `PATTERNS-LIBRARY.md` | Catálogo cross-account: validados / en evaluación / anti-patterns. |
 | `HANDOFF-PROMPTS.md` | Template canónico para delegar iteración a otro asistente IA. |

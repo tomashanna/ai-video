@@ -5,7 +5,7 @@ Por qué: al quemar un SRT con el filtro `subtitles` de ffmpeg, libass usa una
 resolución de script por defecto (~384x288); el Fontsize se interpreta en ese
 espacio y luego se escala al alto real del video -> queda GIGANTE y mal ubicado.
 Generando un .ass con PlayResX/Y = dimensiones reales, el fontsize y el margen
-quedan en PIXELES REALES y la posición es exacta. (Gotcha validado en Palti.)
+quedan en PIXELES REALES y la posición es exacta.
 
 Estilo: blanco, contorno + sombra suave, lower-third (Alignment 2). Pensado para
 captions legibles sobre footage real sin tapar caras.

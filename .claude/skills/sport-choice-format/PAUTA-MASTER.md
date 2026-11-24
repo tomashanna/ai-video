@@ -366,7 +366,7 @@ Consultar `video-log.md` ANTES de diseñar. Rotar: **liga/equipos** (no repetir 
 ## §14 — PENDIENTES + RELACIÓN CON DOCS + ESTADO
 
 ### Deliverables Capa B/C que siguen a esta pauta
-- `BRAND.md` deportes (look cálido/saturado/brillante + preset CSS — OPUESTO al lúgubre `saturate .35/brightness .74` de horror).
+- `VISUAL-STYLE.md` deportes (look cálido/saturado/brillante + preset CSS — OPUESTO al lúgubre `saturate .35/brightness .74` de horror).
 - SPEC template deportes v1 (hereda schema v11; campos sport: `risk_policy`, `favorite`, `recorridos[]`, `compuertas`).
 - `SCRIPT-WRITING-GUIDE.md` update (alinear a dos-recorridos + favorito + narración-no-juzga; ya está en 🟦/🟩/🟥).
 - Failure-catalog como doc Capa C operacional + `TASTE-LOG.md` deportes.

@@ -298,7 +298,7 @@ Cualquier frame con NEGRO o sin elemento esperado → bug. Revisar GSAP namespac
 
 - `PATTERNS.md` § 1 — estructura temporal general del formato
 - `PATTERNS.md` § 10.5 — Opción D: Teaser materialization (técnica visual)
-- `BRAND.md` — preset filter CSS canónico (`contrast 1.28 saturate 0.35 brightness 0.74`)
+- `VISUAL-STYLE.md` — preset filter CSS canónico (`contrast 1.28 saturate 0.35 brightness 0.74`)
 - `ai-video-production/CAPTIONS.md` — Whisper-sync hard rule
 - `ai-video-production/RETENTION-RULES.md` — reglas de retención short-form
 - `video-animation/ANIMATION-LAYER.md` § 11.5 — técnica Kling start_image + end_image

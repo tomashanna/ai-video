@@ -108,22 +108,6 @@ Para verify V4 archive D38 UNCHANGED, consultar `_freeze-manifests/v4-baseline.m
 - Manifest es append-only (NO sobreescribir). V5+ frozen → nuevo `_freeze-manifests/v5-baseline.md5`.
 - Razón estructural: D38 verifiability vive en filesystem (Principio 4 Sólido), NO en memoria del rol Claude conversacional. Pre-PRE-4.I el "frozen UNCHANGED" se enforcaba solo por memoria — gap resuelto.
 
-### Environment quirks (this machine) — added 2026-05-28 (D-editorial-32)
-
-Constraints/behaviors of Tomás's machine that any role must account for. Codified empirically (caso disparador: client-project-d whisper-local large-v3 download).
-
-- **Corporate SSL-inspection proxy (self-signed root in chain).** Python `urllib`/`requests` model+asset downloads FAIL with `ssl.SSLCertVerificationError: self-signed certificate in certificate chain`. The corporate root cert IS installed in the **macOS keychain** (so the proxy works system-wide), but Python ships its own cert bundle that does NOT include it.
-  - **Symptom:** `whisper.load_model(...)`, HuggingFace downloads, `pip` (sometimes), any urllib-based fetch → `CERTIFICATE_VERIFY_FAILED`.
-  - **Canonical fix (mechanical, no decision change):** download the asset with **`curl`** (macOS curl uses Secure Transport → trusts the keychain → accepts the corporate root), place it in the tool's expected cache, then let the library load from cache (no network). Example — whisper:
-    ```bash
-    # model URLs live in: python -c "import whisper; print(whisper._MODELS)"
-    curl -L --fail -o "$HOME/.cache/whisper/large-v3.pt" "<model_url>"
-    # whisper.load_model('large-v3') then verifies sha256 + uses the cached file, no urllib download
-    ```
-  - **Verify connectivity, not just SSL:** a `curl` HTTP 404 means SSL is fine (wrong URL); an SSL error means the proxy blocked it. Distinguish before escalating.
-  - **NOT a Bug #9 escalation** when the curl/keychain fix resolves it (mechanical, preserves the chosen model/asset). Escalate only if curl ALSO fails (proxy blocks the host entirely) or if a smaller/different asset would change a quality/cost decision.
-  - **Forward rule:** scripts that auto-download models/assets in this environment must prefer curl/keychain over urllib, or pre-seed the cache. Pixabay (and other Cloudflare/JS-challenge sites) are NOT headlessly downloadable even via curl — use direct-download sources (e.g. Incompetech CC-BY) or escalate.
-
 ### Spawning sub-agents from auditor session (when needed)
 
 Auditor PUEDE spawn architect/engineer narrow scope sub-agents via Agent tool (per 3-role constraint: "NUNCA invocar arquitecto/auditor como sub-agent del INGENIERO" — auditor spawning others is OK, especially for orchestrated V4 flow).

@@ -46,7 +46,6 @@
 | `WORKFLOW.md` | Loop maestro 5 pasos + flujos típicos | Cualquier tarea de video |
 | `DECISION-FRAMEWORK.md` | Cuándo preguntar vs ejecutar | Decisiones de scope |
 | `ANTI-PATTERNS.md` | Aprendizajes amargos universales | Antes de inventar algo |
-| `META-BRAND.md` | TU identidad como creador (Toby Hanna) | Decisiones de portfolio multi-cuenta |
 | `PERFORMANCE.md` | Sistema de feedback loop con métricas IG | Después de publicar cada video |
 | `PATTERNS-LIBRARY.md` | Catálogo cross-account validados | Meta-review cada 10 videos |
 | `HANDOFF-PROMPTS.md` | Template para delegar iteración a otra IA | Cuando se delega |
@@ -118,7 +117,7 @@ Estructura canónica (todos los formatos deben tener):
 | `REFERENCE-ANALYSIS.md` | Análisis de virales referentes del nicho | ✅ |
 | `BOOTSTRAP-NEW-PROJECT.md` | Bootstrap aplicado al formato | ✅ |
 | `PRODUCTION-PIPELINE.md` | Comandos aplicados (STYLE_SUFFIX, prompts) | ✅ |
-| `BRAND.md` | Audience persona + voz + paleta + hashtags de la cuenta IG | ✅ |
+| `VISUAL-STYLE.md` | Preset CSS + paleta + tipografía del formato | ✅ |
 | `video-log.md` | Registro de archetypes/temas usados por video (rotation log) | ✅ |
 | `TEMPLATE-SPEC.md` | Phase 3 stuff (parametrización futura) | Opcional |
 
@@ -191,7 +190,7 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
    - PAUTA-MASTER.md si aplica (archetypes empíricos del formato)
    - REFERENCE-ANALYSIS.md (análisis de virales del nuevo nicho)
    - BOOTSTRAP-NEW-PROJECT.md, PRODUCTION-PIPELINE.md (con STYLE_SUFFIX propio)
-   - BRAND.md (audience nueva cuenta IG)
+   - VISUAL-STYLE.md (preset CSS + paleta del formato)
    - video-log.md (vacío)
    - templates/ (NARRATIVE, SFX, scripts con STYLE_SUFFIX nuevo)
 4. Si el visual del template requiere estilo distinto → crear `elements/<estilo-nuevo>/`
@@ -221,7 +220,6 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
 
 ### Sesión nueva: el video-director skill se auto-carga
 - Identidad + workflow + quality bar
-- META-BRAND para context estratégico
 - `CLAUDE.md` § Mapa de docs autoritativos para saber qué leer por tema
 
 ### Skill del formato se auto-carga si la tarea menciona keywords del formato

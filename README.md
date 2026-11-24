@@ -68,8 +68,7 @@ El handoff entre roles y los gates por checkpoint están en
 `creative-director/HANDOFF-PROTOCOL.md` y `creative-director/AUDITOR-PROTOCOL.md`.
 
 **➕ Un rol aparte: 🎬 el Editor.** El triángulo de arriba **fabrica** videos con IA (desde cero). Para
-**editar footage YA grabado** (testimonios, ads, entrevistas, screen-recordings — casos German, editorial,
-Palti) hay un cuarto rol independiente y paralelo, el **Editor** (`.claude/skills/video-editor/`): no genera
+**editar footage YA grabado** (testimonios, ads, entrevistas, screen-recordings) hay un cuarto rol independiente y paralelo, el **Editor** (`.claude/skills/video-editor/`): no genera
 ni diseña, **ensambla y pule lo que existe** (cortes, velocidad, captions, música/mezcla/−14 LUFS,
 transiciones, textos, color). Vive en su propia terminal como los otros y reusa el toolkit de `ai-video-production`.
 
@@ -147,7 +146,6 @@ arquitecto → ingeniero → auditor (con los gates por checkpoint) está en `CL
 ## Contribuir / colaborar
 
 - **Maintainer**: Tomás Hanna (tomashanna)
-- **Colaboradores**: IanCid + afluence (técnico)
 - **Comunicación**: filesystem como ground truth (no memoria conversacional — Principio 4)
 - **Commit / branch**: nunca `--amend` ni `push --force` sobre commits ya pusheados. Los detalles
   operativos vivos están en `CLAUDE.md`.
