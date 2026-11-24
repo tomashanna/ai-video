@@ -103,10 +103,10 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
 shot_list:
   - shot_id: shot_01
     tier_assignment: "pro_mandatory"  # hook
-    
+
   - shot_id: shot_05
     tier_assignment: "std_default"  # body
-    
+
   - shot_id: shot_16
     tier_assignment: "pro_override_with_reason"
     tier_override_reason: "pose-coupling polydactyly preservation per MODEL-BEHAVIOR-LOG entry 1"

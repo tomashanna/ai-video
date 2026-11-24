@@ -554,7 +554,7 @@ Per clip (atomic unit, repeats N times):
   Step 5: Caption sidecar JSON per clip → shot_NN_captions.json (Whisper local)
   Step 6: Quality Gate Agent per-clip verdict (≥9.0 PASS / iterate / escalate)
   Step 7 (mid-execution): Gemini Vision hook per clip → frame-by-frame audit ANTES de concat
-  
+
 Then assemble (cross-clip layers):
   Step 8: ffmpeg concat shot_01_with_audio.mp4 + shot_02_with_audio.mp4 + … → assembled.mp4
   Step 9: Effects library between clips (transitions: crossfade / hard cut / white flash / glitch / shader wipe)
@@ -679,7 +679,7 @@ Output: 5 dimensions per clip (UI overlap, frame negros, AVU detect, character c
 "¿Esto pasa EN el mundo de la escena, o marca el corte editorial?"
   • EN el mundo (diegetic) → LAYER 1 (clip atomic)
   • Marca corte (non-diegetic) → LAYER 2 (effect file)
-  
+
 Examples:
   - Cocinera taps spoon @ 0:23 → diegetic (her action) → LAYER 1
   - Whoosh between clip 5→6 → non-diegetic editorial → LAYER 2 (in effect)
@@ -714,13 +714,13 @@ Examples:
    - "single_continuous_Xs" → 1 file exact length (preferred)
    - "stitched_sections" → N files crossfaded via ffmpeg acrossfade
    - "loop_Xs_stretched" → loop a base sample to target duration
-   
+
 3. PER-LAYER VERIFY pre-concat (NEW Q23 gate):
    - LUFS in band per layer type ✓
    - Length match video_duration_s ±0.5s
    - No speech bleed (Whisper voiceprint check)
    - Spectrum analysis (drone <300Hz, accent 200-2000Hz, ambient broadband)
-   
+
 4. ASSEMBLE post-concat (ai-video apply-cross-clip-music):
    ffmpeg amix assembled.mp4 + drone_base.mp3 + accent_drama.mp3 + ambient_room.mp3
    + sidechain ducking layer 1+2 UNDER TTS speech (-8 ±1 dB during VO segments)   # PRE-4.C tolerance (2026-05-25): SPEC-declared band (plumbing). Outcome verifiable via final dynamic_range_db (F1 canonical 14.49-22.34, typical ducking 10-25 dB).
@@ -888,7 +888,7 @@ HYBRID solves BOTH:
   Layer 1: caption baked into clip = same frame data as audio = CANNOT drift
   Layer 3: narrator continuous overlay = no boundary cuts
   Layer 3: UI overlays HyperFrames = countdown + decision + outro work
-  
+
   Result: best of both worlds, drift class eliminated structurally.
 ```
 
@@ -935,29 +935,29 @@ def build_atomic_clip(shot_id, spec, output_path):
     """Build self-contained atomic clip with audio + captions baked."""
     # Load visual
     visual = load_hailuo_clip(shot_id)
-    
+
     # Determine clip-scoped audio (NO narrator)
     audio_layers = []
     if shot_has_character_speech(spec, shot_id):
         char_audio = extract_character_audio(spec, shot_id)
         audio_layers.append(char_audio)
-    
+
     sfx = generate_diegetic_sfx(spec, shot_id)
     audio_layers.extend(sfx)
-    
+
     if shot_has_avu(spec, shot_id):
         audio_layers.append(load_avu_audio(spec, shot_id))
-    
+
     mixed_audio = ffmpeg_amix(audio_layers)
-    
+
     # Generate captions FROM CLIP AUDIO (Whisper)
     captions = whisper_transcribe(mixed_audio, language='es', word_timestamps=True)
     # Override caption text with SPEC text_canonical (preserve canonical wording)
     captions = align_captions_to_spec(captions, spec.text_canonical_for_shot(shot_id))
-    
+
     # Burn captions into video
     visual_with_captions = ffmpeg_drawtext(visual, captions, style='canonical_horror_choice')
-    
+
     # Mux
     atomic = ffmpeg_mux(visual_with_captions, mixed_audio)
     atomic.save(output_path)
@@ -970,20 +970,20 @@ def build_atomic_clip(shot_id, spec, output_path):
 ```python
 def audit_caption_audio_sync(video_path):
     """Verify caption text at frame T matches narrator audio at T."""
-    
+
     # Extract frames every 3s
     frames = ffmpeg_extract_frames(video_path, interval=3)
-    
+
     # Whisper transcribe full audio with word timestamps
     audio_timeline = whisper_full_word_timestamps(video_path)
-    
+
     issues = []
     for t, frame in frames.items():
         # Get caption text on frame via Gemini Vision
         caption_text = gemini_vision_extract_caption(frame)
         # Get narrator audio words at this timestamp (±1s window)
         narrator_words = audio_timeline.words_in_window(t, ±1)
-        
+
         # Verify caption text matches narrator audio
         similarity = jaccard_similarity(caption_text, narrator_words)
         if similarity < 0.5:
@@ -993,7 +993,7 @@ def audit_caption_audio_sync(video_path):
                 'narrator': narrator_words,
                 'similarity': similarity
             })
-    
+
     return issues
 ```
 
@@ -1034,18 +1034,18 @@ video_capabilities:
   # Source paradigm
   source_clips_origin: ai_generated | pre_existing | mixed
   has_ai_generated_clips: true|false
-  
+
   # Audio paradigm
   has_tts_narration: true|false
   has_human_voiceover: true|false
   audio_mix_target: lufs_-14 | spec_declared | preserve_source | none
-  
+
   # Visual paradigm
   has_captions_baked: true|false
   has_layer_2_effects: true|false
   has_layer_3_music: true|false
   has_layer_4_ui: true|false
-  
+
   # Format paradigm
   format_type: interactive_choice | tutorial | b2b_commercial | compilation | other
   duration_intent_s: <integer>

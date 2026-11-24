@@ -132,7 +132,7 @@ User dijo "narración muy lenta". Ingeniero respondió "objetivamente misma pace
    SÍ → medila (transcription.json + ffprobe + librosa + scripts/measure-*.sh)
    NO → paso 3
 
-3. Reportá al usuario: "métrica X no documentada para este formato + 
+3. Reportá al usuario: "métrica X no documentada para este formato +
    no medible con tools actuales — propongo Y basado en heurística general,
    o agendamos análisis de referentes"
 
@@ -519,13 +519,13 @@ Antes de generar TTS, revisar:
    - **Lógica clara**: el viewer puede explicar el twist en una frase post-video. Si pregunta "¿pero por qué eso era una trampa?" → el twist falla.
    - **Imágenes acompañan**: visual evidence del twist en el frame, no solo dicho por el narrador. Si el twist es "el termo era de tu padre", el termo debe verse con iniciales/marcas que lo conecten — no basta narrar.
    - **Narración explica el link**: 1 frase explícita que cierre el gap lógico. "Mismo termo. Mismas iniciales. Tu padre subió en 1987 y nunca bajó." NO "Reconoces el olor" (vago, asume contexto).
-   
+
    **Sub-regla — Timing de setup elements**: los elementos visuales que **plantan semilla retroactiva** del twist (ej: foto vieja en H3 que se cobra en H6) tienen **timing distinto a detail shots**. Mínimo 2.5s, idealmente 3.0-3.5s, con caption confirmatorio sincronizado. Bajo 2.5s = el viewer ve pero no procesa → twist falla retroactivamente. Detalle por formato: `horror-choice-format/PATTERNS.md` § 6.5 Regla 2. Caso disparador: cabana-tormenta v4 — foto del padre <1s rompió el setup.
-   
+
    **Razón**: un plot twist sin coherencia confunde en lugar de impactar — viewer queda con "¿qué?" en vez de "¡oh!". Y el algoritmo de IG penaliza confusión (rewatch buscando entender = +retention pero -shares; aún peor: scroll inmediato).
-   
+
    **Detección durante QA**: si Gemini te dice "twist no se entiende" o "imágenes no acompañan la revelación" o "narración asume contexto" → es esta regla. NO fixear con más Kling — fixear con guion + assets de evidencia + narración explícita + timing de setup elements.
-   
+
    **Aplicación durante NARRATIVE.md drafting**: antes de generar assets, leer el twist en voz alta y preguntarte: "¿un viewer sin contexto previo podría explicarme esto en una frase?". Si no → reescribir. Y para cada elemento visual: ¿se cobra después? Si sí → setup element 2.5-3.5s, no detail shot.
 
 ---

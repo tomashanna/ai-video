@@ -189,7 +189,7 @@ text='Nombre — Rol':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.5:boxbo
 x=60:y=h-180:enable='between(t,1,6)'" -c:a copy out.mp4
 ```
 
-Para overlays más ricos (animados, branding, logos) está la vía HyperFrames/GSAP, o renderizar un PNG con alpha y superponer con `overlay`. 
+Para overlays más ricos (animados, branding, logos) está la vía HyperFrames/GSAP, o renderizar un PNG con alpha y superponer con `overlay`.
 
 
 ---

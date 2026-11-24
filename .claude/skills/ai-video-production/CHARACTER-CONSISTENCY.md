@@ -193,15 +193,15 @@ Cuando pasás `--ref`, el prompt cambia:
 
 ### Sin referencia (anchor inicial)
 ```
-"Medium close-up portrait of a 60-year-old gaunt man with grey hair, deep eyes, 
-worn dark jacket, neutral expression, soft frontal lighting, blurred dark forest background. 
+"Medium close-up portrait of a 60-year-old gaunt man with grey hair, deep eyes,
+worn dark jacket, neutral expression, soft frontal lighting, blurred dark forest background.
 Photorealistic 35mm, monochrome editorial."
 ```
 
 ### Con referencia (escena nueva)
 ```
-"The man from the reference image walking through a dark misty forest at night. 
-POV slightly behind subject. Mist swirls around him. Same character — same face, 
+"The man from the reference image walking through a dark misty forest at night.
+POV slightly behind subject. Mist swirls around him. Same character — same face,
 same age, same jacket. New angle and lighting."
 ```
 

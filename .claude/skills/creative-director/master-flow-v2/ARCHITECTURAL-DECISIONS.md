@@ -63,7 +63,7 @@ entries: []
 def apply_override(override_flag, reason, cp_affected, agent, verdict_bypassed=None):
     if not reason or len(reason) < 10:
         raise ValueError("Override requires explicit reason ≥10 chars")
-    
+
     entry = {
         'timestamp': datetime.utcnow().isoformat() + 'Z',
         'override_flag': override_flag,
@@ -72,10 +72,10 @@ def apply_override(override_flag, reason, cp_affected, agent, verdict_bypassed=N
         'agent': agent,
         'verdict_bypassed': verdict_bypassed,
     }
-    
+
     # Append to YAML file (NEVER overwrite)
     append_to_architectural_decisions(entry)
-    
+
     # Log visible to user
     print(f"⚠️ ARCHITECTURAL OVERRIDE: {override_flag} | CP: {cp_affected} | Reason: {reason}")
     print(f"   Logged to ARCHITECTURAL-DECISIONS.md")

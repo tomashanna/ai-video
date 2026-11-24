@@ -125,14 +125,24 @@ Wrap your existing generation calls:
 import subprocess
 
 # After Hailuo finishes shot_05.mp4:
-result = subprocess.run([
-    "uv", "run", "ai-video", "gemini-midexec-vision",
-    "--hook", "hailuo_post",
-    "--clip", "assets/clips/shot_05.mp4",
-    "--spec", "creative-specs/<id>.yaml",
-    "--shot-id", "shot_05_film_reveal",
-    "--output", f"reports/midexec/shot_05.json"
-])
+result = subprocess.run(
+    [
+        "uv",
+        "run",
+        "ai-video",
+        "gemini-midexec-vision",
+        "--hook",
+        "hailuo_post",
+        "--clip",
+        "assets/clips/shot_05.mp4",
+        "--spec",
+        "creative-specs/<id>.yaml",
+        "--shot-id",
+        "shot_05_film_reveal",
+        "--output",
+        f"reports/midexec/shot_05.json",
+    ]
+)
 
 if result.returncode == 1:
     # 🔴 flagged — regen THIS shot only, not full iter

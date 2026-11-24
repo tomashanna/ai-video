@@ -1816,7 +1816,7 @@ phase_2_forward:
 |---|---|---|---|
 | **Within-scene beat connection** (same character, same setting, time-continuous) | `cross-fade-0.5s` | `cross-fade-0.5s.json` | Invisible blend, preserves continuity |
 | **Within-scene time jump** (later same day, memory dissolve) | `cross-fade-1.0s` | `cross-fade-1.0s.json` | Slow deliberate, reads as "later" |
-| **Scene change default workhorse** | `hard-cut-with-whoosh` | `hard-cut-with-whoosh.json` | Preserves cuts/min target, audio sting | 
+| **Scene change default workhorse** | `hard-cut-with-whoosh` | `hard-cut-with-whoosh.json` | Preserves cuts/min target, audio sting |
 | **Hook countdown impact** | `hard-cut-with-whoosh` (or AVU bundled per § 7.11.5) | `hard-cut-with-whoosh.json` | High-energy entry to body |
 | **Decision UI / choice freeze** | `black-screen-0.3s` + freeze frame | `black-screen-0.3s.json` | Lets choice land |
 | **Decision lock-in (countdown ends, path commits)** | `light-flash-impact` | `light-flash-impact.json` | White flash + sharp SFX (high impact, USE SPARINGLY) |
@@ -1910,10 +1910,10 @@ Empirical comparison character consistency dimension:
 for shot in spec['shot_list']:
     # Previously: STRICT only on hero shots
     # OLD: if shot['hero']: strict = True
-    
+
     # NEW POLICY: STRICT on ALL shots
     strict = True
-    
+
     # Generate anchor with STRICT mode
     if model == 'nano-banana':
         flags = ['--cref', shot['character_anchor_url'], '--sref', shot['style_anchor_url'], '--cw', '100']
@@ -2035,7 +2035,7 @@ phase_2_forward:
 def select_model_tier(shot):
     hero_types = {'hook', 'climax_peak', 'cliffhanger_reveal'}
     pro_motion_types = {'walking', 'full_body_action', 'hand_close_up', 'lip_sync_close_up', 'creature_with_anatomy'}
-    
+
     if shot['type'] in hero_types or shot.get('hero', False):
         return 'hailuo_pro_1080p'
     if shot['motion_type'] in pro_motion_types:
@@ -2139,7 +2139,7 @@ def build_motion_bridge_prompt(shot):
     bridge_from = shot.get('motion_bridge_intent', {}).get('from_previous', '')
     bridge_to = shot.get('motion_bridge_intent', {}).get('to_next', '')
     pov_motion = shot.get('pov_traversal', 'static')
-    
+
     motion_clause_map = {
         'walking_forward': 'POV camera moving forward at steady walking pace (0.5 m/s), camera at human eye level, slight bob from footsteps',
         'descending': 'POV camera descending smoothly (0.3 m/s downward), gravity-influenced motion',
@@ -2150,7 +2150,7 @@ def build_motion_bridge_prompt(shot):
         'static_with_micro_bob': 'POV camera stationary with subtle natural breathing micro-bob',
     }
     motion_clause = motion_clause_map.get(pov_motion, '')
-    
+
     prompt = f"""{base}
 
 CAMERA / POV: {motion_clause}
@@ -2206,7 +2206,7 @@ shot_list:
     pov_traversal: <enum: walking_forward | descending | ascending | approaching_character | turning_left | turning_right | static_with_micro_bob>
     audio_layer_continuity: [<list of layer_ids that must NOT cut at boundary>]
     visual_style_lut: <lut_id reference>
-    
+
 # Plus per-section:
 narrative_sections:
   - section_id: pre_decision
@@ -2656,4 +2656,3 @@ phase_3_forward:
   - **Sidechain duck −6dB** del SFX (y música/ambient) bajo el narrador continuo (Layer 3). Equivale al `mix_db` del SPEC: un SFX a `mix_db: -12` a -16 dB reposa cómodo bajo un narrador a ~0 dBFS de referencia; durante el habla el sidechain lo baja 6 dB extra.
   - Capa SFX dedicada (track-index 60-110, hard rule #8). SFX diegéticos → Layer 1 clip-scoped; stings no-diegéticos (whoosh, glitch_warm) → Layer 2 effect.
 - **Implementación duck**: `sidechaincompress` con el bus del narrador como key, ratio ~4:1, threshold tal que el ducking efectivo ≈ −6dB cuando el narrador habla; release ~250ms para que el SFX "respire" de vuelta entre frases.
-

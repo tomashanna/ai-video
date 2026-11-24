@@ -99,4 +99,3 @@
 **Drop shadow obligatorio en todos los textos**: receta canónica universal en `ai-video-production/ELEMENTS-LIBRARY.md` § "Receta universal — Drop shadow para texto sobre IA-generated images" (4 strokes diagonales + drop shadow + glow envelope). **NO duplicar acá** — apuntar. (Hereda regla referent-validated: drop shadow > thick stroke.)
 
 ---
-

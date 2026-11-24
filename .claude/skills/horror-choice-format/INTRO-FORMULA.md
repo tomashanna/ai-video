@@ -39,14 +39,14 @@
 **Prompt template Gemini Nano Banana**:
 
 ```
-Wide centered composition of an abandoned [SETTING] entrance at deep dusk/night. 
-A [PORTAL TYPE: wooden-framed dark tunnel mouth / open doorway / cave mouth] in 
-the center background, [ENVIRONMENTAL DETAIL: rusted mine cart rails / overgrown 
-path / cracked stone steps] leading into pitch darkness. Thick heavy fog drifting 
-horizontally across the entrance, partially obscuring the mouth. **Two dim warm 
-[LIGHT SOURCE: carbide lamps / orange embers / pairs of eyes] glowing faintly 
-deep inside.** Industrial debris and dark [vegetation/forest/structures] flanking 
-the sides. No people, no characters, completely empty entrance. Cold blue twilight 
+Wide centered composition of an abandoned [SETTING] entrance at deep dusk/night.
+A [PORTAL TYPE: wooden-framed dark tunnel mouth / open doorway / cave mouth] in
+the center background, [ENVIRONMENTAL DETAIL: rusted mine cart rails / overgrown
+path / cracked stone steps] leading into pitch darkness. Thick heavy fog drifting
+horizontally across the entrance, partially obscuring the mouth. **Two dim warm
+[LIGHT SOURCE: carbide lamps / orange embers / pairs of eyes] glowing faintly
+deep inside.** Industrial debris and dark [vegetation/forest/structures] flanking
+the sides. No people, no characters, completely empty entrance. Cold blue twilight
 palette outside, faint amber glow inside. Cinematic ominous establishing shot.
 ```
 

@@ -1365,7 +1365,7 @@ phase_2_forward:
 **Updated SPEC schema v10 field**:
 ```yaml
 narrative_structure:
-  counterfactual_placement: "before_choice_resolves" | "twin_ending_good_alternate" | 
+  counterfactual_placement: "before_choice_resolves" | "twin_ending_good_alternate" |
                            "good_path_at_end" | "parallel_alternation" |
                            "after_both_paths_retrospective_DEPRECATED"
   emotional_framing: "stakes_lift" | "relief_contrast" | "retrospective_closure"
@@ -1467,4 +1467,3 @@ phase_2_forward:
   - "Build ai-video audit-audio extension: spectrogram-based layer count detection (3 freq bands threshold)"
   - "Codify drone/ambient/accent ElevenLabs SFX prompts in assets/library/sfx-catalog.json per genre"
 ```
-

@@ -473,7 +473,7 @@ ENGINEER ↔ AUDITOR     : Filesystem (CP[N]-handoff.md)
 ARCHITECT ↔ AUDITOR    : Filesystem (Track commits + amendments)
                          + USER bridge
 
-ALL agents ↔ SHARED   : 
+ALL agents ↔ SHARED   :
   • GAPS-LOG.md (cross-agent gap tracking)
   • active_session_state.md (memory snapshot)
   • PAUTA-MASTER + INGENIERO-PAUTA (canonical authority)
@@ -570,7 +570,7 @@ Plus user perceptual ground truth (Rule D PRECEDENCE):
 Path A: iter retry (engineer-domain fixes)
    - Most fixes (caption text, mix levels, GSAP timing, etc.)
    - Iter cap=2 default per overnight auth
-   
+
 Path B: engineer bypass (accept current as-is)
    - REJECT default — bypass erases architect intent
    - User explicit waiver required
@@ -578,15 +578,15 @@ Path B: engineer bypass (accept current as-is)
 Path B-extension: architect SPEC amendment post-escalate
    - Architect amends SPEC with canonical rationale
    - Engineer execute under new SPEC
-   
+
 Path C: alternative tool / approach
    - When current approach hits ceiling (Hailuo Std weakness, etc.)
    - Engineer + architect collaborate
-   
+
 Path D: full sprint (Phase A→E)
    - When multiple structural gaps detected
    - User authorization required
-   
+
 Path E: re-spec / re-render with corrected values
    - Post Phase 1 measurement scripts
    - Flip pending → validated
@@ -698,27 +698,27 @@ trigger: V4 shipped 2026-05-23, ready to start
 sprint_id: M  # M for "Marina" AI influencer forward + "Multi-layer defense"
 status: NOT_STARTED (codification 2026-05-23)
 scope: |
-  Sprint M consolidates CRITICAL validators preventing entire bug classes that 
-  user perceptual detected when validators technical missed (pattern_class 
-  "user_perceptual_detects_what_validators_miss"). Defense in depth 5 layers + 
+  Sprint M consolidates CRITICAL validators preventing entire bug classes that
+  user perceptual detected when validators technical missed (pattern_class
+  "user_perceptual_detects_what_validators_miss"). Defense in depth 5 layers +
   cost discipline + tier strategy.
-  
+
   CRÍTICA (Bug #12 defense in depth — 4 scripts):
   - ai-video audit-spec-narration-fits-duration (L1 — WPM band pre-emit SPEC)
   - ai-video audit-tts-vs-spec-duration (L2 — TTS actual vs SPEC intent post-CP2)
   - ai-video audit-clip-timing-vs-audio (L4 — per-clip + render total pre-CP5)
   - audit-auditor-decision-scope.py (Gap #52 — auditor escalation enforcement)
-  
+
   ALTA:
   - audit-spec-tier-strategy.py (Gap #53 — default tier per shot position)
-  
+
   Plus Sub-Fase 3A products (in flight 2026-05-23):
   - ai-video build-video-hybrid + 3 sub-scripts (Layer 1-4 assembly consolidation)
   - src/ai_video/core/hard_rules_parser.py (dynamic threshold helper)
   - 6 test_*.py companions (Hard Rule #26 enforcement)
-  
+
   Plus 10 user_claim_no_primary_source candidates (validate before build):
-  - cost-tracker-unified.py, ai-video audit-spec-narrative-coherence, 
+  - cost-tracker-unified.py, ai-video audit-spec-narrative-coherence,
     audit-spec-language-neutral.py, audit-spec-cost-estimates-vs-real.py,
     audit-thresholds-vs-hardrules.py, audit-spec-consequence-effects.py,
     audit-architect-bootstrap-reads.py, cost-cap-auto-scale.py,
@@ -728,15 +728,15 @@ owner: TBD (Sprint M builder, likely engineer agent narrow scope per validator)
 budget_estimated: $0 dev (all local + FREE Gemini Vision)
 ETA: TBD — depends on V4 perceptual review + V5+ launch planning
 priority: M priority CRÍTICA (escalated post V4 user perceptual catches)
-trigger: 
+trigger:
   - Bug class #12 narration timing detected V4 user perceptual (validator gap closure)
   - Gap #52 auditor silent decision (pattern instance #5 threshold reached)
   - Forward Marina (AI influencer Hedra cost variables) sensitivity
 
 marina_specific_consideration: |
-  AI influencer hooks (face close-up early) may need Pro mandatory through hook + 
-  setup phases for realism belief threshold (uncanny valley face sensitivity higher 
-  in face close-ups). Adapt tier strategy when Marina launches with Hedra lipsync 
+  AI influencer hooks (face close-up early) may need Pro mandatory through hook +
+  setup phases for realism belief threshold (uncanny valley face sensitivity higher
+  in face close-ups). Adapt tier strategy when Marina launches with Hedra lipsync
   cost variables.
 ```
 
@@ -814,7 +814,7 @@ Visual elements to draw in Excalidraw:
 
 [3 large rectangles aligned horizontally]:
   🏛️ ARCHITECT (terminal 2)  |  🛠️ ENGINEER (terminal 1)  |  🔍 AUDITOR (terminal 3)
-  
+
   Color coding:
   - Architect: PURPLE (#6B46C1)
   - Engineer:  GREEN  (#10B981)
@@ -827,11 +827,11 @@ Arrows (bidirectional with labels):
   USER → ARCHITECT: "concept + interview + feedback"
   USER ↔ ENGINEER: "status + iter approvals"
   USER ↔ AUDITOR: "audit results + verdicts"
-  
+
   ARCHITECT → FILESYSTEM: "creative-specs/<id>.yaml"
   ENGINEER → FILESYSTEM: "CP[N]-handoff.md + renders/"
   AUDITOR → FILESYSTEM: "GAPS-LOG.md + verdicts"
-  
+
   Annotation: "No agent-to-agent direct communication"
 ```
 
@@ -1114,7 +1114,7 @@ TITLE: "AUDIO ARCHITECTURE — 3 layers per scope"
 
 [Top row: VISUAL flow]
    clip_01.mp4  ──[effect_01]── clip_02.mp4  ──[effect_02]── clip_03.mp4  ──...
-   
+
 [Middle row 1: LAYER 1 AUDIO PER-CLIP (orange, bundled in clip mp4)]
    ┌─────────────┐           ┌─────────────┐           ┌─────────────┐
    │TTS+SFX+AVU  │           │TTS+SFX+AVU  │           │TTS+SFX+AVU  │
@@ -1176,29 +1176,29 @@ TITLE: "AUTONOMOUS VIDEO FACTORY — 3 videos/día con manual publish anti-ban"
    • Input queue (theme + pattern + setting)
    • Monitor in-flight + costs + scores
    • 3 HUMAN CHECKPOINTS marked with ⭐ stars
-   
+
 [Center: ORCHESTRATOR.py — large blue box]
    • Scheduled trigger 3x/día
-   • State machine PENDING → SPEC_GEN → AUDIT_SPEC → CP1 → AUDIT_CP1 → 
+   • State machine PENDING → SPEC_GEN → AUDIT_SPEC → CP1 → AUDIT_CP1 →
      CP2 → AUDIT_CP2 → CP3 → AUDIT_CP3 → CP4 → AUDIT_CP4 → CP5 → AUDIT_CP5 → READY
    • ⭐ Per-CP auditor gates MANDATORY (Hard Rule #24)
    • NO engineer multi-CP autonomous run (anti-pattern #15)
    • Failure recovery: max 3 iter per CP → escalate human
-   
+
 [Below orchestrator — 3 agent boxes side-by-side]:
    🏛️ ARCHITECT (purple)     🛠️ ENGINEER (green)     🔍 AUDITOR (orange)
    Claude API + PAUTA         Claude API + Phase 2    Claude API + calib v4
-   
+
 [Below agents — 4th automated agent]:
    ⭐ Quality Gate Agent (teal) — per-clip operates autonomously
-   
+
 [Below QG agent — model tier]:
    Veo 3.1 (yellow, FREE Gemini API) | Hailuo Replicate (red, $0.27-0.60)
-   
+
 [Bottom of pipeline — output queue gray]:
    Filesystem /renders/ready/<video>.mp4
    + caption_draft.txt + hashtags.txt + first_frame.jpg
-   
+
 [FINAL stage — USER MANUAL PUBLISH (blue with anti-ban warning)]:
    ⚠️ USER → manually opens IG → posts at organic time
    NEVER programmatic publish — IG ban risk
@@ -1207,7 +1207,7 @@ TITLE: "AUTONOMOUS VIDEO FACTORY — 3 videos/día con manual publish anti-ban"
    • Human checkpoints star markers: SPEC approval, HUMAN-CHECKLIST, publish
    • Cost annotation: $4 per video × 90/mo = $360/mo Replicate
    • Time annotation: 10-15 min user time per video (manual publish included)
-   
+
 [Decision gate marker top-right]:
    "Build factory ONLY IF video #3 perceptual ≥9.0
     (validation gate per Phase 4 evolution roadmap)"
@@ -1337,25 +1337,25 @@ Phase 8:        Engagement-loop integration (auto-respond DMs, comment monitorin
 
 ```
 [Block 1 — Subject+body]
-Matarife stands frontal facing viewer, motionless arms by sides, slight chest 
-breath rise every 2 seconds. Cocinera 2m to his right inclines body slightly 
-forward toward viewer, head tilts 5° while breathing normally, eye glow 
+Matarife stands frontal facing viewer, motionless arms by sides, slight chest
+breath rise every 2 seconds. Cocinera 2m to his right inclines body slightly
+forward toward viewer, head tilts 5° while breathing normally, eye glow
 intensity pulses subtle warm tungsten.
 
 [Block 2 — Camera direction]
-Wide-medium portrait lens 35mm, static framing eye-level, no movement except 
+Wide-medium portrait lens 35mm, static framing eye-level, no movement except
 imperceptible parallax background dust particles.
 
 [Block 3 — Lighting]
-Cinema matadero overhead fluorescent tubes 5000K cool, flickering once at 
-4-second mark. Side fluorescent on left wall casts slight green-cyan tint. 
-Cocinera underlit by warm 2700K tungsten from below table (visible heat from 
+Cinema matadero overhead fluorescent tubes 5000K cool, flickering once at
+4-second mark. Side fluorescent on left wall casts slight green-cyan tint.
+Cocinera underlit by warm 2700K tungsten from below table (visible heat from
 caldron).
 
 [Block 4 — Atmosphere VIA physical]
-Cold breath visible from cocinera mouth subtle, cold air condensation faint on 
-matarife cleaver-head surface. Steam rising lazy from caldron toward cocinera 
-chin. Hanging meat carcasses sway nearly imperceptible 2cm side-to-side every 
+Cold breath visible from cocinera mouth subtle, cold air condensation faint on
+matarife cleaver-head surface. Steam rising lazy from caldron toward cocinera
+chin. Hanging meat carcasses sway nearly imperceptible 2cm side-to-side every
 3 seconds.
 
 [Block 5 — Style reference]
@@ -1422,7 +1422,7 @@ Q1: ¿Shot requires MOTION NARRATIVO?
     │       hero shot   → Pro 1080p ($0.08/s)
     └─ NO → Q2
 
-   ⚠️ HOOK VIRAL OVERRIDE: shot data-start <30s → Kling 2.5 Turbo Pro 
+   ⚠️ HOOK VIRAL OVERRIDE: shot data-start <30s → Kling 2.5 Turbo Pro
    DEFAULT regardless of motion (hard rule #6).
 
 Q2: ¿Cinematic ESTÁTICA + character preservation?
@@ -1644,7 +1644,7 @@ FASE 0 — Architect prompt al usuario para gather inputs:
    ¿Cuál preferís? O describí el archetype de twist que querés.
 
 2. SETTING + ATMOSPHERE
-   Examples canonical: planta eléctrica, mina abandonada, acuario, carretera, 
+   Examples canonical: planta eléctrica, mina abandonada, acuario, carretera,
    fundición, metro, tren, cockpit, matadero.
    ¿Qué setting? + paleta tonal preferred (warm/cool/sepia/cinematic).
 
@@ -1655,14 +1655,14 @@ FASE 0 — Architect prompt al usuario para gather inputs:
    Describilos físicamente OR pickeá del PAUTA § 5 catalog.
 
 4. CLIFFHANGER ARCHETYPE
-   Tipos: muerte / bucle eterno TRAP / pérdida identidad / prisión emocional / 
+   Tipos: muerte / bucle eterno TRAP / pérdida identidad / prisión emocional /
           salida amanecer
    ¿Cuál twist final querés?
 
 5. DELIVERY FORMAT (default: reel 9:16, 88s)
    ¿Diferente? Especificá.
 
-Cuando me confirmes los 5, genero SPEC v9 completo con shot_list 22 shots + 
+Cuando me confirmes los 5, genero SPEC v9 completo con shot_list 22 shots +
 narration_script + asset_list + GAPS #23-#28 fields populated."
 ```
 
@@ -1675,20 +1675,20 @@ narration_script + asset_list + GAPS #23-#28 fields populated."
   scene_context:
     who_is_there: "Viewer POV (manos+cuchillo holding) + carcasa hanging from hook"
     who_does_what: |
-      Carcasa colgante de un gancho se contorsiona violentamente, su parte 
-      central (donde estaría el estómago) ABRE COMO UNA BOCA MASIVA con dientes 
-      humanos uniformes perfectos visibles en el interior rosado-rojo. La boca 
+      Carcasa colgante de un gancho se contorsiona violentamente, su parte
+      central (donde estaría el estómago) ABRE COMO UNA BOCA MASIVA con dientes
+      humanos uniformes perfectos visibles en el interior rosado-rojo. La boca
       grita silencio. Carne se estira en hilos translúcidos entre dientes.
     why_this_shot_exists: |
-      Climax body horror P6 consequence_A — viewer eligió "mirar" → carcasa 
+      Climax body horror P6 consequence_A — viewer eligió "mirar" → carcasa
       revela ser organismo vivo + lo va a tragar. Setup para shot_08 absorption.
     narration_in_this_shot: |
       [23.5-25.5s]: "Si mirás, la carcasa abre la boca grande, te traga entero."
   visual_intent: |
     POV viewer: manos+cuchillo visible bottom edge frame (frozen mid-action).
-    Center frame: carcasa hanging from chain swinging slow. Mid-carcasa interior 
-    expands wide reveals mouth aperture 60cm wide x 80cm tall. Inside: rows of 
-    uniform human teeth (28-32 visible). Pink-red soft tissue glistens wet. 
+    Center frame: carcasa hanging from chain swinging slow. Mid-carcasa interior
+    expands wide reveals mouth aperture 60cm wide x 80cm tall. Inside: rows of
+    uniform human teeth (28-32 visible). Pink-red soft tissue glistens wet.
     Lateral chain creaks visible side-to-side motion 5cm. Cinematic body horror.
   visual_action_match:
     spec_text_narration: "carcasa abre la boca grande te traga entero"
@@ -1720,16 +1720,16 @@ This anchor will be reused across multiple shots to maintain character consisten
 CHARACTER: matarife_anchor
 
 PROMPT (8K photorealistic):
-Photorealistic 8k portrait, full body neutral standing pose, plain gray 
-background, soft front light. Subject: tall thin male humanoid figure, 
-height 1.85m. CRITICAL: his head is literally replaced by a large vertical 
-butcher cleaver knife (60cm tall stainless steel blade pointing up, sharp 
-edge visible at top, black molded grip where mouth would be at bottom — no 
-human face, no eyes). Body wears thick brown leather butcher apron stained 
-with dried blood and rust patches covering chest and thighs. Industrial 
-blue plastic gloves up to elbows. Black rubber boots knee-high. Arms hang 
-neutral at sides. No human facial expression possible (no face). The 
-cleaver-head reflects ambient light subtly (steel sheen). Cinematic horror 
+Photorealistic 8k portrait, full body neutral standing pose, plain gray
+background, soft front light. Subject: tall thin male humanoid figure,
+height 1.85m. CRITICAL: his head is literally replaced by a large vertical
+butcher cleaver knife (60cm tall stainless steel blade pointing up, sharp
+edge visible at top, black molded grip where mouth would be at bottom — no
+human face, no eyes). Body wears thick brown leather butcher apron stained
+with dried blood and rust patches covering chest and thighs. Industrial
+blue plastic gloves up to elbows. Black rubber boots knee-high. Arms hang
+neutral at sides. No human facial expression possible (no face). The
+cleaver-head reflects ambient light subtly (steel sheen). Cinematic horror
 aesthetic but composed and frontal. No text, no logos.
 
 OUTPUT REQUIREMENTS:
@@ -1760,7 +1760,7 @@ auditor_query = """
 You are an INDEPENDENT VIDEO AUDIT EXPERT.
 
 CONTEXT: This is frame extracted at t=22s from matadero-banquete iter 8 render.
-Engineer's claim: "D1 decision UI countdown shows digit '3' at start of window 
+Engineer's claim: "D1 decision UI countdown shows digit '3' at start of window
 (t=22.64s) with proper film leader Academy style + freeze + filter overlay."
 
 YOUR TASK: Verify the engineer's claim INDEPENDENTLY. Do NOT trust the label.
@@ -1768,18 +1768,18 @@ YOUR TASK: Verify the engineer's claim INDEPENDENTLY. Do NOT trust the label.
 Examine the attached frame and report:
 
 1. Is countdown digit "3" visible center frame? (Y/N + position)
-2. What style is the countdown? (film_leader_academy = crosshair circle + big 
+2. What style is the countdown? (film_leader_academy = crosshair circle + big
    central digit OR css_minimalist_ring = small ring + small digit OR other)
 3. Is background scene frozen (no motion blur, sharp edges)? Or animated?
 4. Is filter overlay applied (sepia/grain/VHS visible)? Or raw clip?
 5. Are choice buttons "A) MIRAR" / "B) SEGUIR" visible at top?
 6. Is loading bar visible? At what Y% position?
-7. Is cocinera lips static (NOT mid-articulation)? Per anti-pattern #9, 
+7. Is cocinera lips static (NOT mid-articulation)? Per anti-pattern #9,
    character lips MUST be static when no character audio playing.
 
 Output: structured JSON with each verification + concur/refute engineer claim.
 
-CANONICAL REFERENCE: Reels P6 Hedonismo Eterno (ref-08 acuario + ref-13 
+CANONICAL REFERENCE: Reels P6 Hedonismo Eterno (ref-08 acuario + ref-13
 electrica per PAUTA-MASTER § 18 decision-UI-pacing).
 """
 
@@ -1803,24 +1803,24 @@ User actúa como bridge entre agents (no direct comm). Typical bridge prompts:
 
 ```
 USER → ARCHITECT (start sprint):
-"Architect, necesito SPEC video #2. Inputs FASE 0: pattern P3, setting cinema 
-abandonado, dyad proyeccionista (bueno aparente) + acomodador (malo aparente 
+"Architect, necesito SPEC video #2. Inputs FASE 0: pattern P3, setting cinema
+abandonado, dyad proyeccionista (bueno aparente) + acomodador (malo aparente
 que salva twist), cliffhanger prisión emocional eterna."
 
 USER → ENGINEER (start CP):
-"Engineer, arrancá CP4 animation. SPEC: creative-specs/cinema-abandonado.yaml. 
+"Engineer, arrancá CP4 animation. SPEC: creative-specs/cinema-abandonado.yaml.
 Usá MODEL-BENCHMARK.md decision tree. Premium prompt 5-block obligatorio."
 
 USER → AUDITOR (audit post-handoff):
-"Auditor, verifica CP5-POST-AUDIT-handoff.md cinema-abandonado iter 1. 
+"Auditor, verifica CP5-POST-AUDIT-handoff.md cinema-abandonado iter 1.
 Run Gate 0 + audit-frames-granular S1-S10 + dual gate check."
 
 USER → AUDITOR (forward learning):
-"Auditor, vi que [X] no funciona bien en este video. Codify forward como GAP 
+"Auditor, vi que [X] no funciona bien en este video. Codify forward como GAP
 si es sistémico."
 
 User feedback chains (Rule D PRECEDENCE):
-"User perceptual: [observation X]" → Auditor codifies → Architect adapts SPEC 
+"User perceptual: [observation X]" → Auditor codifies → Architect adapts SPEC
 forward → Engineer implements forward.
 ```
 

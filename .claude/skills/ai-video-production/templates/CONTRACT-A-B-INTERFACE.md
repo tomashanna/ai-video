@@ -51,11 +51,11 @@ Font family:
   - Narration class: canonical narration font (drop-shadow style, e.g., "Helvetica-Bold")
   - Warning class (red): same font, color override
   - Character name labels: monospaced (e.g., "Courier-Bold")
-  
+
 Font size:
   - ≤8 words per caption: 80px
   - >8 words: 68px
-  
+
 Color:
   - Narration: white (#FFFFFF) + drop shadow black 2px offset
   - Warning (red): #FF3333 + drop shadow black 2px offset

@@ -97,7 +97,7 @@ tl.set("#h3-cap-2", { opacity: 1 }, 21.2);
 
 **Por qué falla**: la UI de Instagram (description, username, music sticker, like button) tapa los bottom ~400px del feed. El caption queda invisible o cortado.
 
-**Fix**: 
+**Fix**:
 ```css
 .caption-wrap {
   bottom: 540px;    /* canónico IG Reel */

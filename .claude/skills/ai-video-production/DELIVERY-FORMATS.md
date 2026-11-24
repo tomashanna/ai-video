@@ -56,7 +56,7 @@ Cada celda representa un combo válido. ⭐ marca proyectos ya producidos.
 
 ```bash
 # Al hacer bootstrap, declarar ambos ejes:
-"Bootstrap video: 
+"Bootstrap video:
   genre   = horror-choice
   format  = reel
   setting = mina abandonada"

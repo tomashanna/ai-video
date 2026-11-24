@@ -44,25 +44,25 @@ Si la cuenta tiene 5+ videos publicados, comparar contra rolling avg últimos 10
 
 ## Hipótesis pre-publicación (qué creía que iba a funcionar)
 
-- 
+-
 
 ## Qué funcionó (basado en data)
 
 Patterns que correlacionan con buenos números en este video:
 
-- 
+-
 
 ## Qué NO funcionó
 
 Patterns que pueden haber bajado los números:
 
-- 
+-
 
 ## Patterns nuevos detectados (a evaluar)
 
 Cosas que noté que NO estaban en docs y vale la pena trackear:
 
-- 
+-
 
 ## Cross-references
 
@@ -71,9 +71,9 @@ Cosas que noté que NO estaban en docs y vale la pena trackear:
 
 ## Notas adicionales
 
-- 
+-
 
 ## Long tail (opcional — completar a T+7d si el video sigue creciendo)
 
-- Views T+7d: 
-- Δ% vs T+48h: 
+- Views T+7d:
+- Δ% vs T+48h:

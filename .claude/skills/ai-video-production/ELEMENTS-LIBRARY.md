@@ -78,7 +78,7 @@ AI video 1/
 
 ```html
 <div data-composition-src="templates/hyperframes/countdown-pulse/index.html"
-     data-start="11" 
+     data-start="11"
      data-duration="3.5"
      data-track-index="50"></div>
 ```
@@ -113,8 +113,8 @@ Cuando aparezca un template que requiera identidad visual distinta:
 
 ```python
 # "Dame todos los countdowns horror"
-countdowns_horror = [e for e in elements 
-                     if 'countdown' in e['tags'] 
+countdowns_horror = [e for e in elements
+                     if 'countdown' in e['tags']
                      and 'horror' in e['tags']]
 ```
 

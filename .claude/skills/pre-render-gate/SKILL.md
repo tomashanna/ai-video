@@ -116,7 +116,7 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
     - 1 bullet "qué funcionó" (replicar en futuros videos)
     - 1 bullet "qué no funcionó" (anti-pattern descubierto, si aplica)
     - Costo total del proyecto
-    
+
     Razón: el video-log.md se consulta antes de cada nuevo video (rotación pattern + cross-video lessons). POST-MORTEM standalone era write-only — nunca propagaba.
 
 16. **¿HUMAN-CHECKLIST ejecutado (gate humano del usuario)?**

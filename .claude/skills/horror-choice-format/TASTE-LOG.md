@@ -149,7 +149,7 @@ shot 4: pongo traje → shot 5: bajo → shot 6: nado
    - Uncanny character silueta DISTINCT (Felipe alien-grey, Tulio sheep-wolf, Dylan spindly)
    - Atmospheric secondary motion ≥3 simultaneous (walls + ambient + character breath + light)
    - Cuts/min 14-19 modulated
-   
+
    Algunas codificadas ya (cuts/min § 23, music layers § 25, counterfactual § 24, character signature § 21, atmospheric motion § 20). Otras NO (POV inmersión literal, liminal-spaces vibe coherence).
 
 5. **System target REAL para video #3** = **perceptual ≥9.0**, NO Gemini ≥9.7. Porque:

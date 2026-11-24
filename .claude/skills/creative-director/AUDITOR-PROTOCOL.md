@@ -245,7 +245,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
    - M7.6 User listen test = sanity check OPTIONAL post-programmatic verification, NO substitute
    - ⭐ **M7.6.5 PER-SEGMENT WPM canonical check (BLOQUEANTE — añadido 2026-05-19 PM post matadero iter 6 user catch GAP #21)**:
      Hard Rule #19 EXPANSION 2026-05-18 codified per-SPEAKER WPM check. PERO intra-speaker per-SEGMENT variance NO audited. Engineer puede aplicar atempo per-speaker uniform PERO over-tempo individual segments para fit duration windows = pace asymmetry user perceives.
-     
+
      **M7.6.5.1 Per-segment WPM computation**:
      ```python
      for seg in captions:
@@ -256,22 +256,22 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
          if wpm_seg < canonical_p25 or wpm_seg > canonical_p75:
              flag_outlier(seg, wpm_seg)
      ```
-     
+
      **M7.6.5.2 Verdicts gating**:
      - All segments ∈ canonical band [152, 180] → ✅ PASS
      - 1 segment >50% over canonical_p75 → 🔴 FAIL bloqueante (user perceptual catches this asymmetry)
      - 1-2 segments marginal (≤20% over/under band) → 🟡 NB (review acceptable depending on segment role: hook/climax/cliffhanger may justify slight deviation)
      - Overall avg PASS pero segments outlier → 🔴 FAIL — overall band check INSUFFICIENT
-     
+
      **M7.6.5.3 Per-segment role considerations** (acceptable variations):
      - Climax staccato peak (e.g., "Caes." 1-word segment): WPM artificial high acceptable (NB only)
      - Cliffhanger soft delivery: WPM slightly slow acceptable (NB only)
      - Normal narration segments: STRICT canonical band [152, 180]
      - **Decision setup segments**: STRICT canonical (these set up countdown timing — over-tempo confuses viewer)
      - **Hook framing question**: STRICT canonical (CRITICAL — first impression retention)
-     
+
      **Caso disparador matadero iter 6**: caption[0] narrator framing "Decidí con quién pasar la noche: matarife... o cocinera." = 9 words / 1.98s = 272.7 WPM (65% over canonical p75=180). Overall avg 178 WPM passed band because other narrator segments compensated slower. User perceptual caught segment-level outlier: "el inicio nose porque va mas rápido que lo demas".
-     
+
      **Fix codified forward**:
      - INGENIERO-PAUTA § 1.X: atempo uniform per-speaker REQUIRED, NO per-segment over-tempo to fit duration windows
      - If narration too long for window → extend window OR cut narration text, NEVER atempo individual segment
@@ -285,25 +285,25 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
      - M7.7.4 User listen test post-programmatic = required confirmation cuando effects chain heavy (no opcional)
      - ⭐ **M7.7.5 SEMANTIC EQUIVALENCE METHODOLOGY REFINEMENT (added 2026-05-18 post matadero Path 2a SoX brittle Whisper case)**:
        Whisper methodology can be brittle a single-letter substitutions o digit normalization. Antes de FAIL verdict, apply semantic equivalence rules:
-       
+
        **Rule A — Digit normalization equivalence**:
        - "Veinte" ↔ "20" (Whisper digit transcribe) = MATCH ✓
        - "Una" ↔ "1", "dos" ↔ "2", etc. (Spanish numerals 1-30) = MATCH
        - Spanish 5:40 = "cinco cuarenta" o "5:40" = MATCH
-       
+
        **Rule B — Phonetic neighborhood equivalence (single consonant substitution)**:
        Phonemes minimal-pair substitutions usually NO afectan intelligibility (user hearing recognizes word despite Whisper transcription error):
        - g ↔ k ("ganchos" ↔ "canchos") = MATCH if same syllable structure
        - b ↔ v ("vienes" ↔ "bienes") = MATCH
        - s ↔ z (Latin Spanish dialect) = MATCH
        - Other consonant pairs phonetically similar = MATCH (case-by-case judgment)
-       
+
        Rule C — Plurals/articles minor variations:
        - "Los ganchos" ↔ "ganchos" (article dropped) = partial match (proportional ratio)
-       
+
        Rule D — User listen test perceptual ground truth precedence:
        Si user listen test PASS (perceptual) BUT Whisper ratio <0.90 via single-substitution brittleness → **perceptual ground truth wins**. Codify result as ✅ PASS with NB flag "Whisper methodology brittle, perceptual confirmed".
-       
+
        **Caso disparador matadero CP2 Path 2a SoX**: matarife_count "Veinte minutos" → Whisper "20 minutos" (digit normalization, NOT intelligibility fail) + matarife_rule "ganchos" → "canchos" (g/k phonetic neighborhood, user perception "está bien"). Strict M7.7 = 1/3 PASS. With M7.7.5 refinement = 3/3 PASS. **Perceptual ground truth (user listen) confirms.**
      - **Caso disparador matadero CP2 post-Oxley 2026-05-18**: matarife mean_volume HIGH (-21 dB) measured M7.1 PASS, PERO user listen "no se escucha nada" porque LPF 2000Hz cortó consonants + aecho out_gain 0.3 drown dry signal → speech unintelligible aunque audible. M7.7 catches this: Whisper re-transcribe processed audio falla word-match vs SPEC.
    - **Rationale**: programmatic acoustic verification es AUTOMATABLE via Whisper + canonical script. NO human-in-loop. Phase 5 automation requires this. **Caso disparador matadero CP2 v1**: Path A approved sin acoustic verification, user listen test post-hoc reveló "MUUUY lentos" — empirical refutation (125-143 WPM vs canon 165 median). **Caso disparador CP2 v3 post-Oxley**: M7 PASS pero matarife inaudible perception — M7.7 audibility/intelligibility expansion codified.
@@ -629,17 +629,17 @@ Después de la tabla, el auditor concluye con UNO de:
     - t=duration*0.75 (e.g., 72s — user caught error 70-77s)
     - t=duration-10s (end-of-video forensics per GAP #30)
     - t=duration-3s (outro card moment)
-    
+
     PLUS run audit-frames-granular con --interval 0.5 OR ai-video audit-frames interval 1.0 + visually inspect ≥10 random frame extracts.
-    
+
     **Caso disparador**: cinema-abandonado iter 3 user flagged 3 error windows (t=15, t=53-62, t=70-77) que auditor (yo) NO verifiqué — solo extracted 88/91/93/95s end-of-video. Trusted engineer "0 FAIL / 8 WARN" sin independent random distributed verification. Anti-pattern #8+#10 recurrence.
-    
+
     **Rule canonical strict**:
     - Sample ≥7 distributed timestamps PER audit cycle
     - Caption overlap detection: count chunks per 5s window — if >5 chunks/5s = too dense, FLAG
     - Audio waveform analysis: ffmpeg volumedetect per 5s window — drift detection
     - Independent verify ≠ accept engineer report
-    
+
     Forward: codify in script `audit-distributed-timestamps.py` (Phase 2 priority).
 
 12. ⭐ **Trust Gemini holistic SCORE single-source (added 2026-05-21 post cinema-abandonado comparative analysis)**. Gemini holistic SCORES con ≥1 punto de inflación vs user perceptual ground truth (caso cinema-abandonado v2 = Gemini 8.6 holistic; user perceived "el peor"). Auditor NEVER concludes "video ship-ready" basado SOLO en Gemini holistic score.
@@ -656,7 +656,7 @@ Después de la tabla, el auditor concluye con UNO de:
    - music layers cinema=1 vs canonical 3 (-66%)
    - character consistency cinema=7/10 vs canonical 9/10 (-2pts)
    - visual artifacts cinema=7/10 vs canonical 8/10 (-1pt)
-   
+
    Holistic Gemini didn't surface these because it scored "atmosphere 9/10" + "narrative 9/10" high. Per-dimension empirical comparison surfaced them.
 
    **Auditor check obligatorio post-CP5 render**:
@@ -747,9 +747,9 @@ Después de la tabla, el auditor concluye con UNO de:
    - NO "mouth begins moving toward warning line" mid-state propositions — esto es exactly el anti-pattern
    - Aplica a TODOS los character faces visibles (face = lips potentially visible = strict compliance)
    - NO aplica a: matarife sin face (cleaver helmet), narrator off-screen, viewer POV (hand visible no face)
-   
+
    **Auditor check obligatorio**: frame extraction at character-non-speech moments (e.g., during narrator overlay OR countdown OR transition silence) — verify lips static. Si lips mid-articulation visible during character-silent moment → 🔴 FAIL realism.
-   
+
    **Caso disparador**: matadero iter 4 propuesta inicial mía (auditor terminal 3) sugirió "cocinera mouth begins moving toward warning line" durante countdown silence — user catch immediato: "se pierde el realismo". Confirms anti-pattern. Forward: codify en INGENIERO-PAUTA + AUDITOR-PROTOCOL para anti-recurrencia universal.
 
 ---

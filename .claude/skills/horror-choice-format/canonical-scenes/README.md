@@ -96,4 +96,3 @@ uv run ai-video extract-canonical-max-detail \
 Post Phase 1 script run + 8/8 refs regenerated:
 - All previous codification flagged `canonical_validation_status: pending_video_measurement` → flip to `validated_via_video_measurement` post empirical cross-canonical bands
 - Anti-pattern #10 (docs trust without direct verification) becomes BLOCKED by build pipeline: any new pattern codification requires `events.json` reference per source
-

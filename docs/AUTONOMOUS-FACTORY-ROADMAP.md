@@ -31,23 +31,23 @@ orchestrator.py per video:
   spawn architect_agent(theme) → SPEC.yaml
   spawn auditor_agent(audit SPEC vs PAUTA) → PASS/NB/FAIL verdict ⭐ GATE
   user_approval_gate(SPEC) ← CHECKPOINT 1
-  
+
   spawn engineer_agent(CP1 anchors) → CP1-handoff.md
   spawn auditor_agent(audit CP1) → verdict ⭐ GATE
   if FAIL → re-spawn engineer CP1 (iter), max 3 attempts
-  
+
   spawn engineer_agent(CP2 TTS) → CP2-handoff.md
   spawn auditor_agent(audit CP2) → verdict ⭐ GATE
-  
+
   spawn engineer_agent(CP3 shots) → CP3-handoff.md
   spawn auditor_agent(audit CP3) → verdict ⭐ GATE
-  
+
   spawn engineer_agent(CP4 animation) → CP4-handoff.md
   spawn auditor_agent(audit CP4) → verdict ⭐ GATE
-  
+
   spawn engineer_agent(CP5 render) → renders/draft.mp4
   spawn auditor_agent(final audit) → verdict ⭐ GATE (calibrated v4 + sentinels + audit-spec)
-  
+
   user_checklist_gate(render) ← CHECKPOINT 2
   user_publish_manual() ← CHECKPOINT 3 (anti-ban)
 ```
@@ -248,7 +248,7 @@ Plus infrastructure:
   - SQLite DB: $0
   - Filesystem state: $0
   - Optional: cloud orchestrator alternative ~$20/mes
-  
+
 GRAND TOTAL ANNUAL: ~$4,320-4,560/año
 ```
 

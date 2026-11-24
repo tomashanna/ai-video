@@ -231,7 +231,7 @@ grep -E '<audio.*src=' <project>/index.html | grep -oE 'src="[^"]+"'
 **Fix doc**: `NARRATIVE-LED-EDITING.md`.
 
 #### 4. Captions
-**Chequear**: 
+**Chequear**:
 - Overlaps entre elementos distintos (`cap-h3-n4` + `cap-h3-branch` visibles juntos)
 - Gaps >0.3s sin texto entre frases del narrador
 - Sync con audio (Whisper auto, no hand-timed)

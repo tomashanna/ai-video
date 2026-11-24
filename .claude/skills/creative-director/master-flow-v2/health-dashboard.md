@@ -115,7 +115,7 @@ NOT building yet — wait for 1-2 more video entries to validate column schema f
    - Own productions average delta: **+1.33** (Gemini OVER-scores)
    - Canonical backrooms refs average delta: **-2.73** (Gemini UNDER-scores)
    - **Total spread = 4.06 puntos** between how Gemini judges own vs canonical
-   
+
    ⚠️ Esto demuele anti-pattern #12 versión original. Gemini NO infla constante 1 pt. Gemini NO sabe puntuar género POV/liminal-spaces correctamente. Penaliza visual artifacts (rubber hands, melt walls) que SON parte del feel backrooms — y por eso under-scores canonical refs.
 
 2. **User baseline NO es 7.85 — es vara honesta**:

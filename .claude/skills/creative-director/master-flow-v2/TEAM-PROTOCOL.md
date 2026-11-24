@@ -380,16 +380,16 @@ Patterns que recurren entre CPs y proyectos:
 PASO 1 — MEASURE (canonical ground truth)
   Run extractor script over N canonical refs → output bands per dimension
   Example: measure-canonical-per-speaker.py → per_speaker_canonical_bands.json
-  
+
 PASO 2 — MATCH (candidate search)
   Search candidates (voice IDs, models, presets) vs measured bands
   Quantitative comparison, NO qualitative guess
-  
+
 PASO 3 — VALIDATE (dual gate)
   Programmatic: candidate output measured fits canonical bands
   Perceptual: user listen test / visual review acoustic ground truth
   BOTH must pass
-  
+
 PASO 4 — USE (commit)
   library entry: canonical_validation_status: validated
   validated_against_canonical_refs: [refs measured]

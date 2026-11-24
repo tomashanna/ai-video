@@ -172,7 +172,7 @@ Después de los inputs FASE 0 y antes de generar TTS/imágenes/SFX, ejecutar dos
 
 ### 9.5.a — Character anchors
 
-El formato horror-choice tiene 2 personajes recurrentes (malo aparente + bueno aparente). El bueno aparente **aparece en 2 contextos visualmente distintos**: H1 presentación y H6 cliffhanger (cabaña / safe place). 
+El formato horror-choice tiene 2 personajes recurrentes (malo aparente + bueno aparente). El bueno aparente **aparece en 2 contextos visualmente distintos**: H1 presentación y H6 cliffhanger (cabaña / safe place).
 
 **Decisión obligatoria pre-render**:
 
