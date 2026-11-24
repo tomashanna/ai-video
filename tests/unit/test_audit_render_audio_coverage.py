@@ -31,8 +31,6 @@ from pathlib import Path
 
 import pytest
 
-pytestmark = pytest.mark.ffmpeg  # synthesises fixtures with ffmpeg lavfi
-
 HERE = Path(__file__).parent
 SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_render_audio_coverage.py"
 
@@ -150,6 +148,12 @@ def test_silencedetect_parser():
 # ---------------------------------------------------------------------------
 # RUNTIME PATH (in-process main() with MOCKED media wrappers)
 # ---------------------------------------------------------------------------
+@pytest.fixture
+def tmp(tmp_path):
+    """These tests were written for a hand-rolled runner that passed a temp dir."""
+    return tmp_path
+
+
 def _patch_runtime(duration, segments, silence_zones):
     MOD.ffprobe_duration = lambda v: duration
     MOD.whisper_transcribe_mp4 = lambda v, language="es", model_name="base": segments
