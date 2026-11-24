@@ -1,6 +1,6 @@
 # AI Video — sistema de producción de videos cortos con IA
 
-[![CI](https://github.com/tomashanna/AI-Video-Edits-/actions/workflows/ci.yml/badge.svg)](https://github.com/tomashanna/AI-Video-Edits-/actions/workflows/ci.yml)
+[![CI](https://github.com/tomashanna/ai-video/actions/workflows/ci.yml/badge.svg)](https://github.com/tomashanna/ai-video/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -71,7 +71,7 @@ Detalle operativo (hard rules, gates por checkpoint, triggers de skills): [`docs
 Requisitos: Python ≥ 3.11, [uv](https://docs.astral.sh/uv/), `ffmpeg`/`ffprobe`; Node ≥ 22 solo para renderizar con HyperFrames.
 
 ```bash
-git clone https://github.com/tomashanna/AI-Video-Edits-.git && cd AI-Video-Edits-
+git clone https://github.com/tomashanna/ai-video.git && cd ai-video
 uv sync --extra providers            # + --extra media para Whisper/OpenCV, --all-extras para todo
 cp .env.example .env                 # completar solo las keys que vayas a usar
 uv run ai-video doctor               # binarios, extras y keys (nunca imprime valores)

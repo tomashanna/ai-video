@@ -18,6 +18,11 @@ dependencies = [
   "pydantic-settings>=2.3",
 ]
 
+[project.urls]
+Repository = "https://github.com/tomashanna/ai-video"
+Issues = "https://github.com/tomashanna/ai-video/issues"
+Changelog = "https://github.com/tomashanna/ai-video/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 # Paid generative APIs (ElevenLabs, Gemini/Veo, Replicate/Kling).
 providers = [
