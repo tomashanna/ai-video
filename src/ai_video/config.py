@@ -15,7 +15,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AliasChoices, Field, SecretStr
+from pydantic import AliasChoices, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from ai_video.errors import ConfigError
@@ -78,6 +78,14 @@ class Settings(BaseSettings):
     # --- Logging --------------------------------------------------------------
     log_level: str = Field(default="INFO", validation_alias=AliasChoices("AIVIDEO_LOG_LEVEL", "log_level"))
     log_json: bool = Field(default=False, validation_alias=AliasChoices("AIVIDEO_LOG_JSON", "log_json"))
+
+    @field_validator("gemini_api_key", "elevenlabs_api_key", "replicate_api_token", mode="before")
+    @classmethod
+    def _blank_is_unset(cls, v: object) -> object:
+        """``KEY=`` in .env (as in .env.example) means "not configured", not an empty key."""
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
 
     def require(self, name: SecretName) -> str:
         """Return the secret value or raise :class:`ConfigError` with a fix hint."""
