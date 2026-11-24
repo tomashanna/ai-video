@@ -18,7 +18,7 @@ USAGE:
 
 OUTPUTS:
     stdout: human-readable score breakdown
-    --output: JSON with 8 dimensions + weighted_score + raw_response
+    --output: JSON with the v4 dimensions + weighted_score + raw_response
 
 ENV:
     GEMINI_API_KEY — required.
@@ -113,19 +113,30 @@ def find_prompt_template() -> Path:
     return prompt_path("calibrated-gemini-prompt-v4.txt")
 
 
+def weighted_score(dims: dict) -> float:
+    """Weighted mean of the v4 dimensions (weights sum to 1.0). Scores must be within [0, 10]."""
+    missing = [k for k in WEIGHTS if k not in dims]
+    if missing:
+        raise ValueError(f"missing dimensions: {missing}")
+    for k in WEIGHTS:
+        if not 0.0 <= float(dims[k]) <= 10.0:
+            raise ValueError(f"{k}={dims[k]} outside [0, 10]")
+    return round(sum(float(dims[k]) * w for k, w in WEIGHTS.items()), 4)
+
+
 def parse_response(text: str) -> dict:
-    """Extract 8 dimensional scores + weighted score + verdict from Gemini response."""
+    """Extract the v4 dimensional scores + weighted score + verdict from a Gemini response."""
     dims = {}
     for name, pattern in DIM_PATTERNS:
         m = re.search(pattern, text, re.IGNORECASE)
         if m:
             dims[name] = float(m.group(1))
 
-    # Compute weighted score from dimensions (don't trust Gemini's own arithmetic)
-    if len(dims) == 8:
-        weighted_computed = sum(dims[k] * WEIGHTS[k] for k in WEIGHTS)
-    else:
-        weighted_computed = None
+    # Compute weighted score from dimensions (don't trust Gemini's own arithmetic).
+    # v4 has len(WEIGHTS) == 10 dimensions; the old hardcoded "== 8" (v2 leftover) meant
+    # the weighted score was NEVER computed and every run reported "incomplete".
+    complete = all(k in dims for k in WEIGHTS)
+    weighted_computed = weighted_score(dims) if complete else None
 
     # Also extract Gemini's reported WEIGHTED SCORE (cross-check)
     m_weighted = re.search(r"WEIGHTED SCORE[:\s]+(\d+\.?\d*)", text)
@@ -145,7 +156,7 @@ def parse_response(text: str) -> dict:
         "weighted_score_reported": weighted_reported,
         "confidence": confidence,
         "verdict": verdict,
-        "dimensions_complete": len(dims) == 8,
+        "dimensions_complete": complete,
     }
 
 
@@ -215,7 +226,9 @@ def main():
         if parsed['verdict']:
             print(f"  VERDICT: {parsed['verdict']}")
     else:
-        print(f"  ⚠️  Could not parse all 8 dimensions ({len(parsed['dimensions'])}/8)")
+        print(
+            f"  ⚠️  Could not parse all {len(WEIGHTS)} dimensions ({len(parsed['dimensions'])}/{len(WEIGHTS)})"
+        )
         print("  Raw response saved for inspection.")
 
     if args.output:
@@ -227,7 +240,10 @@ def main():
         }
         args.output.write_text(json.dumps(output_data, indent=2))
         print(f"\n  → Full output: {args.output}", file=sys.stderr)
+    # Non-zero exit when the response could not be scored, so callers never treat an
+    # unparseable judge answer as a pass.
+    return 0 if parsed["dimensions_complete"] else 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
