@@ -1,0 +1,1090 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-15T23:36:17+00:00",
+    "n_referents": 10,
+    "method": "Local-only measurements. Whisper transcription + ffmpeg ebur128 + librosa BPM/RMS + PIL/numpy frame analysis.",
+    "tools_used": [
+      "openai-whisper (small, fp16=False, language=es)",
+      "ffmpeg ebur128 filter",
+      "librosa 0.11.0 (beat_track, rms)",
+      "Pillow 12.x + numpy for HSV/brightness/vignette/grain"
+    ],
+    "section_split": "hook=0-15%, dilemmas=15-80%, outro=80-100% of duration",
+    "sanitized": "Numeric measurements only. Source filenames, creator handles and on-screen text removed; referents are anonymised as ref-NN."
+  },
+  "per_referent": {
+    "ref-03": {
+      "duration_s": 93.29,
+      "pace": {
+        "wpm_total": 195.41,
+        "wpm_hook": 184.62,
+        "wpm_dilemmas": 202.4,
+        "wpm_outro": 178.35,
+        "coverage_pct": 80.31,
+        "avg_block_s": 2.997,
+        "total_words": 244,
+        "speak_time_s": 74.92,
+        "n_segments": 25,
+        "pause_count": 21,
+        "pause_total_s": 13.82,
+        "pause_avg_s": 0.658,
+        "pause_max_s": 2.3
+      },
+      "audio": {
+        "lufs_integrated": -13.76,
+        "lufs_hook": -15.3,
+        "lufs_dilemmas": -13.6,
+        "lufs_outro": -13.3,
+        "music_bpm": 103.36,
+        "rms_db_total": -21.08,
+        "rms_db_hook": -20.7,
+        "rms_db_dilemmas": -19.2,
+        "rms_db_outro": -27.5,
+        "dynamic_range_db": 18.62
+      },
+      "pacing": {
+        "cuts_per_min": 3.22,
+        "cuts_per_min_raw": 7.07,
+        "cuts_total": 5,
+        "cuts_total_raw": 11,
+        "flash_bursts": 2,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 3,
+        "cuts_outro": 2,
+        "avg_time_between_cuts_s": 15.55,
+        "min_time_between_cuts_s": 5.55,
+        "max_time_between_cuts_s": 21.16,
+        "long_shots_gt_8s": 4
+      },
+      "visual": {
+        "n_frames_analyzed": 19,
+        "hsv_avg": [
+          74.7,
+          34.9,
+          20.8
+        ],
+        "dominant_hue_label": "red",
+        "dominant_hue_deg": 15.0,
+        "brightness_mean": 53.04,
+        "brightness_std": 19.36,
+        "vignette_ratio": 1.419,
+        "grain_variance": 196.02,
+        "frame_to_frame_diff_avg": 26.95,
+        "frame_to_frame_diff_max": 64.31,
+        "saturation_pct": 34.9
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 1.37,
+        "silence_pct": 1.47
+      }
+    },
+    "ref-04": {
+      "duration_s": 69.27,
+      "pace": {
+        "wpm_total": 171.29,
+        "wpm_hook": 156.16,
+        "wpm_dilemmas": 165.5,
+        "wpm_outro": 203.21,
+        "coverage_pct": 88.5,
+        "avg_block_s": 6.811,
+        "total_words": 175,
+        "speak_time_s": 61.3,
+        "n_segments": 9,
+        "pause_count": 6,
+        "pause_total_s": 2.48,
+        "pause_avg_s": 0.413,
+        "pause_max_s": 0.6
+      },
+      "audio": {
+        "lufs_integrated": -13.83,
+        "lufs_hook": -13.3,
+        "lufs_dilemmas": -13.9,
+        "lufs_outro": -13.8,
+        "music_bpm": 161.5,
+        "rms_db_total": -23.36,
+        "rms_db_hook": -21.86,
+        "rms_db_dilemmas": -20.03,
+        "rms_db_outro": -35.35,
+        "dynamic_range_db": 22.34
+      },
+      "pacing": {
+        "cuts_per_min": 2.6,
+        "cuts_per_min_raw": 2.6,
+        "cuts_total": 3,
+        "cuts_total_raw": 3,
+        "flash_bursts": 0,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 2,
+        "cuts_outro": 1,
+        "avg_time_between_cuts_s": 17.32,
+        "min_time_between_cuts_s": 3.45,
+        "max_time_between_cuts_s": 42.54,
+        "long_shots_gt_8s": 2
+      },
+      "visual": {
+        "n_frames_analyzed": 14,
+        "hsv_avg": [
+          105.1,
+          31.6,
+          34.9
+        ],
+        "dominant_hue_label": "orange",
+        "dominant_hue_deg": 45.0,
+        "brightness_mean": 88.91,
+        "brightness_std": 47.36,
+        "vignette_ratio": 1.522,
+        "grain_variance": 269.56,
+        "frame_to_frame_diff_avg": 53.27,
+        "frame_to_frame_diff_max": 116.16,
+        "saturation_pct": 31.6
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 1.94,
+        "silence_pct": 2.8
+      }
+    },
+    "ref-05": {
+      "duration_s": 71.28,
+      "pace": {
+        "wpm_total": 156.42,
+        "wpm_hook": 105.03,
+        "wpm_dilemmas": 166.25,
+        "wpm_outro": 155.91,
+        "coverage_pct": 96.33,
+        "avg_block_s": 5.722,
+        "total_words": 179,
+        "speak_time_s": 68.66,
+        "n_segments": 12,
+        "pause_count": 1,
+        "pause_total_s": 0.48,
+        "pause_avg_s": 0.48,
+        "pause_max_s": 0.48
+      },
+      "audio": {
+        "lufs_integrated": -13.93,
+        "lufs_hook": -13.2,
+        "lufs_dilemmas": -14.1,
+        "lufs_outro": -13.9,
+        "music_bpm": 136.0,
+        "rms_db_total": -23.91,
+        "rms_db_hook": -22.42,
+        "rms_db_dilemmas": -21.44,
+        "rms_db_outro": -33.04,
+        "dynamic_range_db": 21.87
+      },
+      "pacing": {
+        "cuts_per_min": 5.05,
+        "cuts_per_min_raw": 5.05,
+        "cuts_total": 6,
+        "cuts_total_raw": 6,
+        "flash_bursts": 0,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 3,
+        "cuts_outro": 3,
+        "avg_time_between_cuts_s": 10.18,
+        "min_time_between_cuts_s": 2.28,
+        "max_time_between_cuts_s": 33.09,
+        "long_shots_gt_8s": 2
+      },
+      "visual": {
+        "n_frames_analyzed": 15,
+        "hsv_avg": [
+          102.9,
+          44.8,
+          34.7
+        ],
+        "dominant_hue_label": "red",
+        "dominant_hue_deg": 15.0,
+        "brightness_mean": 88.52,
+        "brightness_std": 27.7,
+        "vignette_ratio": 1.279,
+        "grain_variance": 84.19,
+        "frame_to_frame_diff_avg": 42.54,
+        "frame_to_frame_diff_max": 86.53,
+        "saturation_pct": 44.8
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 1.79,
+        "silence_pct": 2.51
+      }
+    },
+    "ref-06": {
+      "duration_s": 90.74,
+      "pace": {
+        "wpm_total": 172.7,
+        "wpm_hook": 168.22,
+        "wpm_dilemmas": 169.81,
+        "wpm_outro": 183.39,
+        "coverage_pct": 83.47,
+        "avg_block_s": 3.293,
+        "total_words": 218,
+        "speak_time_s": 75.74,
+        "n_segments": 23,
+        "pause_count": 19,
+        "pause_total_s": 14.14,
+        "pause_avg_s": 0.744,
+        "pause_max_s": 2.04
+      },
+      "audio": {
+        "lufs_integrated": -13.83,
+        "lufs_hook": -13.7,
+        "lufs_dilemmas": -14.0,
+        "lufs_outro": -13.5,
+        "music_bpm": 129.2,
+        "rms_db_total": -20.91,
+        "rms_db_hook": -20.32,
+        "rms_db_dilemmas": -19.76,
+        "rms_db_outro": -25.1,
+        "dynamic_range_db": 18.77
+      },
+      "pacing": {
+        "cuts_per_min": 1.98,
+        "cuts_per_min_raw": 1.98,
+        "cuts_total": 3,
+        "cuts_total_raw": 3,
+        "flash_bursts": 0,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 0,
+        "cuts_outro": 3,
+        "avg_time_between_cuts_s": 22.69,
+        "min_time_between_cuts_s": 2.21,
+        "max_time_between_cuts_s": 81.2,
+        "long_shots_gt_8s": 1
+      },
+      "visual": {
+        "n_frames_analyzed": 18,
+        "hsv_avg": [
+          121.3,
+          19.2,
+          21.4
+        ],
+        "dominant_hue_label": "red",
+        "dominant_hue_deg": 15.0,
+        "brightness_mean": 54.46,
+        "brightness_std": 25.61,
+        "vignette_ratio": 1.558,
+        "grain_variance": 127.04,
+        "frame_to_frame_diff_avg": 28.0,
+        "frame_to_frame_diff_max": 70.39,
+        "saturation_pct": 19.2
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 0.95,
+        "silence_pct": 1.05
+      }
+    },
+    "ref-08": {
+      "duration_s": 88.18,
+      "pace": {
+        "wpm_total": 183.08,
+        "wpm_hook": 180.0,
+        "wpm_dilemmas": 181.11,
+        "wpm_outro": 198.0,
+        "coverage_pct": 88.45,
+        "avg_block_s": 3.545,
+        "total_words": 238,
+        "speak_time_s": 78.0,
+        "n_segments": 22,
+        "pause_count": 2,
+        "pause_total_s": 3.0,
+        "pause_avg_s": 1.5,
+        "pause_max_s": 2.0
+      },
+      "audio": {
+        "lufs_integrated": -14.03,
+        "lufs_hook": -14.4,
+        "lufs_dilemmas": -13.9,
+        "lufs_outro": -14.1,
+        "music_bpm": 99.38,
+        "rms_db_total": -22.8,
+        "rms_db_hook": -19.94,
+        "rms_db_dilemmas": -19.09,
+        "rms_db_outro": -37.02,
+        "dynamic_range_db": 19.33
+      },
+      "pacing": {
+        "cuts_per_min": 4.76,
+        "cuts_per_min_raw": 9.53,
+        "cuts_total": 7,
+        "cuts_total_raw": 14,
+        "flash_bursts": 3,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 4,
+        "cuts_outro": 3,
+        "avg_time_between_cuts_s": 11.02,
+        "min_time_between_cuts_s": 2.55,
+        "max_time_between_cuts_s": 21.69,
+        "long_shots_gt_8s": 5
+      },
+      "visual": {
+        "n_frames_analyzed": 18,
+        "hsv_avg": [
+          172.5,
+          40.3,
+          24.8
+        ],
+        "dominant_hue_label": "cyan",
+        "dominant_hue_deg": 195.0,
+        "brightness_mean": 63.36,
+        "brightness_std": 14.72,
+        "vignette_ratio": 1.349,
+        "grain_variance": 182.65,
+        "frame_to_frame_diff_avg": 32.36,
+        "frame_to_frame_diff_max": 54.56,
+        "saturation_pct": 40.3
+      },
+      "silences": {
+        "silence_count": 2,
+        "silence_total_s": 3.0,
+        "silence_pct": 3.4
+      }
+    },
+    "ref-09": {
+      "duration_s": 101.53,
+      "pace": {
+        "wpm_total": 158.53,
+        "wpm_hook": 152.0,
+        "wpm_dilemmas": 167.21,
+        "wpm_outro": 135.79,
+        "coverage_pct": 93.57,
+        "avg_block_s": 3.393,
+        "total_words": 251,
+        "speak_time_s": 95.0,
+        "n_segments": 28,
+        "pause_count": 3,
+        "pause_total_s": 4.0,
+        "pause_avg_s": 1.333,
+        "pause_max_s": 2.0
+      },
+      "audio": {
+        "lufs_integrated": -13.95,
+        "lufs_hook": -13.0,
+        "lufs_dilemmas": -14.0,
+        "lufs_outro": -14.5,
+        "music_bpm": 103.36,
+        "rms_db_total": -22.45,
+        "rms_db_hook": -19.93,
+        "rms_db_dilemmas": -20.66,
+        "rms_db_outro": -30.19,
+        "dynamic_range_db": 21.0
+      },
+      "pacing": {
+        "cuts_per_min": 3.55,
+        "cuts_per_min_raw": 8.86,
+        "cuts_total": 6,
+        "cuts_total_raw": 15,
+        "flash_bursts": 3,
+        "cuts_hook": 3,
+        "cuts_dilemmas": 2,
+        "cuts_outro": 1,
+        "avg_time_between_cuts_s": 14.5,
+        "min_time_between_cuts_s": 2.82,
+        "max_time_between_cuts_s": 33.11,
+        "long_shots_gt_8s": 5
+      },
+      "visual": {
+        "n_frames_analyzed": 21,
+        "hsv_avg": [
+          161.7,
+          27.7,
+          14.7
+        ],
+        "dominant_hue_label": "blue-cyan",
+        "dominant_hue_deg": 225.0,
+        "brightness_mean": 37.45,
+        "brightness_std": 12.62,
+        "vignette_ratio": 1.27,
+        "grain_variance": 101.82,
+        "frame_to_frame_diff_avg": 17.6,
+        "frame_to_frame_diff_max": 45.17,
+        "saturation_pct": 27.7
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 1.88,
+        "silence_pct": 1.86
+      }
+    },
+    "ref-10": {
+      "duration_s": 76.06,
+      "pace": {
+        "wpm_total": 182.22,
+        "wpm_hook": 211.76,
+        "wpm_dilemmas": 177.55,
+        "wpm_outro": 180.0,
+        "coverage_pct": 88.74,
+        "avg_block_s": 2.25,
+        "total_words": 205,
+        "speak_time_s": 67.5,
+        "n_segments": 30,
+        "pause_count": 1,
+        "pause_total_s": 2.5,
+        "pause_avg_s": 2.5,
+        "pause_max_s": 2.5
+      },
+      "audio": {
+        "lufs_integrated": -14.03,
+        "lufs_hook": -15.1,
+        "lufs_dilemmas": -13.5,
+        "lufs_outro": -15.1,
+        "music_bpm": 143.55,
+        "rms_db_total": -21.72,
+        "rms_db_hook": -22.64,
+        "rms_db_dilemmas": -18.91,
+        "rms_db_outro": -30.18,
+        "dynamic_range_db": 18.53
+      },
+      "pacing": {
+        "cuts_per_min": 4.73,
+        "cuts_per_min_raw": 9.47,
+        "cuts_total": 6,
+        "cuts_total_raw": 12,
+        "flash_bursts": 2,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 4,
+        "cuts_outro": 2,
+        "avg_time_between_cuts_s": 10.87,
+        "min_time_between_cuts_s": 3.23,
+        "max_time_between_cuts_s": 21.04,
+        "long_shots_gt_8s": 5
+      },
+      "visual": {
+        "n_frames_analyzed": 16,
+        "hsv_avg": [
+          87.4,
+          33.4,
+          28.6
+        ],
+        "dominant_hue_label": "red",
+        "dominant_hue_deg": 15.0,
+        "brightness_mean": 72.89,
+        "brightness_std": 28.8,
+        "vignette_ratio": 1.557,
+        "grain_variance": 244.08,
+        "frame_to_frame_diff_avg": 41.91,
+        "frame_to_frame_diff_max": 61.86,
+        "saturation_pct": 33.4
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 1.62,
+        "silence_pct": 2.12
+      }
+    },
+    "ref-11": {
+      "duration_s": 88.75,
+      "pace": {
+        "wpm_total": 151.48,
+        "wpm_hook": 151.9,
+        "wpm_dilemmas": 155.12,
+        "wpm_outro": 139.77,
+        "coverage_pct": 91.49,
+        "avg_block_s": 2.707,
+        "total_words": 205,
+        "speak_time_s": 81.2,
+        "n_segments": 30,
+        "pause_count": 2,
+        "pause_total_s": 7.3,
+        "pause_avg_s": 3.65,
+        "pause_max_s": 3.7
+      },
+      "audio": {
+        "lufs_integrated": -15.2,
+        "lufs_hook": -13.9,
+        "lufs_dilemmas": -15.1,
+        "lufs_outro": -16.4,
+        "music_bpm": 123.05,
+        "rms_db_total": -22.95,
+        "rms_db_hook": -19.84,
+        "rms_db_dilemmas": -21.75,
+        "rms_db_outro": -29.19,
+        "dynamic_range_db": 20.83
+      },
+      "pacing": {
+        "cuts_per_min": 6.08,
+        "cuts_per_min_raw": 14.2,
+        "cuts_total": 9,
+        "cuts_total_raw": 21,
+        "flash_bursts": 2,
+        "cuts_hook": 1,
+        "cuts_dilemmas": 5,
+        "cuts_outro": 3,
+        "avg_time_between_cuts_s": 8.88,
+        "min_time_between_cuts_s": 0.67,
+        "max_time_between_cuts_s": 28.39,
+        "long_shots_gt_8s": 4
+      },
+      "visual": {
+        "n_frames_analyzed": 18,
+        "hsv_avg": [
+          150.5,
+          27.2,
+          29.3
+        ],
+        "dominant_hue_label": "cyan",
+        "dominant_hue_deg": 195.0,
+        "brightness_mean": 74.63,
+        "brightness_std": 33.23,
+        "vignette_ratio": 1.158,
+        "grain_variance": 154.04,
+        "frame_to_frame_diff_avg": 40.4,
+        "frame_to_frame_diff_max": 70.22,
+        "saturation_pct": 27.2
+      },
+      "silences": {
+        "silence_count": 2,
+        "silence_total_s": 1.52,
+        "silence_pct": 1.72
+      }
+    },
+    "ref-12": {
+      "duration_s": 113.08,
+      "pace": {
+        "wpm_total": 114.86,
+        "wpm_hook": 106.15,
+        "wpm_dilemmas": 110.7,
+        "wpm_outro": 134.29,
+        "coverage_pct": 92.86,
+        "avg_block_s": 3.281,
+        "total_words": 201,
+        "speak_time_s": 105.0,
+        "n_segments": 32,
+        "pause_count": 5,
+        "pause_total_s": 6.0,
+        "pause_avg_s": 1.2,
+        "pause_max_s": 2.0
+      },
+      "audio": {
+        "lufs_integrated": -13.97,
+        "lufs_hook": -13.8,
+        "lufs_dilemmas": -14.1,
+        "lufs_outro": -13.6,
+        "music_bpm": 129.2,
+        "rms_db_total": -19.86,
+        "rms_db_hook": -19.71,
+        "rms_db_dilemmas": -18.9,
+        "rms_db_outro": -23.12,
+        "dynamic_range_db": 14.49
+      },
+      "pacing": {
+        "cuts_per_min": 1.06,
+        "cuts_per_min_raw": 1.59,
+        "cuts_total": 2,
+        "cuts_total_raw": 3,
+        "flash_bursts": 0,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 1,
+        "cuts_outro": 1,
+        "avg_time_between_cuts_s": 37.69,
+        "min_time_between_cuts_s": 1.52,
+        "max_time_between_cuts_s": 61.41,
+        "long_shots_gt_8s": 2
+      },
+      "visual": {
+        "n_frames_analyzed": 23,
+        "hsv_avg": [
+          113.2,
+          27.7,
+          22.2
+        ],
+        "dominant_hue_label": "cyan",
+        "dominant_hue_deg": 195.0,
+        "brightness_mean": 56.68,
+        "brightness_std": 19.21,
+        "vignette_ratio": 1.433,
+        "grain_variance": 164.0,
+        "frame_to_frame_diff_avg": 30.31,
+        "frame_to_frame_diff_max": 61.95,
+        "saturation_pct": 27.7
+      },
+      "silences": {
+        "silence_count": 1,
+        "silence_total_s": 0.68,
+        "silence_pct": 0.6
+      }
+    },
+    "ref-13": {
+      "duration_s": 128.61,
+      "pace": {
+        "wpm_total": 129.6,
+        "wpm_hook": 137.65,
+        "wpm_dilemmas": 126.4,
+        "wpm_outro": 142.5,
+        "coverage_pct": 77.76,
+        "avg_block_s": 2.128,
+        "total_words": 216,
+        "speak_time_s": 100.0,
+        "n_segments": 47,
+        "pause_count": 8,
+        "pause_total_s": 23.0,
+        "pause_avg_s": 2.875,
+        "pause_max_s": 8.0
+      },
+      "audio": {
+        "lufs_integrated": -14.07,
+        "lufs_hook": -15.7,
+        "lufs_dilemmas": -15.1,
+        "lufs_outro": -11.2,
+        "music_bpm": 136.0,
+        "rms_db_total": -21.04,
+        "rms_db_hook": -23.76,
+        "rms_db_dilemmas": -20.7,
+        "rms_db_outro": -20.11,
+        "dynamic_range_db": 21.32
+      },
+      "pacing": {
+        "cuts_per_min": 8.86,
+        "cuts_per_min_raw": 31.72,
+        "cuts_total": 19,
+        "cuts_total_raw": 68,
+        "flash_bursts": 3,
+        "cuts_hook": 0,
+        "cuts_dilemmas": 16,
+        "cuts_outro": 3,
+        "avg_time_between_cuts_s": 6.43,
+        "min_time_between_cuts_s": 0.5,
+        "max_time_between_cuts_s": 28.66,
+        "long_shots_gt_8s": 6
+      },
+      "visual": {
+        "n_frames_analyzed": 26,
+        "hsv_avg": [
+          164.9,
+          32.8,
+          37.1
+        ],
+        "dominant_hue_label": "cyan",
+        "dominant_hue_deg": 195.0,
+        "brightness_mean": 94.49,
+        "brightness_std": 47.67,
+        "vignette_ratio": 1.651,
+        "grain_variance": 242.55,
+        "frame_to_frame_diff_avg": 58.1,
+        "frame_to_frame_diff_max": 167.32,
+        "saturation_pct": 32.8
+      },
+      "silences": {
+        "silence_count": 2,
+        "silence_total_s": 2.28,
+        "silence_pct": 1.77
+      }
+    }
+  },
+  "aggregated_F1": {
+    "pace.wpm_total": {
+      "min": 114.86,
+      "max": 195.41,
+      "avg": 161.56,
+      "std": 24.93,
+      "median": 164.91,
+      "p25": 152.71,
+      "p75": 179.84,
+      "n": 10
+    },
+    "pace.wpm_hook": {
+      "min": 105.03,
+      "max": 211.76,
+      "avg": 155.35,
+      "std": 33.5,
+      "median": 154.08,
+      "p25": 141.21,
+      "p75": 177.06,
+      "n": 10
+    },
+    "pace.wpm_dilemmas": {
+      "min": 110.7,
+      "max": 202.4,
+      "avg": 162.21,
+      "std": 26.47,
+      "median": 166.73,
+      "p25": 157.72,
+      "p75": 175.62,
+      "n": 10
+    },
+    "pace.wpm_outro": {
+      "min": 134.29,
+      "max": 203.21,
+      "avg": 165.12,
+      "std": 26.48,
+      "median": 167.13,
+      "p25": 140.45,
+      "p75": 182.54,
+      "n": 10
+    },
+    "pace.coverage_pct": {
+      "min": 77.76,
+      "max": 96.33,
+      "avg": 88.15,
+      "std": 5.98,
+      "median": 88.62,
+      "p25": 84.72,
+      "p75": 92.52,
+      "n": 10
+    },
+    "pace.avg_block_s": {
+      "min": 2.13,
+      "max": 6.81,
+      "avg": 3.61,
+      "std": 1.5,
+      "median": 3.29,
+      "p25": 2.78,
+      "p75": 3.51,
+      "n": 10
+    },
+    "pace.pause_count": {
+      "min": 1,
+      "max": 21,
+      "avg": 6.8,
+      "std": 7.33,
+      "median": 4.0,
+      "p25": 2.0,
+      "p75": 7.5,
+      "n": 10
+    },
+    "pace.pause_avg_s": {
+      "min": 0.41,
+      "max": 3.65,
+      "avg": 1.54,
+      "std": 1.11,
+      "median": 1.27,
+      "p25": 0.68,
+      "p75": 2.25,
+      "n": 10
+    },
+    "pace.pause_max_s": {
+      "min": 0.48,
+      "max": 8.0,
+      "avg": 2.56,
+      "std": 2.12,
+      "median": 2.02,
+      "p25": 2.0,
+      "p75": 2.45,
+      "n": 10
+    },
+    "audio.lufs_integrated": {
+      "min": -15.2,
+      "max": -13.76,
+      "avg": -14.06,
+      "std": 0.41,
+      "median": -13.96,
+      "p25": -14.03,
+      "p75": -13.86,
+      "n": 10
+    },
+    "audio.lufs_hook": {
+      "min": -15.7,
+      "max": -13.0,
+      "avg": -14.14,
+      "std": 0.94,
+      "median": -13.85,
+      "p25": -14.93,
+      "p75": -13.4,
+      "n": 10
+    },
+    "audio.lufs_dilemmas": {
+      "min": -15.1,
+      "max": -13.5,
+      "avg": -14.13,
+      "std": 0.55,
+      "median": -14.0,
+      "p25": -14.1,
+      "p75": -13.9,
+      "n": 10
+    },
+    "audio.lufs_outro": {
+      "min": -16.4,
+      "max": -11.2,
+      "avg": -13.94,
+      "std": 1.33,
+      "median": -13.85,
+      "p25": -14.4,
+      "p75": -13.53,
+      "n": 10
+    },
+    "audio.music_bpm": {
+      "min": 99.38,
+      "max": 161.5,
+      "avg": 126.46,
+      "std": 19.8,
+      "median": 129.2,
+      "p25": 108.28,
+      "p75": 136.0,
+      "n": 10
+    },
+    "audio.rms_db_total": {
+      "min": -23.91,
+      "max": -19.86,
+      "avg": -22.01,
+      "std": 1.28,
+      "median": -22.09,
+      "p25": -22.91,
+      "p75": -21.05,
+      "n": 10
+    },
+    "audio.rms_db_hook": {
+      "min": -23.76,
+      "max": -19.71,
+      "avg": -21.11,
+      "std": 1.44,
+      "median": -20.51,
+      "p25": -22.28,
+      "p75": -19.93,
+      "n": 10
+    },
+    "audio.rms_db_dilemmas": {
+      "min": -21.75,
+      "max": -18.9,
+      "avg": -20.04,
+      "std": 1.05,
+      "median": -19.9,
+      "p25": -20.69,
+      "p75": -19.12,
+      "n": 10
+    },
+    "audio.rms_db_outro": {
+      "min": -37.02,
+      "max": -20.11,
+      "avg": -29.08,
+      "std": 5.32,
+      "median": -29.69,
+      "p25": -32.33,
+      "p75": -25.7,
+      "n": 10
+    },
+    "audio.dynamic_range_db": {
+      "min": 14.49,
+      "max": 22.34,
+      "avg": 19.71,
+      "std": 2.31,
+      "median": 20.08,
+      "p25": 18.66,
+      "p75": 21.24,
+      "n": 10
+    },
+    "pacing.cuts_per_min": {
+      "min": 1.06,
+      "max": 8.86,
+      "avg": 4.19,
+      "std": 2.24,
+      "median": 4.14,
+      "p25": 2.75,
+      "p75": 4.98,
+      "n": 10
+    },
+    "pacing.cuts_per_min_raw": {
+      "min": 1.59,
+      "max": 31.72,
+      "avg": 9.21,
+      "std": 8.87,
+      "median": 7.96,
+      "p25": 3.21,
+      "p75": 9.52,
+      "n": 10
+    },
+    "pacing.cuts_total": {
+      "min": 2,
+      "max": 19,
+      "avg": 6.6,
+      "std": 4.84,
+      "median": 6.0,
+      "p25": 3.5,
+      "p75": 6.75,
+      "n": 10
+    },
+    "pacing.flash_bursts": {
+      "min": 0,
+      "max": 3,
+      "avg": 1.5,
+      "std": 1.35,
+      "median": 2.0,
+      "p25": 0.0,
+      "p75": 2.75,
+      "n": 10
+    },
+    "pacing.cuts_hook": {
+      "min": 0,
+      "max": 3,
+      "avg": 0.4,
+      "std": 0.97,
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.0,
+      "n": 10
+    },
+    "pacing.cuts_dilemmas": {
+      "min": 0,
+      "max": 16,
+      "avg": 4,
+      "std": 4.47,
+      "median": 3.0,
+      "p25": 2.0,
+      "p75": 4.0,
+      "n": 10
+    },
+    "pacing.cuts_outro": {
+      "min": 1,
+      "max": 3,
+      "avg": 2.2,
+      "std": 0.92,
+      "median": 2.5,
+      "p25": 1.25,
+      "p75": 3.0,
+      "n": 10
+    },
+    "pacing.avg_time_between_cuts_s": {
+      "min": 6.43,
+      "max": 37.69,
+      "avg": 15.51,
+      "std": 9.09,
+      "median": 12.76,
+      "p25": 10.35,
+      "p75": 16.88,
+      "n": 10
+    },
+    "pacing.long_shots_gt_8s": {
+      "min": 1,
+      "max": 6,
+      "avg": 3.6,
+      "std": 1.71,
+      "median": 4.0,
+      "p25": 2.0,
+      "p75": 5.0,
+      "n": 10
+    },
+    "visual.brightness_mean": {
+      "min": 37.45,
+      "max": 94.49,
+      "avg": 68.44,
+      "std": 18.61,
+      "median": 68.12,
+      "p25": 55.02,
+      "p75": 85.05,
+      "n": 10
+    },
+    "visual.brightness_std": {
+      "min": 12.62,
+      "max": 47.67,
+      "avg": 27.63,
+      "std": 12.29,
+      "median": 26.66,
+      "p25": 19.25,
+      "p75": 32.12,
+      "n": 10
+    },
+    "visual.vignette_ratio": {
+      "min": 1.16,
+      "max": 1.65,
+      "avg": 1.42,
+      "std": 0.16,
+      "median": 1.43,
+      "p25": 1.3,
+      "p75": 1.55,
+      "n": 10
+    },
+    "visual.grain_variance": {
+      "min": 84.19,
+      "max": 269.56,
+      "avg": 176.59,
+      "std": 62.55,
+      "median": 173.32,
+      "p25": 133.79,
+      "p75": 230.92,
+      "n": 10
+    },
+    "visual.frame_to_frame_diff_avg": {
+      "min": 17.6,
+      "max": 58.1,
+      "avg": 37.14,
+      "std": 12.48,
+      "median": 36.38,
+      "p25": 28.58,
+      "p75": 42.38,
+      "n": 10
+    },
+    "visual.saturation_pct": {
+      "min": 19.2,
+      "max": 44.8,
+      "avg": 31.96,
+      "std": 7.21,
+      "median": 32.2,
+      "p25": 27.7,
+      "p75": 34.52,
+      "n": 10
+    },
+    "silences.silence_total_s": {
+      "min": 0.68,
+      "max": 3.0,
+      "avg": 1.7,
+      "std": 0.66,
+      "median": 1.71,
+      "p25": 1.41,
+      "p75": 1.92,
+      "n": 10
+    },
+    "silences.silence_pct": {
+      "min": 0.6,
+      "max": 3.4,
+      "avg": 1.93,
+      "std": 0.82,
+      "median": 1.81,
+      "p25": 1.53,
+      "p75": 2.41,
+      "n": 10
+    },
+    "visual.dominant_hue_distribution": {
+      "red": 4,
+      "orange": 1,
+      "cyan": 4,
+      "blue-cyan": 1
+    },
+    "duration_s": {
+      "min": 69.27,
+      "max": 128.61,
+      "avg": 92.08,
+      "std": 18.57,
+      "median": 89.75,
+      "p25": 79.09,
+      "p75": 99.47,
+      "n": 10
+    }
+  },
+  "notes": [
+    "Whisper model used: 'small' (CLI, fp16=False, language=es) for ref-08..ref-13. ref-03..ref-06 transcriptions were pre-existing — they were generated with an unknown Whisper model/config (size impacts WPM precision by 2-5%).",
+    "Pace section split: hook=0-15% / dilemmas=15-80% / outro=80-100% of total duration. Empirical mapping (not from spec).",
+    "LUFS per section computed via ffmpeg ebur128 over short windows — values for sections <3s are noisy and reported as-is.",
+    "Music BPM = librosa.beat.beat_track on mixed audio (narration + music + SFX). Use as approximation; true musical BPM may differ when narration dominates.",
+    "Visual analysis uses 18-21 frames extracted at ~5s intervals by the original pipeline (frame_*.jpg). NOT frame-by-frame — represents key-moment sampling.",
+    "dominant_hue_deg uses 12 buckets of 30°. Label maps: red(0-30) / orange(30-60) / yellow(60-90) / yellow-green(90-120) / green(120-150) / teal(150-180) / cyan(180-210) / blue-cyan(210-240) / blue(240-270) / purple(270-300) / magenta(300-330) / pink-red(330-360).",
+    "vignette_ratio: <1.0 = darker center than edges (rare); 1.0 = flat; >1.0 = brighter center, classic vignette. Typical cinematic = 1.05-1.20.",
+    "grain_variance: 25th-percentile of 16x16 block variances in center region. Higher = more film grain texture. Compare across refs to gauge consistency.",
+    "ref-03..ref-06 silences_count in metadata.json appears to use a high noise threshold — silences.txt parsing may yield slightly different counts.",
+    "vignette_ratio >1.0 here means CENTER is brighter than EDGES (which is the opposite of the classical 'vignette' label). For vertical reels with centered subjects, ratio 1.3-1.5 is typical = subject highlighting + edge darkening = strong vignette / soft vignette in classical sense. Lower ratio (1.0-1.15) = flat lighting.",
+    "dynamic_range_db is p95-p5 of frame RMS in dBFS (robust to silence floor). Higher = more variation between loud peaks and quiet sections. Typical music with ducking 10-25 dB.",
+    "rms_db_outro reads very low (-25 to -37 dB avg) for several refs — they have a closing 'punchline' / cliffhanger zone with reduced energy. Don't read this as 'audio bug'; it's a deliberate creative pattern.",
+    "Aggregated visual.dominant_hue_deg is omitted because it averages a circular variable and the result is meaningless. Use visual.dominant_hue_distribution (categorical histogram) instead.",
+    "pacing.cuts_per_min uses DE-CLUSTERED counts (cuts within 0.5s collapsed to one — closer to perceptual scene changes). pacing.cuts_per_min_raw shows the raw ffmpeg detection count including flash/glitch clusters. ref-13 raw=31.7/min vs declustered=5.1/min — the raw count was inflated by 8 flash bursts.",
+    "pacing.flash_bursts = count of detection clusters of >=3 cuts within <0.5s. Indicates flash transitions / glitch effects / rapid montage moments. Many F1 refs have 0-3; ref-13 has 8."
+  ],
+  "skipped": [
+    {
+      "metric": "visual.color_temperature_kelvin",
+      "reason": "Requires LAB or proper CCT estimation — proxied by dominant_hue + brightness_mean."
+    },
+    {
+      "metric": "punchy_frames_detection",
+      "reason": "Computed only as frame_to_frame_diff_max — full sudden-flash detection deferred to Gemini Vision pass."
+    },
+    {
+      "metric": "narration_vs_music_separation",
+      "reason": "Per-section LUFS measured on mixed audio (narration+music+SFX). True music-only or narration-only requires source separation (Demucs/Spleeter) — TODO if needed."
+    },
+    {
+      "metric": "captions_visual_specs",
+      "reason": "Font/stroke/shadow extraction needs Gemini Vision on captions OCR — TODO future pass."
+    }
+  ]
+}

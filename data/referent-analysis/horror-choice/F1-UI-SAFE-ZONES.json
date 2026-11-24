@@ -1,0 +1,746 @@
+{
+  "metadata": {
+    "generated_at": "2026-05-16T02:29:11.205286Z",
+    "n_referents": 10,
+    "method": "5 frames per referent sampled evenly. Each frame analyzed by Gemini Vision (gemini-3.1-flash-lite) with structured JSON output of UI overlay bounding boxes. Coordinates returned as Gemini's 0-1000 normalized scale, converted to percent (0-100). Native Instagram UI (top bar, right action stack, bottom comment bar) excluded by prompt. Per-element-type aggregation: mean / range / band of bbox center and dimensions across all observations.",
+    "frame_resolution": "1180x2556 (vertical 9:16, all referents)",
+    "n_frames_per_ref": 5,
+    "n_frames_total": 50,
+    "coord_system": "percent of frame (0-100), origin top-left",
+    "sanitized": "Numeric measurements only. Source filenames, creator handles and on-screen text removed; referents are anonymised as ref-NN."
+  },
+  "per_referent": {
+    "ref-03": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 49.9,
+        "y_pct": 64.2,
+        "width_pct": 43.9,
+        "height_pct": 3.6,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 3
+      },
+      "watermark": {
+        "x_pct": 34.0,
+        "y_pct": 77.3,
+        "width_pct": 48.2,
+        "n_observations": 2,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 29.8,
+        "y_pct_range": [
+          17.9,
+          41.8
+        ],
+        "font_modes": {
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      },
+      "warning_text": {
+        "x_pct": 49.9,
+        "y_pct": 64.0,
+        "color": "red",
+        "n_observations": 1
+      }
+    },
+    "ref-04": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 49.9,
+        "y_pct": 64.3,
+        "width_pct": 65.0,
+        "height_pct": 3.8,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 3
+      },
+      "countdown": {
+        "x_pct": 50.3,
+        "y_pct": 45.7,
+        "size_pct": 44.4,
+        "color": "black",
+        "n_observations": 1
+      },
+      "watermark": {
+        "x_pct": 33.3,
+        "y_pct": 78.8,
+        "width_pct": 50.9,
+        "n_observations": 3,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      }
+    },
+    "ref-05": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 49.9,
+        "y_pct": 59.5,
+        "width_pct": 47.6,
+        "height_pct": 3.7,
+        "color": "white",
+        "style": "drop_shadow",
+        "n_observations": 4
+      },
+      "watermark": {
+        "x_pct": 31.2,
+        "y_pct": 79.0,
+        "width_pct": 54.1,
+        "n_observations": 1,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      }
+    },
+    "ref-06": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 43.7,
+        "y_pct": 50.3,
+        "width_pct": 62.5,
+        "height_pct": 3.5,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 4
+      },
+      "choice_buttons": {
+        "y_pct": 12.7,
+        "button_width_pct_avg": 74.6,
+        "button_height_pct_avg": 4.7,
+        "colors": {
+          "white": 3
+        },
+        "n_observations": 3
+      },
+      "loading_bar": {
+        "y_pct": 48.2,
+        "width_pct": 17.4,
+        "n_observations": 3
+      },
+      "watermark": {
+        "x_pct": 34.0,
+        "y_pct": 77.1,
+        "width_pct": 48.0,
+        "n_observations": 4,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 17.6,
+        "y_pct_range": [
+          17.6,
+          17.6
+        ],
+        "font_modes": {
+          "monospaced": 1
+        },
+        "color": "white",
+        "n_observations": 1
+      }
+    },
+    "ref-08": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 50.0,
+        "y_pct": 64.1,
+        "width_pct": 56.1,
+        "height_pct": 3.7,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 3
+      },
+      "watermark": {
+        "x_pct": 33.1,
+        "y_pct": 82.7,
+        "width_pct": 49.9,
+        "n_observations": 3,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 27.9,
+        "y_pct_range": [
+          14.1,
+          41.7
+        ],
+        "font_modes": {
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      },
+      "warning_text": {
+        "x_pct": 50.0,
+        "y_pct": 64.0,
+        "color": "red",
+        "n_observations": 1
+      }
+    },
+    "ref-09": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 49.8,
+        "y_pct": 56.0,
+        "width_pct": 32.5,
+        "height_pct": 1.9,
+        "color": "white",
+        "style": "stroke",
+        "n_observations": 12
+      },
+      "watermark": {
+        "x_pct": 31.6,
+        "y_pct": 77.2,
+        "width_pct": 53.4,
+        "n_observations": 1,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 40.4,
+        "y_pct_range": [
+          14.0,
+          68.6
+        ],
+        "font_modes": {
+          "sans-serif": 10,
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 12
+      },
+      "warning_text": {
+        "x_pct": 49.7,
+        "y_pct": 21.9,
+        "color": "red",
+        "n_observations": 1
+      }
+    },
+    "ref-10": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 50.0,
+        "y_pct": 64.2,
+        "width_pct": 45.4,
+        "height_pct": 3.2,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 4
+      },
+      "watermark": {
+        "x_pct": 31.8,
+        "y_pct": 77.0,
+        "width_pct": 53.0,
+        "n_observations": 3,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 24.8,
+        "y_pct_range": [
+          22.2,
+          27.3
+        ],
+        "font_modes": {
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      }
+    },
+    "ref-11": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 49.9,
+        "y_pct": 76.4,
+        "width_pct": 40.2,
+        "height_pct": 3.1,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 3
+      },
+      "watermark": {
+        "x_pct": 10.9,
+        "y_pct": 82.3,
+        "width_pct": 13.9,
+        "n_observations": 3,
+        "note": "raw screen-recording: overlaps IG-native bottom UI region"
+      },
+      "character_name_labels": {
+        "y_pct_avg": 21.1,
+        "y_pct_range": [
+          15.0,
+          27.1
+        ],
+        "font_modes": {
+          "sans-serif": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      }
+    },
+    "ref-12": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 50.0,
+        "y_pct": 54.6,
+        "width_pct": 34.5,
+        "height_pct": 2.2,
+        "color": "white",
+        "style": "plain",
+        "n_observations": 1
+      },
+      "character_name_labels": {
+        "y_pct_avg": 24.9,
+        "y_pct_range": [
+          24.2,
+          25.6
+        ],
+        "font_modes": {
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      },
+      "warning_text": {
+        "x_pct": 49.9,
+        "y_pct": 61.1,
+        "color": "red",
+        "n_observations": 1
+      }
+    },
+    "ref-13": {
+      "frame_resolution": [
+        1180,
+        2556
+      ],
+      "captions_narration": {
+        "x_pct": 50.0,
+        "y_pct": 46.8,
+        "width_pct": 62.3,
+        "height_pct": 4.1,
+        "color": "white",
+        "style": "drop_shadow+stroke",
+        "n_observations": 5
+      },
+      "character_name_labels": {
+        "y_pct_avg": 33.8,
+        "y_pct_range": [
+          27.4,
+          40.3
+        ],
+        "font_modes": {
+          "monospaced": 2
+        },
+        "color": "white",
+        "n_observations": 2
+      }
+    }
+  },
+  "aggregated_safe_zones": {
+    "character_name_label": {
+      "n_observations": 25,
+      "x_center_pct_avg": 52.2,
+      "x_center_pct_range": [
+        8.8,
+        91.8
+      ],
+      "y_center_pct_avg": 33.1,
+      "y_center_pct_range": [
+        14.0,
+        68.6
+      ],
+      "y_band_pct": [
+        12.4,
+        69.1
+      ],
+      "x_band_pct": [
+        5.6,
+        94.3
+      ],
+      "width_pct_avg": 13.7,
+      "width_pct_range": [
+        4.3,
+        37.9
+      ],
+      "height_pct_avg": 2.5,
+      "height_pct_range": [
+        1.0,
+        5.9
+      ],
+      "color_text_modes": {
+        "white": 25
+      },
+      "font_style_modes": {
+        "monospaced": 13,
+        "sans-serif": 12
+      },
+      "stroke_pct": 60.0,
+      "shadow_pct": 60.0
+    },
+    "warning_text": {
+      "n_observations": 4,
+      "x_center_pct_avg": 49.9,
+      "x_center_pct_range": [
+        49.7,
+        50.0
+      ],
+      "y_center_pct_avg": 52.8,
+      "y_center_pct_range": [
+        21.9,
+        64.0
+      ],
+      "y_band_pct": [
+        21.3,
+        65.6
+      ],
+      "x_band_pct": [
+        17.8,
+        82.0
+      ],
+      "width_pct_avg": 46.8,
+      "width_pct_range": [
+        23.1,
+        64.2
+      ],
+      "height_pct_avg": 2.5,
+      "height_pct_range": [
+        1.1,
+        3.2
+      ],
+      "color_text_modes": {
+        "red": 4
+      },
+      "font_style_modes": {
+        "sans-serif": 2,
+        "monospaced": 2
+      },
+      "stroke_pct": 25.0,
+      "shadow_pct": 75.0
+    },
+    "watermark": {
+      "n_observations": 20,
+      "x_center_pct_avg": 29.7,
+      "x_center_pct_range": [
+        8.6,
+        36.8
+      ],
+      "y_center_pct_avg": 79.1,
+      "y_center_pct_range": [
+        76.8,
+        83.2
+      ],
+      "y_band_pct": [
+        75.0,
+        84.7
+      ],
+      "x_band_pct": [
+        3.8,
+        59.1
+      ],
+      "width_pct_avg": 45.0,
+      "width_pct_range": [
+        9.5,
+        55.1
+      ],
+      "height_pct_avg": 3.0,
+      "height_pct_range": [
+        1.7,
+        4.6
+      ],
+      "color_text_modes": {
+        "white": 18,
+        "other": 2
+      },
+      "font_style_modes": {
+        "sans-serif": 18,
+        "unknown": 2
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 75.0
+    },
+    "caption_narration": {
+      "n_observations": 42,
+      "x_center_pct_avg": 49.3,
+      "x_center_pct_range": [
+        17.1,
+        83.1
+      ],
+      "y_center_pct_avg": 58.7,
+      "y_center_pct_range": [
+        9.0,
+        76.7
+      ],
+      "y_band_pct": [
+        7.5,
+        78.2
+      ],
+      "x_band_pct": [
+        1.2,
+        93.8
+      ],
+      "width_pct_avg": 47.0,
+      "width_pct_range": [
+        11.3,
+        84.1
+      ],
+      "height_pct_avg": 3.1,
+      "height_pct_range": [
+        1.1,
+        6.9
+      ],
+      "color_text_modes": {
+        "white": 40,
+        "red": 2
+      },
+      "font_style_modes": {
+        "monospaced": 25,
+        "sans-serif": 17
+      },
+      "stroke_pct": 69.0,
+      "shadow_pct": 71.0
+    },
+    "countdown": {
+      "n_observations": 1,
+      "x_center_pct_avg": 50.3,
+      "x_center_pct_range": [
+        50.3,
+        50.3
+      ],
+      "y_center_pct_avg": 45.7,
+      "y_center_pct_range": [
+        45.7,
+        45.7
+      ],
+      "y_band_pct": [
+        35.4,
+        56.0
+      ],
+      "x_band_pct": [
+        28.1,
+        72.5
+      ],
+      "width_pct_avg": 44.4,
+      "width_pct_range": [
+        44.4,
+        44.4
+      ],
+      "height_pct_avg": 20.6,
+      "height_pct_range": [
+        20.6,
+        20.6
+      ],
+      "color_text_modes": {
+        "black": 1
+      },
+      "font_style_modes": {
+        "sans-serif": 1
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 0.0
+    },
+    "choice_button": {
+      "n_observations": 3,
+      "x_center_pct_avg": 37.7,
+      "x_center_pct_range": [
+        26.3,
+        44.4
+      ],
+      "y_center_pct_avg": 12.7,
+      "y_center_pct_range": [
+        8.1,
+        16.2
+      ],
+      "y_band_pct": [
+        6.6,
+        20.4
+      ],
+      "x_band_pct": [
+        0.0,
+        87.5
+      ],
+      "width_pct_avg": 74.6,
+      "width_pct_range": [
+        52.6,
+        86.3
+      ],
+      "height_pct_avg": 4.7,
+      "height_pct_range": [
+        2.9,
+        8.3
+      ],
+      "color_text_modes": {
+        "white": 3
+      },
+      "font_style_modes": {
+        "monospaced": 3
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 100.0
+    },
+    "percentage_indicator": {
+      "n_observations": 2,
+      "x_center_pct_avg": 53.2,
+      "x_center_pct_range": [
+        53.2,
+        53.2
+      ],
+      "y_center_pct_avg": 41.1,
+      "y_center_pct_range": [
+        41.0,
+        41.1
+      ],
+      "y_band_pct": [
+        40.1,
+        42.1
+      ],
+      "x_band_pct": [
+        47.9,
+        58.6
+      ],
+      "width_pct_avg": 10.7,
+      "width_pct_range": [
+        10.7,
+        10.7
+      ],
+      "height_pct_avg": 1.9,
+      "height_pct_range": [
+        1.9,
+        2.0
+      ],
+      "color_text_modes": {
+        "white": 2
+      },
+      "font_style_modes": {
+        "sans-serif": 2
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 100.0
+    },
+    "loading_bar": {
+      "n_observations": 3,
+      "x_center_pct_avg": 46.0,
+      "x_center_pct_range": [
+        27.8,
+        55.1
+      ],
+      "y_center_pct_avg": 48.2,
+      "y_center_pct_range": [
+        45.4,
+        49.5
+      ],
+      "y_band_pct": [
+        43.5,
+        50.8
+      ],
+      "x_band_pct": [
+        22.4,
+        65.5
+      ],
+      "width_pct_avg": 17.4,
+      "width_pct_range": [
+        10.9,
+        20.8
+      ],
+      "height_pct_avg": 2.9,
+      "height_pct_range": [
+        2.3,
+        3.8
+      ],
+      "color_text_modes": {
+        "white": 3
+      },
+      "font_style_modes": {
+        "sans-serif": 2,
+        "unknown": 1
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 100.0
+    },
+    "other": {
+      "n_observations": 1,
+      "x_center_pct_avg": 50.3,
+      "x_center_pct_range": [
+        50.3,
+        50.3
+      ],
+      "y_center_pct_avg": 76.3,
+      "y_center_pct_range": [
+        76.3,
+        76.3
+      ],
+      "y_band_pct": [
+        74.5,
+        78.2
+      ],
+      "x_band_pct": [
+        40.1,
+        60.5
+      ],
+      "width_pct_avg": 20.4,
+      "width_pct_range": [
+        20.4,
+        20.4
+      ],
+      "height_pct_avg": 3.7,
+      "height_pct_range": [
+        3.7,
+        3.7
+      ],
+      "color_text_modes": {
+        "white": 1
+      },
+      "font_style_modes": {
+        "sans-serif": 1
+      },
+      "stroke_pct": 0.0,
+      "shadow_pct": 100.0
+    }
+  },
+  "safe_zones_recommendations": {
+    "countdown": "Center countdown at X 50% / Y 46% (band Y 35-56%). Size avg 44% wide, 21% tall. Clear zone X 30-70% / Y 35-56% — no text or UI overlap when countdown active.",
+    "loading_bar": "Y 48% (band 44-51%). Width avg 17% of frame.",
+    "watermark": "Bottom-left position. Y 79% / X 30% (X band 4-59%, Y band 75-85%). This is INSIDE the IG-native bottom comment area in raw screen-recordings — for our renders, the equivalent safe position is above the bottom 27% (IG safe zone).",
+    "character_name_labels": "Above each character. Y band 12-69% (avg center 33%). Font: {'monospaced': 13, 'sans-serif': 12} — monospaced canonical. Color: {'white': 25} — white dominant. Width avg 14% per name.",
+    "warning_text": "Center between characters. Y 53% (band 21-66%). Red dominant; sans-serif bold.",
+    "no_overlap_matrix": {
+      "character_name_labels_zone": "Y 12-40% — when name labels visible above characters, do NOT place captions or any narration text here. Names occupy this band exclusively.",
+      "countdown_zone": "Y 35-56% (center, X 30-70%) — when 3-2-1 countdown active, no other text or UI may enter this band. Countdown takes the visual stage.",
+      "captions_zone": "Y 58-72% — canonical caption band (median across 9/10 refs). No countdown, no choice buttons, no character labels should enter this band when caption is visible. The ONE exception: ref-06 poll-style choice buttons sit at TOP (Y 7-20%), so captions at Y 60% don't conflict.",
+      "watermark_zone": "Y 75-85% — creator watermark zone (only in raw screen-recordings). In our clean renders this is the IG-native bottom safe-zone (do not place anything here).",
+      "loading_bar_zone": "Y 43-51% center, X 21-58% — when poll-style choice active, loading bar + percentage sit here. Conflicts with countdown_zone — they are mutually exclusive states."
+    }
+  },
+  "anti_patterns_detected": [
+    "ref-13: caption avg Y=47% is unusually HIGH (canonical band is 60-75%) — likely overlapping subject"
+  ],
+  "notes": [
+    "All referents are raw screen-recordings of Instagram Reels at 1180x2556. Creator overlays therefore sit ABOVE the IG-native bottom UI strip (~73-100% Y band). For OUR renders (clean 1080x1920 canvas without IG chrome), translate: caption band 60-72% measured here is the same band to use; do NOT extend captions into the bottom 27% (IG safe zone).",
+    "Character names use monospaced font (canonical: Courier-like). Warning text uses sans-serif bold red. Captions use either monospaced or sans-serif depending on creator — but drop-shadow without thick stroke is the dominant treatment.",
+    "Choice buttons in this corpus are TEXT-ONLY prompts (no boxed buttons). '¿BAJAS?' / 'O ESPERAS' style — typography is the button.",
+    "Countdown observations are sparse: countdown appears for only ~3-5s per video and our 5-frame sampling misses it in most refs. The few observations cluster at center."
+  ],
+  "skipped": []
+}

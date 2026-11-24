@@ -1,0 +1,92 @@
+{
+  "schema_version": "v1",
+  "extraction_date": "2026-05-20",
+  "source_refs": [
+    "ref-03",
+    "ref-06",
+    "ref-08",
+    "ref-09",
+    "ref-10",
+    "ref-11",
+    "ref-12",
+    "ref-13"
+  ],
+  "params": {
+    "countdown_digit_duration_s": {
+      "median": 0.5,
+      "p25": 0.5,
+      "p75": 0.5,
+      "n_samples": 1
+    },
+    "countdown_pause_beat_s": {
+      "median": 0.9,
+      "p25": 0.33,
+      "p75": 2.1,
+      "n_samples": 14
+    },
+    "ambient_duck_db_during_countdown": {
+      "median": 0.22,
+      "p25": -2.44,
+      "p75": 1.31,
+      "n_samples": 20
+    },
+    "freeze_frame": {
+      "pct_windows_with_freeze": 0.14,
+      "n_windows_total": 22,
+      "n_windows_with_freeze": 3,
+      "median_freeze_duration_s": 2.2
+    },
+    "per_segment_wpm_bands": {
+      "hook_framing": {
+        "median": 180.0,
+        "p25": 172.4,
+        "p75": 189.9,
+        "n_samples": 10
+      },
+      "unclassified": {
+        "median": 166.25,
+        "p25": 120.0,
+        "p75": 186.0,
+        "n_samples": 32
+      },
+      "setup_establishing": {
+        "median": 151.9,
+        "p25": 120.0,
+        "p75": 162.2,
+        "n_samples": 11
+      },
+      "consequence_narration": {
+        "median": 157.5,
+        "p25": 127.5,
+        "p75": 197.47,
+        "n_samples": 20
+      },
+      "decision_question": {
+        "median": 150.0,
+        "p25": 140.0,
+        "p75": 160.0,
+        "n_samples": 23
+      },
+      "decision_setup": {
+        "median": 165.0,
+        "p25": 152.5,
+        "p75": 205.9,
+        "n_samples": 10
+      },
+      "cliffhanger": {
+        "median": 130.4,
+        "p25": 80.0,
+        "p75": 150.0,
+        "n_samples": 9
+      }
+    }
+  },
+  "notes": [
+    "OCR via EasyOCR center crop. Confidence threshold 0.4.",
+    "Freeze SSIM threshold 0.96 over 2s consecutive.",
+    "Duck via librosa RMS pre 2s vs during decision window.",
+    "Per-segment WPM categorized via heuristic regex patterns (role classifier).",
+    "Filter overlay detection NOT included (Phase 2 — color histogram unreliable without canonical templates).",
+    "Loading bar fill duration NOT included (Phase 2 — needs canonical UI template)."
+  ]
+}
