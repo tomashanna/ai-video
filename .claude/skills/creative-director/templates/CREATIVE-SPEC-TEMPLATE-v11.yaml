@@ -377,8 +377,8 @@ narration_script:
     speaker: "char_a"
     voice_id: "<voice_id>"
     text_canonical: "No me elijas. Es una trampa."
-    timestamp_intent_s: [8.0, 10.5]
-    shot_id_anchor: "shot_02"
+    timestamp_intent_s: [5.5, 7.5]
+    shot_id_anchor: "shot_01"   # must reference a shot_id declared in shot_list (validated)
     lip_sync_required: true
 
   # ... etc per all narration segments
