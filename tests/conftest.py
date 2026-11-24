@@ -30,8 +30,10 @@ def _isolated_env(monkeypatch: pytest.MonkeyPatch, tmp_path_factory: pytest.Temp
     ledger_dir = tmp_path_factory.mktemp("ledger")
     monkeypatch.setenv("AIVIDEO_SPEND_LEDGER", str(ledger_dir / "spend.jsonl"))
     monkeypatch.setenv("AIVIDEO_RENDER_LOCK", str(ledger_dir / "render.lock"))
-    from ai_video.config import reset_settings_cache
+    import ai_video.config as config
 
-    reset_settings_cache()
+    # Never load a developer's real .env (it holds live API keys).
+    monkeypatch.setattr(config, "default_env_files", lambda: ())
+    config.reset_settings_cache()
     yield
-    reset_settings_cache()
+    config.reset_settings_cache()
