@@ -159,14 +159,15 @@ def test_poll_until_returns_and_times_out():
 # ---------------------------------------------------------------------- logging
 
 
-@pytest.mark.parametrize(
-    "secret",
-    [
-        "AI" + "za" + "SyA1234567890abcdefghijklmnopqrstuv",
-        "r8" + "_abcdefghijklmnopqrstuvwxyz123456",
-        "sk" + "_live_abcdefghijklmnopqrstuvwxyz",
-    ],
-)
+# Fake key *shapes*, assembled at runtime so secret scanners never see a key literal.
+FAKE_KEYS = [
+    "AI" + "za" + "SyA1234567890abcdefghijklmnopqrstuv",
+    "r8" + "_abcdefghijklmnopqrstuvwxyz123456",
+    "sk" + "_live_abcdefghijklmnopqrstuvwxyz",
+]
+
+
+@pytest.mark.parametrize("secret", FAKE_KEYS)
 def test_redact_known_key_shapes(secret: str):
     out = redact(f"request failed with key={secret} trailing")
     assert secret not in out and REDACTED in out

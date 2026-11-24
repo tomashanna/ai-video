@@ -1,0 +1,2 @@
+# Synthetic, non-functional key shape used by a redaction unit test (later assembled at runtime).
+7ecfc3f9c0df3795bef8d1139c45d73aa13d14d6:tests/unit/test_infra.py:gcp-api-key:165
