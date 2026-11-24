@@ -28,6 +28,9 @@ from pathlib import Path
 
 from ai_video.paths import voice_effects_catalog
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 CATALOG_PATH = voice_effects_catalog()
 
 
@@ -57,7 +60,7 @@ def list_presets(catalog: dict) -> None:
 def apply_sox(chain: str, input_path: Path, output_path: Path) -> None:
     cmd = ["sox", str(input_path), str(output_path)] + shlex.split(chain)
     print(f"[sox] {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     if result.returncode != 0:
         sys.exit(f"sox failed:\n{result.stderr}")
 
@@ -65,7 +68,7 @@ def apply_sox(chain: str, input_path: Path, output_path: Path) -> None:
 def apply_ffmpeg(chain: str, input_path: Path, output_path: Path) -> None:
     cmd = ["ffmpeg", "-y", "-i", str(input_path), "-af", chain, str(output_path)]
     print(f"[ffmpeg] {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     if result.returncode != 0:
         sys.exit(f"ffmpeg failed:\n{result.stderr}")
 

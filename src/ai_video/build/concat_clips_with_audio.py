@@ -33,6 +33,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -104,7 +107,7 @@ def _run_concat(clip_paths, output_path, stream_copy):
         cmd = base + ["-c", "copy", str(output_path)]
     else:
         cmd = base + ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", str(output_path)]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     Path(list_path).unlink(missing_ok=True)
     return r
 

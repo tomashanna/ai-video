@@ -55,6 +55,9 @@ except ImportError:
 
 from ai_video.core.spec_transitions_adapter import normalize_transitions  # noqa: E402
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 
 # Fallback for recipe ids that lack an explicit `xfade_transition` field (post Option D all
 # canonical recipes declare it; this remains for forward/legacy robustness).
@@ -102,7 +105,7 @@ def ffprobe_duration(path):
     r = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
         capture_output=True, text=True,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     return float(r.stdout.strip())
 
 
@@ -207,7 +210,7 @@ def run_chain(clips, fc, last_v, last_a, tmp_out, target_fps=30):
         "-c:a", "aac", "-b:a", "192k", "-r", str(target_fps),
         str(tmp_out),
     ]
-    return subprocess.run(cmd, capture_output=True, text=True)
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
 
 
 def overlay_stings(tmp_in, output, sting_jobs):
@@ -232,7 +235,7 @@ def overlay_stings(tmp_in, output, sting_jobs):
         "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
         str(output),
     ]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     Path(tmp_in).unlink(missing_ok=True)
     return r
 
@@ -333,7 +336,7 @@ def main():
             print(f"ERROR: passthrough input not found: {inp}", file=sys.stderr)
             return 1
         r = subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                            "-i", str(inp), "-c", "copy", str(output)], capture_output=True, text=True)
+                            "-i", str(inp), "-c", "copy", str(output)], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
         if r.returncode != 0:
             print(f"ERROR: passthrough copy failed: {r.stderr[:300]}", file=sys.stderr)
             return 1

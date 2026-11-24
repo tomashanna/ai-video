@@ -79,6 +79,9 @@ except ImportError:
 from ai_video.config import get_settings
 from ai_video.providers.clients import gemini_client
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 GEMINI_MODEL = "gemini-3.1-flash-lite"
 SCORE_FAIL_THRESHOLD = 7  # score <7 in any dimension → 🔴 flag regen
 
@@ -146,7 +149,7 @@ def ffprobe_duration(media_path: str) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "csv=p=0", media_path],
         capture_output=True, text=True, check=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     return float(result.stdout.strip())
 
 
@@ -171,7 +174,7 @@ def extract_n_frames(video_path: str, n: int, output_dir: str) -> list[tuple[flo
             ["ffmpeg", "-y", "-ss", str(t), "-i", video_path,
              "-frames:v", "1", "-q:v", "2", fp],
             capture_output=True, check=False
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         if os.path.exists(fp) and os.path.getsize(fp) > 1000:
             out.append((t, fp))
     return out
@@ -371,7 +374,7 @@ def ffmpeg_mean_volume(audio_path: str) -> float | None:
         result = subprocess.run(
             ["ffmpeg", "-i", audio_path, "-af", "volumedetect", "-f", "null", "-"],
             capture_output=True, text=True, check=False
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         # Output in stderr
         m = re.search(r"mean_volume:\s*(-?\d+\.?\d*)\s*dB", result.stderr)
         if m:
@@ -608,7 +611,7 @@ def hook_transition_post(args) -> dict:
                 ["ffmpeg", "-y", "-ss", str(t), "-i", args.concat,
                  "-frames:v", "1", "-q:v", "2", fp],
                 capture_output=True, check=False
-            )
+            , timeout=SUBPROCESS_TIMEOUT_S)
             if os.path.exists(fp) and os.path.getsize(fp) > 1000:
                 frames.append((t, fp))
 

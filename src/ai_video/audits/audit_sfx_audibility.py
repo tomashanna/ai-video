@@ -40,6 +40,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 BED_PAD = 2.0
 FLOOR_DB = {"event": 2.0, "scream": 2.0, "transition": 2.0, "diegetic": 2.0,
             "ui": 2.0, "flash": 2.0, "texture": 1.0}
@@ -48,7 +51,7 @@ EFFECTIVE_DUR_CAP = 1.2   # measure at most the first 1.2s of an event (the tran
 
 
 def run(cmd):
-    return subprocess.run([str(c) for c in cmd], capture_output=True, text=True)
+    return subprocess.run([str(c) for c in cmd], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
 
 
 def probe_dur(p):

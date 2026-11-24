@@ -48,6 +48,9 @@ from pathlib import Path
 
 from ai_video.paths import model_capabilities_matrix
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -202,7 +205,7 @@ def atomic_starts(atomic_dir, shot_ids):
         starts[sid] = cum
         if p.exists():
             r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                                "-of", "csv=p=0", str(p)], capture_output=True, text=True)
+                                "-of", "csv=p=0", str(p)], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
             try:
                 cum += float(r.stdout.strip())
             except ValueError:

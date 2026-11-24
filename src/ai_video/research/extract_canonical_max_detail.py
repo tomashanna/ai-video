@@ -42,6 +42,9 @@ from pathlib import Path
 
 from ai_video.paths import referent_analysis_dir, repo_root
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 PROJECT_ROOT = repo_root()
 REF_DIR = referent_analysis_dir()
 
@@ -112,7 +115,7 @@ def get_video_duration(mp4_path):
     r = subprocess.run(
         ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4_path)],
         capture_output=True, text=True, check=True,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     return float(r.stdout.strip())
 
 
@@ -134,7 +137,7 @@ def extract_dense_frames(mp4_path, out_dir, dense_until_s=30.0):
         "-q:v", "3",
         "-pix_fmt", "yuvj420p",
         str(out_dir / "frame_dense_%04d.jpg"),
-    ], check=True)
+    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
     n_dense = len(list(out_dir.glob("frame_dense_*.jpg")))
 
     # Pass 2: sparse (every 1s) from 30s onwards
@@ -147,7 +150,7 @@ def extract_dense_frames(mp4_path, out_dir, dense_until_s=30.0):
             "-q:v", "3",
             "-pix_fmt", "yuvj420p",
             str(out_dir / "frame_sparse_%04d.jpg"),
-        ], check=True)
+        ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
     n_sparse = len(list(out_dir.glob("frame_sparse_*.jpg")))
 
     return {

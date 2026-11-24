@@ -49,6 +49,9 @@ from pathlib import Path
 
 from ai_video.paths import model_capabilities_matrix
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -156,7 +159,7 @@ def ffprobe_stream_duration(path, stream):
         ["ffprobe", "-v", "error", "-select_streams", sel,
          "-show_entries", "stream=duration", "-of",
          "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True)
+        capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     val = (r.stdout or "").strip().splitlines()
     for line in val:
         try:
@@ -169,7 +172,7 @@ def ffprobe_stream_duration(path, stream):
     r2 = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True)
+        capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     try:
         d = float((r2.stdout or "").strip())
         return d if d > 0 else None

@@ -52,6 +52,9 @@ except ImportError:
 from ai_video.errors import ConfigError
 from ai_video.paths import transitions_dir
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 # Pipeline steps are package modules, run in a child interpreter so each keeps its own
 # argparse/exit-code contract (and a crash in one step cannot corrupt this process).
 STEP_MODULES = {
@@ -99,14 +102,14 @@ def _probe(path, stream, entry):
     r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", stream,
                         "-show_entries", f"stream={entry}", "-of",
                         "default=noprint_wrappers=1:nokey=1", str(path)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     return r.stdout.strip()
 
 
 def _duration(path):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     try:
         return float(r.stdout.strip())
     except ValueError:
@@ -115,14 +118,14 @@ def _duration(path):
 
 def _lufs(path):
     r = subprocess.run(["ffmpeg", "-i", str(path), "-af", "ebur128", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     m = re.findall(r"I:\s*(-?\d+\.?\d*)\s*LUFS", r.stderr)
     return float(m[-1]) if m else None
 
 
 def _peak_dbfs(path):
     r = subprocess.run(["ffmpeg", "-i", str(path), "-af", "volumedetect", "-f", "null", "-"],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     m = re.search(r"max_volume:\s*(-?\d+\.?\d*)\s*dB", r.stderr)
     return float(m.group(1)) if m else None
 
@@ -202,7 +205,7 @@ def run_gates(draft, caps, target_fps, output_resolution, duration_intent, inter
     frame = draft.parent / f"_gate8_{draft.stem}.png"
     r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss",
                         str((dur or 1) / 2), "-i", str(draft), "-vframes", "1", str(frame)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     ok = frame.exists() and frame.stat().st_size > 1000
     if frame.exists():
         frame.unlink()
@@ -341,7 +344,7 @@ def main():
         "-vf", ",".join(vf_parts), "-r", str(target_fps),
         "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
         "-c:a", "copy", str(draft),
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     if r.returncode != 0:
         print(f"ERROR: Layer 4 / fps norm failed: {r.stderr[-400:]}", file=sys.stderr)
         return 1

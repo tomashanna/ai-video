@@ -41,6 +41,9 @@ except ImportError:
 
 from ai_video.paths import referent_analysis_dir, repo_root
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 PROJECT_ROOT = repo_root()
 REF_DIR = referent_analysis_dir()
 
@@ -191,7 +194,7 @@ def extract_frames_dense(mp4_path, start_s, end_s, interval_s=0.1, out_dir=None)
         "-q:v", "3",
         "-pix_fmt", "yuvj420p",
         pattern,
-    ], check=True)
+    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
     return sorted(out_dir.glob("frame_*.jpg"))
 
 

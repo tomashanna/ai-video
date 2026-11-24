@@ -73,6 +73,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -141,7 +144,7 @@ def run_ffprobe_duration(path: Path) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     try:
         return float(result.stdout.strip())
     except ValueError:
@@ -153,7 +156,7 @@ def run_ffprobe_streams(path: Path) -> dict:
     result = subprocess.run(
         ["ffprobe", "-v", "error", "-show_streams", "-of", "json", str(path)],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
@@ -293,7 +296,7 @@ def extract_three_frames(clip_path: Path, tmpdir: Path) -> list:
             ["ffmpeg", "-y", "-ss", f"{t:.2f}", "-i", str(clip_path),
              "-frames:v", "1", "-q:v", "2", str(out)],
             capture_output=True
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         if out.exists() and out.stat().st_size > 1000:
             extracted.append((label, t, out))
     return extracted
@@ -595,7 +598,7 @@ def measure_lufs(clip_path: Path) -> dict:
          "-af", f"loudnorm=I={TARGET_LUFS}:TP={TRUE_PEAK_MAX}:LRA=11:print_format=json",
          "-f", "null", "-"],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     output = result.stderr
     try:
         start = output.rindex("{")
@@ -616,7 +619,7 @@ def measure_volumedetect(clip_path: Path) -> dict:
         ["ffmpeg", "-hide_banner", "-nostats", "-i", str(clip_path),
          "-af", "volumedetect", "-f", "null", "-"],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     output = result.stderr
     mean_match = re.search(r"mean_volume:\s*(-?[\d.]+)\s*dB", output)
     max_match = re.search(r"max_volume:\s*(-?[\d.]+)\s*dB", output)
@@ -765,7 +768,7 @@ def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count:
             ["ffmpeg", "-y", "-i", str(clip_path), "-vn",
              "-ac", "1", "-ar", "16000", str(tmp_wav)],
             capture_output=True
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         if not tmp_wav.exists() or tmp_wav.stat().st_size < 1000:
             add_finding(findings, "sync", "WARN", "Could not extract audio for re-Whisper")
             return results

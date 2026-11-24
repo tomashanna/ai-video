@@ -16,6 +16,9 @@ from PIL import Image, ImageDraw, ImageFilter
 
 from ai_video.paths import avu_dir, library_dir, repo_root
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 PROJECT_ROOT = repo_root()
 AVU_DIR = avu_dir()
 TMP = Path("/tmp/avu_hook_transition")
@@ -66,7 +69,7 @@ def main():
         "-color_range", "tv",
         "-r", str(FPS),
         str(silent),
-    ], check=True)
+    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
 
     # Audio: cut-warm-whoosh trimmed to 0.5s + -10 dB
     audio = TMP / "audio.mp3"
@@ -77,7 +80,7 @@ def main():
         "-af", "volume=-10dB",
         "-c:a", "libmp3lame", "-b:a", "192k",
         str(audio),
-    ], check=True)
+    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
 
     subprocess.run([
         "ffmpeg", "-y", "-loglevel", "error",
@@ -87,7 +90,7 @@ def main():
         "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
         "-shortest",
         str(OUT_VIDEO),
-    ], check=True)
+    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
 
     print(f"✓ AVU built: {OUT_VIDEO}")
     return 0

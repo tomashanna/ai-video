@@ -47,6 +47,9 @@ except ImportError:
 from ai_video.errors import ConfigError
 from ai_video.providers.clients import gemini_client
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 
 AUDIT_PROMPT = """Examina este frame de un video horror-choice (1080×1920, vertical Reel para Instagram).
 
@@ -77,7 +80,7 @@ def extract_frames(video_path: str, interval: float, output_dir: str) -> list:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "csv=p=0", video_path],
         capture_output=True, text=True, check=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     duration = float(result.stdout.strip())
 
     frames = []
@@ -89,7 +92,7 @@ def extract_frames(video_path: str, interval: float, output_dir: str) -> list:
             ["ffmpeg", "-y", "-ss", str(t), "-i", video_path,
              "-frames:v", "1", "-q:v", "2", out],
             capture_output=True, check=False
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         if os.path.exists(out) and os.path.getsize(out) > 1000:
             frames.append((t, out))
         t += interval

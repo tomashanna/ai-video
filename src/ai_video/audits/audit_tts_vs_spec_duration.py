@@ -26,6 +26,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -39,7 +42,7 @@ DEFAULT_NAMING = "{shot_id}_narrator.mp3"
 def ffprobe_duration(path):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     try:
         return float(r.stdout.strip())
     except ValueError:

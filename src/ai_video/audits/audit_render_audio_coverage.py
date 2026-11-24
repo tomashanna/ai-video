@@ -36,6 +36,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:  # pyyaml only needed when reading a SPEC for capabilities/strategy
@@ -161,7 +164,7 @@ def ffprobe_duration(video_path: str) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "csv=p=0", video_path],
         capture_output=True, text=True, check=True,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     return float(out.stdout.strip())
 
 
@@ -193,7 +196,7 @@ def ffmpeg_silence_zones(video_path: str, noise_db: float = -35.0,
          "-af", f"silencedetect=noise={noise_db}dB:d={min_silence_s}",
          "-f", "null", "-"],
         capture_output=True, text=True,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     return parse_silencedetect(out.stderr)
 
 

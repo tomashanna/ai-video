@@ -61,6 +61,9 @@ from pathlib import Path
 from ai_video.paths import repo_root, resolve_asset
 from typing import Any
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -127,7 +130,7 @@ def _measure_mean_dbfs(path: Path) -> float:
     r = subprocess.run(
         ["ffmpeg", "-hide_banner", "-i", str(path), "-af", "volumedetect", "-f", "null", "-"],
         capture_output=True, text=True,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     mean = None
     for line in r.stderr.splitlines():
         if "mean_volume:" in line:
@@ -221,8 +224,8 @@ def _token_overlap_ratio(a: str, b: str) -> float:
 def run(cmd: list[str], capture: bool = False, check: bool = True) -> subprocess.CompletedProcess:
     """Run shell command, raise on error."""
     if capture:
-        return subprocess.run(cmd, capture_output=True, text=True, check=check)
-    return subprocess.run(cmd, check=check)
+        return subprocess.run(cmd, capture_output=True, text=True, check=check, timeout=SUBPROCESS_TIMEOUT_S)
+    return subprocess.run(cmd, check=check, timeout=SUBPROCESS_TIMEOUT_S)
 
 
 def ffprobe_duration(path: Path) -> float:
@@ -247,7 +250,7 @@ def ffprobe_lufs(path: Path) -> float | None:
         "-f", "null", "-",
     ]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
         stderr = result.stderr
         # Extract JSON block at end of stderr
         match = re.search(r"\{[^{}]*\"input_i\"[^{}]*\}", stderr, re.DOTALL)
@@ -267,7 +270,7 @@ def ffprobe_peak_db(path: Path) -> float | None:
         "-f", "null", "-",
     ]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
         match = re.search(r"max_volume:\s*(-?[\d.]+)\s*dB", result.stderr)
         if match:
             return float(match.group(1))
@@ -1142,7 +1145,7 @@ def bake_captions_per_clip(
             str(clip_path),
         ],
         capture_output=True, text=True, check=False,
-    )
+     timeout=SUBPROCESS_TIMEOUT_S)
     has_audio_stream = bool(probe_audio.stdout.strip())
 
     # Extract audio for Whisper. If no audio stream, we still produce a passthrough.
@@ -1160,7 +1163,7 @@ def bake_captions_per_clip(
                         str(audio_path),
                     ],
                     check=True, capture_output=True, text=True,
-                )
+                 timeout=SUBPROCESS_TIMEOUT_S)
             except subprocess.CalledProcessError as e:
                 result["error"] = f"ffmpeg audio extract failed: {e.stderr}"
                 return result
@@ -1198,7 +1201,7 @@ def bake_captions_per_clip(
                         str(output_path),
                     ],
                     check=True, capture_output=True, text=True,
-                )
+                 timeout=SUBPROCESS_TIMEOUT_S)
                 result["success"] = True
                 return result
             except subprocess.CalledProcessError as e:
@@ -1254,7 +1257,7 @@ def bake_captions_per_clip(
                      "-i", str(clip_path), "-c", "copy", "-map", "0",
                      str(output_path)],
                     check=True, capture_output=True, text=True,
-                )
+                 timeout=SUBPROCESS_TIMEOUT_S)
                 result["success"] = True
                 return result
             except Exception as e:
@@ -1266,7 +1269,7 @@ def bake_captions_per_clip(
             ["ffprobe", "-v", "error", "-select_streams", "v",
              "-show_entries", "stream=height,width", "-of", "csv=p=0", str(clip_path)],
             capture_output=True, text=True, check=False,
-        )
+         timeout=SUBPROCESS_TIMEOUT_S)
         video_height, video_width = 1920, 1080
         try:
             tok = probe_dims.stdout.strip().splitlines()[0].split(",")
@@ -1306,7 +1309,7 @@ def bake_captions_per_clip(
             str(output_path),
         ]
         try:
-            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
         except subprocess.CalledProcessError as e:
             result["error"] = f"ffmpeg drawtext burn failed: {e.stderr[-800:] if e.stderr else 'unknown'}"
             return result

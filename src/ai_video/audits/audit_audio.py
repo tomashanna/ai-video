@@ -37,6 +37,9 @@ import os
 import re
 import sys
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 
 # UMBRALES validados contra los 3 videos exitosos (2026-05-13)
 MIN_NARRATION_COVERAGE = 70.0    # %. mina 77, bosque 70.3, elige 72.9, pueblo 30.9 ❌
@@ -55,7 +58,7 @@ def get_video_duration(video_path: str) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "csv=p=0", video_path],
         capture_output=True, text=True, check=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     return float(result.stdout.strip())
 
 
@@ -67,7 +70,7 @@ def measure_lufs(video_path: str) -> dict:
          "-af", f"loudnorm=I={TARGET_LUFS}:TP=-1:LRA=11:print_format=json",
          "-f", "null", "-"],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     # ffmpeg writes loudnorm JSON to stderr
     output = result.stderr
     # Find JSON block

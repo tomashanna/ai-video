@@ -42,6 +42,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 try:
     import yaml
 except ImportError:
@@ -75,7 +78,7 @@ def determine_branch(caps):
 
 def ffprobe_duration(path):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                        "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+                        "-of", "csv=p=0", str(path)], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     try:
         return float(r.stdout.strip())
     except ValueError:
@@ -149,7 +152,7 @@ def build_mix(input_video, music_files, narrator, out_wav):
         "-filter_complex", ";".join(fc), "-map", "[mixout]",
         "-c:a", "pcm_s16le", "-ar", "48000", str(out_wav),
     ]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     return r.returncode, r.stderr, duck_applied
 
 
@@ -158,7 +161,7 @@ def loudnorm_measure(audio_src):
         "ffmpeg", "-i", str(audio_src),
         "-af", f"loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA={TARGET_LRA}:print_format=json",
         "-f", "null", "-",
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     err = r.stderr
     start = err.rfind("{")
     end = err.rfind("}")
@@ -178,7 +181,7 @@ def loudnorm_apply(audio_src, m, out_wav):
     r = subprocess.run([
         "ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(audio_src),
         "-af", af, "-ar", "48000", "-c:a", "pcm_s16le", str(out_wav),
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     return r.returncode, r.stderr
 
 
@@ -188,7 +191,7 @@ def mux(input_video, mastered_audio, output):
         "-i", str(input_video), "-i", str(mastered_audio),
         "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
         "-ar", "48000", str(output),
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     return r.returncode, r.stderr
 
 
@@ -284,7 +287,7 @@ def main():
     if branch == "passthrough":
         r = subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
                             "-i", str(input_path), "-c", "copy", str(output)],
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
         if r.returncode != 0:
             print(f"ERROR: passthrough copy failed: {r.stderr[:300]}", file=sys.stderr)
             return 1

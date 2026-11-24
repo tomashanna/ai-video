@@ -45,6 +45,9 @@ import sys
 from pathlib import Path
 from statistics import quantiles
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 
 # Critical metrics — failure relevant
 CRITICAL_METRICS = [
@@ -125,7 +128,7 @@ def measure_our_video(video_path, html_path=None):
             ["ffprobe", "-v", "error", "-show_entries", "format=duration",
              "-of", "csv=p=0", video_path],
             text=True
-        ).strip()
+        , timeout=SUBPROCESS_TIMEOUT_S).strip()
         out["duration_s"] = float(dur)
     except Exception as e:
         print(f"ERROR: ffprobe duration failed: {e}", file=sys.stderr)
@@ -137,7 +140,7 @@ def measure_our_video(video_path, html_path=None):
             ["ffmpeg", "-i", video_path, "-af",
              "loudnorm=I=-14:TP=-1:LRA=11:print_format=json", "-f", "null", "-"],
             capture_output=True, text=True
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         for line in result.stderr.splitlines():
             if '"input_i"' in line:
                 # parse JSON-ish output
@@ -163,7 +166,7 @@ def measure_our_video(video_path, html_path=None):
             ["ffmpeg", "-i", video_path, "-filter:v",
              "select='gt(scene,0.3)',showinfo", "-f", "null", "-"],
             capture_output=True, text=True
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         cuts = sum(1 for line in result.stderr.splitlines() if "pts_time:" in line)
         out["pacing"]["cuts_per_min"] = (cuts * 60.0) / out["duration_s"]
         out["pacing"]["cuts_total_raw"] = cuts
@@ -179,7 +182,7 @@ def measure_our_video(video_path, html_path=None):
             ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
              audio_tmp, "-loglevel", "error"],
             check=True
-        )
+        , timeout=SUBPROCESS_TIMEOUT_S)
         model = whisper.load_model("small")
         result = model.transcribe(audio_tmp, language="es", fp16=False)
         segments = result.get("segments", [])

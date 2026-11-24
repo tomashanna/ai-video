@@ -54,6 +54,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+# Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
+SUBPROCESS_TIMEOUT_S = 1800
+
 
 def parse_html_elements(html_path: Path) -> dict:
     """Extract caption + outro-card + watermark elements with positions from HTML."""
@@ -130,7 +133,7 @@ def get_video_duration(video_path: Path) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", str(video_path)],
         capture_output=True, text=True
-    )
+    , timeout=SUBPROCESS_TIMEOUT_S)
     return float(result.stdout.strip())
 
 
