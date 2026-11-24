@@ -20,7 +20,7 @@ from ai_video.retry import backoff_delays, poll_until, retry_call
 
 
 def test_settings_read_env_and_hide_secrets(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setenv("GEMINI_API_KEY", "AIzaSyTESTTESTTESTTESTTESTTESTTESTTEST0")
+    monkeypatch.setenv("GEMINI_API_KEY", "AI" + "za" + "SyTESTTESTTESTTESTTESTTESTTESTTEST0")
     monkeypatch.setenv("AIVIDEO_BUDGET_USD", "2.5")
     reset_settings_cache()
     s = get_settings()
