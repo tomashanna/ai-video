@@ -4,7 +4,11 @@ Validates SPEC per-shot lip_sync_required declarations (D17 architect compliance
 5 tests: CLI + Bug #9 + clean PASS + shot missing field FAIL + inconsistency (character speech but
 lip_sync_required false) FAIL.
 """
-import json, shutil, subprocess, sys, tempfile, unittest
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_spec_lip_sync_marks.py"

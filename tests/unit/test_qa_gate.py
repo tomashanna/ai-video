@@ -25,7 +25,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-
 SCRIPT_DIR = Path(__file__).parent
 QA_GATE_PATH = Path(__file__).resolve().parents[2] / "src/ai_video/audits/qa_gate.py"
 CLAUDE_MD_CANONICAL = Path(__file__).resolve().parents[2] / "docs/OPERATING-MANUAL.md"

@@ -46,14 +46,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 try:
     import yaml
 except ImportError:
     print("ERROR: pyyaml not installed. Run: pip install pyyaml", file=sys.stderr)
     sys.exit(2)
 
-from ai_video.core.spec_transitions_adapter import normalize_transitions  # noqa: E402
+from ai_video.core.spec_transitions_adapter import normalize_transitions
 
 # Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
 SUBPROCESS_TIMEOUT_S = 1800

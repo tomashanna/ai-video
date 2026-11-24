@@ -254,7 +254,9 @@ class TestV6RealRegression(unittest.TestCase):
         # Non-circular real-artifact FAIL regression (HR#26 / instance 4/5): inject the
         # bueno_aparente (char_b) into a played-path decision shot of the REAL V6 SPEC → the
         # validator MUST catch it (exit 1). Uses the real v11 schema, not a synthetic dict.
-        import yaml, tempfile
+        import tempfile
+
+        import yaml
         spec = yaml.safe_load(V6_SPEC.read_text())
         for sh in spec.get("shot_list", []):
             if sh.get("shot_id") == "shot_06":

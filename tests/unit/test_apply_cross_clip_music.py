@@ -19,7 +19,6 @@ sidechain duck dB SPEC-declared (plumbing).
 Authority: Paso 4.3 build + PIPELINE §13.7.5 Layer 3 + PRE-4.C bands + Pattern 7 + PRE-4.E.
 """
 import json
-import os
 import re
 import shutil
 import subprocess

@@ -65,7 +65,7 @@ import tempfile
 from pathlib import Path
 
 try:
-    import google.genai as genai
+    import google.genai as genai  # noqa: F401  (availability check)
 except ImportError:
     print("ERROR: missing deps. Run: uv sync --extra providers", file=sys.stderr)
     sys.exit(2)
@@ -665,7 +665,7 @@ def print_report(report: dict) -> None:
             print(f"  {key}: {report[key]}")
 
     # Scores (visual hooks)
-    if "scores" in report and report["scores"]:
+    if report.get("scores"):
         print(f"  Scores (min={report.get('min_score')}, threshold={SCORE_FAIL_THRESHOLD}):")
         for dim, sd in report["scores"].items():
             mark = "🔴" if sd["score"] < SCORE_FAIL_THRESHOLD else ("🟡" if sd["score"] < 8 else "🟢")

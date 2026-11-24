@@ -50,16 +50,15 @@ Outputs per shot:
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 from ai_video.paths import repo_root, resolve_asset
-from typing import Any
 
 # Upper bound for any child process (ffmpeg/ffprobe/whisper); prevents hung gates.
 SUBPROCESS_TIMEOUT_S = 1800
@@ -1072,12 +1071,12 @@ def _drawtext_filters_for_cue(
             f"text='{escaped}'",
             f"fontsize={fontsize}",
             f"fontcolor={color}",
-            f"x=(w-text_w)/2",
+            "x=(w-text_w)/2",
             f"y={y_expr}",
             f"shadowcolor={CAPTION_SHADOW_COLOR}",
             f"shadowx={CAPTION_SHADOW_OFFSET_PX}",
             f"shadowy={CAPTION_SHADOW_OFFSET_PX}",
-            f"borderw=1",
+            "borderw=1",
             f"bordercolor={CAPTION_SHADOW_COLOR}",
             f"enable='between(t,{cue['start_s']:.3f},{cue['end_s']:.3f})'",
         ]
@@ -1801,13 +1800,13 @@ def main():
             "shots": summaries,
         }, f, indent=2, ensure_ascii=False)
 
-    print(f"\n══════════════════════════════════════════════════════════════")
+    print("\n══════════════════════════════════════════════════════════════")
     print(f"  Batch summary: {len(summaries)}/{len(shots)} built")
     print(f"  PASS: {sum(1 for s in summaries if s['audit_status'] == 'PASS')}")
     print(f"  REVIEW: {sum(1 for s in summaries if s['audit_status'] != 'PASS')}")
     print(f"  FAILED: {len(failed)}")
     print(f"  Manifest: {_rel(batch_path, base_root)}")
-    print(f"══════════════════════════════════════════════════════════════")
+    print("══════════════════════════════════════════════════════════════")
 
     return 0 if not failed else 1
 

@@ -22,13 +22,11 @@ Authority: CLAUDE.md Hard Rule #19 + #26. Bug class: SCHEMA EVOLUTION crash.
 V4 ground truth: cerro-aislado-v4/CP5-handoff.md L33 (script was patched in-place;
 backport pending). NO modificar V4 archive (D38).
 """
-import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
-
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 TEMPLATE_SCRIPT = REPO_ROOT / "src" / "ai_video" / "audits" / "audit_spec_completeness.py"

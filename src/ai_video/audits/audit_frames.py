@@ -31,15 +31,14 @@ Integration con el flow del agente productor:
 """
 
 import argparse
+import json
 import os
 import subprocess
-import json
-import tempfile
 import sys
-from pathlib import Path
+import tempfile
 
 try:
-    import google.genai as genai
+    import google.genai as genai  # noqa: F401  (availability check)
 except ImportError:
     print("ERROR: missing deps. Run: uv sync --extra providers")
     sys.exit(2)
@@ -202,7 +201,7 @@ def main():
     print()
     if len(all_issues) > args.max_issues:
         print(f"❌ FRAME AUDIT FAILED — {len(all_issues)} frames with issues (max {args.max_issues})")
-        print(f"   Fixear issues antes de stop point pre-Kling.")
+        print("   Fixear issues antes de stop point pre-Kling.")
         return 1
 
     print(f"✅ FRAME AUDIT PASSED — {len(all_issues)} frames ≤ max {args.max_issues}")

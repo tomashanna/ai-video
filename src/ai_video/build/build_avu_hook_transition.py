@@ -9,8 +9,8 @@ Spec:
 - Purpose: shot-to-shot warm transition signal (matadero→cliffhanger cut at ~67s)
 """
 import subprocess
-import tempfile
 import sys
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter

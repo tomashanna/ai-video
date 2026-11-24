@@ -19,7 +19,6 @@ cached, ~30-60s first download).
 NO heavy py deps in tests (no numpy/whisper). Synthetic SPEC + synthetic video-log MD parsed by script.
 """
 import json
-import os
 import shutil
 import subprocess
 import sys

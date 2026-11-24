@@ -24,7 +24,6 @@ import re
 import sys
 from pathlib import Path
 
-
 MAX_WORDS_PER_CAPTION = 6   # max words before splitting a new caption
 MIN_GAP_S = 0.08            # minimum silence gap to force a split
 FADE_DURATION = 0.0         # instant set (no fade) — keep captions sharp

@@ -63,8 +63,8 @@ import sys
 from pathlib import Path
 
 try:
-    from google import genai
-    from google.genai import types
+    from google import genai  # noqa: F401  (availability check)
+    from google.genai import types  # noqa: F401  (availability check)
 except ImportError:
     print("ERROR: pip install google-genai", file=sys.stderr)
     sys.exit(1)
@@ -214,7 +214,7 @@ def main():
             print(f"  VERDICT: {parsed['verdict']}")
     else:
         print(f"  ⚠️  Could not parse all 8 dimensions ({len(parsed['dimensions'])}/8)")
-        print(f"  Raw response saved for inspection.")
+        print("  Raw response saved for inspection.")
 
     if args.output:
         output_data = {

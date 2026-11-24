@@ -166,7 +166,7 @@ def sentinel_s1_audio_visual_character_mismatch(
             continue  # narrator off-screen voice always valid
 
         # Check if character_id has visible windows defined
-        visible_windows = character_visible_windows.get(speaker, None)
+        visible_windows = character_visible_windows.get(speaker)
         if visible_windows is None:
             findings.append({
                 "sentinel": "S1",
@@ -545,7 +545,7 @@ def sentinel_s6_countdown_digit_transition_timing(html_path: Path) -> list:
                     "element": digit_id,
                     "issue": f"Countdown digit '{digit_id}' transitions firing at near-identical timestamps (gap={gap:.2f}s < 0.5s) — digits jump instantly instead of staggered per canonical 1s per digit",
                     "transitions": [(d, t) for d, t in transitions_sorted],
-                    "fix_hint": f"Stagger GSAP tl.call() timestamps +1s per digit. Better: replace HTML+GSAP countdown with pre-rendered AVU clip (eliminates timing-bug class entirely per PAUTA § 19 AVU principle).",
+                    "fix_hint": "Stagger GSAP tl.call() timestamps +1s per digit. Better: replace HTML+GSAP countdown with pre-rendered AVU clip (eliminates timing-bug class entirely per PAUTA § 19 AVU principle).",
                 })
                 break  # one finding per digit_id is enough
 

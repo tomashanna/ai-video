@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Optional
 
 # Matches a Hard Rules table row:
 #   | <rule_id>( <emojis>)? | <text> | <authority_pointer> |
@@ -113,7 +112,7 @@ def parse_hard_rules(claude_md_path: Path | str) -> list[dict]:
     return rules
 
 
-def get_rule(rules: list[dict], rule_id: int) -> Optional[dict]:
+def get_rule(rules: list[dict], rule_id: int) -> dict | None:
     """Look up a rule by id. Returns None for missing (e.g., Rule #22 empty slot)."""
     for r in rules:
         if r["rule_id"] == rule_id:
@@ -121,7 +120,7 @@ def get_rule(rules: list[dict], rule_id: int) -> Optional[dict]:
     return None
 
 
-def get_quality_threshold_calibrated(rules: list[dict]) -> Optional[float]:
+def get_quality_threshold_calibrated(rules: list[dict]) -> float | None:
     """Extract calibrated quality threshold from Hard Rule #1.
 
     Current canonical threshold per Hard Rule #1 (updated 2026-05-21 PM late):
@@ -141,7 +140,7 @@ def get_quality_threshold_calibrated(rules: list[dict]) -> Optional[float]:
     return None
 
 
-def get_quality_threshold_perceptual(rules: list[dict]) -> Optional[float]:
+def get_quality_threshold_perceptual(rules: list[dict]) -> float | None:
     """Extract perceptual quality threshold from Hard Rule #1.
 
     Current canonical threshold per Hard Rule #1:
@@ -161,6 +160,7 @@ def get_quality_threshold_perceptual(rules: list[dict]) -> Optional[float]:
 if __name__ == "__main__":
     # CLI inspection: print parsed rules summary for human review.
     import json
+
     from ai_video.paths import hard_rules_doc
 
     canonical = hard_rules_doc()

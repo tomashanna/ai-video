@@ -37,7 +37,7 @@ import json
 import re
 import subprocess
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 from ai_video.paths import referent_analysis_dir, repo_root
@@ -418,7 +418,7 @@ def main():
             print(f"  Skipped frame extraction (existing: {n_existing} frames)")
 
         # Compile events
-        print(f"  Compiling events from transcription + scene_cuts...")
+        print("  Compiling events from transcription + scene_cuts...")
         events = compile_events(ref_id, transcription_path, scene_cuts_path)
         events["frame_extraction_info"] = frame_info
         events["source_mp4"] = REF_TO_SOURCE[ref_id]

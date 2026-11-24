@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-from ai_video.providers import image as I  # noqa: E402
+from ai_video.providers import image as I
 
 
 def test_default_agnostic():

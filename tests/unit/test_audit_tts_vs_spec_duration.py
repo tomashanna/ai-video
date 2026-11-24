@@ -6,7 +6,11 @@ Catches TTS overshoots that would cause sync drift or shot overlap downstream.
 7 tests: CLI/capability/Bug9 + clean match + overshoot FAIL + TTS missing FAIL + no-narration skip.
 Synthetic mp3s via ffmpeg lavfi (sine tones at controlled durations).
 """
-import json, os, shutil, subprocess, sys, tempfile, unittest
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 import pytest

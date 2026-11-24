@@ -5,7 +5,12 @@ Validates that SPEC narration_text per shot FITS in declared duration_intent_s
 
 7 tests: CLI/capability/Bug9 + clean PASS + WPM too high FAIL + WPM too low FLAG + missing-input skip.
 """
-import importlib.util, json, os, shutil, subprocess, sys, tempfile, unittest
+import importlib.util
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_spec_narration_fits_duration.py"

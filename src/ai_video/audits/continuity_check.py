@@ -25,8 +25,6 @@ import json
 import os
 import re
 import sys
-from pathlib import Path
-
 
 # Umbrales
 MAX_NARRATIVE_GAP_SECONDS = 2.0  # gaps >2s entre frases de narrador = bandera roja
@@ -234,9 +232,7 @@ def analyze(narrative_path: str, html_path: str, video_duration: float = 90.0) -
             report["issues"].append(f"{severity}: {msg}")
         else:
             # Gaps >5s are issues, smaller are warnings
-            if "5." in msg or "6." in msg or "7." in msg or "8." in msg or "9." in msg:
-                report["issues"].append(f"{severity}: {msg}")
-            elif float(msg.split("s gap")[0]) > 3.0:
+            if "5." in msg or "6." in msg or "7." in msg or "8." in msg or "9." in msg or float(msg.split("s gap")[0]) > 3.0:
                 report["issues"].append(f"{severity}: {msg}")
             else:
                 report["warnings"].append(f"{severity}: {msg}")
@@ -274,7 +270,7 @@ def main():
         print(f"ERROR: index.html not found: {args.html}")
         return 2
 
-    print(f"📖 Continuity check")
+    print("📖 Continuity check")
     print(f"   NARRATIVE.md: {args.narrative}")
     print(f"   index.html:   {args.html}")
     print(f"   Duration:     {args.video_duration}s")
@@ -307,7 +303,7 @@ def main():
 
     if len(report["issues"]) > args.max_issues:
         print(f"❌ CONTINUITY CHECK FAILED — {len(report['issues'])} issues (max {args.max_issues})")
-        print(f"   Fixear gaps narrativos / cobertura baja antes del stop point.")
+        print("   Fixear gaps narrativos / cobertura baja antes del stop point.")
         return 1
 
     print(f"✅ CONTINUITY CHECK PASSED — {len(report['issues'])} issues ≤ max {args.max_issues}")

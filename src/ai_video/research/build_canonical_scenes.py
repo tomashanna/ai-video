@@ -21,12 +21,10 @@ Cost: ~$0.20 per ref if Gemini calls needed (6 frames × $0.002 typical).
 
 import argparse
 import json
-import os
 import re
 import sys
 from pathlib import Path
 from typing import Any
-
 
 # ─── Constants ──────────────────────────────────────────────────────────────
 

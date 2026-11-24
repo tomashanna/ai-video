@@ -214,8 +214,8 @@ def main():
     print(f"\nSFX AUDIBILITY AUDIT — {video.name}  ({len(events)} events, video {vdur:.1f}s)")
     print(f"{'shot':9s} {'sfx_id':26s} {'cls':10s} {'P':1s} {'t0':>7s} {'ev_dB':>7s} {'bed_dB':>7s} {'Δ':>6s} {'flr':>4s}  res")
     for r in sorted(rows, key=lambda x: x["t0"]):
-        print(f"{str(r['shot']):9s} {str(r['sfx_id'])[:26]:26s} {r['cls']:10s} {'P' if r['primary'] else 'r'} "
-              f"{r['t0']:7.2f} {str(r['ev_rms']):>7s} {str(r['bed_rms']):>7s} {str(r['delta_db']):>6s} "
+        print(f"{r['shot']!s:9s} {str(r['sfx_id'])[:26]:26s} {r['cls']:10s} {'P' if r['primary'] else 'r'} "
+              f"{r['t0']:7.2f} {r['ev_rms']!s:>7s} {r['bed_rms']!s:>7s} {r['delta_db']!s:>6s} "
               f"{r['floor']:4.1f}  {'PASS' if r['pass'] else 'FAIL'}")
     nprim = sum(1 for r in rows if r["primary"])
     nprim_pass = sum(1 for r in rows if r["primary"] and r["pass"])

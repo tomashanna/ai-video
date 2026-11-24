@@ -147,27 +147,27 @@ def _legacy_gate(score: float, stage: str, iteration: int) -> int:
     """Legacy single-threshold gate (--score flag). Preserved for back-compat."""
     if score < _STRUCTURAL_ROT_THRESHOLD:
         print(f"🚨 STRUCTURAL ROT — score {score} < {_STRUCTURAL_ROT_THRESHOLD}")
-        print(f"   Algo estructural está roto. NO iterar — escalar al usuario YA.")
-        print(f"   Revisar diseño desde la raíz del NARRATIVE.md.")
+        print("   Algo estructural está roto. NO iterar — escalar al usuario YA.")
+        print("   Revisar diseño desde la raíz del NARRATIVE.md.")
         return 1
 
     if stage == "pre-kling":
         if score < _LEGACY_THRESHOLD:
-            print(f"❌ PRE-KLING QA GATE BLOCKED (legacy mode)")
+            print("❌ PRE-KLING QA GATE BLOCKED (legacy mode)")
             print(f"   Score actual: {score} < umbral {_LEGACY_THRESHOLD}")
             print(f"   Iteración: {iteration}/3")
-            print(f"   Iterar con fixes NO-KLING en orden A→B→C.")
+            print("   Iterar con fixes NO-KLING en orden A→B→C.")
             return 1
-        print(f"✅ PRE-KLING QA GATE PASSED (legacy mode)")
+        print("✅ PRE-KLING QA GATE PASSED (legacy mode)")
         print(f"   Score: {score} ≥ {_LEGACY_THRESHOLD}")
         return 0
 
     elif stage == "post-kling":
         if score < _LEGACY_THRESHOLD:
-            print(f"❌ POST-KLING QA GATE BLOCKED (legacy mode)")
+            print("❌ POST-KLING QA GATE BLOCKED (legacy mode)")
             print(f"   Score actual: {score} < umbral {_LEGACY_THRESHOLD}")
             return 1
-        print(f"✅ POST-KLING QA GATE PASSED (legacy mode)")
+        print("✅ POST-KLING QA GATE PASSED (legacy mode)")
         print(f"   Score: {score} ≥ {_LEGACY_THRESHOLD}")
         return 0
 
@@ -190,7 +190,7 @@ def _dual_branch_gate(
     if calibrated < _STRUCTURAL_ROT_THRESHOLD and (perceptual is None or perceptual < _STRUCTURAL_ROT_THRESHOLD):
         print(f"🚨 STRUCTURAL ROT — calibrated {calibrated} + perceptual "
               f"{perceptual or 'N/A'} both < {_STRUCTURAL_ROT_THRESHOLD}")
-        print(f"   Algo estructural está roto. NO iterar — escalar al usuario YA.")
+        print("   Algo estructural está roto. NO iterar — escalar al usuario YA.")
         return 1
 
     threshold_calibrated, threshold_perceptual = _load_thresholds()
@@ -201,7 +201,7 @@ def _dual_branch_gate(
         print(f"   calibrated: {calibrated} ≥ threshold {threshold_calibrated}")
         if perceptual is not None:
             print(f"   perceptual: {perceptual} (informational)")
-        print(f"   Source: CLAUDE.md Hard Rule #1 (threshold read dynamically)")
+        print("   Source: CLAUDE.md Hard Rule #1 (threshold read dynamically)")
         return 0
 
     # Branch (b): perceptual ≥ threshold → PASS via Rule D PRECEDENCE.
@@ -209,7 +209,7 @@ def _dual_branch_gate(
         print(f"✅ {stage.upper()} QA GATE PASSED (perceptual branch — Rule D PRECEDENCE)")
         print(f"   calibrated: {calibrated} < threshold {threshold_calibrated} (would fail alone)")
         print(f"   perceptual: {perceptual} ≥ threshold {threshold_perceptual} (user ground truth overrides)")
-        print(f"   Source: CLAUDE.md Hard Rule #1 dual gate OR logic")
+        print("   Source: CLAUDE.md Hard Rule #1 dual gate OR logic")
         return 0
 
     # Neither branch satisfied yet.
@@ -218,7 +218,7 @@ def _dual_branch_gate(
         status = "AWAITING_USER_PERCEPTUAL"
         print(f"⏸️ {stage.upper()} QA GATE — status {status}")
         print(f"   calibrated: {calibrated} < threshold {threshold_calibrated} (FAIL)")
-        print(f"   perceptual: NOT PROVIDED")
+        print("   perceptual: NOT PROVIDED")
         print(f"   Per Hard Rule #1 Rule D PRECEDENCE: user_perceptual ≥{threshold_perceptual} "
               f"can override calibrated FAIL. User MUST watch render + report perceptual score.")
         if project_dir and project_id:
@@ -227,7 +227,7 @@ def _dual_branch_gate(
             )
             print(f"   📋 HUMAN-CHECKLIST auto-generated: {target}")
         else:
-            print(f"   (HUMAN-CHECKLIST auto-gen skipped — pass --project-dir + --project-id to enable)")
+            print("   (HUMAN-CHECKLIST auto-gen skipped — pass --project-dir + --project-id to enable)")
         return 3
 
     # Both branches FAILED (calibrated < threshold AND perceptual < threshold).
@@ -291,7 +291,7 @@ def main() -> int:
 
     if args.iteration > 3:
         print(f"🚨 ESCALATION REQUIRED — {args.iteration} iterations sin convergence")
-        print(f"   Reportar al usuario con análisis dimensión-por-dimensión.")
+        print("   Reportar al usuario con análisis dimensión-por-dimensión.")
         return 2
 
     # Legacy mode.

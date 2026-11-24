@@ -318,7 +318,7 @@ def main():
         print(f"ERROR: html not found: {args.html}")
         return 2
 
-    print(f"🎵 Auditing audio (v2, vara basada en mina v15 / bosque v10 / elige V7)")
+    print("🎵 Auditing audio (v2, vara basada en mina v15 / bosque v10 / elige V7)")
     print(f"   Video: {args.video}")
     print()
 
@@ -350,7 +350,7 @@ def main():
             print(f"   • {issue}")
         if report['narration_quality']['short_blocks']:
             print()
-            print(f"   Short blocks detail:")
+            print("   Short blocks detail:")
             for b in report['narration_quality']['short_blocks']:
                 print(f"     - {b['src']}: {b['duration']}s")
         print()
@@ -362,10 +362,10 @@ def main():
 
     if len(report["issues"]) > args.max_issues:
         print(f"❌ AUDIO AUDIT FAILED — {len(report['issues'])} issues (max {args.max_issues})")
-        print(f"   Vara basada en mina v15 / bosque v10 / elige V7. NO ajustar al alza para 'pasar'.")
+        print("   Vara basada en mina v15 / bosque v10 / elige V7. NO ajustar al alza para 'pasar'.")
         return 1
 
-    print(f"✅ AUDIO AUDIT PASSED")
+    print("✅ AUDIO AUDIT PASSED")
     return 0
 
 

@@ -88,7 +88,7 @@ SCORE_RE = re.compile(r"\b(?:\d{1,2}\.\d/10|\d{1,2}/10|gemini\s+\d{1,2}(?:\.\d)?
 
 
 # Kept out of the f-string: nested escaped quotes are Python 3.12+ syntax only.
-_PATTERN_TOKEN = 'token "pattern"'
+_PATTERN_TOKEN = 'token "pattern"'  # noqa: S105 - not a secret
 
 
 def slug_normalize(s: str) -> str:

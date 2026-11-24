@@ -158,8 +158,8 @@ def _write_sidecar(dirpath: Path, captions: list[dict]) -> Path:
 
 def _run_main(argv):
     """Call main() with patched sys.argv; capture exit code + stdout."""
-    import io
     import contextlib
+    import io
     old_argv = sys.argv
     sys.argv = ["audit-caption-temporal-coverage.py"] + argv
     buf = io.StringIO()

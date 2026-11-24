@@ -286,9 +286,10 @@ def ocr_sample_cues(video_path: Path, interval_s: float = 0.5) -> list[dict] | N
     caption cues. Heavy/optional — returns None if pytesseract/ffmpeg unavailable so
     the caller degrades to exit 2 (can't-measure) rather than a false PASS."""
     try:
-        import subprocess, tempfile, os
-        import pytesseract  # noqa: F401
-        from PIL import Image  # noqa: F401
+        import tempfile
+
+        import pytesseract
+        from PIL import Image
     except Exception:
         return None
     # NOTE: implemented as a thin sampler; sampling logic intentionally minimal so
@@ -302,8 +303,9 @@ def ocr_sample_cues(video_path: Path, interval_s: float = 0.5) -> list[dict] | N
     tmp = Path(tempfile.mkdtemp())
     try:
         import subprocess as sp
-        from PIL import Image
+
         import pytesseract
+        from PIL import Image
         last_text, run_start = None, None
         while t < dur:
             frame = tmp / f"f_{int(t*1000)}.png"

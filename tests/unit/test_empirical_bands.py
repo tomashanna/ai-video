@@ -9,12 +9,11 @@ la banda de captions_narration.y_pct medida debe contener ~62-64, NO 48.
 from __future__ import annotations
 
 import json
-import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-from ai_video.core import empirical_bands as eb  # noqa: E402
+from ai_video.core import empirical_bands as eb
 
 
 def _mk_fixture_tree(tmp: Path, fmt: str = "horror-choice"):

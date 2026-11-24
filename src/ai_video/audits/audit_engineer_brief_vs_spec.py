@@ -49,8 +49,7 @@ except ImportError:
 ES_STOPWORDS = {
     "para", "pero", "porque", "como", "cuando", "donde", "hacia", "hasta", "desde",
     "sobre", "entre", "este", "esta", "esto", "esos", "esas", "eso", "esa", "ese",
-    "unos", "unas", "una", "uno", "los", "las", "del", "con", "por", "que", "una",
-    "sus", "sin", "más", "muy", "ya", "le", "lo", "la", "el", "un", "su", "se",
+    "unos", "unas", "una", "uno", "los", "las", "del", "con", "por", "que", "sus", "sin", "más", "muy", "ya", "le", "lo", "la", "el", "un", "su", "se",
     "y", "o", "a", "de", "en", "es", "al", "mientras", "luego", "tras", "cada",
 }
 

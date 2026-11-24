@@ -71,8 +71,7 @@ except ImportError:
     print("ERROR: openai-whisper not installed. Run: pip install openai-whisper", file=sys.stderr)
     sys.exit(2)
 
-from ai_video.core.similarity import jaccard_similarity, estimate_text_offset_s
-
+from ai_video.core.similarity import estimate_text_offset_s, jaccard_similarity
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Config (per CONTRACT v1.0)
@@ -670,7 +669,7 @@ def audit_shot(
 
     # ── Whisper transcribe full clip audio ──
     audio_wav = os.path.join(workdir, f"{shot_id}_audio.wav")
-    print(f"  Extracting audio → Whisper...", file=sys.stderr)
+    print("  Extracting audio → Whisper...", file=sys.stderr)
     have_audio = extract_audio(atomic_clip_path, audio_wav)
     whisper_out = whisper_transcribe(audio_wav) if have_audio else {"text": "", "segments": []}
     whisper_text = whisper_out["text"]

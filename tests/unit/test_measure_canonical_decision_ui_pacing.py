@@ -15,7 +15,6 @@ import sys
 import unittest
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/research/measure_canonical_decision_ui_pacing.py"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 

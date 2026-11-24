@@ -24,7 +24,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 # SFX impact keywords (detect impact events from src name)
 IMPACT_KEYWORDS = [
     "white-flash", "flash", "thud", "body-fall", "body-thud",
@@ -145,7 +144,7 @@ def main():
 
     Path(args.debug_dir).mkdir(parents=True, exist_ok=True)
 
-    print(f"🎬 Frame-perfect sync check")
+    print("🎬 Frame-perfect sync check")
     print(f"   Video: {args.video}")
     print(f"   HTML: {args.html}")
     print()
@@ -190,10 +189,10 @@ def main():
         print("   - Animation muy sutil (delta < threshold)")
         print()
         print(f"   Ver frames extraídos en: {args.debug_dir}/")
-        print(f"   Ver: ai-video-production/MOTION-LAYER.md § 'Audio-reactive motion'")
+        print("   Ver: ai-video-production/MOTION-LAYER.md § 'Audio-reactive motion'")
         return 1
 
-    print(f"✅ SYNC CHECK PASSED — all impacts have visual response")
+    print("✅ SYNC CHECK PASSED — all impacts have visual response")
     return 0
 
 

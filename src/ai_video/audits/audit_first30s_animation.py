@@ -171,9 +171,9 @@ def evaluate_kenburns_hr7(shots, *, max_share=KENBURNS_MAX_SHARE, max_dur_s=KENB
         "over_duration_shots": over_dur,
         "duration_ok": dur_ok,
         "detail": (
-            (f"share Ken Burns/estático {share*100:.0f}% > {max_share*100:.0f}% — "
+            f"share Ken Burns/estático {share*100:.0f}% > {max_share*100:.0f}% — "
              f"HR#7 lo limita a fallback ({n_static}/{total} shots)" if not share_ok else
-             f"share Ken Burns/estático {share*100:.0f}% ≤ {max_share*100:.0f}% ✓ ({n_static}/{total})")
+             f"share Ken Burns/estático {share*100:.0f}% ≤ {max_share*100:.0f}% ✓ ({n_static}/{total})"
         ),
     }
     return ok, summary, per_shot

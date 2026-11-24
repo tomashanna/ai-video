@@ -290,8 +290,8 @@ def main():
         print(f"target_fps: {target_fps}{' (DEFAULTED + WARNING)' if target_fps_defaulted else ''}")
         print(f"output_resolution: {output_resolution}")
         print(f"has_layer_4_ui: {has_l4}")
-        print(f"pipeline: 4.2 concat → 4.4 effects → 4.3 music+master → Layer4 UI + fps norm")
-        print(f"gates_plan: [1_duration, 2_lufs, 3_dbtp, 4_resolution, 5_fps, 6_caption_sync, 7_layers, 8_frames]")
+        print("pipeline: 4.2 concat → 4.4 effects → 4.3 music+master → Layer4 UI + fps norm")
+        print("gates_plan: [1_duration, 2_lufs, 3_dbtp, 4_resolution, 5_fps, 6_caption_sync, 7_layers, 8_frames]")
         return 0
 
     if not clips_dir.exists():

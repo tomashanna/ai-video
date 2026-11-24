@@ -41,10 +41,9 @@ LEGACY_TYPE_TO_RECIPE = {
 
 
 def _has_per_shot_transitions(shot_list):
-    for s in shot_list:
-        if isinstance(s, dict) and (s.get("transition_in") or s.get("transition_out")):
-            return True
-    return False
+    return any(
+        isinstance(s, dict) and bool(s.get("transition_in") or s.get("transition_out")) for s in shot_list
+    )
 
 
 def normalize_transitions(spec):

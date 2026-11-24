@@ -21,7 +21,6 @@ Synthetic fixtures via ffmpeg lavfi. Uses REAL Capa A effects-library (hard-cut-
 + whoosh sting). NO numpy/whisper. NO golden V4.
 """
 import json
-import os
 import re
 import shutil
 import subprocess

@@ -30,8 +30,8 @@ Documentado en: .claude/skills/video-director/ANTI-PATTERNS.md
 """
 import re
 import sys
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 MIN_VISIBLE_SECONDS = 1.0
 CAPTION_WRAP_Z_INDEX = 70  # estándar en todos los proyectos

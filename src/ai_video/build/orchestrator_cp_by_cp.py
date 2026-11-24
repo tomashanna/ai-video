@@ -57,34 +57,27 @@ CLI examples:
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
-
-from ai_video.core.orchestrator_state import (  # noqa: E402
-    OrchestratorState,
+from ai_video.core.orchestrator_state import (
     LINEAR_FLOW,
-    next_state,
-    cp_id_from_state,
-    previous_cp,
-    parse_verdict,
-    detect_multi_cp_prompt,
-    assert_engineer_scope_single_cp,
-    OverrideEntry,
-    now_iso_utc,
-    append_architectural_decision,
-    parse_cost_from_file,
-    HaltReason,
     GateHalt,
-    VALID_AGENTS,
-    VALID_CP_AFFECTED,
+    HaltReason,
+    OrchestratorState,
+    OverrideEntry,
+    append_architectural_decision,
+    assert_engineer_scope_single_cp,
+    cp_id_from_state,
+    detect_multi_cp_prompt,
+    next_state,
+    now_iso_utc,
+    parse_cost_from_file,
+    parse_verdict,
+    previous_cp,
 )
-
 
 # -----------------------------------------------------------------------------
 # Defaults
@@ -164,10 +157,10 @@ class ParsedOverride:
     cp_affected: str  # e.g. "CP3"
     override_flag_label: str  # e.g. "skip-cp3-audit"
     reason: str
-    verdict_bypassed: Optional[str] = None
+    verdict_bypassed: str | None = None
 
 
-def parse_overrides_from_args(argv: list[str]) -> tuple[list[ParsedOverride], list[str], Optional[str]]:
+def parse_overrides_from_args(argv: list[str]) -> tuple[list[ParsedOverride], list[str], str | None]:
     """
     Extract --override-XXX flags + --reason from argv. Returns:
       (overrides_list, remaining_argv, error_message_or_None)
@@ -183,7 +176,7 @@ def parse_overrides_from_args(argv: list[str]) -> tuple[list[ParsedOverride], li
     overrides: list[ParsedOverride] = []
     remaining: list[str] = []
     i = 0
-    pending_override: Optional[str] = None
+    pending_override: str | None = None
 
     while i < len(argv):
         token = argv[i]
@@ -221,7 +214,7 @@ def parse_overrides_from_args(argv: list[str]) -> tuple[list[ParsedOverride], li
             i += 1
             continue
 
-        if token == "--reason":
+        if token == "--reason":  # noqa: S105 - CLI token, not a secret
             if pending_override is None:
                 # --reason without a pending override
                 return [], [], "--reason given without preceding --override-* flag"
@@ -268,10 +261,10 @@ class GateContext:
     decisions_path: Path
     timeout_per_cp_min: int
     cost_cap_usd: float
-    cost_log_path: Optional[Path]
+    cost_log_path: Path | None
     overrides: list[ParsedOverride]
     dry_run: bool = False
-    cp_start_time: Optional[float] = None
+    cp_start_time: float | None = None
     halts: list[HaltReason] = None
     warnings: list[str] = None
     architectural_log: list[OverrideEntry] = None
@@ -287,7 +280,7 @@ class GateContext:
         if self.consumed_overrides is None:
             self.consumed_overrides = set()
 
-    def find_override(self, cp_affected: str, flag_substr: str) -> Optional[ParsedOverride]:
+    def find_override(self, cp_affected: str, flag_substr: str) -> ParsedOverride | None:
         """Find an override matching cp + flag substring (e.g. 'skip', 'force-pass')."""
         for o in self.overrides:
             if o.cp_affected != cp_affected:
@@ -298,7 +291,7 @@ class GateContext:
                 return o
         return None
 
-    def find_global_override(self, flag_substr: str) -> Optional[ParsedOverride]:
+    def find_global_override(self, flag_substr: str) -> ParsedOverride | None:
         for o in self.overrides:
             if o.cp_affected != "GLOBAL":
                 continue
@@ -557,7 +550,7 @@ def gate_check_canonical_floor_cp5(ctx: GateContext) -> None:
     )
 
 
-def _override_to_entry(o: ParsedOverride, ctx: GateContext) -> Optional[OverrideEntry]:
+def _override_to_entry(o: ParsedOverride, ctx: GateContext) -> OverrideEntry | None:
     # Dedup guard: if this ParsedOverride was already logged in this orchestrator
     # run, return None so caller skips re-append.
     if id(o) in ctx.consumed_overrides:
@@ -775,7 +768,7 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
 

@@ -27,21 +27,17 @@ el test asume gaps documentados, no exige contigüidad total.
 
 Authority: CLAUDE.md Hard Rules table + footnote. HR#26 companion (data-driven 2026-06-04).
 """
-import re
-import sys
 import unittest
 from pathlib import Path
 
 # Add parent dir to path so `import hard_rules_parser` resolves regardless
 # of cwd at test invocation (project scripts/lib/ or template scripts/lib/).
-
-from ai_video.core.hard_rules_parser import (  # noqa: E402
-    parse_hard_rules,
-    get_rule,
+from ai_video.core.hard_rules_parser import (
     get_quality_threshold_calibrated,
     get_quality_threshold_perceptual,
+    get_rule,
+    parse_hard_rules,
 )
-
 
 CLAUDE_MD_PATH = Path(__file__).resolve().parents[2] / "docs/OPERATING-MANUAL.md"
 

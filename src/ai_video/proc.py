@@ -50,7 +50,7 @@ def run(
     args = [str(c) for c in cmd]
     if not Path(args[0]).is_absolute():
         require_binary(args[0])
-    return subprocess.run(  # noqa: S603 - args list, no shell
+    return subprocess.run(
         args,
         check=check,
         capture_output=capture,

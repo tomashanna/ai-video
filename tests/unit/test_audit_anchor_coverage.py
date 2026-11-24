@@ -8,7 +8,13 @@ naming the prop, AND clean cases (all present / single-shot-undeclared) PASS wit
 Unit tests hit the PURE function evaluate_anchor_coverage + derive_needed_anchors directly;
 CLI tests run the script by subprocess with tempfile SPEC fixtures + touched anchor files.
 """
-import importlib.util, json, shutil, subprocess, sys, tempfile, unittest
+import importlib.util
+import json
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_anchor_coverage.py"

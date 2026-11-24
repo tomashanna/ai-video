@@ -15,10 +15,9 @@ Usage:
 For project-specific use, run with --text "..." to generate per-video outro.
 """
 import argparse
-import math
 import subprocess
-import tempfile
 import sys
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -135,7 +134,7 @@ def main():
         # Fallback: silence
         subprocess.run([
             "ffmpeg", "-y", "-loglevel", "error",
-            "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=mono",
+            "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
             "-t", str(DUR_S),
             "-c:a", "libmp3lame", "-b:a", "192k",
             str(audio),

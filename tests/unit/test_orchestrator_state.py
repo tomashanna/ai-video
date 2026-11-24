@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-from ai_video.core import orchestrator_state as O  # noqa: E402
+from ai_video.core import orchestrator_state as O
 
 
 def _verdict(text):

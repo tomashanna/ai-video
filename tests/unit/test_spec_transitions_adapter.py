@@ -5,12 +5,9 @@ Per Hard Rule #26: companion test sidecar. 3 tests:
 2. legacy top-level transitions[] array converted correctly + non-destructive
 3. no transitions declared → spec unchanged
 """
-import sys
 import unittest
-from pathlib import Path
 
-
-from ai_video.core.spec_transitions_adapter import normalize_transitions  # noqa: E402
+from ai_video.core.spec_transitions_adapter import normalize_transitions
 
 
 class TestSpecTransitionsAdapter(unittest.TestCase):

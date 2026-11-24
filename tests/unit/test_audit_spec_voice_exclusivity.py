@@ -70,7 +70,7 @@ def _spec_with_shots(narration, shot_starts):
     for seg, spk, ts0, sh in narration:
         lines += [f"  - segment_id: {seg}", f"    speaker: {spk}",
                   f"    timestamp_intent_s: [{ts0}, {ts0 + 1}]",
-                  f"    shot_id_anchor: {sh}", f'    text_canonical: "x x x"']
+                  f"    shot_id_anchor: {sh}", '    text_canonical: "x x x"']
     return "\n".join(lines) + "\n"
 
 

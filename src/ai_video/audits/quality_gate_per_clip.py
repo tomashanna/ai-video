@@ -66,7 +66,6 @@ Cost: ~$0.10 per clip when --enable-gemini active (3 frames × Gemini Vision).
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -343,7 +342,7 @@ def check_visual_canonical(clip_path: Path, shot: dict, shot_id: str,
         return results
 
     try:
-        import google.genai as genai
+        import google.genai as genai  # noqa: F401  (availability check)
     except ImportError:
         add_finding(findings, "visual_canonical", "WARN",
                     "google-genai not installed — visual canonical check skipped",

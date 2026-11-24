@@ -25,11 +25,10 @@ Methodology:
 """
 import argparse
 import json
-import os
 import re
 import subprocess
-import tempfile
 import sys
+import tempfile
 from pathlib import Path
 from statistics import median
 
@@ -236,8 +235,8 @@ def detect_countdown_digits(frame_paths, easyocr_reader, start_s, interval_s):
 
 def detect_freeze_via_ssim(frame_paths, start_s, interval_s, ssim_threshold=0.96):
     """SSIM consecutive frames. If >threshold for >2s consecutive → freeze."""
-    from skimage.metrics import structural_similarity as ssim
     import cv2
+    from skimage.metrics import structural_similarity as ssim
     if len(frame_paths) < 2:
         return {"freeze_detected": False, "duration_s": 0.0}
     ssims = []

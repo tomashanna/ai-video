@@ -14,9 +14,8 @@ import importlib.util
 import io
 import json
 import sys
-import tempfile
 import unittest
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 # Import the dash-named script as a module.

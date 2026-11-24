@@ -135,15 +135,15 @@ def main() -> None:
         if not args.text:
             sys.exit("error: --verify requires --text (expected transcription)")
         score, transcribed = verify_intelligibility(args.output, args.text, args.threshold)
-        print(f"\n[M7.7.5 intelligibility check]")
+        print("\n[M7.7.5 intelligibility check]")
         print(f"  expected:    {args.text}")
         print(f"  transcribed: {transcribed}")
         print(f"  score:       {score:.2f} (threshold {args.threshold})")
         if score < args.threshold:
-            print(f"  ✗ FAIL — consult preset.intelligibility_mitigation")
+            print("  ✗ FAIL — consult preset.intelligibility_mitigation")
             print(f"           mitigation: {preset['intelligibility_mitigation']}")
             sys.exit(2)
-        print(f"  ✓ PASS")
+        print("  ✓ PASS")
 
 
 if __name__ == "__main__":

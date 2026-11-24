@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-from ai_video.build import build_clip_atomic as B  # noqa: E402
+from ai_video.build import build_clip_atomic as B
 
 
 def _fake_whisper(n_words, total_s):

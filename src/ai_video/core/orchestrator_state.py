@@ -15,19 +15,16 @@ from __future__ import annotations
 
 import datetime
 import re
-import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Optional
-
 
 # -----------------------------------------------------------------------------
 # State enum + transitions
 # -----------------------------------------------------------------------------
 
 
-class OrchestratorState(str, Enum):
+class OrchestratorState(str, Enum):  # noqa: UP042 - str mixin kept for JSON/equality back-compat
     PENDING = "PENDING"
     SPEC_GEN = "SPEC_GEN"
     SPEC_AUDIT = "SPEC_AUDIT"
@@ -68,7 +65,7 @@ LINEAR_FLOW = [
 ]
 
 
-def next_state(current: OrchestratorState) -> Optional[OrchestratorState]:
+def next_state(current: OrchestratorState) -> OrchestratorState | None:
     """Return next state in linear flow, or None if terminal."""
     if current == OrchestratorState.HALTED:
         return None
@@ -81,7 +78,7 @@ def next_state(current: OrchestratorState) -> Optional[OrchestratorState]:
     return LINEAR_FLOW[idx + 1]
 
 
-def cp_id_from_state(state: OrchestratorState) -> Optional[str]:
+def cp_id_from_state(state: OrchestratorState) -> str | None:
     """Return 'CP1'..'CP5' if state is a CP_ENG/CP_AUDIT, else None."""
     name = state.value
     m = re.match(r"^(CP[1-5])_(ENG|AUDIT)$", name)
@@ -90,7 +87,7 @@ def cp_id_from_state(state: OrchestratorState) -> Optional[str]:
     return m.group(1)
 
 
-def previous_cp(cp: str) -> Optional[str]:
+def previous_cp(cp: str) -> str | None:
     """Return prior CP id, e.g. 'CP3' -> 'CP2'. 'CP1' returns None."""
     m = re.match(r"^CP([1-5])$", cp)
     if not m:
@@ -187,7 +184,7 @@ FORBIDDEN_PHRASES = [
 ]
 
 
-def detect_multi_cp_prompt(engineer_prompt: str) -> Optional[str]:
+def detect_multi_cp_prompt(engineer_prompt: str) -> str | None:
     """
     Check engineer prompt for forbidden multi-CP / skip-audit / force-pass phrases.
 
@@ -203,7 +200,7 @@ def detect_multi_cp_prompt(engineer_prompt: str) -> Optional[str]:
     return None
 
 
-def assert_engineer_scope_single_cp(handoff_text: str, expected_cp: str) -> Optional[str]:
+def assert_engineer_scope_single_cp(handoff_text: str, expected_cp: str) -> str | None:
     """
     Verify engineer handoff scope is single CP only.
 
@@ -261,11 +258,11 @@ class OverrideEntry:
     cp_affected: str
     reason: str
     agent: str
-    verdict_bypassed: Optional[str] = None
+    verdict_bypassed: str | None = None
     related_files: list = field(default_factory=list)
-    notes: Optional[str] = None
+    notes: str | None = None
 
-    def validate(self) -> Optional[str]:
+    def validate(self) -> str | None:
         # ISO8601 simple sanity
         if not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$", self.timestamp):
             return f"Invalid timestamp ISO8601: {self.timestamp}"
@@ -320,7 +317,7 @@ def _yaml_str(s: str) -> str:
 
 def now_iso_utc() -> str:
     return (
-        datetime.datetime.now(datetime.timezone.utc)
+        datetime.datetime.now(datetime.UTC)
         .replace(microsecond=0)
         .isoformat()
         .replace("+00:00", "Z")
@@ -353,7 +350,6 @@ def append_architectural_decision(
             encoding="utf-8",
         )
 
-    existing = decisions_path.read_text(encoding="utf-8")
     block = entry.to_yaml_block()
 
     # Append as a fenced YAML block at the end

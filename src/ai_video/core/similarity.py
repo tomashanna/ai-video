@@ -12,7 +12,6 @@ Authority: CONTRACT-A-B-INTERFACE.md v1.0 (2026-05-21 auditor pre-build).
 import re
 import string
 
-
 _PUNCT_TABLE = str.maketrans({c: " " for c in string.punctuation + "¿¡«»“”‘’"})
 
 
