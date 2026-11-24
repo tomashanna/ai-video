@@ -1,0 +1,374 @@
+{
+  "version": "1.3",
+  "updated": "2026-06-03",
+  "provider": "ElevenLabs",
+  "description": "Catálogo de voice IDs ElevenLabs para TTS. Cada voice ID se referencia por string en ai-video tts -v <ID>.",
+  "default_voice": "2gPFXx8pN3Avh27Dw5Ma",
+  "default_voice_note": "Oxley Evil Character validated 2026-05-18 post matadero CP2 (user listen test PASS + M7.7.5 PASS Track A Path 2a SoX). Reemplaza Tj9l48J9 deprecated 2026-05-18.",
+  "default_voice_DEPRECATED_2026_05_18": "Tj9l48J9AJbry5yCP5eW",
+  "deprecation_reason": "User listen test matadero CP2 2026-05-18 refutó canonical compliance. Voice character (susurro grave + lento natural) NO matches canonical viral narrators (LatAm energetic conversational). Per docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18, voice IDs validated solo en nuestras producciones (V7 + bosque v1) NO son default canonical viable.",
+  "v5_narrator_strategy_2026_05_29_WINNER": {
+    "winner": "David C2 (K3TeN3ZVK8WnOeJ0NYqZ)",
+    "decided_at": "2026-05-29",
+    "decision_context": "Tomás listen test 4-way A/B 2026-05-29 (Eleguar / Ignacio / José / David C2) con sample text canonical V5 (~21s @165 WPM target). David C2 pick FINAL — deep mysterious LatAm horror profile preferred over TikTok-energetic axis (Eleguar/Ignacio).",
+    "wpm_measurements_2026_05_29": {
+      "eleguar_T7QGPtToiqH4S8VlIkMJ": "166.0 WPM (median canonical 164.91) ✅",
+      "ignacio_AvFwmpNEfWWu5mtNDqhH": "179.4 WPM (top de banda p75 179.84) ✅",
+      "david_c2_K3TeN3ZVK8WnOeJ0NYqZ": "157.2 WPM (sobre p25 152.71) ✅ ← WINNER",
+      "jose_HdHf5loDYrvGJRrbzbUX": "143.3 WPM (BAJO p25, requeriría atempo) ❌"
+    },
+    "creative_direction_signal": "User pick David C2 (deep horror) over Eleguar/Ignacio (energetic) reveals que el formato horror-choice tolera/prefiere theatrical-narrator profile sobre TikTok-conversational. Esto refuta parcialmente hipótesis pre-test que 'TikTok-energetic' era el match canonical único — formato acepta horror-deep axis también, especialmente para mood-cripta storytelling.",
+    "alternatives_kept_for_future": {
+      "ignacio_AvFwmpNEfWWu5mtNDqhH": "Reserva si SPEC futuro pide TikTok-energetic Uruguayan format — viral stories tag sigue valid",
+      "eleguar_T7QGPtToiqH4S8VlIkMJ": "Reserva si SPEC futuro pide entertainment-TV energetic narrator"
+    },
+    "rejected": {
+      "jose_HdHf5loDYrvGJRrbzbUX": "WPM 143.3 (debajo canonical p25 152.71) + perfil 'neutral warm' confirmó hipótesis 'muy plana' pre-test. Pattern repeat de Vicente rejection matadero CP2. NO usar para horror narrator."
+    },
+    "next_step_codification": "1. David C2 entry agregado a voices[] con status validated_canonical_narrator_v5_2026_05_29. 2. PIPELINE.md narrator row updated. 3. SPEC V5+ declara narrator_voice: K3TeN3ZVK8WnOeJ0NYqZ. 4. Engineer CP4 audio aplica atempo per-segment + multiplier ×1.05 if pace_intent_median (157→165 WPM)."
+  },
+  "v5_narrator_strategy_2026_05_27_DEPRECATED_post_AB": {
+    "deprecation_reason": "Pre-A/B research notes — superseded by v5_narrator_strategy_2026_05_29_WINNER. Kept for forensic record.",
+    "context": "BUILD 9 PRE-4.J post WebSearch research 2026-05-27. Decisión Tomás B: pre-V5 A/B test Eleguar (energetic LatAm shorts/social) vs José Latam Neutral Warm (safe default) en v3 model con settings community-recommended para 'moderate-energetic conversational horror narrator' (TikTok-style, NOT theatrical, NOT monotone).",
+    "model_recommended": "eleven_v3 (GA Feb 2026 — flagship expressive narration, 70+ langs incl. Spanish, supports inline audio tags [whispers] [nervous]. Stability <=0.5 required to trigger tags. Latency 2-3x v2 — fine para offline render).",
+    "settings_recommended": {
+      "stability": 0.45,
+      "similarity_boost": 0.8,
+      "style": 0.35,
+      "use_speaker_boost": true,
+      "rationale": "stability 0.40-0.50 = energetic without instability (>=0.5 = monotone news anchor; <0.4 = unstable). similarity_boost 0.75-0.85 (NOT 1.0 = over-enunciates). style 0.30-0.45 (v3 only, expressiveness)."
+    },
+    "candidates_pending_a_b_test": [
+      {
+        "name": "Eleguar",
+        "label_hint": "Latin American Spanish, excited/dynamic, shorts/social use-case tagged",
+        "rationale_top_pick": "Closest match to TikTok energetic horror narrator per ElevenLabs library tags (excited+dynamic+shorts).",
+        "voice_id": "T7QGPtToiqH4S8VlIkMJ",
+        "discovery_path": "elevenlabs.io/voice-library filter language=Spanish + accent=Latin American",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/T7QGPtToiqH4S8VlIkMJ/"
+      },
+      {
+        "name": "Ignacio Uruguayan",
+        "label_hint": "Young Uruguayan, viral videos and stories tag — format match strongest",
+        "rationale_top_pick": "Tag 'viral videos AND stories' + Uruguayan accent = closest match to canonical horror-choice creator perfil (referent-a territory). Added 2026-05-27 post research.",
+        "voice_id": "AvFwmpNEfWWu5mtNDqhH",
+        "discovery_path": "elevenlabs.io/voice-library Latin American narrators",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/AvFwmpNEfWWu5mtNDqhH/",
+        "risk": "Uruguay tiene voseo natural — verify NO voseo drift en test sample"
+      },
+      {
+        "name": "Jose Latam Neutral Warm",
+        "label_hint": "Latin American Spanish neutral, warm, narration default",
+        "rationale_safe_alt": "Safe default si Eleguar feels too energetic. Neutral baseline LatAm. ⚠️ Risk: perfil 'neutral warm' similar a Vicente rejected matadero CP2 'muy plana'.",
+        "voice_id": "HdHf5loDYrvGJRrbzbUX",
+        "discovery_path": "elevenlabs.io/voice-library filter LatAm narrator",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/HdHf5loDYrvGJRrbzbUX/"
+      },
+      {
+        "name": "David C2",
+        "label_hint": "Deep mysterious LatAm horror/crime/mystery — TomásUserPick 2026-05-27",
+        "rationale_horror_baseline": "User listen test 2026-05-27 elected David C2 como horror-narrator favorite. Adds 'horror-deep' axis to A/B (vs energetic-conversational Eleguar/Ignacio). Test confirms si formato prefers TikTok-energetic OR theatrical-deep.",
+        "voice_id": "K3TeN3ZVK8WnOeJ0NYqZ",
+        "discovery_path": "elevenlabs.io/voice-library Spanish horror filter",
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/"
+      }
+    ],
+    "avoid_voices": [
+      {
+        "name": "Javier (Argentine)",
+        "reason": "voseo drift conflicts with feedback_spanish_neutral"
+      },
+      {
+        "name": "Agustin (Buenos Aires)",
+        "reason": "voseo drift, skip"
+      },
+      {
+        "name": "Tj9l48J9AJbry5yCP5eW",
+        "reason": "whisper-grave perfil OPUESTO al energetic-conversational target. Already deprecated 2026-05-18."
+      }
+    ],
+    "a_b_test_protocol": [
+      "1. Browse ElevenLabs voice library → grab exact voice_ids for Eleguar + Jose.",
+      "2. Generate 15-30s sample with REAL V5 SPEC narration text (hook + dilema + cliffhanger).",
+      "3. Apply settings stability=0.45 / similarity=0.80 / style=0.35 / speaker_boost=true.",
+      "4. Compare A vs B perceptually (Tomas listen test — Rule D PRECEDENCE per AUDITOR-PROTOCOL).",
+      "5. Verify M7 acoustic (Whisper re-transcribe + per-segment WPM canonical p25-p75 [152-180] + intelligibility >=0.90).",
+      "6. Pick winner — flip canonical_validation_status to validated + update default_voice for V5+ horror-choice narrator.",
+      "7. If both miss target → consider Instant Voice Clone ($5/mo Starter, 1-5 min sample) as fallback path."
+    ],
+    "v3_pitfalls_2026": [
+      "Audio tags ([whispers], [nervous]) require stability <=0.5 to trigger — high stability ignores them.",
+      "LatAm voces a veces drift hacia Castilian (Spain) en long renders — verify 30s test, atencion c/z sibilants.",
+      "Some Argentine voices ignore neutral input + inject voseo regardless — listen-test mandatory.",
+      "v3 latency 2-3x v2 — fine para offline render, NOT for realtime/streaming."
+    ],
+    "discovery_uncertainty": "Voice IDs alfanumericos NO surfaced en WebSearch 2026-05-27. Tomas toma del library web cuando ejecute A/B. Catalog se actualiza con voice_id real post-test (flip TBD_from_library_web → actual ID).",
+    "role_separation_note": "Oxley (2gPFXx8pN3Avh27Dw5Ma) actual default es creepy character + LatAm baseline 96 WPM — apto matarife/character. Para narrator-tier (TikTok-energetic V5+) NO matchea perfil objetivo. Pre-V5 narrator default = TBD post A/B test (Eleguar / Jose). Matarife OXLEY stays canonical. Cocinera Kate qWWAqFomnJ99VwQLREfT stays canonical."
+  },
+  "sport_choice_narrator_strategy_2026_06_03_WINNER": {
+    "winner": "El Faraón — Energetic Commentator (QpDQJR3frbDwOhTIo8nW)",
+    "decided_at": "2026-06-03",
+    "decision_context": "Tomás pidió 'voice de animador de fútbol latinoamericano' para el formato sport-choice (pre video #2 México vs Sudáfrica, Mundial 2026). Búsqueda shared voice library ElevenLabs (~9 términos) → 2 candidatos es-LatAm audicionados con sample de relato real ('Minuto noventa en el Estadio Azteca... ¡GOOOOOL!'). Tomás listen test pick: El Faraón (Rule D PRECEDENCE).",
+    "candidates_tested": {
+      "el_faraon_QpDQJR3frbDwOhTIo8nW": "WINNER — colombiano, 'High-energy Latin American soccer and sports commentator', perfil relator play-by-play nativo",
+      "jose_y2ijeTfmnXjzheHO6zeN": "Reserva — mexicano, deep powerful announcer (no relator específico)",
+      "diego_tN4nkw7MBnGYAwQ71zQp": "No agregable vía API (voice_not_found en /v1/voices/add — restricción del owner)"
+    },
+    "audition_settings": "multilingual_v2, language=es, stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost true",
+    "next_step_codification": "1. Entry El Faraón en voices[] status pending (perceptual PASS / M7 programmatic pendiente CP2 video #2). 2. Docs sport (INGENIERO-PAUTA § capas + audio-direction + NO-HORROR-GUARD G3) referencian QpDQJR3frbDwOhTIo8nW como narrador canónico sport — reemplaza el placeholder David C2. 3. M7 WPM measure en CP2 del primer video sport → flip a validated si banda canónica + intelligibility PASS."
+  },
+  "atempo_rule": "Aplicar atempo per INGENIERO-PAUTA-MASTER § 1.7 measured (per-segment raw_dur/target_dur clamped [0.7, 2.5]) + per-speaker SPEC L660-672 multipliers when applicable (narrator 1.15 / cocinera 1.23 / matarife 1.28 ceiling). Verify post-TTS measure_F1.py methodology vs canonical p25-p75 bands [152.71, 179.84].",
+  "atempo_rule_DEPRECATED_2026_05_18": "Aplicar atempo 2.0 con ffmpeg después de generar TTS si la voz es lenta por naturaleza (canónico para Tj9l48J9AJbry5yCP5eW). DEPRECATED — derived from our productions, not canonical refs.",
+  "canonical_validation_protocol": {
+    "rationale": "Per docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18: every voice ID default debe tener canonical_validation_status. States: validated | pending | deprecated_our_prod_only.",
+    "validation_methodology": [
+      "1. Sample test voice ID con 30s typical horror narration text",
+      "2. measure_F1.py WPM applied to TTS output",
+      "3. Compare per-speaker WPM band canonical (TODO Phase 1: implement measure-canonical-per-speaker.py via diarization)",
+      "4. User listen test acoustic perception ground truth (BLOCKING — programmatic alone insufficient per matadero CP2 lesson) — Rule D PRECEDENCE per AUDITOR-PROTOCOL § 3 CP2 M7.7.5",
+      "5. M7.7.5 semantic equivalence refinement for matarife/character voices: Rule A digit normalization + Rule B phonetic neighborhood + Rule C plurals/articles minor + Rule D user perceptual precedence",
+      "6. Mark status 'validated' only if BOTH programmatic + perceptual checks pass"
+    ],
+    "refs_for_canonical_match": [
+      "ref-03",
+      "ref-04",
+      "ref-05",
+      "ref-06",
+      "ref-08",
+      "ref-09",
+      "ref-10",
+      "ref-11",
+      "ref-12",
+      "ref-13"
+    ]
+  },
+  "voices": [
+    {
+      "id": "2gPFXx8pN3Avh27Dw5Ma",
+      "label": "Oxley Evil Character",
+      "characteristics": "Tono creepy character + LatAm baseline ~96 WPM natural. Apto narrator + matarife (con effects chain SoX SPEC L1366-1383).",
+      "status": "validated",
+      "canonical_validation_status": "validated",
+      "validated_at": "2026-05-18",
+      "validated_in": [
+        "matadero-banquete CP2",
+        "bosque-abandonado v2-final (legacy use)"
+      ],
+      "validation_context": {
+        "matadero_cp2_2026_05_18": {
+          "user_pick_sample": "G — Oxley + atempo ×1.6 = 156 WPM matches ref-05 cluster",
+          "auditor_m7_overall_wpm": 172.5,
+          "auditor_m7_per_speaker_pass": "narrator 173.4 ✅ / matarife 160.2 ✅ / cocinera 172.6 ✅ (Valeria — separate)",
+          "matarife_m77_path2a_sox_3of3_pass_m775_refined": "rule 0.88 via Rule B phonetic + count 0.50 via Rule A digit normalization + exit 1.00 clean",
+          "user_perceptual_ground_truth": "matarife audio está bien (Rule D PRECEDENCE)"
+        }
+      },
+      "use_primary": "Narrator + matarife (matarife necesita effects chain SoX SPEC L1366-1383 per matadero precedente)",
+      "atempo_strategy": "per-segment atempo = raw_dur/target_dur clamped [0.7, 2.5] + per-speaker multiplier (narrator 1.15 / matarife 1.28 ceiling per SPEC pace_correction_path_E_2026_05_18)",
+      "matarife_effects_chain_sox": {
+        "tool": "sox (conda-forge install)",
+        "chain": "pitch -300, flanger 0 0.6 4 1 0.5 sine, highpass 80, lowpass 3500, reverb 30 50 60 100 0 0, norm -16, tempo -s <ratio>",
+        "rationale": "ffmpeg + rubberband + flanger + aecho + LPF 2000 destruía consonant articulation (Path 1+2b M7.7 1/3 PASS). SoX preservó M7.7.5 3/3 PASS."
+      },
+      "notes": "Default canonical 2026-05-18. NUNCA usar para cocinera (use Valeria 9oPKasc15pfAbMr7N6Gs)."
+    },
+    {
+      "id": "qWWAqFomnJ99VwQLREfT",
+      "label": "Kate - Bright, Friendly & Positive voice",
+      "characteristics": "Warm female Spanish multilingual_v2 fine-tuned. USER override 2026-05-19 — Rule D perceptual PRECEDENCE over engineer/architect descartar rationale.",
+      "status": "validated_canonical",
+      "canonical_validation_status": "validated_canonical",
+      "validated_at": "2026-05-19",
+      "validated_in": [
+        "matadero-banquete CP2 user override 2026-05-19"
+      ],
+      "validation_context": {
+        "matadero_cp2_user_override_2026_05_19": {
+          "user_pick_sample": "B — Kate BFP (override Sample A Valeria architect pick)",
+          "rule_d_perceptual_precedence": "user listen post-CP4: 'cocinera_sample_B es la mejor'",
+          "auditor_m775_per_segment": {
+            "hook_cocinera_warning": "M7.7 strict 6/7=0.86 → M7.7.5 PASS via Rule B (elijas→lijas vowel elision, consonants preserved)",
+            "cocinera_offer_dialogue": "M7.7 strict 6/6=1.00 clean PASS"
+          },
+          "engineer_initial_descartar_reason_overridden": "Initial engineer rec descartar B por 'Bright Positive' label contraindicating P6 cozy seductive — OVERRIDDEN per Rule D PRECEDENCE (auditor protocol § 3 CP2 M7.7.5)"
+        }
+      },
+      "use_primary": "Cocinera (default canonical post-2026-05-19) — warm female + bright friendly + uniform smile uncanny when paired with eye glow + chef coat stained signature",
+      "atempo_strategy": "per-segment atempo + ×1.23 multiplier SPEC L666 (Path E pace_correction multipliers preserved)",
+      "effects_chain": "aecho=0.5:0.3:40:0.25, highpass=f=80 + per-segment atempo (warm intimate reverb per SPEC L1389-1395)",
+      "notes": "NUNCA usar para narrator/matarife (use Oxley 2gPFXx8pN3Avh27Dw5Ma). DEFAULT cocinera post user override."
+    },
+    {
+      "id": "9oPKasc15pfAbMr7N6Gs",
+      "label": "Valeria",
+      "characteristics": "Warm female Spanish middle-aged. Cocinera-archetype tested. Natural ~143 WPM.",
+      "status": "tested_validated_alternative",
+      "canonical_validation_status": "tested_validated_alternative",
+      "validated_at": "2026-05-17",
+      "validated_in": [
+        "matadero-banquete CP1 (cocinera anchor sample A)",
+        "matadero-banquete CP2 (cocinera 2 segments — replaced by Kate 2026-05-19)"
+      ],
+      "validation_context": {
+        "matadero_cp1_cp2_2026_05_17_to_18": {
+          "architect_pick_sample": "A — Valeria over Kate BFP initially",
+          "auditor_m7_cocinera_wpm": 172.6,
+          "perceptual": "warm welcoming seductive (P6 cozy aparente match)"
+        },
+        "matadero_cp2_override_2026_05_19": {
+          "status_change": "validated → tested_validated_alternative",
+          "reason": "User Rule D perceptual override → Kate BFP preferred. Valeria remains valid for OTHER projects (alternative cocinera-archetype voice)."
+        }
+      },
+      "use_alternative": "Cocinera alternative voice for non-matadero-banquete projects. NOT deprecated — valid choice for different creator style preferences.",
+      "notes": "Alternative valid cocinera voice. For matadero-banquete CP2 specifically replaced by Kate BFP per user override 2026-05-19."
+    },
+    {
+      "id": "Tj9l48J9AJbry5yCP5eW",
+      "label": "Matthew Schmitz - Nosferatu Ancient Vampire Lord [DEPRECATED 2026-05-18]",
+      "characteristics": "Tono grave, susurro, lento por naturaleza. ElevenLabs catalog name confirmed via search_voices 2026-05-18.",
+      "status": "deprecated_our_prod_only",
+      "canonical_validation_status": "deprecated_our_prod_only",
+      "validated_against_canonical_refs": "N/A — refuted by matadero CP2 user listen test 2026-05-18",
+      "validated_at": null,
+      "deprecation_date": "2026-05-18",
+      "deprecation_caso_disparador": "matadero-banquete CP2 — user listen test post-Path-E (176 WPM measured in band) reveló perception 'muy lento'. Voice character intrinsic NO matches canonical viral narrators (LatAm energetic conversational). Atempo workaround insufficient — voice character inherently slow.",
+      "use_DEPRECATED": "Default para nuevos proyectos. Especialmente formatos horror narrativo.",
+      "atempo_DEPRECATED": 2.0,
+      "validated_in": [
+        "elige-companero V7",
+        "bosque-abandonado v1"
+      ],
+      "validated_in_note": "⚠️ Solo nuestras producciones — NO validation contra canonical refs. Per hard rule #19 NO es authority técnica.",
+      "notes": "A 1x produce ~162s de narración para video de 90s. [DEPRECATED — superseded post matadero CP2 listen refute, replaced by 2gPFXx8pN3Avh27Dw5Ma Oxley Evil Character]"
+    },
+    {
+      "id": "1BfrkuYXmEwp8AWqSLWk",
+      "label": "Voz reserva sin testear",
+      "characteristics": "Desconocido",
+      "status": "reserved_untested",
+      "canonical_validation_status": "pending",
+      "use": "Guardada para futuras pruebas. Hacer test antes de usar en producción.",
+      "atempo": null,
+      "validated_in": [],
+      "notes": "Generar sample antes de usar en proyecto real."
+    },
+    {
+      "id": "Iz0qFF5PGG8vpHduEMN2",
+      "label": "Vicente (professional Spanish multilingual_v2 fine-tuned)",
+      "characteristics": "Spanish professional, energetic natural ~168 WPM. Tested matadero CP2 voice selection 2026-05-18 — user rejected as 'muy plana' for horror tone.",
+      "status": "tested_rejected_horror",
+      "canonical_validation_status": "rejected_horror",
+      "validated_at": null,
+      "rejection_caso_disparador": "matadero-banquete CP2 narrator voice search 2026-05-18 sample A — pace OK (canonical median) pero character plana, no horror edge.",
+      "use_alternative_contexts": "Posible para tutorial / B2B / explainer no-horror formats. NO usar para horror narrator.",
+      "atempo": null,
+      "validated_in": [],
+      "notes": "Tested matadero CP2 narrator search — character mismatch para horror. May work other genres."
+    },
+    {
+      "id": "K3TeN3ZVK8WnOeJ0NYqZ",
+      "label": "David C2 — Deep mysterious LatAm horror/crime/mystery narrator",
+      "characteristics": "Deep, attractive, and mysterious male voice designed for viral horror, crime & mystery. Latin American Spanish. Natural ~157 WPM raw (measured 2026-05-29 con 55-word sample = 21.0s → 157.2 WPM, sobre canonical p25 152.71).",
+      "status": "validated_canonical_narrator_v5",
+      "canonical_validation_status": "validated_canonical_narrator_v5_2026_05_29",
+      "validated_at": "2026-05-29",
+      "validated_in": [
+        "v5-narrator-ab-test-2026-05-29 (Tomás listen test PASS over Eleguar/Ignacio/José)"
+      ],
+      "validation_context": {
+        "v5_a_b_test_2026_05_29": {
+          "test_method": "4-way blind perceptual + WPM raw measurement (no atempo)",
+          "candidates_tested": [
+            "Eleguar T7QGPt",
+            "Ignacio AvFwmp",
+            "José HdHf5l",
+            "David C2 K3TeN3"
+          ],
+          "wpm_measured": "157.2 (canonical band [152.71, 179.84] PASS)",
+          "user_perceptual_pick": "David C2 — Rule D PRECEDENCE",
+          "creative_direction_signal": "Deep horror profile preferred over TikTok-energetic axis. Format tolerates theatrical-narrator (refutes pre-test hypothesis that energetic-conversational was only canonical match)."
+        }
+      },
+      "use_primary": "Narrator V5+ horror-choice (canonical default for narrator role). Replaces Tj9l48J9 deprecated trajectory pre-Oxley-narrator-bridge.",
+      "atempo_strategy": "per-segment raw_dur/target_dur clamped [0.7, 2.5] + ×1.05 narrator-median bump opcional (157→165 WPM si SPEC pace intent median). NO heavy atempo required (raw already in canonical band).",
+      "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/",
+      "ab_test_losers_reserved": {
+        "ignacio_AvFwmpNEfWWu5mtNDqhH": "Reserva si futuro SPEC pide TikTok-energetic Uruguayan",
+        "eleguar_T7QGPtToiqH4S8VlIkMJ": "Reserva si futuro SPEC pide entertainment-TV energetic narrator",
+        "jose_HdHf5loDYrvGJRrbzbUX": "REJECTED — WPM 143.3 debajo canonical p25 + perfil 'muy plana' pattern Vicente rejected. NO usar horror."
+      },
+      "notes": "Canonical narrator V5+ default. Combinable con voice-effects presets (ultratumba_cavernoso natural pair given deep mysterious profile). NUNCA usar para cocinera (Kate canonical) ni matarife (Oxley canonical)."
+    },
+    {
+      "id": "QpDQJR3frbDwOhTIo8nW",
+      "label": "El Faraón — Energetic Commentator (relator fútbol LatAm) [SPORT-CHOICE NARRATOR]",
+      "characteristics": "High-energy Latin American soccer/sports commentator. Colombiano, male middle-aged, professional category, use_case entertainment_tv. Perfil relator play-by-play vivo — match exacto de sport PAUTA-MASTER § 8 (narra la consecuencia, nunca juzga) + NO-HORROR-GUARD G3 (relator deportivo, NO grave omnisciente).",
+      "status": "validated_sport_choice_narrator",
+      "canonical_validation_status": "validated_sport_narrator_2026_06_04",
+      "validated_at": "2026-06-04",
+      "validated_in": [
+        "voice-audition sport 2026-06-03 (Tomás pick)",
+        "mexico-sudafrica CP2 2026-06-04 (producción real: raw 206.9 WPM → atempo 0.8 → 161.6-165.5 en banda [156,195]; M7.7 14/17 ≥0.90 + 2 flags resueltos por Tomás listen test PASS 'Muy bien' — Rule D)"
+      ],
+      "validation_context": {
+        "sport_audition_2026_06_03": {
+          "user_pick": "El Faraón sobre José (y2ije) — Rule D perceptual",
+          "settings_audition": "multilingual_v2 es / stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost",
+          "pending_for_validated": "M7 programmatic en CP2 video sport #2 (Whisper WPM banda canónica F1 [152.71, 179.84] + intelligibility ≥0.90). Sport NO tiene refs virales propios → validación canónica plena post primeros videos shipped (igual que el resto del formato pre-empírico)."
+        }
+      },
+      "use_primary": "Narrator sport-choice (relator play-by-play, español neutral). Reemplaza el placeholder David C2 que INGENIERO-PAUTA sport § 2 heredó de horror.",
+      "atempo_strategy": "MEDIDO en producción (mexico-sudafrica CP2): raw = 206.9 WPM (cadence relator rápida) → atempo uniforme ×0.7975 → 165 target. Canonical multiplier para este voice: ~0.80 (re-medir per proyecto, no asumir).",
+      "gol_scream_rule": "En goles el relator GRITA '¡Gooool!' (3-4 oes moderadas, TTS-safe — NO caps interminables que glitchean). Settings de la audición (stab 0.35/style 0.45) validados con grito por Tomás. PAUTA sport §8 + audio-direction § pico de gol.",
+      "notes": "NUNCA usar para horror narrator (perfil opuesto — David C2 canonical horror). Existen 4 variantes más del mismo voice actor en la shared library (Natural Conversations / Powerful Mysterious / Fresh Dynamic / Full Clear Mellow) si se necesita otro registro."
+    },
+    {
+      "id": "y2ijeTfmnXjzheHO6zeN",
+      "label": "José — Pleasant announcer mexicano (≠ José HdHf5l rejected-horror)",
+      "characteristics": "Mexicano joven, deep powerful voice, announcer/narrative_story. Audicionado para narrador sport-choice 2026-06-03 — perdió vs El Faraón (menos 'relator', más announcer).",
+      "status": "reserved_sport_alternative",
+      "canonical_validation_status": "pending",
+      "validated_at": null,
+      "validated_in": [],
+      "use_alternative": "Reserva sport: announcer de apertura/cierre, promos topical México, o si un SPEC pide registro profundo no-relator. Ya agregado a la cuenta ElevenLabs.",
+      "notes": "NO confundir con José HdHf5loDYrvGJRrbzbUX (rejected horror 'muy plana'). Este es y2ije — voz distinta."
+    }
+  ],
+  "deprecated": [
+    {
+      "id": "0Wj6ADitNyDvXgT6W65p",
+      "reason": "Era el default INCORRECTO en ai-video tts. Voz más rápida, no horror. NO usar."
+    }
+  ],
+  "workflow": [
+    "1. Generar TTS raw: uv run ai-video tts -t '<texto>' -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narr-raw.mp3  (default = Oxley)",
+    "2. Aplicar per-segment atempo: ffmpeg -y -i raw -af 'atempo=<raw_dur/target_dur clamped 0.7-2.5>' processed.mp3",
+    "3. Per-speaker multiplier on top: narrator ×1.15 / matarife ×1.28 / cocinera ×1.23 (SPEC pace_correction L660-672)",
+    "4. Matarife additional: SoX effects chain (pitch -300 + flanger + LPF 3500 + reverb + norm -16 + tempo)",
+    "5. M7 Whisper verify per-speaker ≥152.71 + M7.7.5 semantic equivalence refinement (digit/phonetic/perceptual rules)"
+  ],
+  "rules": [
+    "Verificar DEFAULT_VOICE_ID en ai-video tts antes de cada proyecto nuevo (debe ser 2gPFXx8pN3Avh27Dw5Ma Oxley).",
+    "NUNCA usar el raw en el render. Siempre el processed.mp3 con per-segment atempo.",
+    "Si una voz nueva se prueba y funciona, agregar acá con status 'validated' + validation_context completo.",
+    "Para matarife specifically: SoX effects chain obligatorio (ffmpeg LPF 2000+rubberband destruye consonants per matadero CP2 lesson 2026-05-18)."
+  ],
+  "lessons_learned": [
+    {
+      "date": "2026-05-18",
+      "lesson": "Voice character intrinsic > atempo workaround. Tj9l48J9 vampire grave + atempo never matched canonical viral narrator perception.",
+      "case": "matadero-banquete CP2 voice swap (Path A→Path E→voice change Oxley)"
+    },
+    {
+      "date": "2026-05-18",
+      "lesson": "M7 Whisper methodology brittle to consonant substitutions (g/k, mires/vienes) — needs M7.7.5 refinement with Rule A digit / Rule B phonetic / Rule C variants / Rule D user perceptual PRECEDENCE.",
+      "case": "matadero CP2 matarife Path 1+2b ffmpeg → Path 2a SoX → M7.7.5 3/3 PASS"
+    },
+    {
+      "date": "2026-05-18",
+      "lesson": "Matarife effects chain: ffmpeg+rubberband+LPF-2000 destroys consonants (Whisper 'mirés→vienes'). SoX with proper params + LPF 3500 + norm -16 preserves articulation while keeping character.",
+      "case": "matadero CP2 matarife audio fix Track A Path 1→Path 2a SoX"
+    }
+  ]
+}

@@ -10,7 +10,7 @@
 ┌───────────────────────────────────────────────────────────────┐
 │  CAPA 1 — UNIVERSAL                                            │
 │  Sirve para CUALQUIER template (horror, documental, edu…)      │
-│  Vive en: video-director/ + ai-video-production/ + library/    │
+│  Vive en: video-director/ + ai-video-production/ + assets/library/    │
 │  NUNCA se replica. NUNCA se modifica por proyecto.             │
 └───────────────────────┬───────────────────────────────────────┘
                         │
@@ -46,7 +46,6 @@
 | `WORKFLOW.md` | Loop maestro 5 pasos + flujos típicos | Cualquier tarea de video |
 | `DECISION-FRAMEWORK.md` | Cuándo preguntar vs ejecutar | Decisiones de scope |
 | `ANTI-PATTERNS.md` | Aprendizajes amargos universales | Antes de inventar algo |
-| `META-BRAND.md` | TU identidad como creador (Toby Hanna) | Decisiones de portfolio multi-cuenta |
 | `PERFORMANCE.md` | Sistema de feedback loop con métricas IG | Después de publicar cada video |
 | `PATTERNS-LIBRARY.md` | Catálogo cross-account validados | Meta-review cada 10 videos |
 | `HANDOFF-PROMPTS.md` | Template para delegar iteración a otra IA | Cuando se delega |
@@ -67,26 +66,26 @@
 | `QA.md` | Gemini QA + interpretación feedback |
 | `NARRATIVE-LED-EDITING.md` | Sistema 7 cortes con SFX específicos |
 | `ELEMENTS-LIBRARY.md` | Sistema híbrido de componentes UI |
-| `templates/scripts/*.py` | Scripts genéricos sin STYLE_SUFFIX |
+| `src/ai_video/*.py` | Scripts genéricos sin STYLE_SUFFIX |
 
-### 📦 `library/` — assets reutilizables
+### 📦 `assets/library/` — assets reutilizables
 
 | Carpeta | Contenido |
 |---|---|
-| `library/LIBRARY.md` | Catálogo maestro de SFX/voces/música |
-| `library/sfx-catalog.json` | Machine-readable de SFX |
-| `library/voices-catalog.json` | Machine-readable de voice IDs |
-| `library/sfx/` | 53+ SFX organizados por categoría |
-| `library/voices/` | Referencias a voice IDs |
-| `library/music/` | Música procesada lista para reutilizar |
+| `assets/library/LIBRARY.md` | Catálogo maestro de SFX/voces/música |
+| `assets/library/sfx-catalog.json` | Machine-readable de SFX |
+| `assets/library/voices-catalog.json` | Machine-readable de voice IDs |
+| `assets/library/sfx/` | 53+ SFX organizados por categoría |
+| `assets/library/voices/` | Referencias a voice IDs |
+| `assets/library/music/` | Música procesada lista para reutilizar |
 
-### 📋 Raíz `AI video 1/`
+### 📋 Raíz del repo
 
 | Archivo | Contenido |
 |---|---|
-| `FEEDBACK-LOOP.md` | Frame slicing + Read para validar video sin reproducir |
-| `elements.json` | Catálogo machine-readable de componentes UI (countdown/loader/lower-third) |
-| `.agents/skills/hyperframes*` | Skill oficial viva HyperFrames (API/CLI/registry, v0.6.69+). Reemplaza los scrapes `hyperframes-github.md`/`hyperframes-knowledge.md` (v0.4.22, DEPRECATED → `_archive-deprecated-docs/`) |
+| `docs/FEEDBACK-LOOP.md` | Frame slicing + Read para validar video sin reproducir |
+| `templates/hyperframes/elements.json` | Catálogo machine-readable de componentes UI (countdown/loader/lower-third) |
+| `.agents/skills/hyperframes*` | Skill oficial viva HyperFrames (API/CLI/registry, v0.6.69+). Reemplaza los scrapes `hyperframes-github.md`/`hyperframes-knowledge.md` (v0.4.22, DEPRECATED → `_archive-deprecated-docs (retirado; ver historial git)`) |
 
 ### 🌐 Skills globales `~/.claude/skills/`
 
@@ -118,7 +117,7 @@ Estructura canónica (todos los formatos deben tener):
 | `REFERENCE-ANALYSIS.md` | Análisis de virales referentes del nicho | ✅ |
 | `BOOTSTRAP-NEW-PROJECT.md` | Bootstrap aplicado al formato | ✅ |
 | `PRODUCTION-PIPELINE.md` | Comandos aplicados (STYLE_SUFFIX, prompts) | ✅ |
-| `BRAND.md` | Audience persona + voz + paleta + hashtags de la cuenta IG | ✅ |
+| `VISUAL-STYLE.md` | Preset CSS + paleta + tipografía del formato | ✅ |
 | `video-log.md` | Registro de archetypes/temas usados por video (rotation log) | ✅ |
 | `TEMPLATE-SPEC.md` | Phase 3 stuff (parametrización futura) | Opcional |
 
@@ -127,9 +126,9 @@ Estructura canónica (todos los formatos deben tener):
 | Template | Contenido |
 |---|---|
 | `NARRATIVE-TEMPLATE.md` | Esqueleto del NARRATIVE.md por proyecto |
-| `SFX-LIST-TEMPLATE.md` | Lista de SFX típicos del formato (referenciar library/) |
+| `SFX-LIST-TEMPLATE.md` | Lista de SFX típicos del formato (referenciar assets/library/) |
 | `sfx-spec-TEMPLATE.json` | Spec batch SFX típico del formato |
-| `hyperframes.json-TEMPLATE` | Config HyperFrames con valores del formato |
+| `templates/project/hyperframes.json` | Config HyperFrames con valores del formato |
 | `scripts/{captions,image,sfx,tts}.py` | Scripts CON STYLE_SUFFIX hardcoded del formato |
 
 ---
@@ -142,7 +141,7 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
 
 | Archivo / carpeta | Origen | Único o copy? |
 |---|---|---|
-| `CLAUDE.md` | Copy adaptado del proyecto previo del mismo formato | Replica |
+| `docs/OPERATING-MANUAL.md` | Copy adaptado del proyecto previo del mismo formato | Replica |
 | `DESIGN.md` | Copy del previo del mismo formato | Replica con ajustes |
 | `NARRATIVE.md` | Copy de `<formato>/templates/NARRATIVE-TEMPLATE.md` | Esqueleto replicado, contenido único |
 | `creative-brief-vN.md` | Llenando template de PAUTA-MASTER.md [ex-CREATIVE-BRIEF deprecated] | Único |
@@ -164,16 +163,16 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
 ### Cuando arrancás un VIDEO NUEVO dentro del mismo template
 
 ```
-1. CAPA 1 (video-director/, ai-video-production/, library/) → REUTILIZAR tal cual (skills cargados)
+1. CAPA 1 (video-director/, ai-video-production/, assets/library/) → REUTILIZAR tal cual (skills cargados)
 2. CAPA 2 (formato/) → REUTILIZAR tal cual
-3. Buscar en library/ los SFX/música/voces necesarios → COPIAR a tu proyecto
-4. Buscar en elements.json los componentes UI → wire via data-composition-src
+3. Buscar en assets/library/ los SFX/música/voces necesarios → COPIAR a tu proyecto
+4. Buscar en templates/hyperframes/elements.json los componentes UI → wire via data-composition-src
 5. CAPA 3 → CREAR carpeta nueva <proyecto-N>/
    - Copy CLAUDE/DESIGN/AGENTS/hyperframes.json del proyecto previo del mismo formato
    - Copy scripts/ del formato
    - Generar NARRATIVE.md llenando template
    - Llenar creative-brief-vN.md (slot-based)
-   - Generar assets SOLO de lo que no esté en library/
+   - Generar assets SOLO de lo que no esté en assets/library/
 6. Actualizar <formato>-format/video-log.md con archetype/tema usado
 7. Después de Gemini ≥9.7 y publicación: capturar performance a T+48h
 8. Cada 10 videos: meta-review → actualizar PATTERNS-LIBRARY.md
@@ -191,12 +190,12 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
    - PAUTA-MASTER.md si aplica (archetypes empíricos del formato)
    - REFERENCE-ANALYSIS.md (análisis de virales del nuevo nicho)
    - BOOTSTRAP-NEW-PROJECT.md, PRODUCTION-PIPELINE.md (con STYLE_SUFFIX propio)
-   - BRAND.md (audience nueva cuenta IG)
+   - VISUAL-STYLE.md (preset CSS + paleta del formato)
    - video-log.md (vacío)
    - templates/ (NARRATIVE, SFX, scripts con STYLE_SUFFIX nuevo)
 4. Si el visual del template requiere estilo distinto → crear `elements/<estilo-nuevo>/`
-   en raíz + actualizar elements.json. Si no → reutilizar elements existentes.
-5. Si el formato requiere SFX nuevos → generarlos en proyecto piloto, después promover a library/
+   en raíz + actualizar templates/hyperframes/elements.json. Si no → reutilizar elements existentes.
+5. Si el formato requiere SFX nuevos → generarlos en proyecto piloto, después promover a assets/library/
 6. Primer <proyecto> del nuevo formato → Capa 3 normal
 ```
 
@@ -209,7 +208,7 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
      - Si → va a CAPA 1 (ai-video-production/ o video-director/)
      - Si no → todavía está en evaluación, va a video-director/PATTERNS-LIBRARY.md § "en evaluación"
 2. ¿Es un SFX/asset reutilizable?
-   - Si → copiar a library/ + actualizar LIBRARY.md + sfx-catalog.json
+   - Si → copiar a assets/library/ + actualizar LIBRARY.md + sfx-catalog.json
 3. ¿Es un anti-pattern descubierto?
    - Universal → video-director/ANTI-PATTERNS.md
    - Format-specific → <formato>-format/ correspondiente
@@ -221,16 +220,15 @@ Estructura canónica de cada proyecto. Detalle completo en `PROJECT-STRUCTURE.md
 
 ### Sesión nueva: el video-director skill se auto-carga
 - Identidad + workflow + quality bar
-- META-BRAND para context estratégico
-- `CLAUDE.md` § Mapa de docs autoritativos para saber qué leer por tema
+- `docs/OPERATING-MANUAL.md` § Mapa de docs autoritativos para saber qué leer por tema
 
 ### Skill del formato se auto-carga si la tarea menciona keywords del formato
 - horror-choice-format si el usuario menciona "hito", "choice", "horror"
 - documental-format si menciona "documental", "investigación", etc.
 
 ### Librería se invoca explícitamente desde WORKFLOW.md
-- Antes de generar SFX → leer library/LIBRARY.md primero
-- Antes de pick countdown/loader → leer elements.json
+- Antes de generar SFX → leer assets/library/LIBRARY.md primero
+- Antes de pick countdown/loader → leer templates/hyperframes/elements.json
 
 ### Skills técnicas se cargan automáticamente
 - hyperframes, hyperframes-cli, gsap cuando se tocan archivos relevantes

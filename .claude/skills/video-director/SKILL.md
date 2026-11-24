@@ -100,7 +100,7 @@ Ejemplos de gaps típicos:
 **Cuando user pregunta sobre cualquier métrica técnica (pace WPM, LUFS, mix levels, ducking dB, cuts/min, motion intensity, UI timing, color grade strength, music BPM, vignette intensity, etc.) tu ÚNICA fuente válida es `<format>-format/INGENIERO-PAUTA-MASTER.md`.**
 
 Para el formato horror-choice × reel:
-- 📍 `<repo-root>/.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`
+- 📍 `.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`
 - Derivado de 10 referentes F1 canónicos en `/referent-analysis/ref-XX/`
 
 ### ⛔ Anti-pattern fundamental: comparar contra nuestras producciones
@@ -110,7 +110,7 @@ Para el formato horror-choice × reel:
 - `bosque-abandonado/` (nuestra producción)
 - `elige-companero/` (nuestra producción)
 - `pueblo-fantasma-desierto/` (nuestra producción)
-- Cualquier proyecto previo en `<repo-root>/<proyecto>/`
+- Cualquier proyecto previo en `<proyecto>/`
 - Archivos `ours-*.md` (movidos a `/referent-analysis/our-production-archive/` con prefijo "NO AUTORIDAD")
 
 **Razón empírica medida 2026-05-15**: nuestras producciones están **25% más lentas en pace que los referentes canónicos** (2.0 w/s vs 2.43-2.75 w/s en referentes F1). Si el ingeniero compara contra nuestras producciones, hereda nuestro bug.
@@ -132,7 +132,7 @@ User dijo "narración muy lenta". Ingeniero respondió "objetivamente misma pace
    SÍ → medila (transcription.json + ffprobe + librosa + scripts/measure-*.sh)
    NO → paso 3
 
-3. Reportá al usuario: "métrica X no documentada para este formato + 
+3. Reportá al usuario: "métrica X no documentada para este formato +
    no medible con tools actuales — propongo Y basado en heurística general,
    o agendamos análisis de referentes"
 
@@ -250,7 +250,7 @@ SELF-AUDIT CHECKPOINT N:
 5. Solo entonces: reportar al arquitecto con output + self-audit
 ```
 
-**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 8 gates pre-render (ver `CLAUDE.md § Pre-render gate`) NO cubren los checkpoints intermedios per-CP — sin self-audit hay un valle ciego.
+**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 8 gates pre-render (ver `docs/OPERATING-MANUAL.md § Pre-render gate`) NO cubren los checkpoints intermedios per-CP — sin self-audit hay un valle ciego.
 
 ---
 
@@ -279,11 +279,11 @@ SELF-AUDIT CHECKPOINT N:
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — context global del directorio + hard rules + arquitectura 3 capas + § Mapa de docs autoritativos (UN solo lugar por tema)
-2. **`<repo-root>/README.md`** — estructura del sistema (capas + 3 roles)
+1. **`docs/OPERATING-MANUAL.md`** — context global del directorio + hard rules + arquitectura 3 capas + § Mapa de docs autoritativos (UN solo lugar por tema)
+2. **`README.md`** — estructura del sistema (capas + 3 roles)
 3. Este archivo (`SKILL.md`) entero — identidad + workflow + hard rules
-4. **`<repo-root>/.claude/skills/video-director/ARCHITECTURE.md`** — las 3 capas
-5. **`<repo-root>/.claude/skills/video-director/WORKFLOW.md`** — loop maestro 5 pasos
+4. **`.claude/skills/video-director/ARCHITECTURE.md`** — las 3 capas
+5. **`.claude/skills/video-director/WORKFLOW.md`** — loop maestro 5 pasos
 
 Además, **SIEMPRE activá en paralelo `ai-video-production`** (es el toolkit técnico — sin ella no podés ejecutar tareas concretas).
 
@@ -347,7 +347,7 @@ Si un render sale 8.8/10, NO se publica. Se itera.
 **No te saltás pasos.** Detalle completo en `WORKFLOW.md`.
 
 Antes de cada nueva tarea preguntate:
-1. ¿Qué doc cubre esto? (`CLAUDE.md` § Mapa de docs autoritativos)
+1. ¿Qué doc cubre esto? (`docs/OPERATING-MANUAL.md` § Mapa de docs autoritativos)
 2. ¿La leí en esta sesión?
 3. ¿Mi plan respeta los hard rules y anti-patterns?
 4. ¿Cómo voy a medir éxito? (Gemini score, ffprobe specs, listening pass)
@@ -356,7 +356,7 @@ Antes de cada nueva tarea preguntate:
 
 ## Hard rules globales (cualquier video, cualquier formato)
 
-1. **Captions vía Whisper, nunca hand-timed.** Hay un script (`scripts/captions.py`). Úsalo.
+1. **Captions vía Whisper, nunca hand-timed.** Hay un script (`ai-video captions`). Úsalo.
 2. **Captions en safe zone IG.** `caption-wrap { bottom: 540px; height: 280px }`.
 3. **Loading bars en safe zone.** `bottom: 1000px`.
 4. **Variantes de imagen para escenas >4s.** Convención `-a/-b/-c`. Ver `IMAGE-VARIETY.md`.
@@ -423,7 +423,6 @@ Si el usuario empieza un formato nuevo sin skill propio: vos creás el plan, per
 | `WORKFLOW.md` | Disciplina secuencial paso a paso, incluyendo cómo iterar tras Gemini QA |
 | `DECISION-FRAMEWORK.md` | Cuándo preguntar al usuario vs ejecutar directo (reversibility, blast radius) |
 | `ANTI-PATTERNS.md` | Cosas que NUNCA hace. Aprendizajes amargos de proyectos previos. |
-| `META-BRAND.md` | Identidad del creador (Toby Hanna). Estrategia multi-cuenta. Decisiones diferidas con criterio. |
 | `PERFORMANCE.md` | Feedback loop: cómo capturar métricas reales de IG y promover patterns a reglas. |
 | `PATTERNS-LIBRARY.md` | Catálogo cross-account: validados / en evaluación / anti-patterns. |
 | `HANDOFF-PROMPTS.md` | Template canónico para delegar iteración a otro asistente IA. |
@@ -475,7 +474,7 @@ Si NO podés → **claridad narrativa rota.** No es un problema técnico — es 
 | **Avg block duration** | **≥4.5s** | 6.07s | 5.24s | 4.73s | 2.34s |
 | **Sound fabric** (narr+ambient+music) | **≥99%** | 100% | 100% | 99.9% | 100% |
 
-**Verificable automáticamente** con `scripts/audit-audio.py` (gate 5 del flow).
+**Verificable automáticamente** con `ai-video audit-audio` (gate 5 del flow).
 
 ### Por qué la vara antigua estaba mal
 
@@ -520,13 +519,13 @@ Antes de generar TTS, revisar:
    - **Lógica clara**: el viewer puede explicar el twist en una frase post-video. Si pregunta "¿pero por qué eso era una trampa?" → el twist falla.
    - **Imágenes acompañan**: visual evidence del twist en el frame, no solo dicho por el narrador. Si el twist es "el termo era de tu padre", el termo debe verse con iniciales/marcas que lo conecten — no basta narrar.
    - **Narración explica el link**: 1 frase explícita que cierre el gap lógico. "Mismo termo. Mismas iniciales. Tu padre subió en 1987 y nunca bajó." NO "Reconoces el olor" (vago, asume contexto).
-   
+
    **Sub-regla — Timing de setup elements**: los elementos visuales que **plantan semilla retroactiva** del twist (ej: foto vieja en H3 que se cobra en H6) tienen **timing distinto a detail shots**. Mínimo 2.5s, idealmente 3.0-3.5s, con caption confirmatorio sincronizado. Bajo 2.5s = el viewer ve pero no procesa → twist falla retroactivamente. Detalle por formato: `horror-choice-format/PATTERNS.md` § 6.5 Regla 2. Caso disparador: cabana-tormenta v4 — foto del padre <1s rompió el setup.
-   
+
    **Razón**: un plot twist sin coherencia confunde en lugar de impactar — viewer queda con "¿qué?" en vez de "¡oh!". Y el algoritmo de IG penaliza confusión (rewatch buscando entender = +retention pero -shares; aún peor: scroll inmediato).
-   
+
    **Detección durante QA**: si Gemini te dice "twist no se entiende" o "imágenes no acompañan la revelación" o "narración asume contexto" → es esta regla. NO fixear con más Kling — fixear con guion + assets de evidencia + narración explícita + timing de setup elements.
-   
+
    **Aplicación durante NARRATIVE.md drafting**: antes de generar assets, leer el twist en voz alta y preguntarte: "¿un viewer sin contexto previo podría explicarme esto en una frase?". Si no → reescribir. Y para cada elemento visual: ¿se cobra después? Si sí → setup element 2.5-3.5s, no detail shot.
 
 ---

@@ -1,0 +1,2314 @@
+# CREATIVE-SPEC — ultimo-tren-carga (VIDEO V7)
+# schema: v11.2 (HYBRID + canonical refs structural linkage)
+# Author: 🏛️ ARQUITECTO (creative-director) — FASE 0 cierre 2026-06-03; v11.2 amendments 2026-06-03; v11.3 anchor amendment 2026-06-04 (Entry 3 — schema sin cambios, sigue v11.1)
+#
+# ═══ v11.2 AMENDMENTS (Tomás GO 2026-06-03, validados por auditor contra INDEX 8/8) ═══
+#   A1 — HOOK refactor LLAMATIVO + INTERACTIVO + CON MÚSICA: hook partido en shot_01 (hook_a, dyad +
+#        interacción real: Tobias extiende el termo hacia cámara y dice una línea de lure cálido
+#        "Ven conmigo. Abajo hace frío." estilo ref-12 "Ven conmigo" / ref-08 bueno-habla-en-hook;
+#        Dario reacciona físico: gira la cabeza y su lámpara barre el piso) + shot_01b (hook_b, push-in +
+#        micro-motion de AMBOS + countdown film-leader LAST). NUEVO music layer hook_crescendo 0-9s
+#        (stinger/crescendo orquestal-industrial estilo ref-12 sobre el drone_base). Modelo del hook =
+#        kling_v2.5_pro (interacción + diálogo). Tobias habla → lip-sync + D27 voice processing (cálido).
+#   A2 — TODOS los shots ≤5.0s (límite duro Tomás): 22→31 shots. Los 13 shots >5.0s se dividieron en
+#        micro-beats que SIGUEN EL HILO (consequences A partidas en impacto+caída; setups partidos en
+#        contexto+regla; resolución/counterfactual partidos). Narración re-chunkeada ≤13 palabras/shot
+#        (≤4.73s @165WPM). freeze_extend ELIMINADO (nada >5s). cuts/min sube a sweet spot. HISTORIA
+#        IDÉNTICA — mismos beats, decisiones, personajes, narración total (solo re-chunk + granularidad).
+#   A3 — NB fixes SPEC-AUDIT: layer_2.description alineado con transitions table (NB-2); timeline
+#        reconciliada a banda 80-100s con re-chunk (NB-3); script_c cost_cap 10.0 / alert 8.0 (Kling pro).
+# ═══════════════════════════════════════════════════════════════════════════════════════
+# Genre: horror-choice × reel | Pattern P2 (Supervivencia si manejás bien) | Dyad ASIMÉTRICA CLÁSICA (monstruoso-malo + amable-bueno)
+# Authority basis: PAUTA-MASTER §§ 1-25 (esqueleto §2 + INVARIANTE §2.2 + name-labels §2.5 + catálogo P2 §15)
+#   + canonical-scenes ref-03 (P2 primario — Bruno scary-savior, 3 decisiones anidadas escaladas, counterfactual FINAL)
+#   + ref-09 (P9 — counterfactual placement variant) / ref-10 (decisión procedural válvula) / ref-06 (P1 ganadora-contra-impulso)
+#   + ref-08 (bueno-aparente que ofrece + body horror devoración) + INDEX grids
+#   + choice-format-core/CHOICE-MECHANIC § 3 (framing acción-condicional) + § 6 (counterfactual)
+#   + MODEL-CAPABILITIES-MATRIX (HR#28/#29 — narración@165WPM ≤ min(dur, hailuo_std 5.9s)) + MODEL-BEHAVIOR-LOG Entry 1+2
+# Concepto "Propuesta A — El último tren de carga" elegido por Tomás (FASE 0 cerrada).
+# Self-validation HR#27: ver bloque self_audit al final + reporte de chat (validators corridos pre-emit).
+#
+# NOTA DE ROLES (lectura crítica para auditor):
+#   - char_a = DARIO = el MALO-APARENTE (apariencia monstruosa) que ELEGÍS y JUGÁS (Bruno-analog de ref-03 P2).
+#     VERDAD P2: es SOBREVIVIBLE — si seguís sus reglas procedurales con precisión sin pánico, te saca vivo.
+#     Operario de túnel, máscara de respirador antiguo de doble filtro, hule mojado goteando, lámpara siempre
+#     al piso. Da órdenes cortas procedurales. Es el compañero del recorrido jugado (PERMITIDO en played path:
+#     el INVARIANTE § 2.2 solo prohíbe al BUENO-aparente en el played path, NO al elegido).
+#   - char_b = TOBIAS = el BUENO-APARENTE (apariencia amable). VERDAD P2: su path cozy es el counterfactual
+#     (lo cálido que NO viviste). Guardavías viejo, chaleco mostaza, termo, sonrisa con demasiados dientes.
+#     Aparece SOLO en el hook dyad (shot_01) + su counterfactual cozy FINAL (shot_20) + el cliffhanger (shot_22).
+#     NUNCA está en el played path tomando decisiones con el viewer (INVARIANTE CANONICAL-STRUCTURE § 2.2).
+#   El played path = "Si eliges a Dario": vives la noche del túnel donde el INSTINTO + el ENTORNO te tientan a
+#     la muerte (pisar el riel firme / correr del chapoteo / atrapar la barra) y Dario te da contra-reglas de
+#     supervivencia procedurales ("Pisa el cemento" / "Quieto" / "Espera la siguiente"). Resistir el impulso +
+#     obedecer a Dario = sobrevivir (P2: el peligroso obvio ES sobrevivible si lo manejás bien — ref-03 calco).
+
+schema_version: "v11.2"
+schema_revised: "2026-05-22"
+schema_purpose: "HYBRID architecture canonical V4+ — per-clip atomic captions burned + Layer 3 cross-clip + HyperFrames UI overlay + canonical refs structural linkage"
+
+# ═══════════════════════════════════════════════════════════════
+# 1. PROJECT METADATA
+# ═══════════════════════════════════════════════════════════════
+
+project:
+  project_id: "ultimo-tren-carga"
+  format: "horror-choice"
+  delivery: "reel"
+  pattern: "P2"                          # Supervivencia si manejás bien — Dario (máscara de respirador, da miedo) ES sobrevivible si seguís sus reglas
+  pattern_rotation_check: "rotación real (de specs): P6 matadero → P3 cinema → P2 cerro-V4 → P1 V5 sala-limpia → P9 V6 invernadero → V7 = P2. V7 ≠ P9 (V6) ≠ P1 (V5) → compliant HR#14. P2 descansado desde cerro-aislado-v4 (varios videos atrás). Apariencia: ASIMÉTRICA CLÁSICA (monstruoso-malo Dario + amable-bueno Tobias) — descansada desde los early videos (V5 doble-monstruosa, V6 doble-amable recién usadas) → reset al clásico, anti-fatiga (video-log § Rotación V7)."
+  setting: "Andén de servicio de un túnel de mantenimiento de metro fuera de horario, 3 AM: raíles muertos, cableado eléctrico colgando del techo, charcos de agua de filtración en el piso, luz de emergencia ámbar parpadeante; dos operarios entre las vías y una escalera vertical de salida al fondo"
+  total_duration_s_intent: 90            # banda 80-100s; target 90s
+  channel: "@elige_tucompanero"
+  language: "Spanish neutral"            # pisas/corres/esperas/eliges/decides — NUNCA voseo
+  # Cross-video uniqueness (video-log.md schema PRE-4.J — declarado HIGH confidence pre-emit V7)
+  location: "túnel de mantenimiento de metro subterráneo fuera de horario nocturno, andén de servicio, raíles muertos, cableado colgando, charcos de filtración, luz de emergencia ámbar parpadeante"
+  signature_staging: "Dario operario de túnel con máscara de respirador antiguo de doble filtro y overol de hule negro mojado goteando guía al viewer por un andén de servicio entre raíles muertos y cableado colgando, con su lámpara de casco siempre apuntando al piso, hacia una escalera vertical de salida; mientras Tobias guardavías de chaleco de lana mostaza ofrece un termo caliente solo en el hook y el counterfactual, en la oscuridad ámbar del túnel de metro a las 3 AM"
+
+# ═══════════════════════════════════════════════════════════════
+# 1.6 VIDEO CAPABILITIES (Pattern 7 Capability Matrix — MANDATORIO)
+# ═══════════════════════════════════════════════════════════════
+
+video_capabilities:
+  source_clips_origin: "ai_generated"
+  has_ai_generated_clips: true
+  has_tts_narration: true
+  has_human_voiceover: false
+  audio_mix_target: "lufs_-14"
+  has_sfx_layer: true
+  has_captions_baked: true
+  has_layer_2_effects: true
+  has_layer_3_music: true
+  has_layer_4_ui: true
+  format_type: "interactive_choice"
+  duration_intent_s: 90
+  target_fps: 30
+  output_resolution: "1080x1920"
+
+# ═══════════════════════════════════════════════════════════════
+# 1.5 REFERENCES CANONICAL (≥5/8 — mandatory linkage)
+# ═══════════════════════════════════════════════════════════════
+
+references_canonical:
+  - ref_id: "ref-03"                              # canonical-scenes/ref-03-bruno-pablo-mina.md
+    informs:
+      - "narrative_structure.pattern"                  # P2 primario — Bruno scary-savior sobrevivible
+      - "narrative_structure.counterfactual_placement" # counterfactual FINAL (default 4/5; ref-03 lo pone al final)
+      - "narrative_structure.cliffhanger_archetype"    # P2 reveal sin twist verbal + Paz-perdida outro
+      - "characters.char_a"                            # Dario = Bruno-analog (apariencia uncanny máxima + scary-savior P2)
+      - "shot_list.shot_06.narration_in_this_shot"     # D1 categoría curiosidad/obediencia (linterna→riel) + objeto/entorno tentador
+      - "shot_list.shot_07.narration_in_this_shot"     # consequence-A framing acción-condicional ('Si la enciendes'→'Si pisas los rieles')
+      - "editing_targets.pacing_modulation"
+    why_relevant: "ref-03 (P2, 9.04/10) es el referente MAESTRO de este video — su estructura calca 1:1 la mía. (a) PATTERN P2: Bruno (cíclope cuello largo, casco minero — apariencia uncanny máxima) parece trampa pero es SOBREVIVIBLE si esperás (no enciendes linterna / no activás alarma) → Dario (máscara respirador goteando) parece trampa pero sus reglas procedurales ('Pisa el cemento' / 'Quieto' / 'Espera la siguiente') te sacan vivo. (b) 3 DECISIONES ANIDADAS ESCALADAS con stakes crecientes (linterna→seguir→alarma → riel→quieto/correr→barra), categorías DIFERENTES. (c) DINÁMICA DE CONTROL PROCEDURAL del malo (Bruno apaga luces 'los ojos se adaptan solos' / Dario da órdenes cortas señalando el piso). (d) COUNTERFACTUAL FINAL Paz-perdida (Pablo cartas+pan+amanecer → Tobias caseta+estufa+termo+gato+tango). (e) P2 REVEAL SIN VERBALIZAR (Bruno entrega el relevo al amanecer = era trabajador → Dario te sube la escalera y ves el cielo = el túnel ya lo tocó a él, conocía las reglas). (f) Body horror específico al setting (taladro/dinamita/pozo de mina → descarga eléctrica/agua negra/barra al rojo de túnel)."
+
+  - ref_id: "ref-10"                              # canonical-scenes/ref-10-rurik-enzo-fundicion.md
+    informs:
+      - "shot_list.shot_05.narration_in_this_shot"    # D1 dinámica procedural del malo (Bruno-Rurik dan órdenes técnicas)
+      - "shot_list.shot_15.narration_in_this_shot"    # D3 prop diegético de la decisión climática (escalera/barra ↔ válvula/llave)
+      - "music_continuous_layers.drone_base"
+    why_relevant: "Préstamo de dinámica procedural + body horror industrial. (1) Rurik (traje hazmat, máscara con globos oculares — enmascarado/deforme como Dario) da órdenes PROCEDURALES técnicas ('Ponte el traje / Abre la válvula') que el viewer debe seguir o resistir → calco la dinámica de control de Dario (operario enmascarado que da órdenes cortas señalando el piso/escalera). (2) ref-10 categoría sumisión/resistencia procedural en su decisión de la válvula → mi D3 (atrapar la barra que Dario suelta vs esperar la siguiente) es la misma categoría procedural-confianza en el clímax. (3) Body horror específico al setting industrial-eléctrico (Rurik vapor/quemadura → la barra al rojo del cableado sella la palma de Dario-context). (4) Drone industrial bajo continuo del túnel de metro."
+
+  - ref_id: "ref-06"                              # canonical-scenes/ref-06-enzo-axel-carretera.md
+    informs:
+      - "shot_list.shot_11.narration_in_this_shot"    # D2 acción/pasividad (correr vs quedarse inmóvil)
+      - "shot_list.shot_12.narration_in_this_shot"    # consequence-A acción-condicional ('Si tocas el claxon'→'Si corres')
+      - "narrative_structure.canonical_constraints.consequence_framing_style"
+    why_relevant: "ref-06 (P1 puro) es el calco directo de mi D2: la opción ganadora va CONTRA el impulso. Axel: 'quedate inmóvil, no reacciones' → 'Si tocas el claxon / Si enciendes la luz, Axel se enfurece y te arrastra'; quedarse quieto = sobrevivir. Mi D2 es idéntico en mecánica: 'algo respira en el agua de filtración, Dario levanta la mano: quieto' → 'Si corres, el chapoteo atrae lo que vive en el charco y te arrastra bajo el agua negra'; quedarse inmóvil = sobrevivir. Calco: (a) la dinámica acción/pasividad donde el impulso (huir del ruido) mata y la pasividad salva; (b) el framing acción-condicional 'Si corres'; (c) body horror específico (Axel rompe ventana y arrastra → la criatura del charco arrastra bajo el agua negra). Categoría DIFERENTE a D1 (curiosidad/obediencia) y D3 (confianza procedural) — variedad PAUTA § 11."
+
+  - ref_id: "ref-09"                              # canonical-scenes/ref-09-victor-axel-cockpit.md
+    informs:
+      - "narrative_structure.emotional_framing"        # stakes_lift
+      - "shot_list.shot_19.narration_in_this_shot"     # resolución P2/P9 somber sin twist verbal ('sales con vida' / 'ves el cielo')
+      - "shot_list.shot_21.narration_in_this_shot"     # cierre somber relief, NO festivo
+    why_relevant: "ref-09 (P9, 8.99/10) informa el TONO de la resolución y el cierre. Victor (esquelético+máscara, parece amenazante) SALVA cuando obedecés sus órdenes técnicas y el cierre es 'Felicidades, sigues con vida' — resolución SOMBER, no festiva, sin twist verbal. Calco ese registro para mi resolución: Dario te sube la escalera, sueltas la barra correcta, ves el cielo abrir → 'Sales con vida' somber relief (NO celebración). emotional_framing stakes_lift (la apariencia monstruosa de Dario sube las stakes de cada decisión). NOTA: mi counterfactual va al FINAL (ref-03 placement), NO al inicio como ref-09 — solo tomo de ref-09 el registro de la resolución del scary-savior, no su placement invertido."
+
+  - ref_id: "ref-08"                              # canonical-scenes/ref-08-hugo-pablo-acuario.md
+    informs:
+      - "characters.char_b"                          # Tobias = bueno aparente que OFRECE algo (termo ↔ Pablo/Hugo) — presente SOLO en hook/counterfactual/cliffhanger (§2.2)
+      - "shot_list.shot_01.narration_in_this_shot"    # hook dyad — el bueno aparente con postura acogedora ofreciendo
+    why_relevant: "Préstamo de diseño del bueno-aparente. ref-08 Hugo (esqueleto humanoide alto + pipa — visualmente extreme PERO postura no amenazante, ofrece, habla suave) + Pablo (ofrece, postura relajada) informan a Tobias: bueno-aparente cuya seña es la POSTURA ACOGEDORA (sentado, ofreciendo un termo caliente, sonriendo) NO la tameness visual — Tobias tiene una sonrisa con demasiados dientes pequeños (uncanny por contraste, PAUTA § 5: el bueno aparente puede ser visualmente extreme). INVARIANTE § 2.2: como Pablo/Hugo, Tobias aparece SOLO en hook + counterfactual + cliffhanger, NUNCA decidiendo en el played path. Su outcome cozy en el counterfactual (caseta+estufa+termo) calca el Paz-perdida laboral cozy de Hugo (acuario+café+relevo)."
+
+  # Refs NOT usados (declaro razón — recomendado):
+  # - ref-11 (@referent-c atypical, NO referent-a canon — excluido per INDEX outliers flag)
+  # - ref-12 (outro emocional 43s melodramático + apuñalamiento, tono ajeno al P2 procedural-industrial)
+  # - ref-13 (P6 hedonismo + Miro sin boca + cuts-flooding 77s outro — pattern ajeno; mi cliffhanger NO es trampa hedonista)
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ASSEMBLY STRATEGY
+# ═══════════════════════════════════════════════════════════════
+
+assembly_strategy: "per_clip_atomic_hybrid"     # Hard Rule #25 — V4+ canonical
+
+# ═══════════════════════════════════════════════════════════════
+# 3. HYBRID LAYERS DECLARATION (Hard Rule #25)
+# ═══════════════════════════════════════════════════════════════
+
+hybrid_layers:
+  layer_1_per_clip_atomic:
+    description: "Per-shot mp4 con visual + audio clip-scoped + captions BURNED en frame data"
+    captions_source: "whisper_from_clip_audio"
+    captions_burn_script: "ai-video build-clip-atomic --bake-captions"
+    audio_bundled_per_clip:
+      # HR#25: narrator EXCLUIDO de Layer 1 → vive SOLO como narrator_master_continuous en Layer 3
+      # (captions burned per-clip + narrator continuous Layer 3). Layer 1 bundlea SOLO:
+      # character dialog (Dario, lip-sync) + diegetic SFX + clip-scoped ambient.
+      - "character_dialog_within_this_clip"        # Dario (lip-sync, tiene boca bajo la máscara → voz procesada) — shots 05/10/15. Tobias NO habla en played path (removido por invariante § 2.2).
+      - "diegetic_sfx_within_this_clip"
+      - "clip_scoped_ambient_short"
+    output_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_atomic.mp4"
+    manifest_path_convention: "<project>/assets/clips-atomic/shot_NN_<descriptor>_manifest.yaml"
+
+  layer_2_effects_between_clips:
+    # v11.2 NB-2 fix: alineado 1:1 con la transitions table (§11). old_screen_glitch_error se usa SOLO en
+    # los boundaries muerte→bridge y bridge→ramaB (glitch corte-TV — cambio de historia); el boundary
+    # played→counterfactual usa cross_fade_warm (NO glitch). white-flash en decisión→consecuencia-A; hard-cut+whoosh hook→setup.
+    description: "Transiciones + stings en boundaries (alineado a §11 transitions table): hard_cut+whoosh metálico (hook→setup); freeze_into_decision_filter (setup→decisión); white_flash_impact en decisión→consecuencia-A (body horror); old_screen_glitch_error (glitch corte-TV pantalla antigua) SOLO en muerte→bridge y bridge→ramaB (PAUTA § 2.4 perspectiva 6); cross_fade_warm en resolución→played→counterfactual→cliffhanger (NO glitch en played↔counterfactual)"
+    effects_library_ref: "assets/transitions/horror-choice/transitions/"   # carpeta global root (2026-06-05); old_screen_glitch_error horror-choice ONLY
+    transition_variety_min: 3
+    non_diegetic_sfx_placement: "effect_layer"
+
+  layer_3_cross_clip_continuous:
+    description: "Audio que NO corta en boundaries — overlaid post-concat con sidechain duck"
+    layers:
+      - "narrator_master_continuous"
+      - "music_drone_base"
+      - "ambient_continuous_environment"
+    sidechain_target_db: -6
+    overlay_pipeline: "ai-video build-video-hybrid --post-concat-overlay"
+
+  layer_4_hyperframes_ui_overlay:
+    description: "Countdown film-leader academy + decision UI (loading Y52 / countdown Y46) + outro card + name labels persistentes through-countdown"
+    elements:
+      - "countdown_3_2_1_hook"
+      - "decision_freeze_d1"
+      - "decision_freeze_d2"
+      - "decision_freeze_d3"
+      - "outro_card_cliffhanger"
+      - "watermark_handle_persistent"
+
+# ═══════════════════════════════════════════════════════════════
+# 4. CHARACTERS (real invented names + name_validation gate)
+# ═══════════════════════════════════════════════════════════════
+
+characters:
+  - character_id: "char_a"
+    name: "Dario"
+    name_validation:
+      is_real_invented_name: true
+      blacklist_check_passed: true                 # NO job description (no "Operario/Maquinista/Guardavías")
+      canonical_8_refs_pattern: "real_first_name"
+    role: "malo_aparente"                          # APARIENCIA: monstruosa/amenazante (máscara respirador, hule goteando). VERDAD P2: sobrevivible — el elegido que JUGÁS.
+    archetype: "P2 — Supervivencia si manejás bien (el operario enmascarado del túnel conoce las reglas; obedecerlo sin pánico te saca vivo) — Bruno-analog (ref-03) / Rurik-analog (ref-10)"
+    visual_signature: |
+      Operario de túnel humano, complexión robusta, ≈1.85m. Overol de hule reflectante NEGRO
+      empapado que GOTEA constantemente agua de filtración (textura húmeda brillante, no anatomía).
+      LA FIRMA UNCANNY (legible, estática, máscara-coupled): la cara cubierta por una MÁSCARA DE
+      RESPIRADOR ANTIGUO de DOBLE FILTRO — dos cilindros de filtro gemelos sobresaliendo a la altura
+      del pecho/mentón como "ojos falsos", lentes de visor circulares empañados que ocultan los ojos
+      reales. La máscara le deforma la voz a un zumbido grave. Casco con lámpara frontal que NUNCA
+      apunta al viewer: SIEMPRE apunta al piso (cono de luz hacia abajo). Guantes de hule negro
+      mojados. Postura procedural, gestos cortos y secos. Da miedo: el viewer desconfía de él y
+      confía en el cálido Tobias. Contraste vs Tobias: hule-negro-mojado-máscara-zumbido vs
+      lana-cálida-rostro-humano-termo.
+    voice_id_canonical: "K3TeN3ZVK8WnOeJ0NYqZ"     # placeholder; engineer asigna voz propia de personaje (procesada: lowpass + reverb leve para el zumbido de máscara) en CP2 — ver D27 voice processing block + MODEL-CAPABILITIES-MATRIX character_voices
+    anchor_image_id: "char_a_v1"
+    visual_signature_critical_loci: ["respirator_mask_twin_filters"]   # MODEL-BEHAVIOR-LOG Entry 1 — la máscara de doble filtro es el rasgo raro aislable de la cara en close-ups
+    locus_anchor_required: true                    # firma rara (máscara doble filtro) aislable en close-ups POV → locus anchor obligatorio
+    locus_anchors:
+      - locus_id: "respirator_mask_twin_filters"
+        anchor_image_id: "char_a_v1_mask"
+        when_used: "SOLO close-ups donde la máscara ocupa el frame sin cuerpo/escena (Entry 3: usar este locus como --ref en full-scene inserta la máscara como objeto duplicado flotante; en full-scene del personaje va el full anchor + máscara reforzada por prompt)"
+
+  - character_id: "char_b"
+    name: "Tobias"
+    name_validation:
+      is_real_invented_name: true
+      blacklist_check_passed: true                 # NO job description
+      canonical_8_refs_pattern: "real_first_name"
+    role: "bueno_aparente"                         # APARIENCIA: cálida, acogedora (chaleco de lana, termo). VERDAD P2: su path cozy es el counterfactual (lo que NO viviste).
+    archetype: "P2 dyad partner — el guardavías cálido cuyo recorrido cozy es el counterfactual Paz-perdida; visualmente extreme por contraste (sonrisa con demasiados dientes), no tame (PAUTA § 5) — Pablo/Hugo-analog (ref-03/ref-08)"
+    visual_signature: |
+      Guardavías viejo, hombre mayor de rostro apergaminado y arrugado, ≈1.70m, postura SENTADA
+      acogedora en un banco de servicio. Viste un CHALECO DE LANA GRUESO color MOSTAZA sobre camisa
+      de trabajo gastada, gorra de guardavías. Sostiene una LINTERNA DE ACEITE de luz cálida ámbar y
+      un TERMO metálico que ofrece al viewer. Su uncanny es sutil y por contraste: una SONRISA CON
+      DEMASIADOS DIENTES PEQUEÑOS, demasiado parejos, que se ve cálida a primera vista pero inquieta
+      al mirarla fijo. Piel apergaminada, ojos amables entrecerrados. NO tiene deformidad obvia: el
+      horror es que lo CÁLIDO y acogedor es el camino que dejaste atrás. Contraste vs Dario:
+      lana-cálida-rostro-humano-termo-luz-ámbar vs hule-negro-mojado-máscara-zumbido-luz-al-piso.
+    voice_id_canonical: "K3TeN3ZVK8WnOeJ0NYqZ"     # placeholder; engineer asigna voz cálida masculina mayor propia en CP2. v11.2: Tobias AHORA habla 1 línea de lure en el hook (shot_01) → voz cálida diegética (D27 block tobias_voice_processing). NO usado en el played path (invariante § 2.2 intacto — hook ES zona permitida de Tobias).
+    anchor_image_id: "char_b_v1"
+    visual_signature_critical_loci: []             # sin rasgo raro aislable de la cara que requiera locus (la sonrisa va con la cara) → no requiere locus anchor
+    locus_anchor_required: false
+
+narrator_voice: "K3TeN3ZVK8WnOeJ0NYqZ"            # narrador canónico (David C2 — 157 WPM medido; engineer aplica atempo → ~165 WPM canónico)
+
+# ═══════════════════════════════════════════════════════════════
+# 5. NARRATIVE STRUCTURE (counterfactual + emotional framing)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_structure:
+  model_constraints_acknowledged: true                  # HR#28/#29 — narración por shot ≤ canonical@165 ≤ min(dur, hailuo_std 5.9s); shots con narración >5.9s → freeze_extend_required:true (declarado per shot)
+  pattern: "P2"
+  counterfactual_placement: "good_path_at_end"          # ref-03 placement (counterfactual FINAL — default 4/5 refs). Enum válido v11 (NO retrospective)
+  emotional_framing: "stakes_lift"                      # la apariencia monstruosa de Dario sube las stakes de cada decisión (PAUTA § 24.8)
+  cliffhanger_archetype: "P2"                           # P2 reveal somber sin twist verbal (el túnel ya tocó a Dario) + cliffhanger loop
+
+  canonical_constraints:
+    no_retrospective_counterfactual: true
+    si_elegiste_framing_required: true                 # PRINCIPIO: marcar la rama vía acción condicional ("Si pisas los rieles" / "Si corres" / "Si la atrapas")
+    consequence_framing_style: "accion_condicional"    # D19 (primary source): acción-condicional DOMINANTE; NUNCA bare label "Si elegiste A"
+    visual_matches_narration_literal: true
+    first_person_pov_locked: true
+
+  hook_sub_beats:                                      # PAUTA § 2.5 + § 19.5 ordering canonical (countdown LAST). v11.2 A1: hook LLAMATIVO + INTERACTIVO + CON MÚSICA. 2 shots (shot_01 hook_a + shot_01b hook_b).
+    - beat_id: "name_labels_intro"
+      timestamp_intent_s: [0.0, 1.5]
+      shot_anchor: "shot_01"
+      content: "Dyad simultánea Dario + Tobias con name labels monospaced GRANDES (Y11.5), persistentes through-countdown. Hook_crescendo music cue ENTRA aquí (crescendo orquestal-industrial sobre drone_base, estilo ref-12)"
+    - beat_id: "interaction_tobias_lure"            # A1 — INTERACCIÓN REAL (3/8 refs TOP: bueno habla en hook — ref-08 Hugo / ref-12 Nano)
+      timestamp_intent_s: [1.5, 5.0]
+      shot_anchor: "shot_01"
+      content: "Tobias EXTIENDE el termo hacia cámara y dice (voz cálida, lip-sync) 'Ven conmigo. Abajo hace frío.' (lure cálido del bueno-aparente, estilo ref-12 'Ven conmigo'). Dario REACCIONA físico: gira la cabeza hacia el viewer y su lámpara de casco BARRE el piso. Narrator framing encima: 'El último tren ya pasó. Solo uno puede sacarte.' + caption warning rojo del setting (túnel sellado 3 AM). Music hook_crescendo sube."
+    - beat_id: "push_in_micro_motion"
+      timestamp_intent_s: [5.0, 6.0]
+      shot_anchor: "shot_01b"
+      content: "POV slow push-in hacia el dyad al fondo del túnel bajo la luz ámbar + micro-motion de AMBOS (Dario gotea/respira bajo la máscara, Tobias parpadea y mueve el termo) — NO zoom-cut, push-in continuo (feedback_hook_continuity_no_zoom_cut). Music hook_crescendo pico."
+    - beat_id: "countdown_3_2_1"
+      timestamp_intent_s: [6.0, 9.0]
+      shot_anchor: "shot_01b"
+      content: "Film Leader Academy countdown vía AVU clip (digit 1.0s c/u) — LAST. Name labels persisten through-countdown. Music hook_crescendo resuelve al drone_base."
+      avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+
+# ═══════════════════════════════════════════════════════════════
+# 6. NARRATIVE SECTIONS (cross-shot audio + LUT continuity)
+# ═══════════════════════════════════════════════════════════════
+
+narrative_sections:
+  - section_id: "hook"
+    shot_ids: ["shot_01", "shot_01b"]                # v11.2 A1: hook partido (hook_a interacción + hook_b push-in/countdown)
+    audio_layer_continuity_within_section: ["drone_base", "ambient_tunnel", "hook_crescendo"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+  - section_id: "setup_pre_decision"
+    shot_ids: ["shot_02", "shot_03", "shot_03b", "shot_04", "shot_05"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+  - section_id: "decision_1"
+    shot_ids: ["shot_06"]
+    audio_layer_continuity_within_section: ["drone_base"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+  - section_id: "consequence_d1"
+    shot_ids: ["shot_07a", "shot_07b", "shot_08", "shot_09", "shot_09b"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+  - section_id: "decision_2"
+    shot_ids: ["shot_10", "shot_11"]
+    audio_layer_continuity_within_section: ["drone_base"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+  - section_id: "consequence_d2"
+    shot_ids: ["shot_12a", "shot_12b", "shot_13", "shot_14", "shot_14b"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+  - section_id: "decision_3_climax"
+    shot_ids: ["shot_15", "shot_16"]
+    audio_layer_continuity_within_section: ["drone_base", "accent_climax"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+  - section_id: "consequence_d3"
+    shot_ids: ["shot_17a", "shot_17b", "shot_18", "shot_19a", "shot_19b"]
+    audio_layer_continuity_within_section: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+  - section_id: "resolution_b"
+    shot_ids: ["shot_20"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_surface_dawn"]
+    visual_style_lut: "warm_relief_v1"
+  - section_id: "counterfactual_outro"
+    shot_ids: ["shot_21a", "shot_21b"]
+    audio_layer_continuity_within_section: ["drone_base", "ambient_cozy_radio"]
+    visual_style_lut: "warm_relief_v1"
+  - section_id: "cliffhanger_outro"
+    shot_ids: ["shot_22"]
+    audio_layer_continuity_within_section: ["outro_drone", "ambient_cozy_radio"]
+    visual_style_lut: "warm_relief_v1"
+
+# ═══════════════════════════════════════════════════════════════
+# 7. MUSIC LAYERS (3 mandatory — PAUTA § 25)
+# ═══════════════════════════════════════════════════════════════
+
+music_continuous_layers:
+  - layer_id: "hook_crescendo"                         # v11.2 A1 — MÚSICA del hook (stinger/crescendo 0-9s estilo ref-12 sobre el drone_base)
+    scope: "clip_scoped_or_effect"
+    sections: [{from: 0, to: 9, intent: "crescendo orquestal-industrial de hook: cuerdas graves + golpe metálico subterráneo subiendo en tensión, resuelve al drone_base en el countdown (estilo ref-12 crescendo de hook — engancha el scroll)"}]
+    eleven_labs_prompt: "rising cinematic hook crescendo, low orchestral strings swelling with deep industrial metallic hit, building tension over a subterranean drone, climax sting resolving into a sustained low hum, dark horror trailer opening, no melody vocals"
+    compose_strategy: "single_9s_crescendo"
+    target_lufs_pre_mix: -22                            # hook punch (más alto que drone; engineer ducka bajo narrador/diálogo)
+    sidechain_duck_target: true
+  - layer_id: "drone_base"                             # LAYER 1 drone (continuous 0-90s)
+    scope: "cross_clip_continuous"
+    sections: [{from: 0, to: 90, intent: "drone subterráneo metálico frío, tensión sostenida subharmónica con resonancia de túnel"}]
+    eleven_labs_prompt: "low subterranean metallic drone, cold underground tunnel tension, deep sustained bass with faint electrical hum and distant water drip resonance, no melody, dark cinematic horror ambient bed"
+    compose_strategy: "single_continuous_90s"
+    target_lufs_pre_mix: -27
+    sidechain_duck_target: true
+  - layer_id: "ambient_tunnel"                         # LAYER 2 ambient (scene-specific)
+    scope: "cross_clip_continuous"
+    sections: [{from: 6, to: 78, intent: "ambiente túnel de metro nocturno: goteo de filtración + zumbido eléctrico del cableado + chasquido lejano de relés + viento subterráneo hueco"}]
+    eleven_labs_prompt: "abandoned subway maintenance tunnel night room tone, dripping water leakage, faint electrical buzz from hanging cables, distant relay clicks, hollow underground wind, no music"
+    compose_strategy: "loop_10s_stretched"
+    target_lufs_pre_mix: -30
+  - layer_id: "ambient_surface_dawn"                   # LAYER 2 ambient variante (resolución — salida al exterior)
+    scope: "cross_clip_continuous"
+    sections: [{from: 78, to: 84, intent: "salida al exterior, aire frío del amanecer, ciudad lejana"}]
+    eleven_labs_prompt: "cold pre-dawn city ambience from above ground, faint distant traffic, cold open air, calm relief, no horror"
+    compose_strategy: "single_6s_reusable"
+    target_lufs_pre_mix: -29
+  - layer_id: "ambient_cozy_radio"                     # LAYER 2 ambient cozy (counterfactual/cliffhanger — caseta de Tobias)
+    scope: "cross_clip_continuous"
+    sections: [{from: 84, to: 90, intent: "caseta de guardavías cozy: estufa crepitando + radio AM con tango viejo lejano"}]
+    eleven_labs_prompt: "cozy signalman hut ambience, crackling wood stove, faint old AM radio tango music, warm calm interior, peaceful, no horror"
+    compose_strategy: "single_6s_reusable"
+    target_lufs_pre_mix: -29
+  - layer_id: "accent_climax"                           # LAYER 3 accent (event-driven D3 clímax)
+    scope: "clip_scoped_or_effect"
+    sections: [{from: 58, to: 70, intent: "tensión rising en decisión 3 + body horror barra al rojo/caída al pozo"}]
+    eleven_labs_prompt: "rising dark cinematic strings tension, electrical crackle building, metallic groan swell, climax buildup, no drums"
+    compose_strategy: "single_12s"
+    target_lufs_pre_mix: -25
+  - layer_id: "outro_drone"
+    scope: "cross_clip_continuous"
+    sections: [{from: 86, to: 90, intent: "cliffhanger sostenido final, warm-eerie blend"}]
+    eleven_labs_prompt: "sustained low warm hum gradual fade, cliffhanger atmospheric warm-amber blend, soft loop cue"
+    compose_strategy: "single_6s_fade_in"
+    target_lufs_pre_mix: -27
+
+cross_clip_continuous_audio_layers:
+  layer_3_continuous:
+    - "drone_base"
+    - "ambient_tunnel"
+    - "ambient_surface_dawn"
+    - "ambient_cozy_radio"
+    - "outro_drone"
+    - "narrator_master_continuous"
+  layer_1_clip_scoped:
+    - "dario_dialog_within_clip"          # Dario habla on-screen (lip-sync): shots 05/10/15. Tobias NO en played path.
+    - "tobias_dialog_within_clip"         # v11.2 A1 — Tobias habla 1 línea de lure SOLO en el hook (shot_01); zona permitida (invariante § 2.2 intacto)
+    - "diegetic_sfx_within_clip"
+    - "accent_climax"
+    - "hook_crescendo"
+
+# ═══════════════════════════════════════════════════════════════
+# 8. PACING + EDITING TARGETS (PAUTA § 23 — band 14-22 cuts/min)
+# ═══════════════════════════════════════════════════════════════
+
+editing_targets:
+  target_cuts_per_min: [18, 22]                        # PAUTA § 23 banda 14-22
+  target_total_cuts: [30, 34]                          # v11.2 A2: 31 shots base (era 22) → ~30-32 cortes en ~90s ≈ 20-21 cuts/min (sweet spot PAUTA § 23). Subir granularidad acercó cuts/min al techo de la banda sin pasarlo.
+  transition_variety_min: 3
+  pacing_modulation:
+    hook: [10, 13]
+    setup_pre_decision: [16, 20]
+    decision_1: [10, 13]
+    consequence_d1: [22, 28]
+    decision_2: [10, 13]
+    consequence_d2: [22, 28]
+    decision_3_climax: [25, 30]
+    consequence_d3: [25, 30]
+    resolution_b: [12, 16]
+    counterfactual_outro: [12, 16]
+    cliffhanger_outro: [10, 14]
+
+# ═══════════════════════════════════════════════════════════════
+# 9. NARRATION SCRIPT (DERIVADO — single source of truth = narration_in_this_shot por shot)
+# ═══════════════════════════════════════════════════════════════
+# ⛔ SINGLE SOURCE OF TRUTH = `narration_in_this_shot` por shot (shot_list §10).
+#    §9 narration_script = CONCATENACIÓN derivada, palabra-por-palabra, de los narration_in_this_shot
+#    en orden de shot — driver del ENSAMBLE del master continuo Layer 3. El caption-burn per-clip (HR#30)
+#    y el master continuo Layer 3 derivan del MISMO texto per-shot → no desync (anti-pattern #16) +
+#    cobertura temporal completa (HR#30). Narrador = Layer 3 continuous ÚNICAMENTE (HR#25); EXCLUIDO de Layer 1.
+#
+# Estilo calibrado a primary source ref-03/06/10: 2ª persona presente, staccato, framing acción-condicional,
+# "Ahora decides" gatillo, body horror nominal en climax. Narración clara NO tenebrosa (PAUTA § narración clara).
+# Español NEUTRAL: pisas/corres/esperas/eliges/decides — NUNCA voseo.
+# Segmentos NARRATOR → ensamblan el master continuo Layer 3. Segmentos char_a (dialog Dario) →
+#   son Layer 1 clip-scoped, NO parte del master continuo; su fuente canónica = dialog_text del shot.
+
+# v11.2 A2/A3: re-chunkeado ≤13 palabras/segmento (≤4.73s @165WPM) para que cada shot quepa ≤5.0s SIN
+#   truncar y SIN freeze-extend. Timeline reconciliada a banda 80-100s (NB-3): la narración termina ~78s;
+#   con countdowns/loadings/beats no-narrados (hook 9s, freezes, reaction inserts, resolución visual) el
+#   corte total cae ~88-92s. Engineer ajusta el corte final dentro de 80-100s. HISTORIA IDÉNTICA — solo re-chunk.
+narration_script:
+  - segment_id: "narrator_hook"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "El último tren ya pasó. Elige a tu compañero: ¿Dario o Tobías?"   # FIX-PACK v2 F1 — CTA explícita en el hook (orden del user)
+    timestamp_intent_s: [1.8, 4.8]
+    shot_id_anchor: "shot_01"
+    lip_sync_required: false
+
+  # — shot_01: DIÁLOGO de Tobias (lure cálido, Layer 1 clip-scoped, lip-sync). v11.2 A1. Fuente = dialog_text. —
+  - segment_id: "tobias_hook_lure"
+    speaker: "char_b"                                  # Tobias habla on-screen (lip-sync, voz cálida procesada — D27)
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Ven conmigo. Abajo hace frío."
+    timestamp_intent_s: [3.2, 4.9]
+    shot_id_anchor: "shot_01"
+    lip_sync_required: true
+
+  - segment_id: "narrator_setup_1a"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si eliges a Dario, bajas al túnel de mantenimiento."          # 9 palabras ≈3.27s
+    timestamp_intent_s: [10.0, 13.5]
+    shot_id_anchor: "shot_03"
+    lip_sync_required: false
+
+  - segment_id: "narrator_setup_1b"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Las rejas se cierran detrás de ti."                          # 7 palabras ≈2.55s
+    timestamp_intent_s: [14.0, 16.5]
+    shot_id_anchor: "shot_03b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_setup_2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Su lámpara apunta al piso. El cableado gotea sobre los raíles."  # 11 palabras ≈4.0s
+    timestamp_intent_s: [17.0, 21.0]
+    shot_id_anchor: "shot_04"
+    lip_sync_required: false
+
+  # — shot_05: DIÁLOGO de Dario (Layer 1 clip-scoped, NO master continuo). Fuente canónica = dialog_text. —
+  - segment_id: "dario_setup_rule"
+    speaker: "char_a"                                  # Dario habla on-screen (lip-sync, voz procesada zumbido)
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Pisa el cemento. Nunca el riel."
+    timestamp_intent_s: [22.5, 24.5]
+    shot_id_anchor: "shot_05"
+    lip_sync_required: true
+
+  - segment_id: "narrator_d1_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "El riel se ve firme. Ahora decides: pisas el riel o el cemento."  # 13 palabras ≈4.73s
+    timestamp_intent_s: [25.5, 30.3]
+    shot_id_anchor: "shot_06"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_a1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si pisas el riel, no estaba muerto."                         # 8 palabras ≈2.9s
+    timestamp_intent_s: [31.0, 33.9]
+    shot_id_anchor: "shot_07a"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_a2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "La descarga te lanza hacia atrás."                           # 6 palabras ≈2.18s
+    timestamp_intent_s: [34.0, 36.2]
+    shot_id_anchor: "shot_07b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_b1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si pisas el cemento, avanzas en silencio."                   # 7 palabras ≈2.55s
+    timestamp_intent_s: [37.0, 39.6]
+    shot_id_anchor: "shot_09"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d1_consequence_b2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dario asiente y sigue al fondo."                            # 6 palabras ≈2.18s
+    timestamp_intent_s: [40.0, 42.2]
+    shot_id_anchor: "shot_09b"
+    lip_sync_required: false
+
+  # — shot_10: DIÁLOGO de Dario (Layer 1 clip-scoped). Fuente canónica = dialog_text. —
+  - segment_id: "dario_d2_rule"
+    speaker: "char_a"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Quieto. No corras."
+    timestamp_intent_s: [43.0, 44.5]
+    shot_id_anchor: "shot_10"
+    lip_sync_required: true
+
+  - segment_id: "narrator_d2_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Algo respira en el agua. Ahora decides: te quedas inmóvil o corres."  # 12 palabras ≈4.36s
+    timestamp_intent_s: [45.0, 49.4]
+    shot_id_anchor: "shot_11"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_a1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si corres, el chapoteo lo atrae."                           # 6 palabras ≈2.18s
+    timestamp_intent_s: [50.0, 52.2]
+    shot_id_anchor: "shot_12a"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_a2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Te arrastra bajo el agua negra."                            # 6 palabras ≈2.18s
+    timestamp_intent_s: [52.3, 54.5]
+    shot_id_anchor: "shot_12b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_b1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si te quedas inmóvil, pasa de largo."                       # 7 palabras ≈2.55s
+    timestamp_intent_s: [55.0, 57.6]
+    shot_id_anchor: "shot_14"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d2_consequence_b2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dario te guía hasta la escalera."                           # 6 palabras ≈2.18s
+    timestamp_intent_s: [58.0, 60.2]
+    shot_id_anchor: "shot_14b"
+    lip_sync_required: false
+
+  # — shot_15: DIÁLOGO de Dario (Layer 1 clip-scoped). Fuente canónica = dialog_text. —
+  - segment_id: "dario_d3_rule"
+    speaker: "char_a"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Espera la siguiente. No esa."
+    timestamp_intent_s: [61.0, 62.8]
+    shot_id_anchor: "shot_15"
+    lip_sync_required: true
+
+  - segment_id: "narrator_d3_question"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Dario sube primero y te lanza una barra para que subas. Ahora decides. ¿La atrapas o esperas la siguiente?"   # FIX-PACK v2 F5 — D3 claridad (explica la barra)
+    timestamp_intent_s: [63.5, 67.2]
+    shot_id_anchor: "shot_16"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_a1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si la atrapas, está al rojo del cableado."                  # FIX-PACK v2 F5 — D3 claridad
+    timestamp_intent_s: [68.0, 70.9]
+    shot_id_anchor: "shot_17a"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_a2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Te sella la palma y caes al pozo."                          # 8 palabras ≈2.9s
+    timestamp_intent_s: [71.0, 73.9]
+    shot_id_anchor: "shot_17b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_b1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si esperas la siguiente, subes seguro."                     # 6 palabras ≈2.18s
+    timestamp_intent_s: [74.5, 76.7]
+    shot_id_anchor: "shot_19a"
+    lip_sync_required: false
+
+  - segment_id: "narrator_d3_consequence_b2_resolution"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "La trampilla se abre y ves el cielo. Sales con vida."       # 11 palabras ≈4.0s ≤5.0s (NO freeze)
+    timestamp_intent_s: [77.0, 81.0]
+    shot_id_anchor: "shot_19b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_outro_counterfactual_1"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Si hubieras elegido a Tobias, estarías en la caseta."       # 9 palabras ≈3.27s
+    timestamp_intent_s: [82.0, 85.3]
+    shot_id_anchor: "shot_21a"
+    lip_sync_required: false
+
+  - segment_id: "narrator_outro_counterfactual_2"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Con la estufa, el termo y un tango viejo."                  # 9 palabras ≈3.27s
+    timestamp_intent_s: [85.4, 88.7]
+    shot_id_anchor: "shot_21b"
+    lip_sync_required: false
+
+  - segment_id: "narrator_outro_cta"
+    speaker: "narrator"
+    voice_id: "K3TeN3ZVK8WnOeJ0NYqZ"
+    text_canonical: "Mañana hay otro turno, y otro túnel. Elige a tu compañero."  # 11 palabras ≈4.0s
+    timestamp_intent_s: [89.0, 93.0]                  # cola final — outro card se extiende; engineer ajusta total a banda 80-100s
+    shot_id_anchor: "shot_22"
+    lip_sync_required: false
+
+# ═══════════════════════════════════════════════════════════════
+# 10. SHOT LIST (storyboard-level — Hard Rule #21 — 31 shots)
+# ═══════════════════════════════════════════════════════════════
+# v11.2 A2: TODOS los shots ≤5.0s (límite duro Tomás). Mapa de splits old→new:
+#   01(6.0)→01(hook_a 5.0)+01b(hook_b 4.0) | 03(6.0)→03(4.5)+03b(4.0) | 06(5.6)→06(4.8) |
+#   07(6.0)→07a(3.5)+07b(2.8) | 09(5.5)→09(3.0)+09b(3.0) | 11(5.6)→11(4.8) |
+#   12(6.0)→12a(3.5)+12b(2.8) | 14(5.5)→14(3.0)+14b(3.0) | 16(5.2)→16(4.8) |
+#   17(6.0)→17a(3.5)+17b(2.8) | 19(6.5)→19a(3.5)+19b(3.5) | 20(5.0)→20(4.5) |
+#   21(7.0)→21a(3.5)+21b(3.5) | 22(5.0)→22(4.5). Shots sin cambio: 02/04/05/08/10/13/15/18.
+#   freeze_extend_required ELIMINADO (ningún shot >5s).
+# Cada shot v11: scene_context + motion_bridge_intent + pov_traversal + audio_layer_continuity
+# + visual_style_lut + anchor_consistency_strict + anchor_id_required + caption_burn_strategy
+# + script_b_compliance_targets + narration_in_this_shot + visual_intent + visual_action_match
+# + setting_ambient_creature_or_object + atmospheric_motions_count(≥3) + character_active_gesture_per_shot.
+# camera_intent = frases descriptivas (NO label-prefix — MODEL-BEHAVIOR-LOG Entry 2).
+# ≤3 props por shot (MODEL-BEHAVIOR-LOG Entry 1 stability budget).
+# HR#28/#29 fit: narración@165WPM ≤ min(duration_intent_s, hailuo_std 5.9s); narración >5.9s → freeze_extend_required:true.
+
+shot_list:
+
+  - shot_id: "shot_01"                            # v11.2 A1 — HOOK_A: dyad + INTERACCIÓN REAL (Tobias habla + Dario reacciona) + música hook_crescendo. Modelo kling_v2.5_pro.
+    section_id: "hook"
+    description: "HOOK_A — POV frente al dyad Dario + Tobias al fondo del túnel; Tobias extiende el termo hacia cámara y dice 'Ven conmigo. Abajo hace frío.' mientras Dario gira la cabeza hacia el viewer y su lámpara barre el piso. Interacción real en el hook (3/8 refs TOP)"
+    duration_intent_s: 5.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "El viewer enfrenta a Dario (izquierda, overol de hule negro goteando, máscara de respirador de doble filtro, lámpara apuntando al piso) y a Tobias (derecha, sentado en un banco, chaleco de lana mostaza). Tobias EXTIENDE el termo humeante hacia cámara y dice con voz cálida 'Ven conmigo. Abajo hace frío.'; al mismo tiempo Dario GIRA la cabeza hacia el viewer y su lámpara de casco BARRE el piso del túnel"
+      why_this_shot_exists: "Hook LLAMATIVO + INTERACTIVO (A1): dyad simultánea + interacción real (Tobias lure verbal + Dario reacción física) + premisa uncanny asimétrica clásica — PAUTA § 3 + INDEX § 1 (ref-08 Hugo habla / ref-12 Nano 'Ven conmigo')"
+      camera_intent: "Primera persona, plano medio-amplio, leve micro-bob de cámara sostenida, mirando de frente a las dos figuras a unos tres metros al fondo del túnel mientras Tobias extiende el termo hacia la lente"
+    motion_bridge_intent:
+      from_previous: "N/A — primer shot, cámara establece en reposo"
+      to_next: "Push-in continuo hacia el dyad (shot_01b hook_b) — SIN zoom-cut (feedback_hook_continuity_no_zoom_cut)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel", "hook_crescendo"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "kling_v2.5_pro"          # v11.2 A1 — hook con interacción + diálogo lip-sync; engineer agrega entrada kling_v2.5_pro a MODEL-CAPABILITIES-MATRIX ANTES de CP4 (HR#28/29). Asumir clip_max_s 5.0.
+    motion_type: "static_with_micro_bob"
+    hero: true
+    tier_assignment: "pro_mandatory"               # hook — Instagram scroll competition (creative-director TIER table)
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1", char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null                          # countdown se mueve a shot_01b (hook_b) — LAST
+    narration_in_this_shot: "El último tren ya pasó. Solo uno puede sacarte."     # narrador (Layer 3); Tobias entrega su línea vía dialog_text (Layer 1)
+    has_lip_sync_required: true                     # v11.2 A1 — Tobias habla on-screen (lip-sync)
+    dialog_text: "Tobias: Ven conmigo. Abajo hace frío."
+    visual_intent: |
+      Plano medio-amplio POV. Dario a la izquierda: operario robusto de overol de hule negro
+      empapado y goteando, cara cubierta por una máscara de respirador antiguo de doble filtro
+      cilíndrico, casco con lámpara; gira la cabeza hacia el viewer y la lámpara barre el piso.
+      Tobias a la derecha: guardavías viejo sentado en un banco, chaleco de lana mostaza, sonrisa
+      cálida con demasiados dientes pequeños, EXTIENDE un termo metálico humeante hacia la lente.
+      Detrás: raíles muertos, cableado colgando, una escalera vertical al fondo. Luz de emergencia
+      ámbar parpadeante, charcos de filtración reflejando la luz.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "thermo_steam_rising", "lamp_beam_sweep_floor"]
+    setting_ambient_creature_or_object: "una rata cruza lentamente entre los raíles muertos al fondo del túnel (criatura ambient viva del setting — PAUTA § 20)"
+    character_active_gesture_per_shot: "Tobias EXTIENDE el termo humeante hacia cámara y habla; Dario gira la cabeza hacia el viewer y su lámpara barre el piso"
+    ui_active:
+      - {element_id: "name_label_char_a", timestamp_visible_s: [0.0, 5.0], position: {y_pct: 11.5}, text: "DARIO", font: "monospaced", fontsize_intent: "large"}     # persiste through-countdown (continúa en shot_01b) (§2.5)
+      - {element_id: "name_label_char_b", timestamp_visible_s: [0.0, 5.0], position: {y_pct: 11.5}, text: "TOBIAS", font: "monospaced", fontsize_intent: "large"}
+      - {element_id: "warning_caption_setting", timestamp_visible_s: [1.5, 4.5], position: {y_pct: 62}, text: "EL TÚNEL SE CIERRA HASTA EL AMANECER", font: "drop_shadow_canonical", color: "red"}
+
+  - shot_id: "shot_01b"                           # v11.2 A1 — HOOK_B: push-in + micro-motion AMBOS + countdown LAST. Modelo kling_v2.5_pro.
+    section_id: "hook"
+    description: "HOOK_B — POV slow push-in continuo hacia el dyad bajo la luz ámbar con micro-motion de AMBOS personajes (Dario gotea/respira bajo la máscara, Tobias parpadea y mueve el termo); countdown film-leader academy 3-2-1 LAST"
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["char_a", "char_b", "viewer_pov"]
+      who_does_what: "La cámara empuja lentamente hacia el dyad; Dario respira bajo la máscara y la lámpara barre el piso, Tobias parpadea y mueve apenas el termo; arranca el countdown 3-2-1"
+      why_this_shot_exists: "Push-in + micro-motion ambos + countdown LAST (PAUTA § 2.5 + § 19.5 ordering canonical). Continuidad del hook SIN zoom-cut (feedback_hook_continuity_no_zoom_cut) — push-in continuo de shot_01"
+      camera_intent: "Primera persona, push-in lento y continuo hacia el dyad al fondo del túnel bajo la luz ámbar, leve micro-bob"
+    motion_bridge_intent:
+      from_previous: "Push-in CONTINUO desde shot_01 (misma toma, NO corte de framing) — el countdown entra encima"
+      to_next: "Hard cut + whoosh metálico al descenso al andén (setup, shot_02)"
+    pov_traversal: "push_in"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel", "hook_crescendo"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "kling_v2.5_pro"          # v11.2 A1 — continuidad de interacción del hook; mismo tier que shot_01 (engineer agrega entrada a MATRIX pre-CP4)
+    motion_type: "push_in"
+    hero: true
+    tier_assignment: "pro_mandatory"               # hook retención window
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1", char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"   # countdown LAST (1.0-4.0s del shot ≈ 6.0-9.0s del timeline)
+    narration_in_this_shot: ""                       # countdown beat — sin narración (el narrador del hook ya cerró en shot_01)
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV push-in lento y continuo hacia el dyad al fondo del túnel. Dario respira bajo la máscara
+      de doble filtro, la lámpara de casco barre el piso; Tobias parpadea y mueve apenas el termo
+      humeante con su sonrisa de demasiados dientes. Luz de emergencia ámbar parpadeante, cableado
+      goteando. Countdown film-leader academy 3-2-1 centrado encima.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "thermo_steam_rising"]
+    setting_ambient_creature_or_object: "el cableado colgando se balancea levemente goteando hacia los charcos (objeto ambient vivo del setting)"
+    character_active_gesture_per_shot: "Dario respira bajo la máscara y barre el piso con la lámpara; Tobias parpadea y mueve el termo (micro-motion de AMBOS)"
+    ui_active:
+      - {element_id: "name_label_char_a", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 11.5}, text: "DARIO", font: "monospaced", fontsize_intent: "large"}     # persiste through-countdown (§2.5)
+      - {element_id: "name_label_char_b", timestamp_visible_s: [0.0, 4.0], position: {y_pct: 11.5}, text: "TOBIAS", font: "monospaced", fontsize_intent: "large"}
+      - {element_id: "countdown_hook", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+
+  - shot_id: "shot_02"
+    section_id: "setup_pre_decision"
+    description: "Setup — POV bajando al andén de servicio detrás de Dario; las rejas de seguridad se cierran detrás del viewer (atrapamiento físico)"
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer baja unos escalones de metal al andén de servicio siguiendo a Dario; detrás, una reja de seguridad se cierra con un chasquido metálico, sellando la salida fácil"
+      why_this_shot_exists: "Establecer atrapamiento físico + aislamiento (PAUTA § 7 Slot A — atrapamiento + aislamiento) + inicio del recorrido jugado de Dario"
+      camera_intent: "Primera persona descendiendo escalones de metal, leve balanceo, siguiendo a Dario que baja de espaldas al andén de servicio"
+    motion_bridge_intent:
+      from_previous: "POV avanza desde el dyad del hook hacia los escalones de servicio"
+      to_next: "POV continúa por el andén entre raíles muertos y cableado"
+    pov_traversal: "descending"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "descending"
+    hero: false
+    tier_assignment: "pro_recommended"             # hook continuation retención window
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""                       # mini-cut de traversal sin narración (la narración de setup empieza en shot_03)
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV descendiendo unos escalones de metal mojados hacia un andén de servicio. Dario baja
+      adelante de espaldas, overol de hule negro goteando, lámpara de casco apuntando al piso.
+      Detrás del viewer, una reja de seguridad metálica se cierra con un chasquido. Raíles muertos
+      y cableado colgando alrededor. Luz de emergencia ámbar parpadeante, charcos de filtración.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "security_gate_closing", "water_drip_from_cables"]
+    setting_ambient_creature_or_object: "el cableado colgando se balancea levemente y suelta gotas que caen a los charcos (objeto ambient vivo del setting)"
+    character_active_gesture_per_shot: "Dario mira por encima del hombro e indica al viewer que baje con un gesto seco de la mano enguantada"
+    ui_active: []
+
+  - shot_id: "shot_03"                            # v11.2 A2 — split de old shot_03 (parte 1: recorrido del andén)
+    section_id: "setup_pre_decision"
+    description: "Setup — POV recorriendo el andén de servicio tras Dario entre raíles muertos y charcos de filtración; establece el atrapamiento y la dinámica de control de Dario"
+    duration_intent_s: 4.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer camina por el andén de servicio siguiendo a Dario; Dario avanza con la lámpara siempre apuntando al piso, esquivando los charcos; el cableado gotea sobre los raíles muertos"
+      why_this_shot_exists: "Establecer contexto del recorrido jugado + dinámica de control procedural de Dario (lámpara al piso, esquiva charcos) — PAUTA § 10"
+      camera_intent: "Primera persona caminando hacia adelante por el andén, leve balanceo, siguiendo a Dario que avanza de espaldas con la lámpara hacia el piso"
+    motion_bridge_intent:
+      from_previous: "POV continúa desde los escalones hacia el andén de servicio"
+      to_next: "Hard cut a la reja que se cierra detrás del viewer (shot_03b)"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    tier_assignment: "std_default"                 # body shot — viewer ya enganchado
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si eliges a Dario, bajas al túnel de mantenimiento."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV caminando hacia adelante por un andén de servicio estrecho. Dario avanza de espaldas
+      adelante, overol de hule negro goteando, lámpara de casco hacia el piso esquivando charcos.
+      Raíles muertos a un lado, cableado colgando goteando arriba. Luz de emergencia ámbar
+      parpadeante reflejándose en los charcos de filtración del piso.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 4
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "puddle_ripple_reflection", "vapor_breath_cold"]
+    setting_ambient_creature_or_object: "una cucaracha grande corre por el borde del andén hacia una grieta (criatura ambient del setting)"
+    character_active_gesture_per_shot: "Dario hace un gesto seco con la mano enguantada indicando al viewer que se mantenga del lado del cemento, sin mirar atrás"
+    ui_active:
+      - {element_id: "caption_setup_1a", timestamp_visible_s: [0.5, 4.0], position: {y_pct: 62}, text: "BAJAS AL TÚNEL DE MANTENIMIENTO", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_03b"                           # v11.2 A2 — split de old shot_03 (parte 2: reja se cierra — atrapamiento)
+    section_id: "setup_pre_decision"
+    description: "Setup — POV mira atrás: una reja de seguridad se cierra con un chasquido sellando la salida fácil (atrapamiento físico — PAUTA § 7 Slot A)"
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer gira un instante la cabeza y ve cómo una reja de seguridad metálica se cierra con un chasquido detrás, sellando la salida; vuelve la mirada al andén"
+      why_this_shot_exists: "Atrapamiento físico explícito (PAUTA § 7 Slot A) — sigue el hilo del setup; mini-cut sube cuts/min"
+      camera_intent: "Primera persona girando brevemente hacia atrás a una reja de seguridad metálica que se cierra, luego volviendo al frente del andén bajo la luz ámbar"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el recorrido del andén (shot_03)"
+      to_next: "Hard cut al reaction insert del piso/manos (shot_04)"
+    pov_traversal: "looking_around"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "looking_around"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Las rejas se cierran detrás de ti."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV girando brevemente hacia atrás: una reja de seguridad metálica baja y se cierra con un
+      chasquido pesado, sellando los escalones de salida. La luz de emergencia ámbar parpadea sobre
+      los barrotes mojados. La mirada vuelve al frente del andén de servicio.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["security_gate_closing", "amber_emergency_light_flicker", "water_drip_from_cables"]
+    setting_ambient_creature_or_object: "los barrotes de la reja gotean agua de filtración al cerrarse (objeto ambient vivo del setting)"
+    character_active_gesture_per_shot: "Las manos del viewer se crispan al oír cerrarse la reja a su espalda (gesto POV)"
+    ui_active:
+      - {element_id: "caption_setup_1b", timestamp_visible_s: [0.3, 3.5], position: {y_pct: 62}, text: "LAS REJAS SE CIERRAN DETRÁS DE TI", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_04"
+    section_id: "setup_pre_decision"
+    description: "Reaction insert — POV manos del viewer + detalle del setting vivo (mini-cut pacing § 23)"
+    duration_intent_s: 4.5          # narración 12 palabras ≈4.36s @165WPM → dur ≥4.36 (narration-fits)
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer baja la mirada a sus propias manos y al piso: el cableado gotea sobre los raíles muertos a un lado y el cemento húmedo al otro; una gota cae cerca del riel"
+      why_this_shot_exists: "POV body-part visibility (PAUTA § 22.3) + mini-cut para subir cuts/min + establecer el riel vs el cemento (setup del D1)"
+      camera_intent: "Primera persona mirando hacia abajo a las manos y al piso, breve, donde el riel muerto y el cemento corren paralelos bajo la luz ámbar"
+    motion_bridge_intent:
+      from_previous: "Continúa el avance — la mirada baja al piso"
+      to_next: "La mirada sube hacia Dario que se detiene y señala el piso"
+    pov_traversal: "looking_around"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "looking_around"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Su lámpara apunta al piso. El cableado gotea sobre los raíles."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV close-up del piso del túnel y las manos del viewer: a un lado un riel de acero muerto
+      reflejando la luz ámbar, al otro una franja de cemento húmedo. Una gota de agua del cableado
+      cae cerca del riel y salpica. El cono de luz de la lámpara de Dario barre el piso.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["water_drip_falling_near_rail", "amber_light_sweep_floor", "puddle_ripple_reflection"]
+    setting_ambient_creature_or_object: "gotas de filtración cayendo en cadena del cableado al riel muerto (objeto ambient vivo del setting)"
+    character_active_gesture_per_shot: "Las manos del viewer se flexionan ligeramente ante el frío húmedo del túnel (gesto POV)"
+    ui_active:
+      - {element_id: "caption_setup_2", timestamp_visible_s: [0.3, 2.5], position: {y_pct: 62}, text: "EL CABLEADO GOTEA SOBRE LOS RAÍLES", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_05"
+    section_id: "setup_pre_decision"
+    description: "Dario da su regla ('Pisa el cemento. Nunca el riel.') señalando el piso donde el riel y el cemento corren paralelos; la regla vs el impulso queda establecida"
+    duration_intent_s: 4.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Dario se detiene, baja la lámpara al piso señalando el riel muerto y la franja de cemento, niega con la cabeza hacia el riel y dice con voz de zumbido grave 'Pisa el cemento. Nunca el riel.'"
+      why_this_shot_exists: "Setup del D1 + Slot D dinámica de control procedural de Dario (regla rara) contra el impulso/entorno (el riel se ve firme y seco, invita a pisarlo) — PAUTA § 10"
+      camera_intent: "Primera persona, plano medio cerrado, la lámpara de Dario iluminando el riel y el cemento en el piso, Dario al lado señalando con la mano enguantada"
+    motion_bridge_intent:
+      from_previous: "La mirada sube desde el piso hacia Dario que se detiene y señala"
+      to_next: "Freeze + filtro de decisión D1 (decision_freeze)"
+    pov_traversal: "approaching_character"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "approaching_character"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "Dario habla on-screen (lip-sync bajo máscara) + máscara de doble filtro en composición cercana (locus respirator_mask) — anatomical-signature preservation per MODEL-BEHAVIOR-LOG entry 1"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}   # v11.3 — full anchor en full-scene; máscara reforzada por prompt (MODEL-BEHAVIOR-LOG Entry 3; locus solo para close-ups aislados)
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""    # Dario entrega su línea vía dialog_text (lip-sync); narrador NO repite (anti-dup)
+    has_lip_sync_required: true
+    dialog_text: "Dario: Pisa el cemento. Nunca el riel."
+    visual_intent: |
+      POV medio cerrado. Dario inclina la lámpara de casco hacia el piso, iluminando un riel de
+      acero muerto y una franja de cemento húmedo que corren paralelos. Niega con la cabeza hacia
+      el riel y señala el cemento con la mano enguantada de hule negro. Su máscara de respirador
+      de doble filtro llena parte del frame, lentes empañados. Voz de zumbido grave. Luz ámbar.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_light_sweep_floor", "water_drip_from_cables", "vapor_breath_through_mask"]
+    setting_ambient_creature_or_object: "el visor empañado de la máscara de Dario respira condensación que va y viene (objeto vivo del setting/personaje)"
+    character_active_gesture_per_shot: "Dario niega con la cabeza hacia el riel y señala con firmeza la franja de cemento con la mano enguantada"
+    ui_active: []
+
+  - shot_id: "shot_06"
+    section_id: "decision_1"
+    description: "DECISIÓN 1 — freeze + filtro + countdown film-leader + loading bar. Categoría: curiosidad/obediencia (pisar el riel firme y seco del entorno)"
+    duration_intent_s: 4.8          # v11.2 A2 — narración re-chunkeada 13 palabras ≈4.73s @165WPM → dur ≥4.73 ≤5.0 ✓
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Frame congelado del piso: el riel muerto firme y seco a un lado, el cemento húmedo al otro + la bota del viewer titubeando entre ambos; el viewer debe decidir"
+      why_this_shot_exists: "Decision UI editorial moment (PAUTA § 18): freeze + filtro + countdown + loading bar Y52"
+      camera_intent: "Primera persona congelada sobre el riel y el cemento en el piso y la bota del viewer cerca, leve grano de filtro de decisión"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_05 con filtro de decisión aplicado"
+      to_next: "White-flash a la rama A (consecuencia)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "El riel se ve firme. Ahora decides: pisas el riel o el cemento."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado del piso del túnel: un riel de acero muerto firme y seco a un lado, una
+      franja de cemento húmedo al otro + la bota del viewer titubeando entre ambos. Filtro de
+      grano + leve viñeta ámbar (decision moment). Countdown film-leader academy 3-2-1 centrado
+      (Y46) + loading bar (Y52) + opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "amber_vignette_pulse", "rail_metal_static_glint"]
+    setting_ambient_creature_or_object: "el riel muerto como foco visual congelado reflejando un destello ámbar (objeto del setting)"
+    character_active_gesture_per_shot: "La bota del viewer titubea entre el riel y el cemento (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d1", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d1", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 52}, text: "", font: "loading_canonical"}
+      - {element_id: "button_a_d1", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 75}, text: "PISAR EL RIEL", font: "monospaced", color: "white"}
+      - {element_id: "button_b_d1", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 82}, text: "PISAR EL CEMENTO", font: "monospaced", color: "white"}
+
+  - shot_id: "shot_07a"                           # v11.2 A2 — split de old shot_07 (parte 1: bota pisa el riel + arco eléctrico estalla)
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA A1 (parte 1) — la bota pisa el riel y un arco eléctrico azul-blanco estalla; body horror eléctrico arranca. Death-scream + zumbido eléctrico"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer pisa el riel; al instante un arco eléctrico azul-blanco estalla del riel con chispas, la pantalla destella y el cuerpo empieza a sacudirse"
+      why_this_shot_exists: "Body horror específico al setting (electrocución/riel) — consecuencia fatal de seguir el impulso de pisar el riel (PAUTA § 12 — electrocución); parte 1 del beat"
+      camera_intent: "Primera persona, la bota pisa el riel y un arco eléctrico estalla saturando el frame, la cámara empieza a sacudirse"
+    motion_bridge_intent:
+      from_previous: "White-flash desde el freeze de decisión"
+      to_next: "Hard cut al lanzamiento hacia atrás contra el cableado (shot_07b)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "kling_v2.5_pro"          # v11.2 A1/A2 — clímax body-horror con interacción física compleja (arco eléctrico) → kling pro (engineer agrega a MATRIX pre-CP4)
+    motion_type: "static_with_micro_bob"
+    hero: true
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "beat de clímax body-horror (arco eléctrico) — emotional climax beat (creative-director TIER hero shots)"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si pisas el riel, no estaba muerto."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la bota del viewer pisa el riel de acero. Al instante un arco eléctrico azul-blanco
+      estalla del riel con chispas que saltan al frame; destello eléctrico saturado, la cámara
+      empieza a sacudirse violentamente. Paleta fría azul.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["electric_arc_burst", "sparks_scattering_foreground", "camera_violent_shake"]
+    setting_ambient_creature_or_object: "chispas eléctricas saltando del riel en cascada (partículas vivas del setting)"
+    character_active_gesture_per_shot: "N/A (POV — la bota pisa el riel y el cuerpo empieza a convulsionar; sin otro personaje en frame)"
+    ui_active: []
+
+  - shot_id: "shot_07b"                           # v11.2 A2 — split de old shot_07 (parte 2: lanzado hacia atrás contra el cableado + fade negro-azul)
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA A1 (parte 2) — el viewer es lanzado hacia atrás contra el cableado colgando y la pantalla colapsa a negro-azul. Death-scream cortado"
+    duration_intent_s: 2.8
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El cuerpo del viewer es lanzado violentamente hacia atrás contra el cableado colgando mientras la descarga lo recorre; la imagen destella y colapsa a negro-azul"
+      why_this_shot_exists: "Cierre del body horror eléctrico (lanzamiento + fade) — parte 2 del beat; hard cut a negro-azul post-muerte"
+      camera_intent: "Primera persona lanzada hacia atrás contra el cableado con sacudidas, la imagen destella y cae a negro-azul"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el arco eléctrico (shot_07a)"
+      to_next: "Fade a negro-azul post-muerte → bridge a rama B (glitch corte-TV, shot_08)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "continuación del clímax body-horror (lanzamiento + fade)"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "La descarga te lanza hacia atrás."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el cuerpo del viewer es lanzado violentamente hacia atrás contra el cableado colgando
+      mientras la descarga lo recorre; chispas residuales, sacudidas, y la imagen destella y
+      colapsa a negro-azul. Paleta fría saturada.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["camera_thrown_backward", "residual_sparks", "fade_to_blue_black"]
+    setting_ambient_creature_or_object: "el cableado colgando chisporrotea y se balancea al recibir el impacto del cuerpo (objeto vivo del setting)"
+    character_active_gesture_per_shot: "N/A (POV — el cuerpo es lanzado contra el cableado; sin otro personaje en frame)"
+    ui_active: []
+
+  - shot_id: "shot_08"
+    section_id: "consequence_d1"
+    description: "Reaction/bridge insert — glitch corte-TV (old_screen_glitch_error) post-muerte A1 + cue visual de retorno a la rama B (mini-cut)"
+    duration_intent_s: 2.2
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Pantalla colapsa en un glitch de TV antigua (estática + barras + error de imagen); un parpadeo retorna al andén — cue de que volvemos a la rama no elegida (rama B)"
+      why_this_shot_exists: "Rama B transition explícita (PAUTA § Transiciones narrativas — RAMA B) + glitch corte-TV en cambio de historia (PAUTA § 2.4 perspectiva 6) + mini-cut pacing"
+      camera_intent: "Primera persona en glitch de pantalla antigua con estática y barras de error que se resuelve en un parpadeo de retorno al andén del túnel"
+    motion_bridge_intent:
+      from_previous: "Continúa el fade negro-azul del shot_07 hacia el glitch corte-TV"
+      to_next: "Parpadeo de retorno → rama B con Dario asintiendo (cemento pisado)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Pantalla colapsa en un glitch de TV antigua: estática, barras de color desplazadas, error
+      de sincronía de imagen sobre el negro-azul. Un parpadeo súbito devuelve la imagen al andén
+      del túnel iluminado de ámbar, señalando el retorno a la rama no elegida.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["tv_static_glitch_bars", "image_tear_flicker", "amber_return_flash"]
+    setting_ambient_creature_or_object: "barras de error de TV antigua desplazándose por la pantalla (residuo de la transición de historia)"
+    character_active_gesture_per_shot: "N/A (transición POV sin personaje — cue de rama B vía glitch corte-TV)"
+    ui_active:
+      - {element_id: "bridge_caption_b", timestamp_visible_s: [0.8, 2.2], position: {y_pct: 62}, text: "SI PISAS EL CEMENTO", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_09"                            # v11.2 A2 — split de old shot_09 (parte 1: pisas el cemento, avanzas en silencio)
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA B1 (parte 1) — pisas el cemento y avanzas en silencio sin tocar el riel"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer pisa la franja de cemento húmedo y avanza en silencio sin tocar el riel"
+      why_this_shot_exists: "Rama B no es escape directo — es continuación (PAUTA § Consequence B common pattern); parte 1 del beat"
+      camera_intent: "Primera persona pisando el cemento y avanzando en silencio por el andén bajo la luz ámbar"
+    motion_bridge_intent:
+      from_previous: "Parpadeo de retorno desde el glitch del shot_08"
+      to_next: "Hard cut a Dario asintiendo y siguiendo al fondo (shot_09b)"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "walking_forward"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si pisas el cemento, avanzas en silencio."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la bota del viewer pisa la franja de cemento húmedo y avanza en silencio sin tocar el
+      riel de acero muerto al lado. Luz de emergencia ámbar parpadeante, cableado goteando arriba.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "puddle_surface_subtle_ripple"]
+    setting_ambient_creature_or_object: "un charco de filtración al fondo tiembla apenas, como si algo se moviera bajo la superficie (criatura ambient signature del setting)"
+    character_active_gesture_per_shot: "La bota del viewer pisa con cuidado el cemento evitando el riel (gesto POV)"
+    ui_active: []
+
+  - shot_id: "shot_09b"                           # v11.2 A2 — split de old shot_09 (parte 2: Dario asiente y sigue al fondo — bridge a D2)
+    section_id: "consequence_d1"
+    description: "CONSECUENCIA B1 (parte 2) — Dario asiente aprobando y sigue caminando de espaldas hacia el fondo del túnel donde brilla un charco. Bridge a D2"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Dario asiente con seriedad aprobando y empieza a caminar de espaldas hacia un tramo más oscuro y húmedo del túnel donde brilla un charco grande de filtración"
+      why_this_shot_exists: "Bridge a D2 — Dario guía al viewer hacia el charco donde algo respira (continuación de la opresión narrativa)"
+      camera_intent: "Primera persona siguiendo a Dario que asiente y camina de espaldas hacia un tramo más oscuro del túnel con un charco grande al fondo"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el avance en cemento (shot_09)"
+      to_next: "POV avanza hacia el charco grande de agua de filtración para el D2 (shot_10)"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Dario asiente y sigue al fondo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: Dario, overol de hule negro goteando, asiente con seriedad y empieza a caminar de
+      espaldas hacia un tramo más oscuro del túnel donde brilla un charco grande de filtración.
+      La cámara lo sigue. Luz de emergencia ámbar parpadeante.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "puddle_surface_subtle_ripple"]
+    setting_ambient_creature_or_object: "el charco de filtración al fondo tiembla apenas, como si algo se moviera bajo la superficie (criatura ambient signature del setting)"
+    character_active_gesture_per_shot: "Dario asiente con la cabeza y hace un gesto seco con la mano enguantada para que el viewer lo siga"
+    ui_active: []
+
+  - shot_id: "shot_10"
+    section_id: "decision_2"
+    description: "Setup D2 — frente a un charco grande de filtración donde algo respira bajo la superficie; Dario levanta la mano enguantada: quieto, y da su regla ('Quieto. No corras.')"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Frente a un charco grande de agua negra de filtración, la superficie se hincha y respira como si algo viviera debajo; Dario, tenso, levanta la mano enguantada en señal de alto y dice con voz de zumbido 'Quieto. No corras.'"
+      why_this_shot_exists: "Setup del D2 (acción/pasividad) — el INSTINTO empuja a huir del ruido del charco, Dario da la contra-regla de quedarse inmóvil (PAUTA § 10 + § 11). INVARIANTE § 2.2: la tentación viene del entorno/instinto, NO de un segundo personaje"
+      camera_intent: "Primera persona frente a un charco de agua negra cuya superficie se hincha; Dario al lado levanta la mano enguantada en señal de alto bajo la luz ámbar"
+    motion_bridge_intent:
+      from_previous: "POV llega frente al charco grande de filtración siguiendo a Dario"
+      to_next: "Freeze + filtro de decisión D2 (decision_freeze)"
+    pov_traversal: "approaching_character"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "approaching_character"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "Dario habla on-screen (lip-sync bajo máscara) + charco animado con superficie respirando — realismo + props orgánicos"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""    # Dario entrega la línea vía dialog_text (lip-sync); narrador NO repite
+    has_lip_sync_required: true
+    dialog_text: "Dario: Quieto. No corras."
+    visual_intent: |
+      POV frente a un charco grande de agua negra de filtración en el piso del túnel; la superficie
+      se hincha y respira lentamente, como si algo viviera debajo. Dario a la izquierda, overol de
+      hule negro goteando, tenso, levanta la mano enguantada en señal de alto. Su máscara de doble
+      filtro de perfil. Luz de emergencia ámbar parpadeante reflejada en el agua negra.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["black_water_surface_breathing", "amber_emergency_light_flicker", "water_drip_from_cables"]
+    setting_ambient_creature_or_object: "la superficie del charco de agua negra se hincha y respira como si algo viviera debajo (criatura ambient signature del setting)"
+    character_active_gesture_per_shot: "Dario levanta la mano enguantada en señal de alto y aprieta el cuerpo, inmóvil y tenso"
+    ui_active: []
+
+  - shot_id: "shot_11"
+    section_id: "decision_2"
+    description: "DECISIÓN 2 — freeze + filtro + countdown + loading bar. Categoría: acción/pasividad (correr del ruido del charco vs quedarse inmóvil)"
+    duration_intent_s: 4.8          # v11.2 A2 — narración re-chunkeada 12 palabras ≈4.36s @165WPM → dur ≥4.36 ≤5.0 ✓
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Frame congelado del charco de agua negra hinchándose + los pies del viewer tensos al borde; el viewer debe decidir entre correr o quedarse inmóvil"
+      why_this_shot_exists: "Decision UI editorial moment (PAUTA § 18): freeze + filtro + countdown + loading bar Y52"
+      camera_intent: "Primera persona congelada sobre el charco de agua negra y los pies del viewer al borde, leve grano de filtro"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_10 con filtro de decisión aplicado"
+      to_next: "White-flash a la rama A (consecuencia)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "Algo respira en el agua. Ahora decides: te quedas inmóvil o corres."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado del charco de agua negra hinchándose en el piso del túnel + los pies del
+      viewer tensos al borde. Filtro de grano + leve viñeta ámbar (decision moment). Countdown
+      film-leader academy 3-2-1 centrado (Y46) + loading bar (Y52) + opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "amber_vignette_pulse", "black_water_static_swell"]
+    setting_ambient_creature_or_object: "el charco de agua negra congelado a media respiración (criatura/objeto del setting)"
+    character_active_gesture_per_shot: "Los pies del viewer se tensan al borde del charco, a punto de huir (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d2", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d2", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 52}, text: "", font: "loading_canonical"}
+      - {element_id: "button_a_d2", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 75}, text: "CORRER", font: "monospaced", color: "white"}
+      - {element_id: "button_b_d2", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 82}, text: "QUEDARTE INMÓVIL", font: "monospaced", color: "white"}
+
+  - shot_id: "shot_12a"                           # v11.2 A2 — split de old shot_12 (parte 1: corres salpicando + el brazo emerge del charco)
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA A2 (parte 1) — corres salpicando y el chapoteo atrae lo que vive en el charco: un brazo oscuro emerge del agua negra. Body horror arranca"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer echa a correr salpicando el agua; el chapoteo atrae a la criatura: un brazo/tentáculo oscuro y brillante emerge del charco de agua negra hacia el tobillo del viewer"
+      why_this_shot_exists: "Body horror específico al setting (arrastre/ahogamiento) — consecuencia fatal de huir del ruido (PAUTA § 12 — asfixia/arrastre); parte 1 del beat"
+      camera_intent: "Primera persona corriendo y salpicando el agua negra mientras un brazo oscuro emerge del charco hacia el tobillo"
+    motion_bridge_intent:
+      from_previous: "White-flash desde el freeze de decisión"
+      to_next: "Hard cut al arrastre bajo el agua negra (shot_12b)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "kling_v2.5_pro"          # v11.2 A1/A2 — clímax body-horror con criatura emergente compleja → kling pro (engineer agrega a MATRIX pre-CP4)
+    motion_type: "static_with_micro_bob"
+    hero: true
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "beat de clímax body-horror (criatura emergente compleja) — emotional climax beat"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si corres, el chapoteo lo atrae."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la cámara echa a correr salpicando el agua negra del charco. Del agua emerge un brazo
+      oscuro y brillante que se estira hacia el tobillo del viewer; salpicaduras llenan el
+      foreground. Paleta fría azul-negra.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["dark_arm_emerging_from_water", "water_splash_foreground", "black_water_surface_breathing"]
+    setting_ambient_creature_or_object: "lo que vive en el charco emergiendo del agua negra hacia el viewer (criatura signature del setting)"
+    character_active_gesture_per_shot: "N/A (POV — el viewer corre y salpica; el brazo emerge hacia su tobillo; sin otro personaje humano en frame)"
+    ui_active: []
+
+  - shot_id: "shot_12b"                           # v11.2 A2 — split de old shot_12 (parte 2: arrastrado bajo el agua negra + fade negro)
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA A2 (parte 2) — el brazo atrapa el tobillo y arrastra al viewer bajo la superficie negra; burbujas y agua llenan el frame. Death-scream ahogado, fade a negro"
+    duration_intent_s: 2.8
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El brazo oscuro atrapa el tobillo del viewer y lo arrastra hacia abajo bajo la superficie negra; burbujas y agua llenan el frame mientras se ahoga; la imagen cae a negro"
+      why_this_shot_exists: "Cierre del body horror (arrastre + ahogamiento + fade) — parte 2 del beat; hard cut a negro post-muerte"
+      camera_intent: "Primera persona arrastrada hacia abajo bajo el agua negra, burbujas llenando el frame, fade a negro"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el brazo emergente (shot_12a)"
+      to_next: "Fade a negro-azul post-muerte → bridge a rama B (glitch corte-TV, shot_13)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "continuación del clímax body-horror (arrastre bajo agua + fade)"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Te arrastra bajo el agua negra."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el brazo oscuro atrapa el tobillo del viewer y arrastra la cámara hacia abajo bajo la
+      superficie de agua negra; burbujas y agua negra llenan el frame mientras el viewer se hunde.
+      Paleta fría azul-negra. Hard cut a negro al final.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["camera_dragged_under_water", "bubbles_rising_dark", "fade_to_black"]
+    setting_ambient_creature_or_object: "lo que vive en el charco arrastrando al viewer bajo el agua negra (criatura signature en su momento clímax)"
+    character_active_gesture_per_shot: "N/A (POV — el viewer es arrastrado bajo el agua; sin otro personaje en frame)"
+    ui_active: []
+
+  - shot_id: "shot_13"
+    section_id: "consequence_d2"
+    description: "Reaction/bridge insert — glitch corte-TV (old_screen_glitch_error) post-muerte A2 + cue de retorno a rama B (mini-cut)"
+    duration_intent_s: 2.2
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Pantalla colapsa en un glitch de TV antigua sobre el negro-azul del ahogamiento; un parpadeo retorna al andén — cue de rama no elegida (rama B)"
+      why_this_shot_exists: "Rama B transition explícita (PAUTA § RAMA B) + glitch corte-TV en cambio de historia (PAUTA § 2.4 perspectiva 6) + mini-cut pacing"
+      camera_intent: "Primera persona en glitch de pantalla antigua con estática y barras de error que se resuelve en un parpadeo de retorno al charco"
+    motion_bridge_intent:
+      from_previous: "Continúa el fade negro-azul del shot_12 hacia el glitch corte-TV"
+      to_next: "Parpadeo de retorno → rama B con Dario guiándote más allá del charco"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Pantalla colapsa en un glitch de TV antigua: estática, barras de color desplazadas, error
+      de sincronía de imagen sobre el negro-azul del agua. Un parpadeo súbito devuelve la imagen
+      al borde del charco iluminado de ámbar, señalando el retorno a la rama no elegida.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["tv_static_glitch_bars", "image_tear_flicker", "amber_return_flash"]
+    setting_ambient_creature_or_object: "barras de error de TV antigua desplazándose por la pantalla (residuo de la transición de historia)"
+    character_active_gesture_per_shot: "N/A (transición POV sin personaje — cue de rama B vía glitch corte-TV)"
+    ui_active:
+      - {element_id: "bridge_caption_b2", timestamp_visible_s: [0.8, 2.2], position: {y_pct: 62}, text: "SI TE QUEDAS INMÓVIL", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_14"                            # v11.2 A2 — split de old shot_14 (parte 1: te quedas inmóvil, la cosa pasa de largo)
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA B2 (parte 1) — te quedas inmóvil al borde del charco; la cosa se hunde de nuevo y pasa de largo"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer permanece inmóvil al borde del charco; la superficie de agua negra se calma y la sombra debajo se hunde y pasa de largo"
+      why_this_shot_exists: "Rama B es continuación — quedarse inmóvil salva (PAUTA § Consequence B); parte 1 del beat"
+      camera_intent: "Primera persona inmóvil al borde del charco mientras el agua negra se calma y la sombra debajo se hunde"
+    motion_bridge_intent:
+      from_previous: "Parpadeo de retorno desde el glitch del shot_13"
+      to_next: "Hard cut a Dario guiando hacia la escalera (shot_14b)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si te quedas inmóvil, pasa de largo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el viewer permanece inmóvil al borde del charco; la superficie de agua negra se calma
+      y la sombra debajo se hunde y pasa de largo bajo la superficie. Luz de emergencia ámbar
+      parpadeante reflejada en el agua que se aquieta.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["black_water_settling", "amber_emergency_light_flicker", "water_drip_from_cables"]
+    setting_ambient_creature_or_object: "la sombra del charco se hunde lentamente y pasa de largo bajo la superficie (criatura signature aquietándose)"
+    character_active_gesture_per_shot: "Los pies del viewer permanecen rígidos e inmóviles al borde del charco (gesto POV)"
+    ui_active: []
+
+  - shot_id: "shot_14b"                           # v11.2 A2 — split de old shot_14 (parte 2: Dario te guía hasta la escalera — bridge a D3)
+    section_id: "consequence_d2"
+    description: "CONSECUENCIA B2 (parte 2) — Dario baja la mano, asiente y guía al viewer hacia una escalera vertical de salida al fondo. Bridge a D3 clímax"
+    duration_intent_s: 3.0
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Dario baja la mano enguantada, asiente y empieza a caminar de espaldas guiando al viewer hacia una escalera vertical de metal al fondo, iluminada por una trampilla arriba"
+      why_this_shot_exists: "Bridge a D3 clímax (la escalera vertical y la barra que Dario suelta)"
+      camera_intent: "Primera persona siguiendo a Dario que baja la mano y camina de espaldas hacia una escalera vertical de metal al fondo del túnel"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde el charco aquietado (shot_14)"
+      to_next: "POV avanza hacia la escalera vertical de salida para el D3 (shot_15)"
+    pov_traversal: "walking_forward"
+    audio_layer_continuity: ["drone_base", "ambient_tunnel"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "walking_forward"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Dario te guía hasta la escalera."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: Dario, overol de hule negro goteando, baja la mano enguantada, asiente y empieza a
+      caminar de espaldas hacia una escalera vertical de metal al fondo, iluminada tenuemente por
+      una trampilla arriba. La cámara lo sigue. Luz de emergencia ámbar.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "water_drip_from_cables", "ladder_glint_at_end"]
+    setting_ambient_creature_or_object: "la escalera vertical de metal al fondo brilla apenas bajo la luz de la trampilla (objeto del setting que guía a la salida)"
+    character_active_gesture_per_shot: "Dario baja la mano enguantada, asiente y señala la escalera de salida al fondo"
+    ui_active: []
+
+  - shot_id: "shot_15"
+    section_id: "decision_3_climax"
+    description: "Setup D3 — al pie de la escalera vertical, Dario sube primero y, desde arriba, suelta una barra de metal hacia el viewer; da su regla final ('Espera la siguiente. No esa.')"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "Al pie de una escalera vertical de metal, Dario sube unos peldaños y desde arriba suelta una barra de metal que cae hacia el viewer; junto al cableado al rojo vivo; Dario dice con voz de zumbido 'Espera la siguiente. No esa.'"
+      why_this_shot_exists: "Setup del D3 clímax (confianza/procedural) — la regla rara de Dario (esperar la siguiente barra) vs el impulso de atrapar la que cae (PAUTA § 10 + § 11)"
+      camera_intent: "Primera persona mirando hacia arriba por una escalera vertical de metal; Dario arriba suelta una barra que cae hacia la cámara, con cableado al rojo vivo cerca de la pared"
+    motion_bridge_intent:
+      from_previous: "POV llega al pie de la escalera vertical de salida siguiendo a Dario"
+      to_next: "Freeze + filtro de decisión D3 (decision_freeze)"
+    pov_traversal: "ascending"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "amber_emergency_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "ascending"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "Dario habla on-screen (lip-sync bajo máscara) + máscara de doble filtro vista desde abajo en composición cercana (locus respirator_mask) — anatomical-signature preservation per MODEL-BEHAVIOR-LOG entry 1"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}   # v11.3 — full anchor en full-scene; máscara reforzada por prompt (MODEL-BEHAVIOR-LOG Entry 3; locus solo para close-ups aislados)
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""    # Dario entrega la línea vía dialog_text (lip-sync); narrador NO repite
+    has_lip_sync_required: true
+    dialog_text: "Dario: Espera la siguiente. No esa."
+    visual_intent: |
+      POV mirando hacia arriba por una escalera vertical de metal que sube hacia una trampilla.
+      Dario, arriba en los peldaños, overol de hule negro goteando, suelta una barra de metal que
+      cae hacia la cámara. Junto a la pared, un tramo de cableado brilla al rojo vivo. La máscara
+      de doble filtro de Dario vista desde abajo. Luz de emergencia ámbar, chispas tenues.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["falling_metal_bar", "red_hot_cable_glow", "amber_emergency_light_flicker"]
+    setting_ambient_creature_or_object: "el cableado al rojo vivo chisporrotea junto a la escalera (objeto vivo peligroso del setting)"
+    character_active_gesture_per_shot: "Dario suelta la barra desde arriba y niega con la cabeza señalando que el viewer espere la siguiente"
+    ui_active: []
+
+  - shot_id: "shot_16"
+    section_id: "decision_3_climax"
+    description: "DECISIÓN 3 — freeze + filtro + countdown + loading bar. Categoría: confianza/procedural (atrapar la barra que cae vs esperar la siguiente)"
+    duration_intent_s: 4.8          # v11.2 A2 — narración re-chunkeada 10 palabras ≈3.64s @165WPM → dur ≥3.64 ≤5.0 ✓
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Frame congelado de la barra de metal cayendo hacia la mano del viewer + el cableado al rojo vivo cerca; el viewer debe decidir entre atraparla o esperar la siguiente"
+      why_this_shot_exists: "Decision UI editorial moment clímax (PAUTA § 18): freeze + filtro + countdown + loading bar Y52"
+      camera_intent: "Primera persona congelada con la barra cayendo hacia la mano del viewer y el cableado al rojo vivo cerca, leve grano de filtro"
+    motion_bridge_intent:
+      from_previous: "Freeze del shot_15 con filtro de decisión aplicado"
+      to_next: "White-flash a la rama A (consecuencia)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "amber_emergency_tunnel_v1_freeze_filter"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    narration_in_this_shot: "Dario suelta una barra. Ahora decides: la atrapas o esperas."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Frame congelado de una barra de metal cayendo hacia la mano abierta del viewer + un tramo de
+      cableado al rojo vivo chisporroteando cerca de la escalera. Filtro de grano + leve viñeta
+      ámbar (decision moment clímax). Countdown film-leader academy 3-2-1 centrado (Y46) +
+      loading bar (Y52) + opciones A/B.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["film_grain_overlay", "amber_vignette_pulse", "red_hot_cable_static_glow"]
+    setting_ambient_creature_or_object: "el cableado al rojo vivo congelado chisporroteando junto a la barra (objeto del setting en clímax)"
+    character_active_gesture_per_shot: "La mano del viewer se abre, a punto de atrapar la barra que cae (gesto de decisión POV)"
+    ui_active:
+      - {element_id: "countdown_d3", timestamp_visible_s: [1.0, 4.0], position: {y_pct: 46}, text: "3-2-1", font: "film_leader_academy"}
+      - {element_id: "loading_bar_d3", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 52}, text: "", font: "loading_canonical"}
+      - {element_id: "button_a_d3", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 75}, text: "ATRAPAR LA BARRA", font: "monospaced", color: "white"}
+      - {element_id: "button_b_d3", timestamp_visible_s: [1.0, 4.5], position: {y_pct: 82}, text: "ESPERAR LA SIGUIENTE", font: "monospaced", color: "white"}
+
+  - shot_id: "shot_17a"                           # v11.2 A2 — split de old shot_17 (parte 1: atrapas la barra al rojo + palma sellada)
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA A3 (parte 1) — atrapas la barra; está al rojo del cableado y te sella la palma con chisporroteo de carne y humo. Body horror arranca"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer atrapa la barra que cae; está al rojo vivo del cableado y le sella la palma con un chisporroteo de carne y humo"
+      why_this_shot_exists: "Body horror específico al setting (quemadura) — consecuencia fatal de atrapar la barra (PAUTA § 12 — quemadura); parte 1 del beat"
+      camera_intent: "Primera persona, la mano atrapa la barra al rojo vivo, chisporroteo y humo brotando de la palma sellada"
+    motion_bridge_intent:
+      from_previous: "White-flash desde el freeze de decisión"
+      to_next: "Hard cut a la pérdida de agarre y caída al pozo (shot_17b)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "kling_v2.5_pro"          # v11.2 A1/A2 — clímax body-horror con interacción física compleja (palma sellada al rojo) → kling pro (engineer agrega a MATRIX pre-CP4)
+    motion_type: "static_with_micro_bob"
+    hero: true
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "beat de clímax body-horror (palma sellada al rojo) — emotional climax beat"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si la atrapas, la barra está al rojo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la mano del viewer atrapa la barra de metal, que está al rojo vivo del cableado; un
+      chisporroteo de carne y humo brota de la palma sellada al instante. Brillo rojo intenso en
+      el foreground. Paleta fría azul-negra alrededor.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["red_hot_bar_searing_palm", "smoke_from_palm_foreground", "red_glow_pulse"]
+    setting_ambient_creature_or_object: "humo y chispas brotando de la barra al rojo y de la palma sellada (partículas vivas del setting)"
+    character_active_gesture_per_shot: "N/A (POV — la palma del viewer se sella al rojo contra la barra; sin otro personaje en frame)"
+    ui_active: []
+
+  - shot_id: "shot_17b"                           # v11.2 A2 — split de old shot_17 (parte 2: pierdes el agarre y caes al pozo + fade negro)
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA A3 (parte 2) — pierdes el agarre de la escalera y caes al vacío oscuro del pozo de la trampilla. Death-scream que se aleja, fade a negro"
+    duration_intent_s: 2.8
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "El viewer pierde el agarre de la escalera por la palma sellada y cae al vacío oscuro del pozo de la trampilla, dando vueltas; la imagen cae a negro"
+      why_this_shot_exists: "Body horror específico al setting (caída al pozo) — cierre del beat; hard cut a negro post-muerte"
+      camera_intent: "Primera persona perdiendo el agarre y cayendo al vacío oscuro del pozo de la escalera dando vueltas, fade a negro"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde la palma sellada (shot_17a)"
+      to_next: "Fade a negro post-caída → bridge a rama B (glitch corte-TV → resolución, shot_18)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "continuación del clímax body-horror (caída al pozo + fade)"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Te sella la palma y caes al pozo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la cámara pierde el agarre de la escalera y cae al vacío oscuro del pozo de la trampilla,
+      dando vueltas, mientras la luz ámbar se aleja arriba. Humo residual de la palma. Paleta fría
+      azul-negra. Hard cut a negro al final.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["camera_falling_tumble", "amber_light_receding_above", "fade_to_black"]
+    setting_ambient_creature_or_object: "el pozo oscuro de la trampilla tragándose la caída del viewer (elemento del setting en clímax)"
+    character_active_gesture_per_shot: "N/A (POV — el cuerpo del viewer cae al pozo; sin otro personaje en frame)"
+    ui_active: []
+
+  - shot_id: "shot_18"
+    section_id: "consequence_d3"
+    description: "Reaction/bridge insert — glitch corte-TV (old_screen_glitch_error) post-muerte A3 + cue de retorno a rama B (mini-cut)"
+    duration_intent_s: 2.2
+    scene_context:
+      who_is_there: ["viewer_pov"]
+      who_does_what: "Pantalla colapsa en un glitch de TV antigua sobre el negro de la caída; un parpadeo retorna a la escalera — cue de rama no elegida (rama B)"
+      why_this_shot_exists: "Rama B transition explícita (PAUTA § RAMA B) + glitch corte-TV en cambio de historia (PAUTA § 2.4 perspectiva 6) + mini-cut pacing"
+      camera_intent: "Primera persona en glitch de pantalla antigua con estática y barras de error que se resuelve en un parpadeo de retorno al pie de la escalera"
+    motion_bridge_intent:
+      from_previous: "Continúa el fade negro del shot_17 hacia el glitch corte-TV"
+      to_next: "Parpadeo de retorno → rama B con Dario soltando la siguiente barra"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_std"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: false
+    anchor_id_required: {}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "spec_text_override_with_whisper_timing"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.0, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Pantalla colapsa en un glitch de TV antigua: estática, barras de color desplazadas, error
+      de sincronía de imagen sobre el negro de la caída. Un parpadeo súbito devuelve la imagen al
+      pie de la escalera vertical iluminada de ámbar, señalando el retorno a la rama no elegida.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["tv_static_glitch_bars", "image_tear_flicker", "amber_return_flash"]
+    setting_ambient_creature_or_object: "barras de error de TV antigua desplazándose por la pantalla (residuo de la transición de historia)"
+    character_active_gesture_per_shot: "N/A (transición POV sin personaje — cue de rama B vía glitch corte-TV)"
+    ui_active:
+      - {element_id: "bridge_caption_b3", timestamp_visible_s: [0.8, 2.2], position: {y_pct: 62}, text: "SI ESPERAS LA SIGUIENTE", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_19a"                           # v11.2 A2 — split de old shot_19 (parte 1: esperas la siguiente, atrapas la barra fría, subes seguro)
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA B3 (parte 1) — esperas; Dario suelta una segunda barra fría que atrapas y subes los peldaños seguro tras él. P2 reveal somber sin twist verbal"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer espera; Dario suelta una segunda barra de metal fría; el viewer la atrapa sin quemarse y empieza a subir los peldaños de la escalera vertical seguro tras Dario"
+      why_this_shot_exists: "Rama B clímax — la regla rara de Dario (esperar la siguiente) funciona; P2 reveal sin verbalizar; parte 1 del beat (PAUTA § 11 resolution + ref-03 Beat 11)"
+      camera_intent: "Primera persona atrapando una barra fría y empezando a subir la escalera vertical tras Dario bajo la luz ámbar"
+    motion_bridge_intent:
+      from_previous: "Parpadeo de retorno desde el glitch del shot_18"
+      to_next: "Hard cut a la trampilla abriéndose al cielo (shot_19b)"
+    pov_traversal: "ascending"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "ascending"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "Dario suelta la barra + escalera vertical (composición de resolución) — beat de resolución emocional"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si esperas la siguiente, subes seguro."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el viewer espera; Dario, arriba en los peldaños, suelta una segunda barra de metal fría
+      que el viewer atrapa sin quemarse. La cámara empieza a subir los peldaños de la escalera
+      vertical tras Dario. Luz de emergencia ámbar, paleta fría.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["amber_emergency_light_flicker", "ladder_climb_motion", "cold_metal_glint"]
+    setting_ambient_creature_or_object: "la barra fría brilla apenas sin el rojo del cableado (objeto del setting que confirma la regla de Dario)"
+    character_active_gesture_per_shot: "Dario suelta la segunda barra fría y sube primero, haciendo un gesto para que el viewer lo siga"
+    ui_active: []
+
+  - shot_id: "shot_19b"                           # v11.2 A2 — split de old shot_19 (parte 2: la trampilla se abre, ves el cielo, sales con vida)
+    section_id: "consequence_d3"
+    description: "CONSECUENCIA B3 + RESOLUCIÓN (parte 2) — la trampilla se abre arriba revelando el cielo nocturno que aclara; sales con vida. P2 reveal somber"
+    duration_intent_s: 4.5          # v11.2 A2 — narración 11 palabras ≈4.0s @165WPM → dur ≥4.0 ≤5.0 ✓ (bumped de 3.5 para que quepa sin truncar)
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer termina de subir tras Dario; arriba, una trampilla se abre con un chirrido y revela el cielo nocturno que empieza a aclarar hacia el amanecer — sale con vida"
+      why_this_shot_exists: "Resolución — P2 reveal sin verbalizar (el viewer entiende que Dario conocía las reglas); parte 2 del beat (PAUTA § 11 resolution + ref-03 Beat 11)"
+      camera_intent: "Primera persona subiendo los últimos peldaños hacia una trampilla que se abre arriba revelando el cielo nocturno aclarando"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde la subida de la escalera (shot_19a)"
+      to_next: "Cross-fade cálido hacia el exterior/superficie de la resolución (shot_20)"
+    pov_traversal: "ascending"
+    audio_layer_continuity: ["drone_base", "accent_climax"]
+    visual_style_lut: "cold_horror_tunnel_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "ascending"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "trampilla abriéndose al cielo + cold→warm shift (composición compleja de resolución) — beat de resolución emocional"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "La trampilla se abre y ves el cielo. Sales con vida."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: la cámara sube los últimos peldaños tras Dario; arriba, una trampilla se abre con un
+      chirrido y revela el cielo nocturno que empieza a aclarar hacia el amanecer. Paleta fría que
+      empieza a calentarse, aire fresco entrando con polvo flotando en la luz.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["hatch_opening_to_sky", "cold_to_warm_light_shift", "fresh_air_dust_drift"]
+    setting_ambient_creature_or_object: "el cielo nocturno aclarando visto por la trampilla abierta (elemento ambient de resolución del setting)"
+    character_active_gesture_per_shot: "Dario sube primero por la trampilla y hace un gesto para que el viewer lo siga al exterior"
+    ui_active: []
+
+  - shot_id: "shot_20"
+    section_id: "resolution_b"
+    description: "RESOLUCIÓN — POV sale a la superficie por la trampilla junto a Dario, al aire frío del amanecer; el viewer mira su propia palma todavía limpia (sin sellar) — setup somber del cliffhanger"
+    duration_intent_s: 4.5          # v11.2 A2 — ≤5.0 (sin narración; resolución visual + ambient)
+    scene_context:
+      who_is_there: ["char_a", "viewer_pov"]
+      who_does_what: "El viewer sale por la trampilla a una calle vacía al aire frío del amanecer junto a Dario; baja la mirada a su propia palma — todavía limpia, sin sellar, a diferencia de lo que pudo pasar; Dario se quita la máscara un instante de espaldas, sin mostrar el rostro"
+      why_this_shot_exists: "Resolución rama B — supervivencia P2 (las reglas raras de Dario te salvaron); paleta shift a warm relief; setup somber del counterfactual/cliffhanger (PAUTA § 11 resolution)"
+      camera_intent: "Primera persona saliendo por una trampilla a una calle vacía al amanecer frío junto a Dario; la mirada baja a la propia palma limpia"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde la trampilla abierta hacia la calle del amanecer"
+      to_next: "Cross-fade cálido al counterfactual de Tobias en la caseta"
+    pov_traversal: "ascending"
+    audio_layer_continuity: ["drone_base", "ambient_surface_dawn"]
+    visual_style_lut: "warm_relief_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "ascending"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_a: "char_a_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "pass_through_if_silent"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.0, dim2_caption_jaccard_min: 0.0, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: ""                       # resolución visual + ambient; la narración de cierre va en shots 19/21 (sin dead-air: ambient_surface_dawn + accent cubren)
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      POV: el viewer sale por una trampilla a una calle vacía al amanecer frío junto a Dario, cuyo
+      overol de hule negro sigue goteando. La mirada baja a la propia palma del viewer — todavía
+      limpia, sin sellar. Dario, de espaldas, se quita un instante la máscara de respirador sin
+      mostrar el rostro. Paleta cálida de alivio, aliento visible en el aire frío del amanecer.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["cold_breath_vapor", "dawn_light_warming", "steam_rising_from_hatch"]
+    setting_ambient_creature_or_object: "vapor subiendo de la trampilla abierta hacia la calle fría del amanecer (elemento ambient de resolución)"
+    character_active_gesture_per_shot: "Dario, de espaldas, afloja la correa de la máscara un instante; el viewer flexiona su propia palma limpia"
+    ui_active:
+      - {element_id: "caption_resolution", timestamp_visible_s: [0.5, 4.5], position: {y_pct: 62}, text: "SALES CON VIDA", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_21a"                           # v11.2 A2 — split de old shot_21 (parte 1: Tobias en la caseta — "estarías en la caseta")
+    section_id: "counterfactual_outro"
+    description: "COUNTERFACTUAL FINAL (Paz perdida, parte 1) — flash de Tobias en la caseta de guardavías cálida, sentado junto a la estufa encendida"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "Tobias, sentado en una caseta de guardavías cálida junto a una estufa encendida, mira al viewer con su sonrisa de demasiados dientes; la caseta es acogedora y cálida"
+      why_this_shot_exists: "Counterfactual outro Paz-perdida (PAUTA § 13) — el camino cálido que NO viviste; contraste tonal vs el horror del túnel (counterfactual FINAL, ref-03 placement); parte 1"
+      camera_intent: "Primera persona, plano medio cálido, mirando a Tobias sentado en la caseta de guardavías junto a la estufa encendida"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde la calle del amanecer a la caseta cozy de Tobias"
+      to_next: "Hard cut al detalle cozy (termo + radio + gato) de la caseta (shot_21b)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_cozy_radio"]
+    visual_style_lut: "warm_relief_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "counterfactual hero shot — el bueno-aparente Tobias debe leer cálido y consistente con el hook anchor (carga emocional del Paz-perdida)"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Si hubieras elegido a Tobias, estarías en la caseta."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Plano medio POV cálido. Tobias sentado en una caseta de guardavías acogedora: chaleco de
+      lana mostaza, sonrisa con demasiados dientes pequeños, junto a una estufa encendida que
+      crepita. Luz ámbar cálida. Paleta cálida de Paz perdida, contraste con el frío del túnel.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["wood_stove_flame_flicker", "warm_amber_light", "tobias_breathing_calm"]
+    setting_ambient_creature_or_object: "la estufa encendida crepita y proyecta luz cálida temblorosa en la caseta (objeto ambient cozy del counterfactual)"
+    character_active_gesture_per_shot: "Tobias mira al viewer con su sonrisa de demasiados dientes, sentado tranquilo junto a la estufa"
+    ui_active:
+      - {element_id: "caption_counterfactual_a", timestamp_visible_s: [0.5, 3.5], position: {y_pct: 62}, text: "SI HUBIERAS ELEGIDO A TOBIAS", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_21b"                           # v11.2 A2 — split de old shot_21 (parte 2: detalle cozy — termo + radio tango + gato)
+    section_id: "counterfactual_outro"
+    description: "COUNTERFACTUAL FINAL (Paz perdida, parte 2) — Tobias sirve el termo; radio AM con tango viejo y un gato dormido sobre el panel de señales (detalle cotidiano cozy)"
+    duration_intent_s: 3.5
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "Tobias inclina el termo y sirve un café humeante que ofrece al viewer; una radio AM toca un tango viejo y un gato duerme sobre el panel de señales"
+      why_this_shot_exists: "Detalle cotidiano específico del Paz-perdida (PAUTA § 13: termo + radio tango + gato); parte 2 del beat counterfactual"
+      camera_intent: "Primera persona, plano medio cálido, mirando a Tobias servir el termo, con la radio AM y el gato dormido sobre el panel de señales"
+    motion_bridge_intent:
+      from_previous: "Hard cut desde Tobias junto a la estufa (shot_21a)"
+      to_next: "Cross-fade al outro card con el cliffhanger loop (shot_22)"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["drone_base", "ambient_cozy_radio"]
+    visual_style_lut: "warm_relief_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "pro_override_with_reason"
+    tier_override_reason: "counterfactual hero shot — detalle cozy del Paz-perdida (termo + gato) con carga emocional, consistente con Tobias anchor"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: null
+    narration_in_this_shot: "Con la estufa, el termo y un tango viejo."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Plano medio POV cálido. Tobias inclina un termo metálico y sirve un café humeante que extiende
+      hacia el viewer con su sonrisa de demasiados dientes. Sobre el panel de señales duerme un gato;
+      una radio AM antigua suena bajo con un tango viejo. Luz ámbar cálida, paleta de Paz perdida.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["thermo_steam_rising", "cat_breathing_sleep", "wood_stove_flame_flicker"]
+    setting_ambient_creature_or_object: "el gato dormido sobre el panel de señales respira lentamente (criatura ambient cozy del counterfactual)"
+    character_active_gesture_per_shot: "Tobias inclina el termo sirviendo el café y lo extiende hacia el viewer con su sonrisa de demasiados dientes"
+    ui_active:
+      - {element_id: "caption_counterfactual_b", timestamp_visible_s: [0.3, 3.5], position: {y_pct: 62}, text: "LA ESTUFA, EL TERMO Y UN TANGO", font: "drop_shadow_canonical", color: "white"}
+
+  - shot_id: "shot_22"
+    section_id: "cliffhanger_outro"
+    description: "CLIFFHANGER OUTRO — Tobias deja el termo y mira a cámara: mañana hay otro turno, y otro túnel (loop). CTA al próximo video"
+    duration_intent_s: 4.5          # v11.2 A2 — narración 11 palabras ≈4.0s @165WPM → dur ≥4.0 ≤5.0 ✓
+    scene_context:
+      who_is_there: ["char_b", "viewer_pov"]
+      who_does_what: "En la caseta cálida, Tobias deja el termo en el banco, mira directo a cámara con su sonrisa de demasiados dientes y un guiño, sabiendo que mañana habrá otro guardia y otro túnel"
+      why_this_shot_exists: "Cliffhanger específico de loop (PAUTA § 13) — el ciclo continúa: mañana otro turno y otro túnel; CTA al próximo video"
+      camera_intent: "Primera persona / plano cercano de Tobias en la caseta que deja el termo y mira a cámara con su sonrisa de demasiados dientes y un guiño"
+    motion_bridge_intent:
+      from_previous: "Cross-fade cálido desde el counterfactual al detalle de Tobias mirando a cámara"
+      to_next: "N/A — último shot, fade out con outro card + watermark"
+    pov_traversal: "static_with_micro_bob"
+    audio_layer_continuity: ["outro_drone", "ambient_cozy_radio"]
+    visual_style_lut: "warm_relief_v1"
+    is_safe_for_veo: true
+    model_tier_override: "hailuo_pro"
+    motion_type: "static_with_micro_bob"
+    hero: false
+    tier_assignment: "std_default"
+    anchor_consistency_strict: true
+    anchor_id_required: {char_b: "char_b_v1"}
+    anchor_similarity_threshold: 0.6
+    caption_burn_strategy: "whisper_from_clip_audio"
+    script_b_compliance_targets: {dim0_scope_creep_must_pass: true, dim1_narrator_jaccard_min: 0.7, dim2_caption_jaccard_min: 0.7, dim3_sync_offset_max_s: 1.5, dim4_5_visual_jaccard_min: 0.6, dim6_anchor_similarity_min: 0.6, dim7_action_jaccard_min: 0.6}
+    avu_overlay_clip: "outro-card-template.mp4"
+    narration_in_this_shot: "Mañana hay otro turno, y otro túnel. Elige a tu compañero."
+    has_lip_sync_required: false
+    dialog_text: null
+    visual_intent: |
+      Plano cercano cálido de Tobias en la caseta de guardavías: chaleco de lana mostaza, sonrisa
+      con demasiados dientes pequeños, deja el termo en el banco y mira directo a cámara con un
+      guiño. La estufa crepita detrás, el gato duerme sobre el panel. Paleta cálida de amanecer.
+      Outro card + watermark @elige_tucompanero.
+    visual_action_match:
+      matches_literal: true
+      atmospheric_motions_count: 3
+      atmospheric_motions_list: ["wood_stove_flame_flicker", "warm_amber_light", "cat_tail_twitch_sleep"]
+    setting_ambient_creature_or_object: "el gato dormido sobre el panel de señales mueve la cola apenas (criatura ambient cozy — loop del ciclo)"
+    character_active_gesture_per_shot: "Tobias deja el termo, mira a cámara y guiña con su sonrisa de demasiados dientes"
+    ui_active:
+      - {element_id: "outro_cliffhanger_caption", timestamp_visible_s: [0.5, 4.5], position: {y_pct: 62}, text: "MAÑANA HAY OTRO TÚNEL", font: "drop_shadow_canonical", color: "white"}
+      - {element_id: "watermark_handle", timestamp_visible_s: [0.0, 4.5], position: {y_pct: 4, x_pct: 50, anchor: "top_center"}, text: "@elige_tucompanero", font: "drop_shadow_canonical", color: "white"}
+
+# ═══════════════════════════════════════════════════════════════
+# 11. TRANSITIONS (Layer 2 effects between clips)
+# ═══════════════════════════════════════════════════════════════
+
+# v11.2 A2/A3: transitions actualizadas para los 31 shots. NB-2 alineado: old_screen_glitch_error SOLO
+#   en muerte→bridge y bridge→ramaB; played→counterfactual usa cross_fade_warm. Cortes internos de los
+#   splits = hard_cut (continuación del mismo beat, NO cambio de historia).
+transitions:
+  - {from_shot_id: "shot_01", to_shot_id: "shot_01b", transition_type: "continuous_push_in", duration_s: 0.0, rationale: "Hook_a → hook_b: push-in CONTINUO (NO zoom-cut — feedback_hook_continuity_no_zoom_cut); misma toma con countdown encima"}
+  - {from_shot_id: "shot_01b", to_shot_id: "shot_02", transition_type: "hard_cut_with_whoosh", sting_audio: "whoosh-metallic.mp3", duration_s: 0.3, rationale: "Hook → setup: descenso al andén, continuación de momentum"}
+  - {from_shot_id: "shot_02", to_shot_id: "shot_03", transition_type: "hard_cut", duration_s: 0.1, rationale: "Descenso → recorrido del andén"}
+  - {from_shot_id: "shot_03", to_shot_id: "shot_03b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Recorrido → reja se cierra (atrapamiento) — corte interno del setup"}
+  - {from_shot_id: "shot_03b", to_shot_id: "shot_04", transition_type: "hard_cut", duration_s: 0.1, rationale: "Reja → reaction insert piso/manos (mini-cut)"}
+  - {from_shot_id: "shot_04", to_shot_id: "shot_05", transition_type: "hard_cut", duration_s: 0.1, rationale: "Reaction → Dario da la regla"}
+  - {from_shot_id: "shot_05", to_shot_id: "shot_06", transition_type: "freeze_into_decision_filter", duration_s: 0.3, rationale: "Setup → freeze decisión D1"}
+  - {from_shot_id: "shot_06", to_shot_id: "shot_07a", transition_type: "white_flash_impact", sting_audio: "flash-electric-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A1 (body horror eléctrico)"}
+  - {from_shot_id: "shot_07a", to_shot_id: "shot_07b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Arco eléctrico → lanzado hacia atrás — corte interno del beat A1"}
+  - {from_shot_id: "shot_07b", to_shot_id: "shot_08", transition_type: "old_screen_glitch_error", duration_s: 0.4, rationale: "Muerte A1 → bridge rama B (glitch corte-TV, cambio de historia — PAUTA § 2.4)"}
+  - {from_shot_id: "shot_08", to_shot_id: "shot_09", transition_type: "old_screen_glitch_error", duration_s: 0.2, rationale: "Bridge → rama B (cemento pisado) — glitch corte-TV de retorno"}
+  - {from_shot_id: "shot_09", to_shot_id: "shot_09b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Avance cemento → Dario asiente y sigue — corte interno del beat B1"}
+  - {from_shot_id: "shot_09b", to_shot_id: "shot_10", transition_type: "hard_cut", duration_s: 0.1, rationale: "Bridge B1 → setup D2 charco"}
+  - {from_shot_id: "shot_10", to_shot_id: "shot_11", transition_type: "freeze_into_decision_filter", duration_s: 0.3, rationale: "Setup → freeze decisión D2"}
+  - {from_shot_id: "shot_11", to_shot_id: "shot_12a", transition_type: "white_flash_impact", sting_audio: "flash-wet-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A2 (arrastre bajo agua)"}
+  - {from_shot_id: "shot_12a", to_shot_id: "shot_12b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Brazo emerge → arrastrado bajo el agua — corte interno del beat A2"}
+  - {from_shot_id: "shot_12b", to_shot_id: "shot_13", transition_type: "old_screen_glitch_error", duration_s: 0.4, rationale: "Muerte A2 → bridge rama B (glitch corte-TV — PAUTA § 2.4)"}
+  - {from_shot_id: "shot_13", to_shot_id: "shot_14", transition_type: "old_screen_glitch_error", duration_s: 0.2, rationale: "Bridge → rama B (inmóvil, pasa de largo) — glitch corte-TV de retorno"}
+  - {from_shot_id: "shot_14", to_shot_id: "shot_14b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Cosa pasa de largo → Dario guía a la escalera — corte interno del beat B2"}
+  - {from_shot_id: "shot_14b", to_shot_id: "shot_15", transition_type: "hard_cut", duration_s: 0.1, rationale: "Bridge B2 → setup D3 escalera/barra"}
+  - {from_shot_id: "shot_15", to_shot_id: "shot_16", transition_type: "freeze_into_decision_filter", duration_s: 0.3, rationale: "Setup → freeze decisión D3 clímax"}
+  - {from_shot_id: "shot_16", to_shot_id: "shot_17a", transition_type: "white_flash_impact", sting_audio: "flash-electric-impact.mp3", duration_s: 0.2, rationale: "Decisión → consecuencia A3 (barra al rojo/caída)"}
+  - {from_shot_id: "shot_17a", to_shot_id: "shot_17b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Palma sellada → caída al pozo — corte interno del beat A3"}
+  - {from_shot_id: "shot_17b", to_shot_id: "shot_18", transition_type: "old_screen_glitch_error", duration_s: 0.4, rationale: "Muerte A3 → bridge rama B (glitch corte-TV — PAUTA § 2.4)"}
+  - {from_shot_id: "shot_18", to_shot_id: "shot_19a", transition_type: "old_screen_glitch_error", duration_s: 0.2, rationale: "Bridge → rama B (esperar la siguiente) — glitch corte-TV de retorno"}
+  - {from_shot_id: "shot_19a", to_shot_id: "shot_19b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Subir la escalera → trampilla al cielo — corte interno del beat B3/resolución"}
+  - {from_shot_id: "shot_19b", to_shot_id: "shot_20", transition_type: "cross_fade_warm_0.6s", duration_s: 0.6, rationale: "Trampilla al cielo → calle del amanecer (resolución)"}
+  - {from_shot_id: "shot_20", to_shot_id: "shot_21a", transition_type: "cross_fade_warm_0.5s", duration_s: 0.5, rationale: "Calle del amanecer → counterfactual cozy de Tobias (cambio played→counterfactual — cross_fade_warm, NO glitch — NB-2)"}
+  - {from_shot_id: "shot_21a", to_shot_id: "shot_21b", transition_type: "hard_cut", duration_s: 0.1, rationale: "Tobias junto a la estufa → detalle termo/radio/gato — corte interno del counterfactual"}
+  - {from_shot_id: "shot_21b", to_shot_id: "shot_22", transition_type: "cross_fade_warm_0.5s", duration_s: 0.5, rationale: "Counterfactual → cliffhanger detalle Tobias mira a cámara"}
+
+# ═══════════════════════════════════════════════════════════════
+# 12. HYPERFRAMES UI OVERLAY (Layer 4)
+# ═══════════════════════════════════════════════════════════════
+
+# v11.2 A2/A3: timeline_position reconciliada al re-chunk (banda 80-100s). Ventanas APROXIMADAS derivadas
+#   de §9 timestamps; engineer reconcilia al corte final exacto. Countdown del hook ahora vive en shot_01b.
+hyperframes_ui_overlay:
+  countdown_3_2_1_hook:
+    enabled: true
+    timeline_position_s: [6.0, 9.0]                  # dentro de shot_01b (hook_b) — countdown LAST
+    avu_clip: "countdown-3-2-1-film-leader-with-ticks.mp4"
+    z_index: 60
+
+  decision_freeze_d1:
+    enabled: true
+    timeline_position_s: [25.5, 30.3]                # shot_06 (4.8s); countdown 1.0s/dígito + loading Y52. Engineer reconcilia al corte final
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "PISAR EL RIEL", color: "white", y_pct: 75}
+      button_b: {text: "PISAR EL CEMENTO", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    z_index: 60
+
+  decision_freeze_d2:
+    enabled: true
+    timeline_position_s: [45.0, 49.4]                # shot_11 (4.8s). Engineer reconcilia al corte final
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "CORRER", color: "white", y_pct: 75}
+      button_b: {text: "QUEDARTE INMÓVIL", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    z_index: 60
+
+  decision_freeze_d3:
+    enabled: true
+    timeline_position_s: [63.5, 67.2]                # shot_16 (4.8s). Engineer reconcilia al corte final
+    avu_clip: "decision-freeze-with-tick-3-2-1.mp4"
+    overlay_buttons:
+      button_a: {text: "ATRAPAR LA BARRA", color: "white", y_pct: 75}
+      button_b: {text: "ESPERAR LA SIGUIENTE", color: "white", y_pct: 82}
+    overlay_loading_bar: {y_pct: 52, duration_s: 3.0}
+    z_index: 60
+
+  outro_card_cliffhanger:
+    enabled: true
+    timeline_position_s: [88.5, 92.0]                # cliffhanger outro (shot_22). Engineer reconcilia al total final (banda 80-100s)
+    avu_clip: "outro-card-template.mp4"
+    text_overlay: "Mañana hay otro túnel"
+    z_index: 65
+
+  watermark_handle_persistent:
+    enabled: true
+    timeline_position_s: [0.0, 92.0]                 # persistente todo el video (banda 80-100s; engineer ajusta al total final)
+    text: "@elige_tucompanero"
+    position: {y_pct: 4, x_pct: 50, anchor: "top_center"}
+    z_index: 68
+
+# ═══════════════════════════════════════════════════════════════
+# 13. ASSET LIST INVENTORY (ai-video audit-spec-completeness input)
+# ═══════════════════════════════════════════════════════════════
+# Densidad SFX target 30-40 (TASTE-LOG #2). Cada consequence-A fatal tiene un SFX scream/agony.
+
+asset_list:
+  sfx_prompts_to_generate:
+    # — Ambient/diegetic recurrentes del túnel —
+    - {sfx_id: "water_drip_leakage", prompt: "single water drop dripping from cable into puddle, wet tunnel, echo", duration_s: 0.6, uses_shots: ["shot_03", "shot_04", "shot_09"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "emergency_light_buzz", prompt: "amber emergency light electrical buzz and flicker hum, low", duration_s: 1.5, uses_shots: ["shot_01", "shot_05", "shot_10"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "hanging_cable_creak", prompt: "hanging electrical cables creaking and swaying in underground draft, eerie", duration_s: 1.2, uses_shots: ["shot_01b", "shot_02", "shot_03"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "footsteps_wet_concrete", prompt: "single footstep on wet concrete tunnel platform, soft echo", duration_s: 0.5, uses_shots: ["shot_03", "shot_09", "shot_14b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "security_gate_clang", prompt: "metal security gate sliding shut and clanging locked, heavy", duration_s: 1.0, uses_shots: ["shot_03b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "metal_stairs_descend", prompt: "footsteps descending wet metal service stairs, clang echo", duration_s: 1.5, uses_shots: ["shot_02"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "distant_relay_click", prompt: "distant electrical relay clicking in empty tunnel, faint", duration_s: 0.8, uses_shots: ["shot_03", "shot_05"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "dario_mask_breath", prompt: "muffled breathing through old twin-filter respirator mask, low droning rasp", duration_s: 1.5, uses_shots: ["shot_01b", "shot_05", "shot_10", "shot_15"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "thermo_steam_pour_hook", prompt: "metal thermos cap unscrewing with soft steam hiss, cozy", duration_s: 0.9, uses_shots: ["shot_01"], layer_destination: "layer_1_clip_scoped"}     # v11.2 A1 — Tobias extiende el termo en el hook
+    # — Decision UI —
+    - {sfx_id: "countdown_tick", prompt: "single film leader countdown tick, sharp, analog", duration_s: 0.3, uses_shots: ["shot_01b", "shot_06", "shot_11", "shot_16"], layer_destination: "layer_1_clip_scoped"}   # v11.2 — countdown del hook ahora en shot_01b
+    - {sfx_id: "decision_heartbeat", prompt: "slow tense heartbeat thump, low sub-bass, anxiety", duration_s: 0.8, uses_shots: ["shot_06", "shot_11", "shot_16"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "loading_bar_fill", prompt: "subtle digital loading bar fill whir, soft", duration_s: 3.0, uses_shots: ["shot_06", "shot_11", "shot_16"], layer_destination: "layer_1_clip_scoped"}
+    # — Body horror / consequence A SFX (death-screams + sonido de muerte sutil bajo el scream — PAUTA § 3 V7+) —
+    - {sfx_id: "electric_arc_zap", prompt: "high voltage electric arc zap and crackle bursting from rail, sharp", duration_s: 1.0, uses_shots: ["shot_07a"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "death_scream_electrocuted", prompt: "human male death scream cut short by electrocution, body convulsing, with subtle choked gasp underneath", duration_s: 1.6, uses_shots: ["shot_07a", "shot_07b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "body_thrown_back_thud", prompt: "body thrown back hitting cables and ground hard, electrical buzz", duration_s: 0.8, uses_shots: ["shot_07b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "water_splash_run", prompt: "frantic running splashing through dark tunnel puddle water", duration_s: 1.0, uses_shots: ["shot_12a"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "creature_drag_under", prompt: "wet creature limb grabbing ankle and dragging body under black water, heavy splash", duration_s: 1.2, uses_shots: ["shot_12a", "shot_12b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "death_scream_drowned", prompt: "human male scream cut off by being dragged under water, with subtle gurgling drowning gasp underneath", duration_s: 1.6, uses_shots: ["shot_12b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "red_hot_bar_sear", prompt: "red hot metal bar searing into flesh palm, sizzle and steam", duration_s: 0.9, uses_shots: ["shot_17a"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "death_scream_fall_pit", prompt: "human male agony scream burning then falling into dark pit echoing away, with subtle pained gasp underneath", duration_s: 1.8, uses_shots: ["shot_17a", "shot_17b"], layer_destination: "layer_1_clip_scoped"}
+    # — Diegetic D3 + resolution —
+    - {sfx_id: "metal_bar_fall_clatter", prompt: "metal bar dropped falling and clattering down vertical shaft, echo", duration_s: 1.0, uses_shots: ["shot_15", "shot_16"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "cable_red_hot_crackle", prompt: "exposed cable glowing red hot crackling with electricity, hiss", duration_s: 1.5, uses_shots: ["shot_15", "shot_16", "shot_17a"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "ladder_climb_metal", prompt: "hands and boots climbing a vertical metal ladder, clang rungs", duration_s: 1.5, uses_shots: ["shot_19a", "shot_19b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "hatch_open_creak", prompt: "heavy metal hatch creaking open to outside air, release", duration_s: 1.2, uses_shots: ["shot_19b", "shot_20"], layer_destination: "layer_1_clip_scoped"}
+    # — Resolution / cozy —
+    - {sfx_id: "cold_breath_exhale", prompt: "single visible cold breath exhale in pre-dawn air, soft", duration_s: 0.8, uses_shots: ["shot_20"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "distant_city_dawn", prompt: "faint distant city traffic at pre-dawn from street level, calm", duration_s: 2.0, uses_shots: ["shot_20"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "wood_stove_crackle", prompt: "cozy wood stove fire crackling, warm interior", duration_s: 2.0, uses_shots: ["shot_21a", "shot_21b", "shot_22"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "thermo_pour", prompt: "hot liquid pouring from metal thermos into cup, steam", duration_s: 1.0, uses_shots: ["shot_21b"], layer_destination: "layer_1_clip_scoped"}
+    - {sfx_id: "am_radio_tango", prompt: "faint old AM radio playing vintage tango music, lo-fi crackle", duration_s: 2.0, uses_shots: ["shot_21b", "shot_22"], layer_destination: "layer_1_clip_scoped"}
+    # — Transition stings (layer 2) —
+    - {sfx_id: "whoosh_metallic", prompt: "metallic whoosh transition, cold underground swell", duration_s: 0.4, uses_shots: ["shot_02"], layer_destination: "layer_2_effect"}
+    - {sfx_id: "flash_electric_impact", prompt: "white flash impact with electrical zap crack, sharp", duration_s: 0.3, uses_shots: ["shot_07a", "shot_17a"], layer_destination: "layer_2_effect"}
+    - {sfx_id: "flash_wet_impact", prompt: "white flash impact with wet heavy splash thud", duration_s: 0.3, uses_shots: ["shot_12a"], layer_destination: "layer_2_effect"}
+    - {sfx_id: "tv_glitch_sting", prompt: "old TV static glitch error sting, analog tear and buzz", duration_s: 0.4, uses_shots: ["shot_08", "shot_13", "shot_18"], layer_destination: "layer_2_effect"}
+    # SFX total declarado ≈ 35 prompts (banda 30-40 — TASTE-LOG #2; +1 thermo_steam_pour_hook A1). Death-screams en cada consequence-A fatal (shot_07a-b/12a-b/17a-b) con sonido de muerte sutil bajo el scream (PAUTA § 3 V7+). Engineer puede expandir variantes -a/-b dentro de banda.
+
+  music_to_generate:
+    - "hook_crescendo"                            # v11.2 A1 — música del hook (crescendo orquestal-industrial 0-9s)
+    - "drone_base"
+    - "ambient_tunnel"
+    - "ambient_surface_dawn"
+    - "ambient_cozy_radio"
+    - "accent_climax"
+    - "outro_drone"
+
+  ambient_continuous_to_generate:
+    - "drone_base"
+    - "ambient_tunnel"
+
+  anchors_to_generate:                            # CP1 anchor inventory (full + locus per MODEL-BEHAVIOR-LOG Entry 1)
+    - "char_a_v1"                                 # Dario full body + máscara (overol hule + máscara doble filtro co-located)
+    - "char_a_v1_mask"                            # locus anchor — máscara de respirador de doble filtro aislada (close-ups POV de la máscara)
+    - "char_b_v1"                                 # Tobias full body + cara (chaleco mostaza + sonrisa demasiados dientes + termo)
+
+# ═══════════════════════════════════════════════════════════════
+# 14. CHANNEL IDENTITY
+# ═══════════════════════════════════════════════════════════════
+
+channel_signature:
+  watermark_handle: "@elige_tucompanero"
+  caption_style_canonical:
+    name_labels:
+      font: "monospaced"
+      position_y_pct: 11.5
+      color: "yellow_or_white"
+      fontsize_intent: "large"                    # TASTE-LOG #2 — name labels grandes, persistentes through-countdown
+    narration_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "white"
+    warning_captions:
+      font: "drop_shadow_canonical"
+      position_y_pct: 62
+      color: "red"
+  audio_signature:
+    target_lufs: -14
+    true_peak_max: -1
+    music_layers_min: 3
+  visual_signature:
+    aspect_ratio: "9:16"
+    resolution: "1080x1920"
+    frame_rate: 30
+
+# ═══════════════════════════════════════════════════════════════
+# 15. ENFORCEMENT SCRIPT INTEGRATION
+# ═══════════════════════════════════════════════════════════════
+
+enforcement_integration:
+  script_a_build_clip_atomic:
+    invoked_per_shot: true
+    flag: "--bake-captions"
+    requires: ["clip_raw_mp4", "narration_segment_or_silence", "spec_text_canonical_optional"]
+    emits: ["clip_atomic_mp4", "manifest_yaml", "bake_report_json"]
+    caption_coverage_note: "HR#30 — caption burn DEBE chunkear TODA la narración del clip en cues word-timed progresivos (≤2 líneas), NO bloque estático. Shots con freeze_extend_required (19/21) cubren narración > 5.9s."
+
+  script_b_audit_shot_spec_compliance:
+    invoked_per_shot_during_cp4_audit: true
+    dimensions_8: ["dim0_scope_creep", "dim1_narrator_vs_spec", "dim2_caption_vs_spec",
+                   "dim3_caption_vs_narrator_sync", "dim4_5_visual_vs_intent",
+                   "dim6_characters_vs_anchor", "dim7_action_vs_narration"]
+    halt_on_any_fail: true
+    regen_anchors_if_dim6_fails_cp1: true
+
+  script_c_orchestrator:
+    enforces_cp_by_cp: true
+    cost_cap_default_usd: 10.0                     # v11.2 A3 — subido de 8.0 (autorización Tomás 2026-06-03): 4 shots kling_v2.5_pro en hook + clímax suben el costo CP4. Ver delta abajo.
+    cost_alert_threshold_usd: 8.0                  # v11.2 A3 — subido de 6.0
+    forbids_engineer_multi_cp_prompts: true       # anti-pattern #15 / HR#24
+    architectural_decisions_log: ".claude/skills/creative-director/master-flow-v2/ARCHITECTURAL-DECISIONS.md"
+    cost_delta_note_v11_2: |
+      Costo CP4 (animación) estimado: 31 shots i2v. Mix: 4 shots kling_v2.5_pro (shot_01, shot_01b, shot_07a,
+      shot_12a, shot_17a = 5 shots kling pro) + resto hailuo pro/std. Hailuo std $0.28/clip observado V5; hailuo
+      pro y kling_v2.5_pro = TBD por engineer (kling 2.5 pro Replicate ≈ $0.35-0.50/clip 5s estimado de mercado,
+      VERIFICAR). Estimado grueso: ~26 hailuo × ~$0.30 (≈$7.8) + 5 kling × ~$0.45 (≈$2.25) ≈ $10.0 total CP4.
+      DELTA vs v11.1 (22 hailuo ≈ $6.2): ≈ +$3.8 (9 shots extra del split + upgrade kling en 5 shots). Cae en el
+      nuevo cap 10.0. Engineer DEBE verificar el costo real de kling_v2.5_pro en Replicate al agregar la entrada
+      a MODEL-CAPABILITIES-MATRIX (HR#28/29) y flaguear al arquitecto si supera el cap.
+
+# ═══════════════════════════════════════════════════════════════
+# 16. ARCHITECT ANNOTATIONS (in-flight tracking + self-audit)
+# ═══════════════════════════════════════════════════════════════
+
+architect_annotations:
+  - timestamp: "2026-06-03"
+    track: "FASE 0 — Propuesta A elegida por Tomás"
+    note: "Propuesta A 'El último tren de carga' (túnel de mantenimiento de metro) elegida. P2 (Dario máscara-respirador parece trampa pero es SOBREVIVIBLE si seguís sus reglas procedurales). Counterfactual FINAL (Tobias caseta cozy). Apariencia ASIMÉTRICA CLÁSICA (monstruoso-malo + amable-bueno) — reset al clásico, descansada desde early videos. Español neutral. V7 hereda el sistema codificado 2026-06-01: INVARIANTE estructural (Tobias fuera del played path) + name-labels-through-countdown + glitch corte-TV en cambios A/B + muerte + SFX densos matcheados + sonido de muerte sutil bajo scream + atempo cap + música ambiente mood-matched."
+
+  - timestamp: "2026-06-03"
+    track: "INVARIANTE § 2.2 — diseño correcto desde el inicio (lección V6 invernadero F2)"
+    note: "Tobias (bueno_aparente) NUNCA está en el played path — aparece SOLO en shot_01 (hook dyad) + shot_21 (counterfactual cozy) + shot_22 (cliffhanger). En el played path la tentación viene del INSTINTO/ENTORNO (riel firme y seco que invita a pisarlo / ruido del charco que invita a correr / barra que cae que invita a atraparla) + Dario (el ELEGIDO, malo-aparente) da las contra-reglas procedurales. Dario SÍ está en el played path porque es el COMPAÑERO ELEGIDO (permitido por el invariante — solo el bueno-aparente está prohibido en el played path). Diseñado correcto desde el inicio para que ai-video audit-spec-structure-vs-canonical pase sin amendment."
+
+  - timestamp: "2026-06-03"
+    track: "Self-validation HR#27 + D14-D27 (creative-director skill validation)"
+    note: "Ver bloque self_audit abajo. 5 validators corridos por el arquitecto pre-emit — ver reporte de chat (exit codes + findings)."
+
+  - timestamp: "2026-06-03"
+    track: "v11.2 AMENDMENTS (Tomás GO + 3 amendments obligatorios)"
+    note: "A1 HOOK refactor: hook partido shot_01(hook_a, dyad + interacción real — Tobias extiende el termo y dice 'Ven conmigo. Abajo hace frío.' [lure cálido, ref-12/ref-08]; Dario gira la cabeza + lámpara barre el piso) + shot_01b(hook_b, push-in continuo + micro-motion AMBOS + countdown LAST). Nuevo music layer hook_crescendo 0-9s (crescendo orquestal-industrial estilo ref-12). Modelo del hook + clímax body-horror = kling_v2.5_pro (5 shots: 01/01b/07a/12a/17a); engineer agrega entrada a MATRIX pre-CP4 (HR#28/29). Tobias habla → D27 tobias_voice_processing + has_lip_sync. INVARIANTE § 2.2 intacto (hook es zona permitida de Tobias). A2 TODOS los shots ≤5.0s: 22→31 shots, los 13 shots >5.0 partidos en micro-beats que siguen el hilo (consequences A en impacto+caída; setups en contexto+regla; resolución/counterfactual partidos); narración re-chunkeada ≤13 palabras/shot; freeze_extend ELIMINADO; cuts/min ≈20-21 (sweet spot). HISTORIA IDÉNTICA — solo granularidad. A3 NB fixes: layer_2.description alineado a transitions (NB-2); timeline reconciliada banda 80-100s (NB-3); cost_cap 10.0/alert 8.0 (Kling pro, autorización Tomás), delta ≈+$3.8."
+
+  - timestamp: "2026-06-04"
+    track: "v11.3 anchor assignment amendment (Entry 3)"
+    note: "shot_05 + shot_15 (full-scene de Dario) reasignados de char_a_v1_mask (locus) → char_a_v1 (full body). Razón empírica MODEL-BEHAVIOR-LOG Entry 3 (validado 2026-06-04): Gemini --ref con un locus anchor aislado (máscara sola) en composición full-scene inserta el locus como OBJETO duplicado flotante (segunda máscara gigante en foreground sin pertenecer a ninguna cara). V7 shots 05+15 fallaron el audit CP3 con --ref char_a_v1_mask; la regen con --ref char_a_v1 (full body) + prompt-reinforce de la máscara EN el personaje pasó. El locus anchor (char_a_v1_mask) queda SOLO para close-ups donde la máscara ocupa el frame sin cuerpo/escena. El SPEC ahora refleja el anchor REAL usado para que los gates downstream (Script B dim 6 anchor similarity) midan contra el anchor correcto. Amendment QUIRÚRGICO — nada más del SPEC tocado."
+
+self_audit:
+  # v11.2 re-corrido pre-emit (HR#27) tras los amendments A1/A2/A3. 31 shots.
+  auto_audit_2026_05_15:
+    D14_pov_count: {total_shots: 31, pov_shots: 31, ratio_pct: 100}        # ≥80 ✓ (todo POV 1ª persona)
+    D15_rama_B_transitions: {decisions_count: 3, transitions_explicit: 3}   # bridge glitch+caption SI-PISAS-CEMENTO/SI-TE-QUEDAS/SI-ESPERAS (shots 08/13/18) + B-resolution
+    D16_bueno_aparente_intro_shots: {count_before_cliffhanger: 3}           # Tobias en shot_01 (hook dyad + habla) + shot_01b (hook push-in) + shot_21a/21b (counterfactual) antes del cliffhanger shot_22 (≥2 ✓); NUNCA en el played path (invariante § 2.2). v11.2: Tobias habla en el hook (zona permitida).
+    D17_lip_sync_marked: {shots_marked: 31, total_shots: 31}                # todos los shots tienen has_lip_sync_required
+    D18_narrative_transitions_logical: true                                 # cada rama A (07a-b/12a-b/17a-b) → glitch bridge → rama B; resolución B3 en shot_19a-b
+  auto_audit_2026_05_16:
+    D19_si_elegiste_framing: {rama_A_compliant: true, rama_B_compliant: true}  # acción-condicional ("Si pisas el riel/Si corres/Si la atrapas" + "Si pisas el cemento/Si te quedas inmóvil/Si esperas la siguiente"); 0 bare-label. Cada rama prefija el "Si…" en su PRIMER sub-shot (07a/09/12a/14/17a/19a).
+    D20_visual_narration_match: {shots_certified: 31, total_shots: 31}      # matches_literal:true por shot
+    D21_scene_context_complete: {shots_with_full_context: 31, total_shots: 31}
+    D22_primary_sources_consulted: {canonical_scenes_INDEX_read: true, canonical_scenes_ref_xx_read_count: 3}  # ref-03 (deep P2) + ref-12 Beat 1 (hook música/diálogo A1) + ref-08 Beat 1 (bueno habla en hook) + INDEX § 1/4/7 grids
+  auto_audit_2026_05_17:
+    D24_camera_per_shot_complete: {shots_with_camera_block: 31, total_shots: 31, passed: true}   # scene_context.camera_intent por shot (frases descriptivas, NO label-prefix)
+    D25_cuts_flooding_breakdown: {shots_marked_cuts_flooding: 0, shots_with_mini_cuts_internal: 0, passed: true}  # NO cuts_flooding section (P2 no usa ref-13 mini-cuts); granularidad vía splits de beat + reaction inserts (03b/08/13/18). cuts/min ≈20-21 (sweet spot).
+    D26_motion_intensity_compliance: {ken_burns_shots_count: 0, ken_burns_justified_fallbacks: 0, passed: true}   # NO Ken Burns; todos animation AI (hailuo + kling pro en hook/clímax)
+    D27_character_voice_processing:
+      non_standard_voice_characters: ["char_a", "char_b"]                  # v11.2: Dario (zumbido máscara) + Tobias (voz cálida del hook, A1)
+      characters_with_processing_block: 2
+      total_non_standard: 2
+      passed: true
+      dario_voice_processing:
+        base_voice: "voz masculina grave (engineer asigna voice_id propio en CP2 — NO el del narrador)"
+        pitch_shift: "ligero pitch-down para el zumbido de máscara"
+        effects_chain_order: "lowpass ~3500Hz (filtro de máscara) → reverb leve (resonancia de túnel) → check intelligibility ≥ M7.7"
+        output_target_description: "voz reconocible pero con el zumbido grave de hablar a través de un respirador antiguo; INTELIGIBLE (no over-filtered como el matarife — caso disparador matadero)"
+        reference_canonical: "ref-09 Victor susurro técnico procesado + MODEL-CAPABILITIES-MATRIX character_voices axel_malo (visor filter pattern)"
+        engineer_test_criteria: "narración de Dario inteligible al primer escucha sin caption; mean_volume audible; NO LPF agresivo que lo haga ininteligible (anti-pattern matadero matarife)"
+      tobias_voice_processing:                                             # v11.2 A1 — Tobias habla 1 línea de lure en el hook (shot_01)
+        base_voice: "voz masculina mayor cálida y suave (engineer asigna voice_id propio en CP2 — NO el del narrador ni el de Dario)"
+        pitch_shift: "ninguno o muy leve — Tobias suena humano y acogedor (contraste vs zumbido de Dario)"
+        effects_chain_order: "leve reverb de caseta/túnel para ubicarlo en el espacio; SIN filtro de máscara; check intelligibility"
+        output_target_description: "voz cálida, paternal, ligeramente inquietante por lo demasiado-amable; inteligible al primer escucha"
+        reference_canonical: "ref-08 Hugo bueno-habla-en-hook + ref-12 Nano 'Ven conmigo' (lure verbal del personaje en el hook)"
+        engineer_test_criteria: "'Ven conmigo. Abajo hace frío.' inteligible y cálido; lip-sync bajo el patrón i2v (boca visible de Tobias → Hedra/Sync.so Phase 3)"
+  model_capabilities_check_HR28_29:
+    matrix_read: true
+    rule: "narración_dur@165WPM ≤ min(duration_intent_s, clip_max del modelo del shot) por shot. v11.2: TODOS los shots ≤5.0s; narración re-chunkeada ≤13 palabras (≤4.73s) → cabe SIN freeze-extend en CUALQUIER tier (hailuo 5.9 / kling 5.0)."
+    shots_with_narration_over_5.9s_at_165wpm: []                          # v11.2: NINGUNO. freeze_extend ELIMINADO (era shot_19/shot_21 en v11.1; ahora partidos en 19a/19b y 21a/21b, cada chunk ≤4.0s).
+    kling_v2_5_pro_shots: ["shot_01", "shot_01b", "shot_07a", "shot_12a", "shot_17a"]   # 5 shots kling pro (hook + clímax body-horror). Narración por shot: shot_01=8w(2.9s), shot_01b=0w, shot_07a=8w(2.9s), shot_12a=6w(2.18s), shot_17a=8w(2.9s) → TODOS ≤5.0s (kling clip_max asumido 5.0s) ✓. VERIFICACIÓN MANUAL HR#28/29 (validator no soporta per-shot model-cap todavía; kling_v2.5_pro NO en MATRIX → engineer DEBE agregarla pre-CP4).
+    remediation: "Re-chunk a ≤13 palabras/shot + dur ≥canonical_dur por shot → narration-fits PASS sin freeze en ambos tiers. kling shots verificados a mano arriba (todos ≤5.0s). model_constraints_acknowledged:true en narrative_structure."
+  all_passed: true                                                          # D14-D22 + D24-D27 + HR28/29 + invariante § 2.2 intacto + A1/A2/A3 aplicados
+  spec_listo_para_handoff: true
+
+# ═══════════════════════════════════════════════════════════════
+# 17. ENGINEER NOTES
+# ═══════════════════════════════════════════════════════════════
+
+engineer_notes:
+  single_source_of_truth_narration: "⛔ SINGLE SOURCE OF TRUTH = narration_in_this_shot por shot (§10). §9 narration_script = concatenación derivada para el master continuo Layer 3. Caption-burn (HR#30) y master continuo derivan del MISMO texto per-shot → no desync (anti-pattern #16) + cobertura temporal completa. Narrador = Layer 3 continuous ÚNICAMENTE (HR#25). Si editás narración, editá narration_in_this_shot PRIMERO y re-derivá §9 — nunca al revés."
+  narrator_layer_assignment: "HR#25 — el narrador NO va en Layer 1 atomic. Se overlaya post-concat como narrator_master_continuous (Layer 3, sidechain duck -6dB). Layer 1 atomic lleva dialog Dario (lip-sync, shots 05/10/15) + v11.2 dialog Tobias (lip-sync, shot_01 — lure de hook) + diegetic SFX + clip-scoped ambient + hook_crescendo. Tobias habla SOLO en el hook (shot_01), NUNCA en el played path (invariante § 2.2 intacto)."
+  hook_music_note: "v11.2 A1 — hook_crescendo (música del hook 0-9s) = nuevo layer en §7 + asset_list.music_to_generate. Crescendo orquestal-industrial sobre el drone_base, resuelve al drone en el countdown. Engineer ducka el crescendo bajo el narrador del hook + la línea de Tobias. Estilo ref-12 (crescendo orquestal de hook)."
+  kling_matrix_note: "⛔ v11.2 A1 HR#28/#29 — el ingeniero DEBE agregar la entrada `kling_v2.5_pro` a ai-video-production/MODEL-CAPABILITIES-MATRIX.md ANTES de CP4, con specs VERIFICADAS de Replicate (clip_duration_max_s, fps, resolution, cost_per_clip_usd, audio_output, motion_constraints). El SPEC asume clip_max_s 5.0 (tier 5s) para el fit de narración — VERIFICAR. Si el cap real difiere o el costo supera el cap 10.0, flaguear al arquitecto. Shots kling: shot_01, shot_01b, shot_07a, shot_12a, shot_17a."
+  pipeline_strategy: "per_clip_atomic_hybrid"
+  primary_model_target: "hailuo_pro"              # hero/dialogue/climax shots hailuo; hailuo_std para reaction inserts + freezes; kling_v2.5_pro para hook (shot_01/01b) + clímax body-horror (07a/12a/17a) — A1
+  fallback_model: "hailuo_std"
+  lip_sync_strategy: "deferred_phase_3 (Hedra/Sync.so) para shots con has_lip_sync_required:true. v11.2: shot_01 (Tobias — lure de hook, boca VISIBLE → lip-sync clásico aplica), shot_05/10/15 (Dario). NOTA Dario: habla bajo una máscara de respirador → la boca NO es visible; lip-sync clásico no aplica, usar el patrón characters-sin-boca-visible (glow/movimiento sutil de la máscara + caption-as-mouth + voz procesada zumbido) — ref-13 Miro pattern. NOTA Tobias: rostro humano con boca visible → lip-sync estándar Hedra/Sync.so para 'Ven conmigo. Abajo hace frío.'. Engineer flaguea al arquitecto si requiere ajuste."
+  dario_locus_anchors: "char_a_v1 (full) + char_a_v1_mask. Shots que aíslan la máscara en close-up POV (shot_05/shot_15 — Dario da regla / visto desde abajo) usan --ref char_a_v1_mask (MODEL-BEHAVIOR-LOG Entry 1 locus-anchor; la máscara de doble filtro puede regresar a cara normal si no hay cuerpo completo + se usa full anchor)."
+  prompt_style_note: "Prompts en frases descriptivas, NUNCA label-prefix (POV:/ANGLE:/ACTION:) — MODEL-BEHAVIOR-LOG Entry 2 (texto burned-in). camera_intent ya escrito como frase descriptiva."
+  horror_suffix_note: "ai-video image inyecta HORROR_SUFFIX warm amber por default — encaja con amber_emergency_tunnel_v1 (paleta ámbar). Para cold_horror_tunnel_v1 (consecuencias azul-frías) usar --no-mono-suffix + bloque de estilo cool propio (ver MODEL-CAPABILITIES-MATRIX gemini_flash_image)."
+  total_duration_note: "v11.2: narración re-chunkeada termina ~93s en los timestamps de §9 (incluye hook 9s + freezes + beats no-narrados). Con el ensamble per-clip-atomic (suma de duration_intent de los 31 shots ≈ 113s de clip bruto, pero los freezes/decisión solapan con narración y los reaction inserts son cortos) el corte final cae en banda 80-100s. Engineer reconcilia el corte final a la banda (target ~90s) ajustando solapes de freeze/countdown. NB-3 reconciliado: §9 ya no excede el total."
+  veo_quota_observations: "NOT enterprise free — billing confirmado. Avoid Veo. Hailuo stack canonical."
+
+# ═══════════════════════════════════════════════════════════════
+# END SCHEMA v11.2 (doc v11.3 — anchor amendment Entry 3 2026-06-04)
+# ═══════════════════════════════════════════════════════════════

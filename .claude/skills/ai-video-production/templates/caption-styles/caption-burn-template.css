@@ -17,7 +17,7 @@
  *   - caption-wrap container:  bottom: 540px, height: 280px  (Y 62% canonical)
  *   - name label:              top: 220px (Y 11.5%, canonical band 12-40%)
  *
- * Hard rule #4 (CLAUDE.md) — these positions are canonical and FIXED.
+ * Hard rule #4 (docs/OPERATING-MANUAL.md) — these positions are canonical and FIXED.
  * ============================================================================= */
 
 /* Container — applies to ALL caption classes when burned into clip ----------- */
@@ -161,10 +161,10 @@
  *    3. GSAP timeline: tl.from('.caption-narration', {opacity:0, y:8, duration:0.18}, t)
  *
  * C) Whisper integration (hard rule #3 — captions ALWAYS Whisper-timed):
- *    Use scripts/captions.py output (.json word-timestamps) to drive GSAP
+ *    Use ai-video captions output (.json word-timestamps) to drive GSAP
  *    fromTo on each <span> per word. Never hand-time.
  *
  * D) Per-class color overrides per project:
- *    Override .caption-narration color in project's local CSS to match BRAND.md.
+ *    Override .caption-narration color in project's local CSS to match the format's VISUAL-STYLE.md.
  *    Default colors here are the canonical horror-choice palette.
  * ============================================================================= */

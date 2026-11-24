@@ -1,0 +1,90 @@
+# Spec-level eval cases. Each case patches evals/fixtures/base_spec.yaml to inject exactly
+# one defect (or none) and asserts the gate's verdict. Patch ops:
+#   set:    {dotted.path: value}       (list indices allowed: narration_script.1.text_canonical)
+#   append: {dotted.path: item}
+# expect: pass | fail   (exit 0 / exit 1; exit 2 = could-not-measure is always a failure)
+spec_cases:
+  - id: baseline-schema
+    gate: validate-spec
+    expect: pass
+
+  - id: schema-unknown-anchor
+    gate: validate-spec
+    set: {narration_script.1.shot_id_anchor: shot_99}
+    expect: fail
+
+  - id: schema-bad-fps
+    gate: validate-spec
+    set: {video_capabilities.target_fps: 29}
+    expect: fail
+
+  - id: baseline-language
+    gate: audit-language-style
+    expect: pass
+
+  - id: voseo-in-narration
+    gate: audit-language-style
+    set: {narration_script.1.text_canonical: "Bruno sonríe. Vos elegís, ¿querés venir?"}
+    expect: fail
+
+  - id: cliche-in-narration
+    gate: audit-language-style
+    set: {narration_script.2.text_canonical: "Es un bucle eterno."}
+    expect: fail
+
+  - id: job-title-as-character-name
+    gate: audit-language-style
+    set: {characters.0.name: Matarife}
+    expect: fail
+
+  - id: referent-handle-as-own-channel
+    gate: audit-language-style
+    set: {project.channel: "@referent-a"}
+    expect: fail
+
+  - id: baseline-voice-exclusivity
+    gate: audit-spec-voice-exclusivity
+    args: [--mode, spec]
+    expect: pass
+
+  - id: narrator-and-character-overlap
+    gate: audit-spec-voice-exclusivity
+    args: [--mode, spec]
+    append:
+      narration_script:
+        segment_id: a_lure
+        speaker: char_a
+        voice_id: VOICE_A
+        text_canonical: "Ven conmigo, abajo hace frío."
+        timestamp_intent_s: [1.0, 3.0]
+        shot_id_anchor: shot_01
+        lip_sync_required: true
+    expect: fail
+
+  - id: narration-overflows-shot
+    gate: audit-spec-narration-fits-duration
+    set:
+      narration_script.1.text_canonical: "uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciséis diecisiete dieciocho diecinueve veinte veintiuno veintidós veintitrés veinticuatro veinticinco veintiséis veintisiete veintiocho veintinueve treinta"
+      shot_list.1.narration_in_this_shot: "uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciséis diecisiete dieciocho diecinueve veinte veintiuno veintidós veintitrés veinticuatro veinticinco veintiséis veintisiete veintiocho veintinueve treinta"
+    expect: fail
+
+# Caption-timing cases: word timings (as Whisper would return) are grouped by the real
+# captions module, then checked for ordering, overlap, readability and temporal coverage.
+caption_cases:
+  - id: steady-speech
+    video_duration_s: 6.0
+    words: [[Elige, 0.20, 0.55], [a, 0.55, 0.65], [tu, 0.65, 0.80], ["compañero.", 0.80, 1.40],
+            [Bruno, 2.00, 2.40], [sonríe., 2.40, 2.90], [Mateo, 3.30, 3.70], ["no", 3.70, 3.85],
+            [dice, 3.85, 4.10], [nada., 4.10, 4.60]]
+    expect: pass
+  - id: rushed-speech
+    video_duration_s: 2.0
+    words: [[Desafortunadamente, 0.00, 0.10], [incomprensiblemente, 0.10, 0.20], [extraordinariamente, 0.20, 0.30]]
+    expect: fail
+
+# Safe-zone cases: an ASS caption (margin/font/height in px) must sit inside the empirical
+# caption band measured on referents (data/referent-analysis, ± slack in % of height).
+safe_zone_cases:
+  - {id: caption-in-band, margin_v_px: 700, font_size_px: 64, height_px: 1920, expect: pass}
+  - {id: caption-too-low, margin_v_px: 120, font_size_px: 64, height_px: 1920, expect: fail}
+  - {id: caption-too-high, margin_v_px: 1300, font_size_px: 64, height_px: 1920, expect: fail}

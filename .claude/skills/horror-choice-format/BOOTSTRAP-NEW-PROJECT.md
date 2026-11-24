@@ -11,15 +11,15 @@
 ## 0. DÓNDE VIVE QUÉ
 
 ```
-~/AI video 1/                                       ← raíz workspace
-├── PAUTA.md, NARRATION-RULES.md, FEEDBACK-LOOP.md  ← entry docs generales
+<repo>/                                             ← raíz del repo
+├── PAUTA.md, NARRATION-RULES.md, docs/FEEDBACK-LOOP.md  ← entry docs generales
 ├── .agents/skills/                                  ← skills hyperframes / gsap (compartidos)
 ├── .claude/skills/
 │   ├── ai-video-production/                        ← toolkit GENERAL (TTS, image, SFX, motion, etc.)
 │   │   └── templates/
 │   │       ├── scripts/{tts,image,sfx,captions}.py
-│   │       ├── .env-TEMPLATE
-│   │       └── hyperframes.json-TEMPLATE
+│   │       ├── .env.example
+│   │       └── templates/project/hyperframes.json
 │   └── horror-choice-format/                       ← formato ESPECÍFICO horror-choice (FUENTE de este doc)
 │       └── templates/
 │           ├── NARRATIVE-TEMPLATE.md
@@ -33,94 +33,23 @@
 
 ---
 
-## 1. CREAR EL DIRECTORIO DEL PROYECTO
+## 1-4. ENTORNO, PROYECTO Y TEMPLATES DEL FORMATO
+
+Seguí el bootstrap genérico (`../ai-video-production/BOOTSTRAP.md` §1-4). Para horror-choice, el paso de
+templates del formato es:
 
 ```bash
-cd "<repo-root>"
-mkdir -p "<NUEVO_PROYECTO>"/{assets,scripts,renders}
-mkdir -p "<NUEVO_PROYECTO>/assets/sfx"
-cd "<NUEVO_PROYECTO>"
-```
-
-Convención de nombres del directorio: `kebab-case`, descriptivo del setting o título. Ejemplos validados: `elige-companero`, `bosque-abandonado`, `bosque-encantado`, `faro-vacio`.
-
----
-
-## 2. COPIAR LOS TEMPLATES (específicos del formato)
-
-> Asume que ya completaste el bootstrap genérico (ver `../ai-video-production/BOOTSTRAP.md` pasos 1-5) que copió scripts/, .env, hyperframes.json desde `ai-video-production/templates/`. (POST-MORTEM.md deprecated 2026-05-15 — learnings van a video-log.md.)
-
-**Verificá que los gates QA están presentes** (críticos del flow):
-
-```bash
-for script in audit-narrative.py render-lock.py audit-frames.py qa-gate.py; do
-  [ -f scripts/$script ] && echo "✓ scripts/$script" || echo "✗ MISSING — re-correr bootstrap genérico paso 2"
-done
-```
-
-Si falta algún script de QA, el flow NO puede llegar al stop point pre-Kling. Re-correr el `cp` de `ai-video-production/BOOTSTRAP.md` paso 2.
-
-Encima de eso, copiar los templates específicos del formato horror-choice:
-
-```bash
-HORROR_DIR="<repo-root>/.claude/skills/horror-choice-format/templates"
-
+cd "projects/<NUEVO_PROYECTO>"
+HORROR_DIR="../../.claude/skills/horror-choice-format/templates"
 cp "$HORROR_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
 cp "$HORROR_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
 cp "$HORROR_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
-
-# FREESOUND-QUERIES.md NO se copia por default — Freesound es fallback opcional.
-# Solo copiarlo si en producción un asset EL específico sale uncanny:
-#   cp "$HORROR_DIR/FREESOUND-QUERIES-TEMPLATE.md"   FREESOUND-QUERIES.md
+# FREESOUND-QUERIES.md es fallback opcional (solo si un SFX de ElevenLabs sale uncanny):
+#   cp "$HORROR_DIR/FREESOUND-QUERIES-TEMPLATE.md" FREESOUND-QUERIES.md
 ```
 
----
-
-## 3. CONFIGURAR `.env` (CRÍTICO)
-
-Editar `.env` y poner las API keys reales:
-
-```bash
-nano .env
-# Reemplazar los placeholders <aqui-tu-key-...> con las keys reales
-```
-
-Necesarias:
-- `GEMINI_API_KEY` → https://aistudio.google.com/apikey (gratis)
-- `ELEVENLABS_API_KEY` → https://elevenlabs.io/app/settings/api-keys (paid tier ~$22/mes alcanza para muchos videos)
-- `REPLICATE_API_TOKEN` → solo si vas a usar Kling para animación de imágenes (opcional, ~$3/video)
-
-**Verificar que funcionan:**
-```bash
-source .env
-[ -n "$GEMINI_API_KEY" ] && echo "✓ Gemini key set" || echo "✗ Gemini missing"
-[ -n "$ELEVENLABS_API_KEY" ] && echo "✓ ElevenLabs key set" || echo "✗ ElevenLabs missing"
-```
-
----
-
-## 4. CREAR EL VIRTUALENV PYTHON
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install elevenlabs google-genai python-dotenv openai-whisper replicate
-deactivate
-```
-
-Verificación rápida:
-```bash
-.venv/bin/python -c "import elevenlabs, google.genai, dotenv; print('✓ deps ok, elevenlabs', elevenlabs.__version__)"
-```
-
-Debe imprimir `✓ deps ok, elevenlabs 2.44.0` o superior.
-
-> **Alternativa rápida**: reusar el `.venv` de `elige-companero/`:
-> ```bash
-> ln -sf "<repo-root>/elige-companero/.venv" .venv
-> ```
-> Esto evita reinstalar deps. Pero rompe si moves el proyecto, así que solo úsalo si vas a quedarte en la misma máquina.
+Los gates QA (`audit-narrative`, `render-lock`, `audit-frames`, `qa-gate`, …) ya están disponibles como
+`uv run ai-video <gate>`; `uv run ai-video doctor` confirma keys y dependencias.
 
 ---
 
@@ -147,7 +76,7 @@ Resultado esperado:
 Por ahora puede ser vacío o copiar el esqueleto de `bosque-abandonado/index-v2.html` (cambiar título). El contenido real se construye siguiendo `VIDEO-PLAYBOOK.md`.
 
 ```bash
-cp "<repo-root>/bosque-abandonado/index-v2.html" index.html
+cp "bosque-abandonado/index-v2.html" index.html
 # Edita el <title> y limpia el contenido por hito
 ```
 
@@ -170,7 +99,7 @@ No debe devolver nada en archivos que ya editaste. Los templates en `.md` mantie
 Probar que TTS funciona end-to-end:
 
 ```bash
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "Prueba de voz para nuevo proyecto." \
   -o assets/_smoketest.mp3 && \
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/_smoketest.mp3 && \
@@ -181,7 +110,7 @@ Si imprime una duración (~2s) y borra el archivo, **estás listo**.
 
 Probar SFX:
 ```bash
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "low sub-bass impact" -d 0.5 -o assets/sfx/_smoketest.mp3 && \
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/sfx/_smoketest.mp3 && \
 rm assets/sfx/_smoketest.mp3
@@ -189,7 +118,7 @@ rm assets/sfx/_smoketest.mp3
 
 Probar imagen:
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "test prompt: simple black square" -o assets/_smoketest.png && \
 ls -la assets/_smoketest.png && \
 rm assets/_smoketest.png
@@ -243,7 +172,7 @@ Después de los inputs FASE 0 y antes de generar TTS/imágenes/SFX, ejecutar dos
 
 ### 9.5.a — Character anchors
 
-El formato horror-choice tiene 2 personajes recurrentes (malo aparente + bueno aparente). El bueno aparente **aparece en 2 contextos visualmente distintos**: H1 presentación y H6 cliffhanger (cabaña / safe place). 
+El formato horror-choice tiene 2 personajes recurrentes (malo aparente + bueno aparente). El bueno aparente **aparece en 2 contextos visualmente distintos**: H1 presentación y H6 cliffhanger (cabaña / safe place).
 
 **Decisión obligatoria pre-render**:
 
@@ -301,7 +230,7 @@ El agente debe:
 Antes de pasar a producción confirmar:
 
 - [ ] `<NUEVO_PROYECTO>/` creado con subfolders `assets/`, `assets/sfx/`, `scripts/`, `renders/`
-- [ ] `scripts/tts.py`, `scripts/image.py`, `scripts/sfx.py`, `scripts/captions.py` copiados
+- [ ] `ai-video tts`, `ai-video image`, `ai-video sfx`, `ai-video captions` copiados
 - [ ] `.env` con API keys reales (Gemini + ElevenLabs mínimo)
 - [ ] `.venv/` creado con deps instaladas
 - [ ] `hyperframes.json` con nombre del proyecto
@@ -320,8 +249,8 @@ El venv no se activó o las deps no se instalaron. Re-run el paso 4.
 ### Error: `ELEVENLABS_API_KEY environment variable is not set`
 El script no encuentra `.env`. Verificar que `python-dotenv` esté instalado y que `.env` esté en la raíz del proyecto (no en `scripts/`).
 
-### Error: `Gemini API key not found` en image.py
-Mismo problema. `load_dotenv()` busca `.env` en `PROJECT_ROOT` (el padre de `scripts/`). Confirmar que `.env` está en la raíz.
+### Error: `Gemini API key not found` en ai-video image
+Mismo problema. La configuración se lee de variables de entorno o de `.env` en el directorio actual / raíz del repo. Verificar con `uv run ai-video doctor`.
 
 ### Error: hyperframes no reconoce el directorio
 Falta `hyperframes.json` o `index.html` en la raíz. Crear ambos antes de cualquier `hyperframes render`.
@@ -329,7 +258,7 @@ Falta `hyperframes.json` o `index.html` en la raíz. Crear ambos antes de cualqu
 ### Error: SFX salen silenciosos
 Probablemente el venv tiene `elevenlabs < 2.40` y no tiene `text_to_sound_effects`. Actualizar:
 ```bash
-.venv/bin/pip install --upgrade elevenlabs
+uv lock --upgrade-package elevenlabs && uv sync --extra providers
 ```
 
 ---

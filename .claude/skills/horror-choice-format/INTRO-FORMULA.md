@@ -39,14 +39,14 @@
 **Prompt template Gemini Nano Banana**:
 
 ```
-Wide centered composition of an abandoned [SETTING] entrance at deep dusk/night. 
-A [PORTAL TYPE: wooden-framed dark tunnel mouth / open doorway / cave mouth] in 
-the center background, [ENVIRONMENTAL DETAIL: rusted mine cart rails / overgrown 
-path / cracked stone steps] leading into pitch darkness. Thick heavy fog drifting 
-horizontally across the entrance, partially obscuring the mouth. **Two dim warm 
-[LIGHT SOURCE: carbide lamps / orange embers / pairs of eyes] glowing faintly 
-deep inside.** Industrial debris and dark [vegetation/forest/structures] flanking 
-the sides. No people, no characters, completely empty entrance. Cold blue twilight 
+Wide centered composition of an abandoned [SETTING] entrance at deep dusk/night.
+A [PORTAL TYPE: wooden-framed dark tunnel mouth / open doorway / cave mouth] in
+the center background, [ENVIRONMENTAL DETAIL: rusted mine cart rails / overgrown
+path / cracked stone steps] leading into pitch darkness. Thick heavy fog drifting
+horizontally across the entrance, partially obscuring the mouth. **Two dim warm
+[LIGHT SOURCE: carbide lamps / orange embers / pairs of eyes] glowing faintly
+deep inside.** Industrial debris and dark [vegetation/forest/structures] flanking
+the sides. No people, no characters, completely empty entrance. Cold blue twilight
 palette outside, faint amber glow inside. Cinematic ominous establishing shot.
 ```
 
@@ -58,7 +58,7 @@ palette outside, faint amber glow inside. Cinematic ominous establishing shot.
 
 **Comando**:
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "..." \
   -o assets/h1-teaser.png \
   --size 1K --aspect 9:16
@@ -72,7 +72,7 @@ Standard: 2 personajes (malo aparente + bueno aparente) en mismo escenario que e
 
 **Receta exacta**:
 ```bash
-.venv/bin/python scripts/video.py \
+uv run ai-video video \
   -i assets/h1-teaser.png \
   -e assets/h1-characters.png \
   -p "Slow steady camera dolly forward toward an abandoned [SETTING] entrance over [DETAIL]. Thick fog gradually clears as we approach. Two [character archetypes] gradually materialize from the darkness at the [SETTING] entrance: [MALO] (left) [description], [BUENO] (right) [description]. They emerge into view as if always there but only revealed by the approach. Ominous atmospheric reveal." \
@@ -101,7 +101,7 @@ Resultado: 9s. Primeros 5s = motion (dolly + materialize). Últimos 4s = hold de
 
 **Comando**:
 ```bash
-python3 scripts/tts.py \
+uv run ai-video tts \
   -t "Elige a tu compañero. Para bajar a la mina esta noche. Hugo... o Santi." \
   -o assets/h1-narr-raw.mp3
 ffmpeg -y -i assets/h1-narr-raw.mp3 -filter:a "atempo=2.0" assets/h1-narr-2x.mp3
@@ -298,7 +298,7 @@ Cualquier frame con NEGRO o sin elemento esperado → bug. Revisar GSAP namespac
 
 - `PATTERNS.md` § 1 — estructura temporal general del formato
 - `PATTERNS.md` § 10.5 — Opción D: Teaser materialization (técnica visual)
-- `BRAND.md` — preset filter CSS canónico (`contrast 1.28 saturate 0.35 brightness 0.74`)
+- `VISUAL-STYLE.md` — preset filter CSS canónico (`contrast 1.28 saturate 0.35 brightness 0.74`)
 - `ai-video-production/CAPTIONS.md` — Whisper-sync hard rule
 - `ai-video-production/RETENTION-RULES.md` — reglas de retención short-form
 - `video-animation/ANIMATION-LAYER.md` § 11.5 — técnica Kling start_image + end_image

@@ -38,7 +38,7 @@ Sin excepciones. Aplica a:
 
 ```bash
 # Para CADA audio de narración (no SFX) en el proyecto:
-.venv/bin/python scripts/captions.py \
+uv run ai-video captions \
   -a assets/<narration-audio>.mp3 \
   -t <offset-en-timeline-segundos> \
   -e <prefijo-caption-id>
@@ -77,7 +77,7 @@ En bosque-abandonado v1 los captions se hand-timed y se desfasaron visiblemente 
 ## Comando
 
 ```bash
-.venv/bin/python scripts/captions.py \
+uv run ai-video captions \
   -a assets/h3-narr1-2x.mp3 \
   -t 22.7 \
   -e h3-cap-narr1
@@ -114,7 +114,7 @@ Y el HTML correspondiente:
 Para procesar todos los audios de un video en una sola corrida:
 
 ```bash
-.venv/bin/python scripts/captions.py --spec captions-spec.json
+uv run ai-video captions --spec captions-spec.json
 ```
 
 Formato de `captions-spec.json`:
@@ -200,7 +200,7 @@ Zona segura: x 60–840, y 270–1380.
 2. **Medir duraciones** con ffprobe
 3. **Calcular `data-start`** real de cada bloque de narración en el video
 4. **Crear `captions-spec.json`** con audio + start + prefix por bloque
-5. **Ejecutar batch** `scripts/captions.py --spec captions-spec.json`
+5. **Ejecutar batch** `ai-video captions --spec captions-spec.json`
 6. **Copiar el output** (HTML + GSAP) al `index.html`
 7. **Verificar visualmente** los captions tras el primer render (Whisper acierta ~95%, ocasionalmente hay que corregir un timing)
 
@@ -216,7 +216,7 @@ Zona segura: x 60–840, y 270–1380.
 
 ## Post-procesar el output de Whisper — IMPORTANTE
 
-El script `captions.py` produce un patrón:
+El script `ai-video captions` produce un patrón:
 ```js
 tl.set("#cap-X", { opacity: 1, innerHTML: "FRASE 1" }, 1.0);
 tl.set("#cap-X", { opacity: 0 }, 2.0);   // <-- ANTI-PATRÓN
@@ -291,7 +291,7 @@ tl.set("#cap-X", { opacity: 1, innerHTML: "FRASE 3" }, 4.0);
 tl.set("#cap-X", { opacity: 0 }, 5.5);  // SOLO el último opacity 0 — cierre del audio
 ```
 
-Script Python para procesar el output de `captions.py`:
+Script Python para procesar el output de `ai-video captions`:
 
 ```python
 import re
@@ -457,7 +457,7 @@ Para frases como "NO CONFÍES EN ÉL", "ESTÁS SOLO", "NO HAY VUELTA ATRÁS". Un
 
 **Regla dura**: ningún par de cues de caption que se solapen en TIEMPO puede compartir banda Y. Esto incluye **el cross-layer narrador-L3 + diálogo-L1** (no solo dos narraciones, ni solo dos personajes). El burn DEBE de-conflictar en build-time: si dos cues solapados caen en el mismo Y → offset automático del cue más tardío hacia arriba (≥6% = ≥1 alto de línea de separación). Si 2 personajes hablan concurrentes → Y distintos con ≥6% de separación (o secuenciar).
 
-**Por qué importa**: el bug CAPTION-OVERLAP (invernadero V6) usaba `base_pct=0.62` para TODOS los speakers → narrador y diálogo concurrentes se sobreponían en Y62. El check "no same-Y overlap" existía en el audit (sidecar JSON) pero NO se enforzaba en el burn ni cubría el cross-layer narrador+diálogo. Fix codificado en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + portado al template `build_clip_atomic.py`.
+**Por qué importa**: el bug CAPTION-OVERLAP (invernadero V6) usaba `base_pct=0.62` para TODOS los speakers → narrador y diálogo concurrentes se sobreponían en Y62. El check "no same-Y overlap" existía en el audit (sidecar JSON) pero NO se enforzaba en el burn ni cubría el cross-layer narrador+diálogo. Fix codificado en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + portado al template `ai-video build-clip-atomic`.
 
 ### Por qué drop shadow > thick stroke
 

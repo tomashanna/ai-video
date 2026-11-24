@@ -5,7 +5,7 @@
 > **Última actualización:** 2026-05-13 PM
 > **Versión:** v1.0 (post-restructure post-Maikol-incident)
 
-> ⤴ **MECÁNICA AGNÓSTICA AHORA EN CAPA A.5 (`choice-format-core/`).** La mecánica genérica de la familia choice (esqueleto temporal, invariante, decisión→consecuencia, framing acción-condicional, counterfactual, cliffhanger/CTA, patterns abstractos apariencia×verdad, rotación, decision-UI pacing) se extrajo a `../choice-format-core/CHOICE-MECHANIC.md` (creativa) + `../choice-format-core/ROTATION-RULES.md` (rotación) + `../choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica choice-UI), de donde la heredan TANTO horror-choice COMO sport-choice. **Este doc queda como la APLICACIÓN de esa mecánica a los 8 virales horror + TODO el contenido horror-específico** (body horror, monstruos, malo/bueno aparente, archetypes P1-P10, "Paz perdida", settings de terror, SFX de horror). Donde una sección de abajo tiene un puntero `⤴`, la versión agnóstica canónica vive en core y acá queda solo el sabor horror. **Ningún contenido ni anchor se borró** — los validators (`audit-spec-structure-vs-canonical.py`) + AUDITOR-PROTOCOL citan secciones de este doc y siguen resolviendo.
+> ⤴ **MECÁNICA AGNÓSTICA AHORA EN CAPA A.5 (`choice-format-core/`).** La mecánica genérica de la familia choice (esqueleto temporal, invariante, decisión→consecuencia, framing acción-condicional, counterfactual, cliffhanger/CTA, patterns abstractos apariencia×verdad, rotación, decision-UI pacing) se extrajo a `../choice-format-core/CHOICE-MECHANIC.md` (creativa) + `../choice-format-core/ROTATION-RULES.md` (rotación) + `../choice-format-core/INGENIERO-CHOICE-CORE.md` (técnica choice-UI), de donde la heredan TANTO horror-choice COMO sport-choice. **Este doc queda como la APLICACIÓN de esa mecánica a los 8 virales horror + TODO el contenido horror-específico** (body horror, monstruos, malo/bueno aparente, archetypes P1-P10, "Paz perdida", settings de terror, SFX de horror). Donde una sección de abajo tiene un puntero `⤴`, la versión agnóstica canónica vive en core y acá queda solo el sabor horror. **Ningún contenido ni anchor se borró** — los validators (`ai-video audit-spec-structure-vs-canonical`) + AUDITOR-PROTOCOL citan secciones de este doc y siguen resolviendo.
 
 ---
 
@@ -80,13 +80,13 @@ Cuando una regla acá tiene compliance N/8 explícito, podés ver EJEMPLOS CONCR
 
 Validado en 8/8: ningún video rompe la estructura. Toda la variación está en los slots.
 
-> 🏛️ **Autoridad ESTRUCTURAL + invariante**: el esqueleto canónico (hook→played-path→counterfactual→cliffhanger) y el INVARIANTE "el bueno-aparente NUNCA decide con el viewer en el recorrido jugado" son check auditable en **§ 2** (validador: `audit-spec-structure-vs-canonical.py`). Los 3 roles lo usan: arquitecto diseña contra esto · ingeniero ejecuta los specs de UI/efecto/sonido · auditor compara el guion beat-por-beat (eje del SPEC-AUDIT, § 2.4).
+> 🏛️ **Autoridad ESTRUCTURAL + invariante**: el esqueleto canónico (hook→played-path→counterfactual→cliffhanger) y el INVARIANTE "el bueno-aparente NUNCA decide con el viewer en el recorrido jugado" son check auditable en **§ 2** (validador: `ai-video audit-spec-structure-vs-canonical`). Los 3 roles lo usan: arquitecto diseña contra esto · ingeniero ejecuta los specs de UI/efecto/sonido · auditor compara el guion beat-por-beat (eje del SPEC-AUDIT, § 2.4).
 
 ---
 
 ## 2. ESTRUCTURA TEMPORAL EMPÍRICA
 
-> ⤴ **El esqueleto agnóstico + el INVARIANTE + recorridos-secuenciales genéricos viven ahora en `../choice-format-core/CHOICE-MECHANIC.md § 2`.** Acá queda la versión HORROR-aplicada (el esqueleto con malo/bueno aparente + body horror + "Paz perdida"). ⛔ **Los anchors § 2.1 / 2.2 / 2.3 / 2.4 de ESTE doc se conservan textualmente** porque los citan los validators (`audit-spec-structure-vs-canonical.py`) + AUDITOR-PROTOCOL línea 742 ("PAUTA-MASTER § 2"). No se borró nada de § 2; solo se agregó este puntero.
+> ⤴ **El esqueleto agnóstico + el INVARIANTE + recorridos-secuenciales genéricos viven ahora en `../choice-format-core/CHOICE-MECHANIC.md § 2`.** Acá queda la versión HORROR-aplicada (el esqueleto con malo/bueno aparente + body horror + "Paz perdida"). ⛔ **Los anchors § 2.1 / 2.2 / 2.3 / 2.4 de ESTE doc se conservan textualmente** porque los citan los validators (`ai-video audit-spec-structure-vs-canonical`) + AUDITOR-PROTOCOL línea 742 ("PAUTA-MASTER § 2"). No se borró nada de § 2; solo se agregó este puntero.
 
 ### Duración total (range real, no fijo)
 
@@ -136,7 +136,7 @@ El esqueleto + el invariante son fijos. Varía (decisión creativa del arquitect
 
 ### 2.4 ⭐ SPEC-AUDIT — las 8 perspectivas que el auditor mira en CADA guion
 
-El SPEC-AUDIT compara el guion **beat-por-beat contra este esqueleto** + chequea: (1) **Estructura** § 2.1 (🔴 si falta un bloque) · (2) **INVARIANTE § 2.2** (🔴 si el bueno-aparente está en shots de decisión/consecuencia del played path) · (3) **Recorridos secuenciales** (🔴 si se mezclan) · (4) **Pattern + rotación** (HR#14, ∈ canónicos + ≠ último video) · (5) **Name labels § 2.5** · (6) **Efecto glitch** declarado en cambios de historia (`INGENIERO-PAUTA § 9`) · (7) **Sonido** — ownership 3-roles: el **ARQUITECTO** hace un **SFX-pass per shot en el SPEC** (enumera TODO lo audible del frame: cada objeto/acción/ambiente que se ve, suena) + death-screams en cada consequence-A fatal; el **INGENIERO** tiene **licencia diegética** ("lo que se ve, suena" — puede sumar SFX implicados por el frame aunque no estén listados, duck bajo voz) e implementa los niveles **per-clase normalizados a dBFS ABSOLUTO** (no un multiplicador plano sobre la fuente cruda); la **audibilidad se VERIFICA EN el master** (existencia ≠ audible — un SFX "wired" puede quedar inaudible bajo el bed; gate `audit-sfx-audibility.py`). Mix ducked + niveles → `INGENIERO-PAUTA § 10`. Sonido = factor #1 de inmersión (TASTE-LOG #1/#2) · (8) **+ checks pre-existentes** (WPM/narración-fits HR#28/29, framing acción-condicional, visual-matches-narración, character consistency, references_canonical ≥5/8). Enforcement: `audit-spec-structure-vs-canonical.py` (§ 2.1/2.2/2.3) + `audit-spec-narrative-coherence.py` + validators existentes. Arquitecto los corre pre-emit (HR#27); auditor los re-corre (anti-pattern #17).
+El SPEC-AUDIT compara el guion **beat-por-beat contra este esqueleto** + chequea: (1) **Estructura** § 2.1 (🔴 si falta un bloque) · (2) **INVARIANTE § 2.2** (🔴 si el bueno-aparente está en shots de decisión/consecuencia del played path) · (3) **Recorridos secuenciales** (🔴 si se mezclan) · (4) **Pattern + rotación** (HR#14, ∈ canónicos + ≠ último video) · (5) **Name labels § 2.5** · (6) **Efecto glitch** declarado en cambios de historia (`INGENIERO-PAUTA § 9`) · (7) **Sonido** — ownership 3-roles: el **ARQUITECTO** hace un **SFX-pass per shot en el SPEC** (enumera TODO lo audible del frame: cada objeto/acción/ambiente que se ve, suena) + death-screams en cada consequence-A fatal; el **INGENIERO** tiene **licencia diegética** ("lo que se ve, suena" — puede sumar SFX implicados por el frame aunque no estén listados, duck bajo voz) e implementa los niveles **per-clase normalizados a dBFS ABSOLUTO** (no un multiplicador plano sobre la fuente cruda); la **audibilidad se VERIFICA EN el master** (existencia ≠ audible — un SFX "wired" puede quedar inaudible bajo el bed; gate `ai-video audit-sfx-audibility`). Mix ducked + niveles → `INGENIERO-PAUTA § 10`. Sonido = factor #1 de inmersión (TASTE-LOG #1/#2) · (8) **+ checks pre-existentes** (WPM/narración-fits HR#28/29, framing acción-condicional, visual-matches-narración, character consistency, references_canonical ≥5/8). Enforcement: `ai-video audit-spec-structure-vs-canonical` (§ 2.1/2.2/2.3) + `ai-video audit-spec-narrative-coherence` + validators existentes. Arquitecto los corre pre-emit (HR#27); auditor los re-corre (anti-pattern #17).
 
 ### 2.5 UI canon — name labels
 
@@ -191,9 +191,9 @@ Nombres **arriba de cada personaje** (label sobre cada char del dyad), **letra G
 ### Consequence framing — marcar la rama (corregido 2026-05-29 vs primary source; pattern_class 3/5)
 > Reframe: esto NO es "Si elegiste X literal" (paráfrasis sintética) sino un PRINCIPIO con variabilidad.
 - 🟦 **PRINCIPIO (mandatorio):** toda consequence narration en Slot E marca a qué rama pertenece (sin esto el viewer se pierde). Caption "SI ELEGISTE B:" sola es marcador-puente válido, no el único compliance.
-- 🟩 **VARIABILIDAD (libre — todas canónicas, primary source `referent-analysis/horror-choice/ref-XX/transcription.json`):** acción condicional *"Si la enciendes / Si esperas / Si te niegas"* (6/8 @referent-a, DOMINANTE) · choice-reference *"Si decides… / Si escogiste…"* (2/8 @referent-b) · branch por nombre *"Si elegiste a Víctor…"* (ref-09).
+- 🟩 **VARIABILIDAD (libre — todas canónicas, primary source `data/referent-analysis/horror-choice/ref-XX/transcription.json`):** acción condicional *"Si la enciendes / Si esperas / Si te niegas"* (6/8 @referent-a, DOMINANTE) · choice-reference *"Si decides… / Si escogiste…"* (2/8 @referent-b) · branch por nombre *"Si elegiste a Víctor…"* (ref-09).
 - 🟥 **ANTI-PATTERN:** bare label robótico *"Si elegiste A" / "Si elegiste B"* (0/8 — nunca en primary source; suena a formulario).
-- ✓ Auto-audit D19 (corregido) valida el principio + flaggea el anti-pattern; **NO fuerza fraseo**. Validator `audit-spec-narrative-coherence.py`.
+- ✓ Auto-audit D19 (corregido) valida el principio + flaggea el anti-pattern; **NO fuerza fraseo**. Validator `ai-video audit-spec-narrative-coherence`.
 - ✓ Sin marcar la rama, el horror-choice colapsa a horror genérico (caso cabina-14 V1 render 2026-05-16).
 - ✅ **EXTRAÍDO 2026-06-01 → `../choice-format-core/CHOICE-MECHANIC.md`** (al crear sport-choice como 2do template del género choice). El principio agnóstico vive en core; acá queda la aplicación horror + el ⤴ puntero.
 
@@ -790,9 +790,9 @@ validated_against_canonical_refs:
   - "canonical-scenes/INDEX.md decision setup grid 3.3 (8 refs documented patterns)"
   - "ref-13-miro-bryan-electrica.md Beat 4 deep-dive timing"
   - "ref-03 explicit 'filter cinematic/gritty con grain' notation"
-  - "engineer Track B Phase 1 measurement: referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json (8/8 refs measured)"
+  - "engineer Track B Phase 1 measurement: data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json (8/8 refs measured)"
 validation_methodology: "qualitative pattern extraction (Phase 0) + empirical video measurement Phase 1 (ffmpeg + Whisper + librosa + frame analysis 22 decision windows across 8 refs)"
-measurement_script: "measure-canonical-decision-ui-pacing.py — engineer Track B Phase 1 COMPLETE 2026-05-20"
+measurement_script: "ai-video measure-canonical-decision-ui-pacing — engineer Track B Phase 1 COMPLETE 2026-05-20"
 validated_at: 2026-05-20
 ```
 
@@ -846,10 +846,10 @@ decision_ui_canonical_defaults_v3_2026_05_20:  # Track A v3 R1 RESOLUTION
       architect_track_a_v2: 0.7  # compromise — REFUTED
     user_quote: "Me gusta que los segundos en vd sean segundos, 1, 2, 3"
     verdict: "Rule D PRECEDENCE wins. Engineer measurement n=1 insufficient confidence. Architect v2 compromise refuted. countdown_digit_duration_s = 1.0s canonical until empirical n≥5 collected."
-    revisit_trigger: "Phase 1 forward — measure-canonical-decision-ui-pacing.py n≥5 sample increase. If empirical median significantly differs from 1.0s, escalate to user perceptual re-confirm."
+    revisit_trigger: "Phase 1 forward — ai-video measure-canonical-decision-ui-pacing n≥5 sample increase. If empirical median significantly differs from 1.0s, escalate to user perceptual re-confirm."
 ```
 
-Empirical source: `referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json` (engineer Track B Phase 1 8/8 refs measured 2026-05-20).
+Empirical source: `data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json` (engineer Track B Phase 1 8/8 refs measured 2026-05-20).
 
 
 ---
@@ -889,7 +889,7 @@ Elementos audio+visual acoplados (countdown+ticks, hook transition+whoosh, outro
 - Outro cards with tone signature
 - Music section transitions
 
-> ⛔ **El audio bundled del AVU NO se pierde al componer (V7+, fix bug V6, req Tomás 2026-06-01)**. El punto del AVU es visual+audio = 1 unidad (§ 19.1); compositear el AVU **video-only** rompe el principio. **Bug V6**: el countdown (`countdown-3-2-1-film-leader-with-ticks.mp4`, que SÍ trae ticks) se overlayó video-only → **countdown MUDO**. Regla: el countdown (hook + las 3 decisiones) DEBE tener **tick audible** sincronizado al 3-2-1, sobre el bed (urgencia de decisión) — muxeando el audio del AVU O colocando `countdown_tick` por beat. Vale para todo AVU con audio bundled (countdown/flash/outro). Impl + forward check `audit-audio.py`: `INGENIERO-PAUTA § 7.10.5 + § 9`.
+> ⛔ **El audio bundled del AVU NO se pierde al componer (V7+, fix bug V6, req Tomás 2026-06-01)**. El punto del AVU es visual+audio = 1 unidad (§ 19.1); compositear el AVU **video-only** rompe el principio. **Bug V6**: el countdown (`countdown-3-2-1-film-leader-with-ticks.mp4`, que SÍ trae ticks) se overlayó video-only → **countdown MUDO**. Regla: el countdown (hook + las 3 decisiones) DEBE tener **tick audible** sincronizado al 3-2-1, sobre el bed (urgencia de decisión) — muxeando el audio del AVU O colocando `countdown_tick` por beat. Vale para todo AVU con audio bundled (countdown/flash/outro). Impl + forward check `ai-video audit-audio`: `INGENIERO-PAUTA § 7.10.5 + § 9`.
 
 ### 19.4 When AVU NOT applicable (use sync_contract instead)
 
@@ -951,7 +951,7 @@ validated_against_canonical_refs:
 validation_methodology: "direct frame extraction + visual style identification + matadero empirical failure analysis"
 validated_at: 2026-05-19
 status_flip_path:
-  - "Phase 1 forward: extract-canonical-max-detail.py + run on 8 source videos → cross-canonical bands"
+  - "Phase 1 forward: ai-video extract-canonical-max-detail + run on 8 source videos → cross-canonical bands"
   - "Plus: AVU library 4 templates built + tested on iter 5 matadero pilot"
 ```
 
@@ -1365,7 +1365,7 @@ phase_2_forward:
 **Updated SPEC schema v10 field**:
 ```yaml
 narrative_structure:
-  counterfactual_placement: "before_choice_resolves" | "twin_ending_good_alternate" | 
+  counterfactual_placement: "before_choice_resolves" | "twin_ending_good_alternate" |
                            "good_path_at_end" | "parallel_alternation" |
                            "after_both_paths_retrospective_DEPRECATED"
   emotional_framing: "stakes_lift" | "relief_contrast" | "retrospective_closure"
@@ -1437,7 +1437,7 @@ Gemini on Ref-2 (the 9.0/10 winner): *"This is the strongest dimension; the audi
 - See INGENIERO § 8.11 NEW (per-section music layers RULE — added this sprint) for ffmpeg recipe + mix volumes table.
 
 **Auditor (verification per CP)**:
-- **CP4 (audio)**: open render in DAW or spectrogram. Verify 3 distinct frequency bands present (40-200 / 200-2000 / 2000+) at minimum 60% of timeline. Run `audit-audio.py` (extends Phase 2) — flag if <3 layers detected.
+- **CP4 (audio)**: open render in DAW or spectrogram. Verify 3 distinct frequency bands present (40-200 / 200-2000 / 2000+) at minimum 60% of timeline. Run `ai-video audit-audio` (extends Phase 2) — flag if <3 layers detected.
 - **CP5 (final)**: Gemini Vision audio dimension query — must mention "layered" or "3 layers" explicitly OR risk repeat of cinema "audio does 60% of work" warning.
 
 ### 25.5 Caso disparador
@@ -1464,7 +1464,6 @@ validation_methodology: "Gemini Vision audio dimension comparative + layer count
 validated_at: 2026-05-21
 phase_2_forward:
   - "Run Gemini Vision audio dimension on remaining 7 F1 refs to confirm 3-layer canonical"
-  - "Build audit-audio.py extension: spectrogram-based layer count detection (3 freq bands threshold)"
-  - "Codify drone/ambient/accent ElevenLabs SFX prompts in library/sfx-catalog.json per genre"
+  - "Build ai-video audit-audio extension: spectrogram-based layer count detection (3 freq bands threshold)"
+  - "Codify drone/ambient/accent ElevenLabs SFX prompts in assets/library/sfx-catalog.json per genre"
 ```
-

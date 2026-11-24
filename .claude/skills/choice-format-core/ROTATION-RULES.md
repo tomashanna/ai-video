@@ -2,13 +2,13 @@
 
 > **AUTORIDAD agnóstica de la rotación cross-video** de la familia choice. Define LA REGLA de rotación común a todos los géneros choice. **Heredan de este doc:** `horror-choice-format/` y `sport-choice-format/`.
 >
-> ⛔ **Este doc define solo LA REGLA.** El **registro** de videos producidos (el video-log) vive en cada género — `horror-choice-format/video-log.md` y `sport-choice-format/video-log.md` son autoritativos para el ESTADO de rotación de su género (CLAUDE.md HR#14). Core no hospeda ni mueve esos logs.
+> ⛔ **Este doc define solo LA REGLA.** El **registro** de videos producidos (el video-log) vive en cada género — `horror-choice-format/video-log.md` y `sport-choice-format/video-log.md` son autoritativos para el ESTADO de rotación de su género (docs/OPERATING-MANUAL.md HR#14). Core no hospeda ni mueve esos logs.
 >
 > **Última actualización:** 2026-06-01 (creación — extracción agnóstica).
 
 ---
 
-## §1 — LA REGLA (CLAUDE.md HR#14, agnóstica)
+## §1 — LA REGLA (docs/OPERATING-MANUAL.md HR#14, agnóstica)
 
 🟦 **No repetir el mismo PATTERN narrativo en 2 videos consecutivos.** El pattern (la configuración "apariencia × verdad" — ver `CHOICE-MECHANIC.md §7`) debe rotar entre videos.
 
@@ -56,4 +56,4 @@
 
 - **La configuración "apariencia × verdad" que rota** → `CHOICE-MECHANIC.md §7` (patterns abstractos).
 - **El catálogo concreto de patterns + el video-log** → el skill de género (Capa B).
-- **La regla canónica HR#14** → CLAUDE.md § Hard rules globales.
+- **La regla canónica HR#14** → docs/OPERATING-MANUAL.md § Hard rules globales.

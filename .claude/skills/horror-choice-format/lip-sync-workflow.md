@@ -12,7 +12,7 @@
 1. CP3 anchors  →  V5 character anchors (Gemini Nano Banana STRICT, still images)
 2. CP4 Hailuo Std i2v   →  shot_NN.mp4 with character + motion (FACE VISIBLE, BOCA NEUTRA/CERRADA)
 3. CP4.5 Sync.so post-process  →  shot_NN_lipsync.mp4 (mouth region replaced, body motion preserved)
-4. CP4.6 atomic mux  →  shot_NN_atomic.mp4 (audio + captions baked) — via build_clip_atomic.py
+4. CP4.6 atomic mux  →  shot_NN_atomic.mp4 (audio + captions baked) — via ai-video build-clip-atomic
 ```
 
 Aplica SOLO a shots con `lip_sync_required: true` en SPEC. Otros shots saltan el step 3.
@@ -38,7 +38,7 @@ shot_list:
 - **`true`** si: character con cara visible Y boca articulando (diálogo on-screen, narrator visible).
 - **`false`** si: POV first-person (manos visibles pero no rostro del protagonista), character face-less (cleaver helmet, mask), narrator off-screen voiceover, escena ambiente sin character speech.
 
-D17 architect auto-audit valida que **todos** los shots tengan el field declarado (no missing). El validador `audit-spec-lip-sync-marks.py` (BUILD 8) chequea consistencia: si shot tiene `dialog_text` o `speaker: character_*` Y `lip_sync_required: false` → FAIL inconsistencia.
+D17 architect auto-audit valida que **todos** los shots tengan el field declarado (no missing). El validador `ai-video audit-spec-lip-sync-marks` (BUILD 8) chequea consistencia: si shot tiene `dialog_text` o `speaker: character_*` Y `lip_sync_required: false` → FAIL inconsistencia.
 
 ---
 
@@ -98,9 +98,9 @@ Forward consideración: Hedra (deferred V6+) para shots talking-head puros donde
 
 ---
 
-## Validación pre-CP4 (BUILD 8 audit-spec-lip-sync-marks.py)
+## Validación pre-CP4 (BUILD 8 ai-video audit-spec-lip-sync-marks)
 
-`audit-spec-lip-sync-marks.py` valida:
+`ai-video audit-spec-lip-sync-marks` valida:
 1. **Cobertura**: TODOS los shots tienen `lip_sync_required` declarado (no missing).
 2. **Consistencia**: si shot tiene `dialog_text` o `narration_in_this_shot.speaker` matching `character_*`, entonces `lip_sync_required: true`. Si `false` → FAIL inconsistencia.
 

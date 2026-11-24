@@ -18,7 +18,7 @@ description: 🏛️ ARQUITECTO de videos virales. Diseña el QUÉ (historia, pe
 
 ✅ Activar cuando:
 - User dice "necesito un concepto para un video", "qué hacemos para el próximo reel", "diseñá una historia", "creá un guion"
-- User está en directorio `creative/` (tiene su propio CLAUDE.md que apunta a vos)
+- User está en directorio `creative/` (tiene su propio docs/OPERATING-MANUAL.md que apunta a vos)
 - User dice "iteremos con el creativo", "modo arquitecto"
 
 ❌ NO activar cuando:
@@ -62,7 +62,7 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
 
 2. **`horror-choice-format/canonical-scenes/ref-XX.md`** del pattern más similar al tuyo (1-2 refs típicamente). Cada doc tiene 10-14 beats narrativos con: who's there, what they do LITERAL, narration text Whisper, UI active, animation tier, pattern observation. **Empirical reference para SPEC v6 `scene_context.who_does_what`.**
 
-3. **`referent-analysis/descriptive-analysis/ref-XX.md`** — solo si querés más detalle character design crudo (textura, palette specs, AI artifacts). Macro-level, complemento a canonical-scenes.
+3. **`data/referent-analysis/descriptive-analysis/ref-XX.md`** — solo si querés más detalle character design crudo (textura, palette specs, AI artifacts). Macro-level, complemento a canonical-scenes.
 
 **Por qué canonical-scenes vs solo PAUTA-MASTER**:
 - PAUTA-MASTER es **síntesis macro** (slots A-H, reglas N/8).
@@ -103,10 +103,10 @@ Cuando el formato es **horror-choice**, leer EN ESTE ORDEN:
 shot_list:
   - shot_id: shot_01
     tier_assignment: "pro_mandatory"  # hook
-    
+
   - shot_id: shot_05
     tier_assignment: "std_default"  # body
-    
+
   - shot_id: shot_16
     tier_assignment: "pro_override_with_reason"
     tier_override_reason: "pose-coupling polydactyly preservation per MODEL-BEHAVIOR-LOG entry 1"
@@ -165,8 +165,8 @@ Mis docs operacionales son helpers, no autoridad. Si tu instinto te dice "esto n
 
 ### 📚 Referencia adicional (no pauta, solo data)
 
-- `../../referent-analysis/MASTER-SCORING.md` — análisis de 13 referentes virales
-- `../../referent-analysis/REFERENT-ANALYSIS-13-VIDEOS-SYNTHESIS.md` — síntesis del análisis
+- `docs/methodology/SCORING-RUBRIC.md` — rúbrica de scoring (15 dimensiones) derivada del análisis de 13 referentes
+- `data/referent-analysis/horror-choice/` — mediciones numéricas sanitizadas (F1) que consumen los gates
 
 ## Tu workflow
 
@@ -399,10 +399,10 @@ Si FAIL → (a) trim narración, (b) split shot en 2 clips, (c) freeze-extend vi
 
 Antes de declarar el SPEC listo para handoff, el arquitecto DEBE **correr los 3 validators de enforcement contra su PROPIO SPEC** (no solo el self-audit D14-D27 cualitativo):
 ```bash
-cd <project>/scripts   # o .claude/skills/ai-video-production/templates/scripts
-python3 audit-spec-narrative-coherence.py --format <fmt> --spec <SPEC> --video-log <vlog> --skip-semantic
-python3 audit-spec-narration-fits-duration.py --format <fmt> --spec <SPEC>
-python3 audit-spec-lip-sync-marks.py --format <fmt> --spec <SPEC>
+cd <project>/scripts   # o src/ai_video
+uv run ai-video audit-spec-narrative-coherence --format <fmt> --spec <SPEC> --video-log <vlog> --skip-semantic
+uv run ai-video audit-spec-narration-fits-duration --format <fmt> --spec <SPEC>
+uv run ai-video audit-spec-lip-sync-marks --format <fmt> --spec <SPEC>
 ```
 - Si CUALQUIER validator devuelve **FAIL (exit 1)** → **ITERAR** (corregir el SPEC, re-correr) hasta que los 3 den 🟢 PASS o solo FLAGs aceptables. **NO entregar el SPEC con findings 🔴 known.**
 - Entregar con la línea explícita: **`self_validation: 3/3 validators green (0 FAIL)`** + lista de FLAGs aceptados con razón.

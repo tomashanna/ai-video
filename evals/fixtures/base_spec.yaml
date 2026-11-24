@@ -1,0 +1,78 @@
+# Synthetic, minimal schema-v11 creative spec used as the clean baseline for spec evals.
+# Each case in evals/cases.yaml applies a small patch to inject exactly one defect.
+schema_version: v11.2
+project:
+  project_id: eval-baseline
+  format: horror-choice
+  delivery: reel
+  pattern: P1
+  channel: "@elige_tucompanero"
+  language: Spanish neutral
+  total_duration_s_intent: 20
+video_capabilities:
+  source_clips_origin: ai_generated
+  has_ai_generated_clips: true
+  has_tts_narration: true
+  has_human_voiceover: false
+  audio_mix_target: lufs_-14
+  has_sfx_layer: false
+  has_captions_baked: true
+  has_layer_2_effects: false
+  has_layer_3_music: false
+  has_layer_4_ui: false
+  format_type: interactive_choice
+  duration_intent_s: 20
+  target_fps: 30
+  output_resolution: 1080x1920
+narrator_voice: VOICE_NARRATOR
+characters:
+  - id: char_a
+    name: Bruno
+  - id: char_b
+    name: Mateo
+shot_list:
+  - shot_id: shot_01
+    section_id: hook
+    duration_intent_s: 6.0
+    model_tier_override: hailuo_pro
+    motion_type: walking_forward
+    narration_in_this_shot: "Elige a tu compañero."
+    ui_active: []
+  - shot_id: shot_02
+    section_id: setup_pre_decision
+    duration_intent_s: 7.0
+    model_tier_override: hailuo_pro
+    motion_type: static_with_micro_bob
+    narration_in_this_shot: "Bruno sonríe. Mateo no dice nada."
+    ui_active: []
+  - shot_id: shot_03
+    section_id: decision_1
+    duration_intent_s: 7.0
+    model_tier_override: hailuo_pro
+    motion_type: static_with_micro_bob
+    narration_in_this_shot: "¿A quién sigues?"
+    ui_active: []
+narration_script:
+  - segment_id: n_hook
+    speaker: narrator
+    voice_id: VOICE_NARRATOR
+    text_canonical: "Elige a tu compañero."
+    timestamp_intent_s: [0.5, 2.5]
+    shot_id_anchor: shot_01
+    lip_sync_required: false
+  - segment_id: n_setup
+    speaker: narrator
+    voice_id: VOICE_NARRATOR
+    text_canonical: "Bruno sonríe. Mateo no dice nada."
+    timestamp_intent_s: [7.0, 9.5]
+    shot_id_anchor: shot_02
+    lip_sync_required: false
+  - segment_id: n_decision
+    speaker: narrator
+    voice_id: VOICE_NARRATOR
+    text_canonical: "¿A quién sigues?"
+    timestamp_intent_s: [14.0, 15.5]
+    shot_id_anchor: shot_03
+    lip_sync_required: false
+editing_targets:
+  target_cuts_per_min: [14, 22]

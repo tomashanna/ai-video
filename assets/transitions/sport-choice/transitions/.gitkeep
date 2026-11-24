@@ -1,0 +1,2 @@
+# Intentionally empty: the sport-choice layer has no format-specific recipes yet.
+# Keeps the layer declared in catalog.json format_resolution resolvable.

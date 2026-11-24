@@ -51,11 +51,11 @@ Font family:
   - Narration class: canonical narration font (drop-shadow style, e.g., "Helvetica-Bold")
   - Warning class (red): same font, color override
   - Character name labels: monospaced (e.g., "Courier-Bold")
-  
+
 Font size:
   - ≤8 words per caption: 80px
   - >8 words: 68px
-  
+
 Color:
   - Narration: white (#FFFFFF) + drop shadow black 2px offset
   - Warning (red): #FF3333 + drop shadow black 2px offset
@@ -116,7 +116,7 @@ processing:
   whisper_language: es
   drawtext_filter: "<full ffmpeg drawtext command for reproducibility>"
 timestamp: 2026-05-21T22:00:00Z
-script_version: build_clip_atomic.py v1.1 (caption-burn extension)
+script_version: ai-video build-clip-atomic v1.1 (caption-burn extension)
 ```
 
 ---
@@ -319,7 +319,7 @@ def jaccard_similarity(text_a: str, text_b: str) -> float:
     return len(words_a & words_b) / len(words_a | words_b)
 ```
 
-Both scripts use this same function (place in `scripts/lib/similarity.py` shared).
+Both scripts use this same function (place in `src/ai_video/core/similarity.py` shared).
 
 ---
 

@@ -56,7 +56,7 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP3:
 |---|------|----------|
 | A1 | Multi-anchor concurrent refs capability | MODEL-BENCHMARK L1232 (Pro tier 5 personajes / 14 imagenes ref) |
 | A2 | Cost estimate vs Pro 2K pricing | $0.134/img × N + iter buffer |
-| A3 | Tooling reuse (image.py + validate-cocinera + build-contact-sheet) | Validado CP1 |
+| A3 | Tooling reuse (ai-video image + validate-cocinera + build-contact-sheet) | Validado CP1 |
 | A4 | SPEC trigger gates consistent threshold | Validation scripts thresholds match SPEC line citations |
 | A5 | NO UI/captions in CP3 base images | CP3 base / CP4 animation / CP5 composition separation |
 | A6 | Contact-sheet review format | 4×N grid suficiente for visual cross-shot review |
@@ -89,7 +89,7 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP3:
 
 Pattern: cuando hay shot con highest risk (body horror climax shot_07), engineer test ONE primero ($0.13) → validate Pro generation pipeline → cascade Batch 3a full o escalate.
 
-**Caso matadero shot_07**: 
+**Caso matadero shot_07**:
 - "carcasa abre la boca grande" — risk: Pro renders literal surgical incision o normal carcass o safety block
 - Engineer plan: test shot_07 alone → if PASS, cascade Batch 3a; if FAIL, escalate to Midjourney v7 manual
 - Cost gate: $0.13 vs $4 cascade
@@ -112,7 +112,7 @@ Pattern: hard rule #5 "variantes -a/-b/-c en escenas >4s" se interpreta **spirit
 
 Pattern: SPEC declara trigger gate (e.g. `path_b_deferral.escalation_trigger`) que bloquea downstream shots. Engineer puede inadvertidamente parallel-process antes de gate check.
 
-**Caso matadero shot_20**: 
+**Caso matadero shot_20**:
 - SPEC L574: "if shot_20 generated <28 teeth, ESCALATE before proceeding"
 - Engineer parallel-generated shot_21 + shot_22 ANTES de gate check shot_20
 - $0.24 sunk (irreversible)

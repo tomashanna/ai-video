@@ -10,8 +10,8 @@
 
 | # | Fricción | Costo en la sesión | Resolución | Doc/script |
 |---|----------|-------------------|------------|------------|
-| 1 | Render fail por CPU contention con otro agente | ~45 min (3 EPIPE consecutivos) | Lockfile global de renders | `scripts/render-lock.py` + `PIPELINE.md` § 11 |
-| 2 | Imagen <1s no detectada automáticamente | 1 re-render (~12 min) | Lint extendido con check de visibilidad efectiva | `scripts/audit-narrative.py` + `AUDIT.md` |
+| 1 | Render fail por CPU contention con otro agente | ~45 min (3 EPIPE consecutivos) | Lockfile global de renders | `ai-video render-lock` + `PIPELINE.md` § 11 |
+| 2 | Imagen <1s no detectada automáticamente | 1 re-render (~12 min) | Lint extendido con check de visibilidad efectiva | `ai-video audit-narrative` + `AUDIT.md` |
 | 3 | data-duration < GSAP opacity:0 timestamp | 1 re-render (~12 min) | Check `data_duration_too_short` en audit | mismo script |
 | 4 | z-index black-overlay > caption-wrap | 1 re-render (~12 min) | Check `z_index_covers_captions` en audit | mismo script |
 | 5 | Gemini QA permisivo con flash <1s | Detectado solo por humano | Gate humano post-Gemini de 7 checks | `HUMAN-CHECKLIST.md` |
@@ -24,7 +24,7 @@
 
 ## Las 3 mejoras top de mayor impacto
 
-### 🥇 1. `audit-narrative.py` — pre-render gate automatizado
+### 🥇 1. `ai-video audit-narrative` — pre-render gate automatizado
 
 **Sin esto:** cada bug estructural (visibilidad <1s, z-index conflict, data-duration mismatch) cuesta un re-render completo (~12 min) más diagnóstico (~5 min) más el escribir el fix (~3 min) ≈ 20 min por bug.
 
@@ -32,7 +32,7 @@
 
 **ROI:** ~15-20 min por bug atrapado. En esta sesión hubiera atrapado 3 bugs = ~45 min ahorrados.
 
-### 🥈 2. `render-lock.py` — coordinación entre agentes
+### 🥈 2. `ai-video render-lock` — coordinación entre agentes
 
 **Sin esto:** cuando dos Claudes corren simultáneamente con tareas pesadas, FFmpeg pierde CPU y muere con SIGTERM. El mensaje de error NO sugiere "wait for the other agent" — sugiere bugs imaginarios.
 
@@ -53,7 +53,7 @@
 ## Filosofía de los gates
 
 ```
-Gemini QA (≥9.7)  →  audit-narrative.py (0 errors)  →  audit-frames.py (≤2 issues)  →  qa-gate.py  →  HUMAN CHECKLIST  →  PUBLICAR
+Gemini QA (≥9.7)  →  ai-video audit-narrative (0 errors)  →  ai-video audit-frames (≤2 issues)  →  ai-video qa-gate  →  HUMAN CHECKLIST  →  PUBLICAR
    semántico         estructural                          subjetivo
    automático        automático                           humano (~2 min)
 ```

@@ -34,21 +34,21 @@
 |-----------------------------|----------------|-------------------------------|
 | **Speaking rate / pace WPM** | ~165 WPM target (bandas F1 medidas) | `ai-video-production/` (NARRATION) + `MODEL-CAPABILITIES-MATRIX.md` (pace per modelo TTS) |
 | **Narration coverage** | ≥80% del timeline | `ai-video-production/` (audit-audio / coverage) |
-| **LUFS integrated** | **-14 ±0.5** (Instagram) | `ai-video-production/AUDIO-MASTERING.md` + CLAUDE.md HR#1/#9 |
-| **Mix de volúmenes** | narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65 | `ai-video-production/SFX-PIPELINE.md` + CLAUDE.md HR#9 |
+| **LUFS integrated** | **-14 ±0.5** (Instagram) | `ai-video-production/AUDIO-MASTERING.md` + docs/OPERATING-MANUAL.md HR#1/#9 |
+| **Mix de volúmenes** | narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65 | `ai-video-production/SFX-PIPELINE.md` + docs/OPERATING-MANUAL.md HR#9 |
 | **Ducking / sidechain** | -3 a -6 dB sobre música+ambient cuando el narrador habla | `ai-video-production/SFX-PIPELINE.md` + SPEC `layer_3.sidechain_target_db` |
 | **Música 3 capas** (drone + ambient + accent) | bed continuo sin gaps; accent event-driven | `ai-video-production/SFX-PIPELINE.md` + MUSIC layers |
 | **Cuts/min** | banda de-clustered 1-9 (sweet spot 2.75-5) · Gemini-perceived 14-22 | `ai-video-production/PACING-MARKERS.md` (+ § cuts del INGENIERO de género para la banda choice) |
-| **Captions Whisper word-timed** | progresivos, ≤2 líneas, chunkear TODA la narración (NUNCA bloque estático que se trunca) | `ai-video-production/CAPTIONS.md` + CLAUDE.md HR#3/#25/#30 |
-| **HYBRID per-clip atomic assembly** | audio+visual+captions burned per clip + Layer 3 narrador continuo | `ai-video-production/PIPELINE.md § 13` + `build_clip_atomic.py` + CLAUDE.md HR#23/#25 |
-| **MODEL-CAPABILITIES** (clip_max, constraints i2v/TTS/Gemini) | leer la MATRIX ANTES de producir | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` + CLAUDE.md HR#28/#29 |
-| **Motion primitives** (Ken Burns / parallax / flicker / glow) | animation AI preferida (Ken Burns fallback ≤20%) | `ai-video-production/MOTION-LAYER.md` + CLAUDE.md HR#6/#7 |
+| **Captions Whisper word-timed** | progresivos, ≤2 líneas, chunkear TODA la narración (NUNCA bloque estático que se trunca) | `ai-video-production/CAPTIONS.md` + docs/OPERATING-MANUAL.md HR#3/#25/#30 |
+| **HYBRID per-clip atomic assembly** | audio+visual+captions burned per clip + Layer 3 narrador continuo | `ai-video-production/PIPELINE.md § 13` + `ai-video build-clip-atomic` + docs/OPERATING-MANUAL.md HR#23/#25 |
+| **MODEL-CAPABILITIES** (clip_max, constraints i2v/TTS/Gemini) | leer la MATRIX ANTES de producir | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` + docs/OPERATING-MANUAL.md HR#28/#29 |
+| **Motion primitives** (Ken Burns / parallax / flicker / glow) | animation AI preferida (Ken Burns fallback ≤20%) | `ai-video-production/MOTION-LAYER.md` + docs/OPERATING-MANUAL.md HR#6/#7 |
 | **Audio mastering** | normalize -14 LUFS + limiter | `ai-video-production/AUDIO-MASTERING.md` + `scripts/master-audio.sh` |
-| **Regla 30s** (primeros 30s = animation AI) | obligatoria short-form | `ai-video-production/` (animation_30s_rule) + CLAUDE.md HR#6 |
-| **Atempo 2x sobre TTS lento** | sí | `ai-video-production/PIPELINE.md § 1` + CLAUDE.md HR#10 |
+| **Regla 30s** (primeros 30s = animation AI) | obligatoria short-form | `ai-video-production/` (animation_30s_rule) + docs/OPERATING-MANUAL.md HR#6 |
+| **Atempo 2x sobre TTS lento** | sí | `ai-video-production/PIPELINE.md § 1` + docs/OPERATING-MANUAL.md HR#10 |
 | **Cost cap** | ≤ 25% sobre el último video exitoso | SYSTEM-LEARNINGS-V3-V4 (vía género) |
-| **TDD** (`test_*.py` companion por script nuevo) | obligatorio | `ai-video-production/BOOTSTRAP.md` + CLAUDE.md HR#26 |
-| **8 gates pre-render** | Gate 0 spec-completeness + lint + narrative + render-lock + frames + audio + continuity + qa-gate | CLAUDE.md § Pre-render gate |
+| **TDD** (`test_*.py` companion por script nuevo) | obligatorio | `ai-video-production/BOOTSTRAP.md` + docs/OPERATING-MANUAL.md HR#26 |
+| **8 gates pre-render** | Gate 0 spec-completeness + lint + narrative + render-lock + frames + audio + continuity + qa-gate | docs/OPERATING-MANUAL.md § Pre-render gate |
 
 > **Sabor de género** (densidad/tipo de SFX, voces, color grading, BPM por mood, motion con sabor de género, background creatures/atmospheric motions) → el INGENIERO-PAUTA del género. NO acá.
 
@@ -110,7 +110,7 @@
 
 ## §2 — UI SAFE ZONES (técnica choice-UI)
 
-> **Authority:** medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes (vía horror INGENIERO-PAUTA § 7). Fuente raw: `referent-analysis/F1-UI-SAFE-ZONES.json`.
+> **Authority:** medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes (vía horror INGENIERO-PAUTA § 7). Fuente raw: `data/referent-analysis/horror-choice/F1-UI-SAFE-ZONES.json`.
 
 ### 2.1 ⚠️ REGLA OPERACIONAL #1 — un UI element por banda Y a la vez
 
@@ -157,7 +157,7 @@ Cuando un UI element está visible en su banda, NO pongas otro en la misma banda
 ### 2.5 Per-speaker Y-band (CAPTION-OVERLAP fix)
 
 - **Narrador (Layer 3) = Y62.** **Diálogo de personaje (Layer 1) = Y52 + tag del nombre** ("[NOMBRE]:").
-- NUNCA 2 cues de caption que se solapen en TIEMPO al MISMO Y — **cross-layer narrador-L3 + diálogo-L1 incluido** (no solo char-vs-char). El burn de-conflicta en build-time: cue tardío solapado → offset Y ↑ con ≥6% de separación. (Impl: `deconflict_cue_ys` en `cp5b_build_atomic.py` / `build_clip_atomic.py` — Capa A.)
+- NUNCA 2 cues de caption que se solapen en TIEMPO al MISMO Y — **cross-layer narrador-L3 + diálogo-L1 incluido** (no solo char-vs-char). El burn de-conflicta en build-time: cue tardío solapado → offset Y ↑ con ≥6% de separación. (Impl: `deconflict_cue_ys` en `cp5b_build_atomic.py` / `ai-video build-clip-atomic` — Capa A.)
 
 ### 2.6 Loading bar Y52 vs Y48
 
@@ -167,7 +167,7 @@ Y48 era el baseline empírico, pero **causa overlap con countdown Y46% en decisi
 
 ## §3 — CAPTION CHUNKING WORD-TIMED (técnica choice-UI)
 
-> Captions vía Whisper, NUNCA hand-timed (autoridad universal: `ai-video-production/CAPTIONS.md` + CLAUDE.md HR#3). Acá: la regla choice-específica de **cobertura temporal**.
+> Captions vía Whisper, NUNCA hand-timed (autoridad universal: `ai-video-production/CAPTIONS.md` + docs/OPERATING-MANUAL.md HR#3). Acá: la regla choice-específica de **cobertura temporal**.
 
 - 🟦 El caption burn DEBE **chunkear TODA la narración del clip** en cues word-timed progresivos (≤2 líneas cada uno), NO un bloque estático (que se trunca a la 1ª frase).
 - 🟦 **Caption coverage = 3 niveles:** (A) existence + (B) semantic-match del texto + (C) **TEMPORAL span** (caption presente durante TODA la narración hablada del clip).

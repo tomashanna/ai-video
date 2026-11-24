@@ -149,7 +149,7 @@ shot 4: pongo traje → shot 5: bajo → shot 6: nado
    - Uncanny character silueta DISTINCT (Felipe alien-grey, Tulio sheep-wolf, Dylan spindly)
    - Atmospheric secondary motion ≥3 simultaneous (walls + ambient + character breath + light)
    - Cuts/min 14-19 modulated
-   
+
    Algunas codificadas ya (cuts/min § 23, music layers § 25, counterfactual § 24, character signature § 21, atmospheric motion § 20). Otras NO (POV inmersión literal, liminal-spaces vibe coherence).
 
 5. **System target REAL para video #3** = **perceptual ≥9.0**, NO Gemini ≥9.7. Porque:
@@ -189,7 +189,7 @@ Cualquiera de las opciones requiere arquitectura nueva — NO es ajuste cosméti
 
 **Veredicto Tomás**: "Buena! Bastante bueno, creo que estamos sacando contenido de calidad." Publicado.
 
-**Lección estructural (no debe recurrir)**: el bueno-aparente (Celeste) quedó presente en el recorrido jugado tentando → violaba el invariante canónico; el arquitecto lo diseñó así + el auditor lo racionalizó. Root cause = receta `SKILL.md` "doble-amable = ambos hablan" sin el límite del invariante. Fixeado: invariante en PAUTA §2 + SPEC-AUDIT anti-pattern #20 + validator `audit-spec-structure-vs-canonical.py` (12 tests). Memoria `feedback_spec_audit_structural_divergence`.
+**Lección estructural (no debe recurrir)**: el bueno-aparente (Celeste) quedó presente en el recorrido jugado tentando → violaba el invariante canónico; el arquitecto lo diseñó así + el auditor lo racionalizó. Root cause = receta `SKILL.md` "doble-amable = ambos hablan" sin el límite del invariante. Fixeado: invariante en PAUTA §2 + SPEC-AUDIT anti-pattern #20 + validator `ai-video audit-spec-structure-vs-canonical` (12 tests). Memoria `feedback_spec_audit_structural_divergence`.
 
 **Ajustes pedidos por Tomás para V7+ (codificados en docs existentes, sin parches nuevos):**
 1. Más sonidos inmersivos matcheados a la acción (PAUTA §2.4 + INGENIERO-PAUTA §10).

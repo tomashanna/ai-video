@@ -8,7 +8,7 @@ Aprendizaje 2026-05-11: `ANIMATION-LAYER.md` dentro de `ai-video-production/` no
 
 ## Nueva ubicación
 
-`<repo-root>/.claude/skills/video-animation/`
+`.claude/skills/video-animation/`
 
 | Archivo | Path |
 |---|---|
@@ -28,7 +28,7 @@ El skill `video-animation` se carga automáticamente cuando el usuario menciona:
 Cualquier referencia previa a `ai-video-production/ANIMATION-LAYER.md` debe leerse como `video-animation/ANIMATION-LAYER.md`.
 
 Docs ya actualizadas:
-- `CLAUDE.md` § Mapa de docs autoritativos (ref canónica)
+- `docs/OPERATING-MANUAL.md` § Mapa de docs autoritativos (ref canónica)
 - `video-director/SKILL.md`
 - `ai-video-production/SKILL.md` (eliminada referencia a ANIMATION-LAYER local)
 

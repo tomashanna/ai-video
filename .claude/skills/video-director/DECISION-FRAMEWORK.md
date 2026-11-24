@@ -35,7 +35,7 @@
 | Medir duración con ffprobe | ✅ Ejecutar |
 | Loop expansion con ffmpeg | ✅ Ejecutar |
 | Aplicar atempo 2x a TTS | ✅ Ejecutar |
-| Generar 1 imagen con `image.py` (~$0.04) | ✅ Ejecutar |
+| Generar 1 imagen con `ai-video image` (~$0.04) | ✅ Ejecutar |
 | Whisper sobre audios ya generados | ✅ Ejecutar (cero costo) |
 | Update memory file | ✅ Ejecutar |
 | Crear / completar TaskCreate | ✅ Ejecutar |

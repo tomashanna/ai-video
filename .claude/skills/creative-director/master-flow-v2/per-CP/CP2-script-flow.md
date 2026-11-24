@@ -25,7 +25,7 @@
 **File**: `<proyecto>/CP2-PRE-handoff.md`
 
 **Required sections**:
-1. Lectura obligatoria (SPEC narration_script + audio_strategy + captions_strategy + INGENIERO-PAUTA § 1 pace + library/voices-catalog)
+1. Lectura obligatoria (SPEC narration_script + audio_strategy + captions_strategy + INGENIERO-PAUTA § 1 pace + assets/library/voices-catalog)
 2. SPEC slots involucrados
 3. Audits POV + lip_sync_required (D14 + D17 from architect SPEC audits)
 4. Voice ID selection (narrator + matarife + cocinera — engineer-domain per SPEC L1364)
@@ -41,7 +41,7 @@
 - SPEC line numbers narration_script segments + voice_processing chains
 - INGENIERO-PAUTA-MASTER § 1.1 (WPM bands) + § 1.7 (atempo measured)
 - Library voices-catalog (voice IDs validated)
-- CLAUDE.md hard rule #3 (Whisper exclusive) + #10 (atempo)
+- docs/OPERATING-MANUAL.md hard rule #3 (Whisper exclusive) + #10 (atempo)
 
 ---
 
@@ -242,7 +242,7 @@ Ninguna detectada en CP2 matadero.
 |---|-------|-----------|
 | 1 | Matarife per-segment listen test SPEC L1385 — engineer TODO pre-CP4 | CP4 lip sync |
 | 2 | Cocinera voice Valeria → shot_20 CP4 voice continuity (Path B deferral active) | CP4 |
-| 3 | Hard rule #10 CLAUDE.md "atempo 2x" debería actualizarse → 2.3x measured | Sprint separado architect-domain |
+| 3 | Hard rule #10 docs/OPERATING-MANUAL.md "atempo 2x" debería actualizarse → 2.3x measured | Sprint separado architect-domain |
 
 ---
 
@@ -279,7 +279,7 @@ Ninguna detectada en CP2 matadero.
 8. ⭐ **Effects chain compounds atempo lag** — matarife (pitch shift + flanger + LPF + aecho + atempo) ended 119.5 WPM vs narrator (same voice + atempo only) 143 WPM. Forward: cuando voice tiene effects chain, atempo target debe compensar lag adicional (~10-15% más agresivo).
 9. ⭐ **Path A "slow contemplative" defense NO viable si pace <p25 floor 152.71** — PAUTA § 1.6 admite 153-165 "slow horror" pero NO sub-p25. Matadero 125-143 está debajo de slow tier. Path A en este caso era engineering rationalization de un problema técnico real.
 10. ⭐ **Volume meter ≠ intelligibility — M7.7 codified post matarife inaudible (2026-05-18)** — Caso disparador: matarife post-Oxley voice swap volume mean -21 dB (HIGH measured) pero user listen "no se escucha nada" porque LPF 2000Hz cortó consonant articulation (frequency range 2-8kHz) + aecho out_gain 0.3 drown dry signal. M7 PACE PASS aunque intelligibility destroyed. Lesson: speech intelligibility canonical compliance NO reducible a volume meter — requiere **Whisper re-transcribe processed audio + match SPEC text ≥0.90 ratio**. Codified AUDITOR-PROTOCOL § 3 CP2 M7.7. **Plus pattern observado**: short segments (<2s) + heavy effects chain compound destroy articulation (matarife_count "Veinte minutos" 1.5s went to 0.00 intelligibility, while matarife_exit 2s 1.00). Forward: per-segment effects chain calibration (lighter for shorter segments) o re-render con slower delivery + lighter chain.
-11. ⭐ **Voice ID library validation against canonical refs OBLIGATORIO (not our productions)** — Caso disparador matadero CP2 Tj9l48J9 voice ID. Validated_in solo nuestras producciones V7 + bosque v1 = our-prod-validated. Real canonical = LatAm energetic conversational narrators (8 viral refs horror-choice). Replaced con Oxley Evil Character `2gPFXx8pN3Avh27Dw5Ma` post user listen pick. Lesson codified CLAUDE.md hard rule #19 expansion + canonical_validation_status field obligatorio library entries. Forward: measure-canonical-per-speaker.py Phase 1 priority — diarization per-speaker bands derived from canonical refs, voice IDs must match measured bands programmatically.
+11. ⭐ **Voice ID library validation against canonical refs OBLIGATORIO (not our productions)** — Caso disparador matadero CP2 Tj9l48J9 voice ID. Validated_in solo nuestras producciones V7 + bosque v1 = our-prod-validated. Real canonical = LatAm energetic conversational narrators (8 viral refs horror-choice). Replaced con Oxley Evil Character `2gPFXx8pN3Avh27Dw5Ma` post user listen pick. Lesson codified docs/OPERATING-MANUAL.md hard rule #19 expansion + canonical_validation_status field obligatorio library entries. Forward: measure-canonical-per-speaker.py Phase 1 priority — diarization per-speaker bands derived from canonical refs, voice IDs must match measured bands programmatically.
 
 ---
 

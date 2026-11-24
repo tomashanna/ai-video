@@ -9,9 +9,9 @@ description: ANIMACIÓN AI image-to-video (multi-model — Kling/Seedance/Hailuo
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — context global + hard rules
+1. **`docs/OPERATING-MANUAL.md`** — context global + hard rules
 2. Este archivo (`SKILL.md`) entero — identidad + hard rules de animación
-3. **`<repo-root>/.claude/skills/video-animation/ANIMATION-LAYER.md`** — doc maestro 12 secciones (decision tree, duration matching, loop strategy, prompt engineering, asset prep, integración HTML, sync narrador, costo+retries, audio, workflow, checklist, anti-patterns)
+3. **`.claude/skills/video-animation/ANIMATION-LAYER.md`** — doc maestro 12 secciones (decision tree, duration matching, loop strategy, prompt engineering, asset prep, integración HTML, sync narrador, costo+retries, audio, workflow, checklist, anti-patterns)
 4. **`<proyecto>/index.html`** — state actual del HTML donde se integrarán los clips
 5. **`<proyecto>/NARRATIVE.md`** — timing + asset list (necesario para duration matching)
 
@@ -107,10 +107,10 @@ PRE: video ya pasó Gemini QA ≥ 9.0 con estáticas + Ken Burns
 
 5. Verificar setup técnico
    - REPLICATE_API_TOKEN en .env
-   - scripts/video.py disponible (copiar de templates si no existe)
+   - ai-video video disponible (copiar de templates si no existe)
 
 6. Generar clips en batch (paralelo si la API lo permite)
-   .venv/bin/python scripts/video.py \
+   uv run ai-video video \
      -i assets/scene-source.png \
      -p "prompt aquí" \
      -o assets/scene.mp4 \
@@ -144,14 +144,14 @@ PRE: video ya pasó Gemini QA ≥ 9.0 con estáticas + Ken Burns
 # 1. REPLICATE_API_TOKEN configurado
 grep -q REPLICATE_API_TOKEN .env || echo "❌ Falta REPLICATE_API_TOKEN en .env"
 
-# 2. scripts/video.py existe
-[ -f scripts/video.py ] || cp ~/AI\ video\ 1/elige-companero/scripts/video.py ./scripts/
+# 2. ai-video video existe
+uv run ai-video video --help >/dev/null  # tool del paquete, nada que copiar
 
 # 3. replicate package instalado
 .venv/bin/pip list 2>/dev/null | grep -q replicate || .venv/bin/pip install replicate
 ```
 
-### Si falta scripts/video.py
+### Si falta ai-video video
 
 Copiar de referencia:
 ```bash
@@ -188,7 +188,7 @@ El script:
 | Video típico (8-10 animados × tier mixto) | $4-7 base |
 | **+ Retries 1.5x** | **$6-10 budget realista** |
 
-Plan-First Rule (`CLAUDE.md` de cada proyecto): proponer plan antes de generar clips. Cuesta créditos.
+Plan-First Rule (`docs/OPERATING-MANUAL.md` de cada proyecto): proponer plan antes de generar clips. Cuesta créditos.
 
 ---
 

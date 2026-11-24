@@ -15,7 +15,7 @@ sport-choice **hereda el pipeline universal de `ai-video-production` + la mecán
 - **MECÁNICA del formato choice** (estructura temporal, hook dyad, countdown, decisiones binarias, framing condicional, counterfactual, POV, lenguaje) → `../../choice-format-core/CHOICE-MECHANIC.md` (Capa A.5 agnóstica, derivada de los 8 virales vía horror) + su técnica choice-UI → `../../choice-format-core/INGENIERO-CHOICE-CORE.md`.
 - **Pipeline técnico** (TTS, image, SFX, motion, captions, render, QA, HYBRID per-clip atomic, MODEL-CAPABILITIES, 8 gates) → `ai-video-production/`.
 - **`canonical-scenes/`** → sport-choice AÚN no tiene canonical-scenes propios. La autoridad ESTRUCTURAL agnóstica (esqueleto, invariante, placement del counterfactual, framing acción-condicional, dyad, escalada de decisiones, outro) vive en `../../choice-format-core/CHOICE-MECHANIC.md` (ya extraída género-neutro de los 8 virales). Los canonical-scenes propios de sport se derivarán empíricamente de nuestros primeros videos. ⚠️ NO leer assets/contenido de `horror-choice-format/` para producir sport (firewall arriba) — la estructura ya está en core.
-- **`templates/scripts/`** → se heredan de `ai-video-production/templates/`. **Transiciones** → carpeta GLOBAL root `transitions/` (índice `transitions/catalog.json`; sport resuelve `universal/` + `sport-choice/`). Los presets de VOZ de horror NO se usan — narrador deportivo limpio.
+- **`src/ai_video/`** → se heredan de `ai-video-production/templates/`. **Transiciones** → carpeta GLOBAL root `assets/transitions/` (índice `assets/transitions/catalog.json`; sport resuelve `universal/` + `sport-choice/`). Los presets de VOZ de horror NO se usan — narrador deportivo limpio.
 - **CREATIVE-SPEC schema (v11)** → `creative-director/templates/`.
 
 Los docs de ESTE folder cubren SOLO la capa sport-específica.
@@ -62,7 +62,7 @@ Antes de tocar nada de este folder, leer EN ORDEN:
 5. Correr la PLANTILLA DE CADENA CAUSAL (PAUTA-MASTER § 10.C) eslabón por eslabón sobre AMBOS recorridos + los anti-patterns (§ 10)
 6. Aplicar la REGLA DE AMBIENTE a cada shot (image-direction.md)
 7. Llenar audio-direction (paleta SFX fútbol) + ui-elements (name labels equipos)
-8. Self-validation pre-emit (HR#27): correr los validators estructurales (`audit-spec-structure-vs-canonical.py` + `audit-spec-narrative-coherence.py`) + `NO-HORROR-GUARD.md` contra el propio SPEC; iterar hasta 0 findings 🔴
+8. Self-validation pre-emit (HR#27): correr los validators estructurales (`ai-video audit-spec-structure-vs-canonical` + `ai-video audit-spec-narrative-coherence`) + `NO-HORROR-GUARD.md` contra el propio SPEC; iterar hasta 0 findings 🔴
 9. Codificar en CREATIVE-SPEC v11.yaml (schema heredado) + references_canonical[] (citadas por valor ESTRUCTURAL)
 10. HANDOFF al ingeniero
 ```

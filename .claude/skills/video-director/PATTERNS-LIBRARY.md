@@ -104,7 +104,7 @@ Cada meta-review (cada 10 videos) deja una entrada:
 
 ## Cuándo NO agregar a este doc
 
-- Patterns que vos creés que funcionan pero NO tenés data (eso va a `META-BRAND.md` § decisiones diferidas o a un brainstorming separado)
+- Patterns que vos creés que funcionan pero NO tenés data (eso va a un brainstorming separado)
 - Patterns técnicos que ya están documentados (ej: "Ken Burns siempre" — eso está en `MOTION-LAYER.md` y es regla fija, no candidato a evaluación)
 - Patterns con N<3 que querés cementar igual (resistilo — la disciplina N=3 protege contra falsos positivos)
 

@@ -15,13 +15,13 @@ description: GENRE skill — horror-choice estilo @referent-a. Dilemas binarios,
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — context global + arquitectura 3 capas
-2. **⭐ `<repo-root>/.claude/skills/horror-choice-format/PAUTA-MASTER.md`** — **AUTORIDAD CREATIVA EMPÍRICA del ARQUITECTO** (derivada de 8 videos virales canónicos). Reemplaza CREATIVE-BRIEF.md. Tiene: filosofía, estructura temporal validada, Slots A-H con data de los 8, reglas inviolables con compliance N/8, hallazgos críticos vs pauta vieja.
-2.5. **⭐ `<repo-root>/.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`** — **AUTORIDAD TÉCNICA EMPÍRICA del INGENIERO** (derivada de mediciones n=5+ referentes F1, escalando a n=10). Tiene: pace WPM 156-195, LUFS -13.88, cuts/min 5.25, music BPM 99-161, coverage 87%, vignette 1.43, **0 cuts en hook (universal)**, **outro RMS drop -12dB**. El ingeniero consulta acá ANTES de cualquier decisión técnica (pace, mix, cuts, motion, color, BPM, UI timing). NUNCA comparar contra nuestras producciones previas (mina/bosque/elige/pueblo) — están en `/referent-analysis/our-production-archive/` con prefijo "NO AUTORIDAD".
-2.7. **⭐ `<repo-root>/.claude/skills/horror-choice-format/canonical-scenes/INDEX.md` + `ref-XX.md`** correspondiente al pattern elegido (añadido 2026-05-16 Bloque I) — **scene-by-scene EMPÍRICO de los 8 canónicos**. INDEX.md tiene 12 grids cross-ref por `pattern_category` (hook / setup / decision_setup / consequence_A/B / cliffhanger). Cada ref-XX.md tiene 10-14 beats narrativos con `who's there` + `what they do LITERAL` + narration Whisper + UI active + animation tier + pattern observation. **El arquitecto consulta ANTES de diseñar SPEC v6** — sin esto el arquitecto improvisa (caso cabina-14: 17 bugs narrativos). Complementa a PAUTA-MASTER (síntesis macro) con detalle shot-by-shot.
-3. **`<repo-root>/.claude/skills/horror-choice-format/PAUTA.md`** — workflow de producción + criterios de calidad + reglas V7+V8
-4. **`<repo-root>/.claude/skills/horror-choice-format/PATTERNS.md`** — reglas técnicas perennes (timing %, audio, visual, mecánica elección). Validar contra PAUTA-MASTER si hay discrepancia (gana PAUTA-MASTER).
-5. **⭐ `<repo-root>/.claude/skills/horror-choice-format/video-log.md` (AUTORITATIVO PARA ROTACIÓN PATTERN)** — registro de videos producidos. OBLIGATORIO consultar antes de elegir pattern.
+1. **`docs/OPERATING-MANUAL.md`** — context global + arquitectura 3 capas
+2. **⭐ `.claude/skills/horror-choice-format/PAUTA-MASTER.md`** — **AUTORIDAD CREATIVA EMPÍRICA del ARQUITECTO** (derivada de 8 videos virales canónicos). Reemplaza CREATIVE-BRIEF.md. Tiene: filosofía, estructura temporal validada, Slots A-H con data de los 8, reglas inviolables con compliance N/8, hallazgos críticos vs pauta vieja.
+2.5. **⭐ `.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`** — **AUTORIDAD TÉCNICA EMPÍRICA del INGENIERO** (derivada de mediciones n=5+ referentes F1, escalando a n=10). Tiene: pace WPM 156-195, LUFS -13.88, cuts/min 5.25, music BPM 99-161, coverage 87%, vignette 1.43, **0 cuts en hook (universal)**, **outro RMS drop -12dB**. El ingeniero consulta acá ANTES de cualquier decisión técnica (pace, mix, cuts, motion, color, BPM, UI timing). NUNCA comparar contra nuestras producciones previas (mina/bosque/elige/pueblo) — están en `/referent-analysis/our-production-archive/` con prefijo "NO AUTORIDAD".
+2.7. **⭐ `.claude/skills/horror-choice-format/canonical-scenes/INDEX.md` + `ref-XX.md`** correspondiente al pattern elegido (añadido 2026-05-16 Bloque I) — **scene-by-scene EMPÍRICO de los 8 canónicos**. INDEX.md tiene 12 grids cross-ref por `pattern_category` (hook / setup / decision_setup / consequence_A/B / cliffhanger). Cada ref-XX.md tiene 10-14 beats narrativos con `who's there` + `what they do LITERAL` + narration Whisper + UI active + animation tier + pattern observation. **El arquitecto consulta ANTES de diseñar SPEC v6** — sin esto el arquitecto improvisa (caso cabina-14: 17 bugs narrativos). Complementa a PAUTA-MASTER (síntesis macro) con detalle shot-by-shot.
+3. **`.claude/skills/horror-choice-format/PAUTA.md`** — workflow de producción + criterios de calidad + reglas V7+V8
+4. **`.claude/skills/horror-choice-format/PATTERNS.md`** — reglas técnicas perennes (timing %, audio, visual, mecánica elección). Validar contra PAUTA-MASTER si hay discrepancia (gana PAUTA-MASTER).
+5. **⭐ `.claude/skills/horror-choice-format/video-log.md` (AUTORITATIVO PARA ROTACIÓN PATTERN)** — registro de videos producidos. OBLIGATORIO consultar antes de elegir pattern.
 6. Este archivo (`SKILL.md`) entero — hard rules del formato
 
 7. **El sub-doc específico de tu tarea**:
@@ -38,7 +38,7 @@ Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
 Si la tarea es animar con Kling, **también `video-animation`**.
 
-**NO planees ni ejecutes hasta haber leído**: CLAUDE.md + **PAUTA-MASTER.md (COMPLETO)** + PAUTA.md + PATTERNS.md + video-log.md + este SKILL.md + el sub-doc de tu tarea.
+**NO planees ni ejecutes hasta haber leído**: docs/OPERATING-MANUAL.md + **PAUTA-MASTER.md (COMPLETO)** + PAUTA.md + PATTERNS.md + video-log.md + este SKILL.md + el sub-doc de tu tarea.
 
 (⚠️ NO USES `CREATIVE-BRIEF.md` como guía — está DEPRECATED. Toda la autoridad creativa vive en `PAUTA-MASTER.md`.)
 

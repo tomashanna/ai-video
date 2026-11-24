@@ -32,9 +32,9 @@ El inspector municipal del sistema: ni diseñás ni ejecutás — VERIFICÁS. Ll
 | Necesitás | Consultás |
 |---|---|
 | Autoridad creativa / técnica del formato | `PAUTA-MASTER.md` / `INGENIERO-PAUTA-MASTER.md` |
-| Qué es canónico DE VERDAD | `referent-analysis/ref-XX/transcription.json` + frames del mp4 |
-| Inventario contra SPEC | `audit-spec-completeness.py` + `audit-*-coverage.py` (corrélos) |
-| Calidad final | calibrated v4 + `audit-against-referent.py` (dual gate) |
+| Qué es canónico DE VERDAD | `data/referent-analysis/ref-XX/transcription.json` + frames del mp4 |
+| Inventario contra SPEC | `ai-video audit-spec-completeness` + `audit-*-coverage.py` (corrélos) |
+| Calidad final | calibrated v4 + `ai-video audit-against-referent` (dual gate) |
 | Física de modelos antes de validar | `MODEL-CAPABILITIES-MATRIX.md` (nunca de memoria) |
 
 ## Tu voz
@@ -58,19 +58,19 @@ Antes de empezar, ejecutá AUDITOR ACTIVATION PROTOCOL.
 ### Self-bootstrap reading sequence (MANDATORY, no skip)
 
 **Paso A — Always-on (universal context, leer SIEMPRE)**:
-1. `<repo-root>/CLAUDE.md` — system rules, Hard Rules #1-#25, 3-role architecture
-2. `<repo-root>/.claude/skills/creative-director/AUDITOR-PROTOCOL.md` — este doc completo (rol + audit methods + anti-patterns)
-3. `<repo-root>/.claude/skills/creative-director/master-flow-v2/GAPS-LOG.md` — gaps activos tracker (lee al menos las últimas 5 entries)
-4. `<repo-root>/V4-LAUNCH-CHECKLIST.md` — Gate 5 charter SPEC-AUDIT methodology + steps 1-7 con MODEL-BEHAVIOR-LOG enforcement
-5. `<repo-root>/.claude/skills/video-director/MODEL-BEHAVIOR-LOG.md` — empirical model constraints (face-coupling + stability budget + pose-coupling actuales). Lee entries enteras.
-6. `<repo-root>/.claude/skills/creative-director/master-flow-v2/SYSTEM-LEARNINGS-V3-V4-COMPILATION.md` — patterns sistémicos V3+V4 production learnings consolidados (added 2026-05-24 PRE-4.A per D2 canonical reads).
-7. `~/.claude/projects/-Users-tomashanna-AI-video-1/memory/active_session_state.md` — current sprint state + in-flight projects + recent decisions
+1. `docs/OPERATING-MANUAL.md` — system rules, Hard Rules #1-#25, 3-role architecture
+2. `.claude/skills/creative-director/AUDITOR-PROTOCOL.md` — este doc completo (rol + audit methods + anti-patterns)
+3. `.claude/skills/creative-director/master-flow-v2/GAPS-LOG.md` — gaps activos tracker (lee al menos las últimas 5 entries)
+4. `V4-LAUNCH-CHECKLIST.md` — Gate 5 charter SPEC-AUDIT methodology + steps 1-7 con MODEL-BEHAVIOR-LOG enforcement
+5. `.claude/skills/video-director/MODEL-BEHAVIOR-LOG.md` — empirical model constraints (face-coupling + stability budget + pose-coupling actuales). Lee entries enteras.
+6. `.claude/skills/creative-director/master-flow-v2/SYSTEM-LEARNINGS-V3-V4-COMPILATION.md` — patterns sistémicos V3+V4 production learnings consolidados (added 2026-05-24 PRE-4.A per D2 canonical reads).
+7. memoria de sesión del agente (`active_session_state.md`, local, fuera del repo) — current sprint state + in-flight projects + recent decisions
 
 **Paso B — Per-project context (si user especifica proyecto)**:
-7. `<repo-root>/creative-specs/<id>.yaml` — SPEC del proyecto (schema_version + references_canonical + shot_list)
-8. `<repo-root>/<project>/CP*-handoff.md` — todos los engineer handoffs existentes (en orden temporal)
-9. `<repo-root>/<project>/CP*-AUDIT-verdict.md` — verdicts previos del auditor (mi histórico de este proyecto)
-10. `<repo-root>/creative-specs/SPEC-VS-CANONICAL-AUDIT-<id>.md` — SPEC-audit charter output si existe
+7. `creative-specs/<id>.yaml` — SPEC del proyecto (schema_version + references_canonical + shot_list)
+8. `<project>/CP*-handoff.md` — todos los engineer handoffs existentes (en orden temporal)
+9. `<project>/CP*-AUDIT-verdict.md` — verdicts previos del auditor (mi histórico de este proyecto)
+10. `creative-specs/SPEC-VS-CANONICAL-AUDIT-<id>.md` — SPEC-audit charter output si existe
 
 **Paso C — Per-task context (depende de qué te piden)**:
 - Si SPEC-AUDIT charter: lee también `.claude/skills/horror-choice-format/PAUTA-MASTER.md` + `canonical-scenes/INDEX.md` + cualquier ref-XX cited en SPEC.references_canonical[]
@@ -80,7 +80,7 @@ Antes de empezar, ejecutá AUDITOR ACTIVATION PROTOCOL.
 ### Activation completion self-check (verifico antes del primer audit)
 
 Antes de emitir cualquier verdict, confirmar mentalmente:
-- [ ] CLAUDE.md leído + Hard Rules absorbed (especialmente #24 CP-by-CP gates + #25 HYBRID + #19 measure-not-estimate)
+- [ ] docs/OPERATING-MANUAL.md leído + Hard Rules absorbed (especialmente #24 CP-by-CP gates + #25 HYBRID + #19 measure-not-estimate)
 - [ ] AUDITOR-PROTOCOL leído entero (esta doc) — § 6 anti-patterns todos en contexto (#8-#16)
 - [ ] GAPS-LOG último mes en contexto — entiendo qué gaps están abiertos / Sprint B priority
 - [ ] V4-LAUNCH-CHECKLIST Gate 5 charter en contexto — sé qué auditor debe verificar pre-CP1 (≥5/8 refs + N/8 substantive linkage + canonical_constraints)
@@ -95,34 +95,18 @@ Antes de emitir cualquier verdict, confirmar mentalmente:
 |-----------|--------|--------|
 | **SPEC-AUDIT charter** (pre-CP1) | Read SPEC + PAUTA + 8 refs directly. Verify ≥5/8 refs substantive linkage. Cross-check declared linkage. | `creative-specs/SPEC-VS-CANONICAL-AUDIT-<id>.md` (PASS/NB/HALT/ESCALATE verdict) |
 | **CP[N] audit** | Read engineer handoff. Verify filesystem direct (mtime + counts + grep + Python parse). Independent visual/audio verify (Read tool images). Cost ledger sanity. Script C `--validate-handoff-scope` gate. | `<project>/CP[N]-AUDIT-verdict.md` |
-| **Engineer crash recovery** | Audit directly from filesystem evidence (no handoff to read). Per anti-pattern #11 — filesystem ground truth > handoff text. Cross-reference SPEC manifest 1:1 (audit-spec-completeness.py + audit-deliverable-vs-spec-manifest.py per Gap #46). | Same as CP[N] audit but explicit "engineer crashed mid-handoff, auditor reconstructed from artifacts" header |
+| **Engineer crash recovery** | Audit directly from filesystem evidence (no handoff to read). Per anti-pattern #11 — filesystem ground truth > handoff text. Cross-reference SPEC manifest 1:1 (ai-video audit-spec-completeness + audit-deliverable-vs-spec-manifest.py per Gap #46). | Same as CP[N] audit but explicit "engineer crashed mid-handoff, auditor reconstructed from artifacts" header |
 | **MODEL-BEHAVIOR-LOG constraint check** (Gate 5 step 7) | Per entry, check SPEC shots against documented model constraints (e.g., entry 1: face+hand + ≤3 props + pose-match for rare anatomy). Flag violators pre-CP1. | Embed in SPEC-AUDIT charter output |
 | **Pattern detection** (5+ instances of same pattern_class) | Track in GAPS-LOG iteration_log + task #94 queue (DECISIONS-LOG/BUGS-LOG when built). At 5+ instances → codify structural rule. | New entry in GAPS-LOG with priority elevation |
 
 ### V4 archive integrity verification (health check) — added 2026-05-26 PRE-4.I (D39)
 
-Para verify V4 archive D38 UNCHANGED, consultar `_freeze-manifests/v4-baseline.md5` (canonical baseline manifest). NO confiar en memoria conversacional para md5 baselines — usar manifest committed.
+Para verify V4 archive D38 UNCHANGED, consultar `_freeze-manifests (retirado; usar tags/commits git)` (canonical baseline manifest). NO confiar en memoria conversacional para md5 baselines — usar manifest committed.
 
 - 5 baselines frozen: `cerro-aislado-v4/renders/draft-v2.mp4` + `cerro-aislado-v4/scripts/audit-spec-completeness.py` + `cerro-aislado-v4/scripts/lib/similarity.py` + `cerro-aislado-v4/scripts/lib/orchestrator_state.py` + `creative-specs/cerro-aislado-v4.yaml`
 - Verify (macOS no tiene `md5sum` nativo): `md5 -r <path>` per baseline → compare contra manifest. Cualquier mismatch → D38 violation, escalación inmediata (Bug #9).
-- Manifest es append-only (NO sobreescribir). V5+ frozen → nuevo `_freeze-manifests/v5-baseline.md5`.
+- Manifest es append-only (NO sobreescribir). V5+ frozen → nuevo `_freeze-manifests (retirado; usar tags/commits git)`.
 - Razón estructural: D38 verifiability vive en filesystem (Principio 4 Sólido), NO en memoria del rol Claude conversacional. Pre-PRE-4.I el "frozen UNCHANGED" se enforcaba solo por memoria — gap resuelto.
-
-### Environment quirks (this machine) — added 2026-05-28 (D-editorial-32)
-
-Constraints/behaviors of Tomás's machine that any role must account for. Codified empirically (caso disparador: client-project-d whisper-local large-v3 download).
-
-- **Corporate SSL-inspection proxy (self-signed root in chain).** Python `urllib`/`requests` model+asset downloads FAIL with `ssl.SSLCertVerificationError: self-signed certificate in certificate chain`. The corporate root cert IS installed in the **macOS keychain** (so the proxy works system-wide), but Python ships its own cert bundle that does NOT include it.
-  - **Symptom:** `whisper.load_model(...)`, HuggingFace downloads, `pip` (sometimes), any urllib-based fetch → `CERTIFICATE_VERIFY_FAILED`.
-  - **Canonical fix (mechanical, no decision change):** download the asset with **`curl`** (macOS curl uses Secure Transport → trusts the keychain → accepts the corporate root), place it in the tool's expected cache, then let the library load from cache (no network). Example — whisper:
-    ```bash
-    # model URLs live in: python -c "import whisper; print(whisper._MODELS)"
-    curl -L --fail -o "$HOME/.cache/whisper/large-v3.pt" "<model_url>"
-    # whisper.load_model('large-v3') then verifies sha256 + uses the cached file, no urllib download
-    ```
-  - **Verify connectivity, not just SSL:** a `curl` HTTP 404 means SSL is fine (wrong URL); an SSL error means the proxy blocked it. Distinguish before escalating.
-  - **NOT a Bug #9 escalation** when the curl/keychain fix resolves it (mechanical, preserves the chosen model/asset). Escalate only if curl ALSO fails (proxy blocks the host entirely) or if a smaller/different asset would change a quality/cost decision.
-  - **Forward rule:** scripts that auto-download models/assets in this environment must prefer curl/keychain over urllib, or pre-seed the cache. Pixabay (and other Cloudflare/JS-challenge sites) are NOT headlessly downloadable even via curl — use direct-download sources (e.g. Incompetech CC-BY) or escalate.
 
 ### Spawning sub-agents from auditor session (when needed)
 
@@ -186,7 +170,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 3. ⭐ INGENIERO-PAUTA-MASTER del formato — autoridad técnica empírica del ingeniero
 4. ⭐ ref-XX canónico primario aplicable (definido en SPEC.cliffhanger.ref_canonical_anchor)
 5. video-log.md del formato — rotación pattern + learnings previos
-6. CLAUDE.md hard rules #1-#21
+6. docs/OPERATING-MANUAL.md hard rules #1-#21
 7. Memorias relevantes al CP (ver § 3 por checkpoint)
 8. Active session state (memoria) — contexto de sprints en flight
 9. El handoff del ingeniero completo (CP[N]-handoff[-vN].md)
@@ -214,7 +198,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 | Ingeniero entrega `CP[N]-handoff-vN.md` con fixes aplicados | ✅ SÍ (re-audit focused) |
 | Arquitecto entrega `creative-specs/<id>.yaml` aprobado por user | ✅ SÍ (auditar SPEC mismo vs PAUTA-MASTER + D14-D22 — el arquitecto puede haber pasado D14-D22 con compliance superficial) |
 | Pre-render-gate (24 Q, Q1-Q25 salta Q23) corrió Y pasó | ✅ SÍ — auditor agrega validation creativa final |
-| Render draft listo | ✅ SÍ — `audit-against-referent.py` ≥85% + verificación visual |
+| Render draft listo | ✅ SÍ — `ai-video audit-against-referent` ≥85% + verificación visual |
 
 **NO se activa** cuando: el ingeniero corre self-audit sin entregar handoff formal, fixes triviales engineer-domain (typos, paths).
 
@@ -225,7 +209,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ### CP1 — Reference Anchors
 
 1. ✅ **Visual de anchors generados** vs `SPEC.reference_anchors[].visual_anchor_prompt` línea por línea
-   - 1.1 ⭐ **Gate PROGRAMÁTICO (existence)**: `.venv/bin/python scripts/audit-anchor-coverage.py --format <fmt> --spec ../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un anchor NECESARIO (char/setting/prop en >1 shot o declarado en `reference_anchors`) no tiene archivo. Previene FileNotFoundError a mitad del batch CP4 (tras gastar $). CP1 ya NO es solo ojo humano.
+   - 1.1 ⭐ **Gate PROGRAMÁTICO (existence)**: `uv run ai-video audit-anchor-coverage --format <fmt> --spec ../../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un anchor NECESARIO (char/setting/prop en >1 shot o declarado en `reference_anchors`) no tiene archivo. Previene FileNotFoundError a mitad del batch CP4 (tras gastar $). CP1 ya NO es solo ojo humano.
 2. ✅ **Engineer-expanded prompts** drift check vs SPEC + memoria `prompt_quality_no_vague`
 3. ✅ **Hard rule #20** premium prompt 5-block structure (subject + camera + lighting + atmosphere físico + style)
 4. ✅ **Hard rule #19** ingeniero NO cita nuestras producciones como autoridad
@@ -249,7 +233,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
      speak_time = sum(s['end'] - s['start'] for s in segs)
      wpm_total = total_words / speak_time * 60
      ```
-   - M7.2 Compare `wpm_total` vs canonical bands (`referent-analysis/F1-INGENIERO-MEASUREMENTS.json` aggregated_F1):
+   - M7.2 Compare `wpm_total` vs canonical bands (`data/referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json` aggregated_F1):
      - p25 floor: 152.71
      - median: 164.91
      - p75: 179.84
@@ -261,7 +245,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
    - M7.6 User listen test = sanity check OPTIONAL post-programmatic verification, NO substitute
    - ⭐ **M7.6.5 PER-SEGMENT WPM canonical check (BLOQUEANTE — añadido 2026-05-19 PM post matadero iter 6 user catch GAP #21)**:
      Hard Rule #19 EXPANSION 2026-05-18 codified per-SPEAKER WPM check. PERO intra-speaker per-SEGMENT variance NO audited. Engineer puede aplicar atempo per-speaker uniform PERO over-tempo individual segments para fit duration windows = pace asymmetry user perceives.
-     
+
      **M7.6.5.1 Per-segment WPM computation**:
      ```python
      for seg in captions:
@@ -272,26 +256,26 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
          if wpm_seg < canonical_p25 or wpm_seg > canonical_p75:
              flag_outlier(seg, wpm_seg)
      ```
-     
+
      **M7.6.5.2 Verdicts gating**:
      - All segments ∈ canonical band [152, 180] → ✅ PASS
      - 1 segment >50% over canonical_p75 → 🔴 FAIL bloqueante (user perceptual catches this asymmetry)
      - 1-2 segments marginal (≤20% over/under band) → 🟡 NB (review acceptable depending on segment role: hook/climax/cliffhanger may justify slight deviation)
      - Overall avg PASS pero segments outlier → 🔴 FAIL — overall band check INSUFFICIENT
-     
+
      **M7.6.5.3 Per-segment role considerations** (acceptable variations):
      - Climax staccato peak (e.g., "Caes." 1-word segment): WPM artificial high acceptable (NB only)
      - Cliffhanger soft delivery: WPM slightly slow acceptable (NB only)
      - Normal narration segments: STRICT canonical band [152, 180]
      - **Decision setup segments**: STRICT canonical (these set up countdown timing — over-tempo confuses viewer)
      - **Hook framing question**: STRICT canonical (CRITICAL — first impression retention)
-     
+
      **Caso disparador matadero iter 6**: caption[0] narrator framing "Decidí con quién pasar la noche: matarife... o cocinera." = 9 words / 1.98s = 272.7 WPM (65% over canonical p75=180). Overall avg 178 WPM passed band because other narrator segments compensated slower. User perceptual caught segment-level outlier: "el inicio nose porque va mas rápido que lo demas".
-     
+
      **Fix codified forward**:
      - INGENIERO-PAUTA § 1.X: atempo uniform per-speaker REQUIRED, NO per-segment over-tempo to fit duration windows
      - If narration too long for window → extend window OR cut narration text, NEVER atempo individual segment
-     - Phase 1 script `measure-canonical-decision-ui-pacing.py` enhancement: include per-segment WPM aggregation + p25/p75 intra-speaker variance bands
+     - Phase 1 script `ai-video measure-canonical-decision-ui-pacing` enhancement: include per-segment WPM aggregation + p25/p75 intra-speaker variance bands
    - ⭐ **M7.7 AUDIBILITY + INTELLIGIBILITY CHECK (BLOQUEANTE — añadido 2026-05-18 post matarife inaudible fail)**:
      - M7.7.1 Volume measurement per segment (ffmpeg volumedetect): mean_volume ∈ [-30, -16 dB] band typical broadcast canonical
      - M7.7.2 **Intelligibility verification VIA Whisper re-transcribe**: re-run Whisper sobre processed TTS output, NO original raw. Compare transcript words vs SPEC text. Intelligibility ratio = matching_words / spec_words.
@@ -301,25 +285,25 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
      - M7.7.4 User listen test post-programmatic = required confirmation cuando effects chain heavy (no opcional)
      - ⭐ **M7.7.5 SEMANTIC EQUIVALENCE METHODOLOGY REFINEMENT (added 2026-05-18 post matadero Path 2a SoX brittle Whisper case)**:
        Whisper methodology can be brittle a single-letter substitutions o digit normalization. Antes de FAIL verdict, apply semantic equivalence rules:
-       
+
        **Rule A — Digit normalization equivalence**:
        - "Veinte" ↔ "20" (Whisper digit transcribe) = MATCH ✓
        - "Una" ↔ "1", "dos" ↔ "2", etc. (Spanish numerals 1-30) = MATCH
        - Spanish 5:40 = "cinco cuarenta" o "5:40" = MATCH
-       
+
        **Rule B — Phonetic neighborhood equivalence (single consonant substitution)**:
        Phonemes minimal-pair substitutions usually NO afectan intelligibility (user hearing recognizes word despite Whisper transcription error):
        - g ↔ k ("ganchos" ↔ "canchos") = MATCH if same syllable structure
        - b ↔ v ("vienes" ↔ "bienes") = MATCH
        - s ↔ z (Latin Spanish dialect) = MATCH
        - Other consonant pairs phonetically similar = MATCH (case-by-case judgment)
-       
+
        Rule C — Plurals/articles minor variations:
        - "Los ganchos" ↔ "ganchos" (article dropped) = partial match (proportional ratio)
-       
+
        Rule D — User listen test perceptual ground truth precedence:
        Si user listen test PASS (perceptual) BUT Whisper ratio <0.90 via single-substitution brittleness → **perceptual ground truth wins**. Codify result as ✅ PASS with NB flag "Whisper methodology brittle, perceptual confirmed".
-       
+
        **Caso disparador matadero CP2 Path 2a SoX**: matarife_count "Veinte minutos" → Whisper "20 minutos" (digit normalization, NOT intelligibility fail) + matarife_rule "ganchos" → "canchos" (g/k phonetic neighborhood, user perception "está bien"). Strict M7.7 = 1/3 PASS. With M7.7.5 refinement = 3/3 PASS. **Perceptual ground truth (user listen) confirms.**
      - **Caso disparador matadero CP2 post-Oxley 2026-05-18**: matarife mean_volume HIGH (-21 dB) measured M7.1 PASS, PERO user listen "no se escucha nada" porque LPF 2000Hz cortó consonants + aecho out_gain 0.3 drown dry signal → speech unintelligible aunque audible. M7.7 catches this: Whisper re-transcribe processed audio falla word-match vs SPEC.
    - **Rationale**: programmatic acoustic verification es AUTOMATABLE via Whisper + canonical script. NO human-in-loop. Phase 5 automation requires this. **Caso disparador matadero CP2 v1**: Path A approved sin acoustic verification, user listen test post-hoc reveló "MUUUY lentos" — empirical refutation (125-143 WPM vs canon 165 median). **Caso disparador CP2 v3 post-Oxley**: M7 PASS pero matarife inaudible perception — M7.7 audibility/intelligibility expansion codified.
@@ -327,8 +311,8 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ### CP3 — Shot Images
 
 1. ✅ **Character consistency** cross-shots (face structure + wardrobe + signature features)
-2. ✅ **Variantes -a/-b/-c** en shots >4s con TIPOS de plano distintos (CLAUDE.md hard rule #5)
-   - 2.0 ⭐ **Gate PROGRAMÁTICO (duration-driven existence)**: `.venv/bin/python scripts/audit-variant-coverage.py --format <fmt> --spec ../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un shot con on-screen >4.0s tiene <2 variantes (caso bosque-v2 "PowerPoint narrado"). La distinctness de TIPO de plano (2.1/2.2) sigue siendo juicio del auditor.
+2. ✅ **Variantes -a/-b/-c** en shots >4s con TIPOS de plano distintos (docs/OPERATING-MANUAL.md hard rule #5)
+   - 2.0 ⭐ **Gate PROGRAMÁTICO (duration-driven existence)**: `uv run ai-video audit-variant-coverage --format <fmt> --spec ../../creative-specs/<id>.yaml --project-dir .` → 🔴 FAIL si un shot con on-screen >4.0s tiene <2 variantes (caso bosque-v2 "PowerPoint narrado"). La distinctness de TIPO de plano (2.1/2.2) sigue siendo juicio del auditor.
    - 2.1 ⭐ **Cross-validate variant composition NOT just intra-shot, ALSO vs adjacent base shots** (caso disparador matadero shot_07-a vs shot_08 absorption_pov 2026-05-18). Si variant duplica composition de adjacent base shot en narrative sequence → 🔴 FAIL redundant pick
    - 2.2 Architect Q-picks deben validar: ¿variant composition distinct vs (a) other variants same shot AND (b) adjacent base shots n-1, n+1?
 3. ✅ **Paleta dual** intent ejecutada per shot tag (narrative warm vs choice cool)
@@ -345,9 +329,9 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 ⭐ **Aplicable a TODOS los CPs (CP1-CP5)** — caso disparador voice ID matadero:
 
 - D28.1 Cada default usado por engineer durante el CP debe tener `canonical_validation_status` documented:
-  - **Library entries** (`library/voices-catalog.json`, `library/sfx-catalog.json`, etc.): field obligatorio `canonical_validation_status: validated|pending|deprecated_our_prod_only`
-  - **Script defaults** (`scripts/tts.py`, `scripts/image.py`, `scripts/video.py`, etc.): default values documented con canonical source
-  - **Elements** (`elements.json`): countdown / loader / lower-third validated against canonical UI patterns
+  - **Library entries** (`assets/library/voices-catalog.json`, `assets/library/sfx-catalog.json`, etc.): field obligatorio `canonical_validation_status: validated|pending|deprecated_our_prod_only`
+  - **Script defaults** (`ai-video tts`, `ai-video image`, `ai-video video`, etc.): default values documented con canonical source
+  - **Elements** (`templates/hyperframes/elements.json`): countdown / loader / lower-third validated against canonical UI patterns
 - D28.2 Si engineer cita default sin `canonical_validation_status` o status = `deprecated_our_prod_only` → 🔴 FAIL bloqueante
 - D28.3 Si status = `pending` → 🟡 GO condicional + flag forward para measure-against-canonical Phase 1
 - D28.4 Verify validated_against_canonical_refs cites specific refs (NO "validated in our prod V7/bosque" only)
@@ -381,7 +365,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 ### CP5 — Render Draft + Final
 
-1. ✅ **Dual quality gate**: Gemini holístico ≥9.7 + `audit-against-referent.py` ≥85% métricas críticas
+1. ✅ **Dual quality gate**: Gemini holístico ≥9.7 + `ai-video audit-against-referent` ≥85% métricas críticas
 2. ✅ **8 gates pre-render** ejecutados = Gate 0 spec-completeness (= C-INVENTORY-WIRED §9, corre 1º) + los 7 de calidad (lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate)
 3. ✅ **Pre-render-gate (24 Q, Q1-Q25 salta Q23)** completo
 4. ✅ **UI safe zones** banda exclusive per INGENIERO-PAUTA § 7.2
@@ -442,12 +426,12 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
 11. ⭐ **PER-CLIP ATOMIC AUDIT (NEW Phase 2 — 2026-05-21 added post cinema-abandonado vs canonical comparative analysis)**:
 
-   **Applies to**: video #3+ MANDATORY per CLAUDE.md Hard Rule #23. Cinema-abandonado + matadero = legacy global grandfather.
+   **Applies to**: video #3+ MANDATORY per docs/OPERATING-MANUAL.md Hard Rule #23. Cinema-abandonado + matadero = legacy global grandfather.
 
    **Per-clip auditor checklist**:
-   For each `assets/clips-atomic/shot_NN_atomic.mp4` (output of `build_clip_atomic.py`):
+   For each `assets/clips-atomic/shot_NN_atomic.mp4` (output of `ai-video build-clip-atomic`):
 
-   - ✅ **A1 — Quality Gate Agent verdict 🟢 PASS** (`scripts/quality_gate_per_clip.py` exit code 0)
+   - ✅ **A1 — Quality Gate Agent verdict 🟢 PASS** (`ai-video quality-gate-per-clip` exit code 0)
    - ✅ **A2 — Mid-exec Gemini Vision hailuo_post hook passed** (per shot, exit 0 = no regen flagged)
    - ✅ **A3 — Caption sidecar JSON schema valid**:
      - All `start_abs_s` + `end_abs_s` non-None
@@ -462,10 +446,10 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
    **Per-clip audit method**:
    ```bash
    # Per shot_NN
-   .venv/bin/python scripts/quality_gate_per_clip.py \
+   uv run ai-video quality-gate-per-clip \
      --clip assets/clips-atomic/shot_NN_atomic.mp4 \
      --captions assets/clips-atomic/shot_NN_captions.json \
-     --spec ../creative-specs/<id>.yaml \
+     --spec ../../creative-specs/<id>.yaml \
      --shot-id shot_NN \
      --enable-gemini  # ⭐ MANDATORY for hero shots (hook + climax + cliffhanger)
    # Exit 0 → 🟢 PASS this clip
@@ -483,7 +467,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
    **Forward references**:
    - `ai-video-production/PIPELINE.md § 13` per-clip atomic specification
    - `horror-choice-format/INGENIERO-PAUTA-MASTER.md § 8.10-8.15` implementation
-   - `CLAUDE.md Hard Rule #23` per-clip atomic canonical forward
+   - `docs/OPERATING-MANUAL.md Hard Rule #23` per-clip atomic canonical forward
    - Memory `feedback_per_clip_atomic_assembly`
 
 ---
@@ -543,7 +527,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 
    **Rationale**: caso disparador matadero CP5 STOP point 2026-05-19. Engineer declared CP4 done con solo video assets (29 Hailuo clips delivered). `assets/sfx/` `assets/music/` `assets/ambient/` ALL EMPTY (0/10, 0/3, 0/2 vs SPEC). `index.html` ZERO countdown/choice_buttons/loading_bar wired (vs SPEC 3 countdown + 2 button sets + 2 loading bars). Auditor (yo) interpreted engineer's `coverage_pct 69.93% structural` label como "1 LU off LUFS tweak" pattern-match sin medir directo. User flagged "faltan SFX + countdowns + cut effects" → audit direct verified → gap surfaced. C-INVENTORY-WIRED ensures audits MEASURE inventory (not just quality), preventing recurrence.
 
-   **Forward**: implementation in `scripts/audit-spec-completeness.py` (Phase 1 priority) automates this step + cron integration Phase 5.
+   **Forward**: implementation in `ai-video audit-spec-completeness` (Phase 1 priority) automates this step + cron integration Phase 5.
 
 ---
 
@@ -560,7 +544,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
 - [ ] ¿Hard Rules + tolerance bands están gated por capability flags donde aplica? (e.g., Hard Rule #25 caption invariance gated por `has_captions_baked`)
 - [ ] ¿Si SPEC carece de `video_capabilities` block → flag Bug #9, escalá a Tomás (NO assumir defaults silent)?
 - [ ] ¿Output report distingue claramente properties skipped por `not_applicable` vs properties actually tested?
-- [ ] ¿Effects-library TIERED (PRE-4.K)? Verificá que el engineer pasó `--effects-dir` con AMBOS catálogos (Capa A universal primitives + Capa B `<format>` sub-genre) a `apply-effects-between-clips.py`; que recipes `xfade_fidelity: approximate` usados en producción tengan WARNING reconocido (Option B trigger si perceptualmente inaceptable). Principio "Disponibilidad ≠ Uso": el SPEC `shot_list[].transition_out` (Capa C) elige del catálogo disponible, NO prescripción.
+- [ ] ¿Effects-library TIERED (PRE-4.K)? Verificá que el engineer pasó `--effects-dir` con AMBOS catálogos (Capa A universal primitives + Capa B `<format>` sub-genre) a `ai-video apply-effects-between-clips`; que recipes `xfade_fidelity: approximate` usados en producción tengan WARNING reconocido (Option B trigger si perceptualmente inaceptable). Principio "Disponibilidad ≠ Uso": el SPEC `shot_list[].transition_out` (Capa C) elige del catálogo disponible, NO prescripción.
 
 **Anti-pattern detectable:**
 
@@ -615,7 +599,7 @@ Después de la tabla, el auditor concluye con UNO de:
 5. **Compartir contexto con arq/ing**. NO leer el HANDOFF-PROTOCOL del arquitecto antes de auditar (eso te biasea con su lens). Leer SOLO autoridad canónica + handoff del ingeniero.
 6. **Inventar findings sin authority quote**. Cada FAIL/NB debe tener pointer a doc § línea.
 7. **Cerrar audit sin responder preguntas explícitas del ingeniero**. Si el handoff tiene §10 "Preguntas auditor A1-A8", el output del auditor responde A1-A8 explícitamente.
-8. ⭐ **Pattern-match label engineer sin medir directo** (added 2026-05-19 post matadero CP5 gap #13). Si engineer reporta `coverage_pct 69.93% structural` o `LUFS -15.1` o cualquier métrica con label cualitativo, NUNCA asumir el scope del gap por el label — **medir directo**: `ls assets/sfx/` `grep countdown index.html` `ffprobe master.mp3`. Hard rule #19 ("NUNCA estimar, SIEMPRE medir") aplica al auditor también. **Caso disparador**: yo (auditor) interpreté engineer's "coverage_pct 69.93% structural" como "1 LU off LUFS tweak iter 2 small fixes $0.50" pattern-match basado en label — real scope era "10 SFX + 3 music + 2 ambient + 3 countdowns + 2 button sets + 2 loading bars ALL UNGENERATED $1.10". User flagged directo "faltan SFX + countdowns + cut effects" → audit verified → gap surfaced. Audits miden CALIDAD de lo que existe, NO INVENTARIO contra SPEC — el auditor debe MEDIR el inventory diff manualmente hasta `audit-spec-completeness.py` esté implementado.
+8. ⭐ **Pattern-match label engineer sin medir directo** (added 2026-05-19 post matadero CP5 gap #13). Si engineer reporta `coverage_pct 69.93% structural` o `LUFS -15.1` o cualquier métrica con label cualitativo, NUNCA asumir el scope del gap por el label — **medir directo**: `ls assets/sfx/` `grep countdown index.html` `ffprobe master.mp3`. Hard rule #19 ("NUNCA estimar, SIEMPRE medir") aplica al auditor también. **Caso disparador**: yo (auditor) interpreté engineer's "coverage_pct 69.93% structural" como "1 LU off LUFS tweak iter 2 small fixes $0.50" pattern-match basado en label — real scope era "10 SFX + 3 music + 2 ambient + 3 countdowns + 2 button sets + 2 loading bars ALL UNGENERATED $1.10". User flagged directo "faltan SFX + countdowns + cut effects" → audit verified → gap surfaced. Audits miden CALIDAD de lo que existe, NO INVENTARIO contra SPEC — el auditor debe MEDIR el inventory diff manualmente hasta `ai-video audit-spec-completeness` esté implementado.
 
 10. ⭐ **Trust docs canonical-scenes/intermediate sin direct frame verification** (added 2026-05-19 PM post iter 4-5 countdown wrong analysis). Cuando audit requiere verificar canonical pattern, auditor NUNCA debe confiar exclusivamente en docs canonical-scenes/ref-XX.md o REFERENT-ANALYSIS-13-VIDEOS-SYNTHESIS.md — esos docs son **sampling intermediario** (frames cada 5s en canonical-scenes) que **PIERDE eventos críticos** que caen entre frames sampled.
 
@@ -629,10 +613,10 @@ Después de la tabla, el auditor concluye con UNO de:
 
    **Forward**:
    - GAP #20 canonical-scenes docs MAX DETAIL methodology (every 0.5s critical first 30s + every 1s rest)
-   - Phase 1 script `extract-canonical-max-detail.py` automates comprehensive frame coverage
+   - Phase 1 script `ai-video extract-canonical-max-detail` automates comprehensive frame coverage
    - AUDITOR per CP audit: extract frames directly when verifying canonical pattern compliance — NUNCA depend solo on intermediate docs
 
-   ⭐ **REINFORCEMENT 2026-05-29 (pattern_class `synthesis_converts_flexible_principles_to_binary_rules` instances 2/5 + 3/5; refinamiento de `validation_against_synthesis_violates_primary_source_principle`)**: el principio aplica también a REGLAS DE TEXTO/GUION, no solo a frames. **Y el modo de falla NO es "regla equivocada" sino "principio flexible convertido en regla binaria"**: al auditar una regla, distinguí 🟦principio underlying (enforce) de 🟩variabilidad creativa (NO enforce — el arquitecto es libre) de 🟥anti-pattern (flag). Un validator NO debe forzar una elección creativa específica. Cuando audites una regla con claim "canónico N/M" (framing, fraseo, estructura narrativa), validá contra la FUENTE PRIMARIA directa — los transcripts Whisper en `referent-analysis/horror-choice/ref-XX/transcription.json` — NO contra la síntesis (PAUTA-MASTER, canonical-scenes, memorias-paráfrasis). **Caso disparador**: la regla `feedback_si_elegiste_framing` / D19 ("Si elegiste X") era paráfrasis sintética; el primary source usa "Si [acción condicional]" (6/8 @referent-a) + "Si decides/escogiste" (2/8 @referent-b). El validator `audit-spec-narrative-coherence.py` enforzaba la paráfrasis → FAIL sobre el canónico real. Co-findings misma clase (forensic audit 2026-05-29): `"Una noche en paz"` mandado como canónico = 0/8 (es firma de marca nuestra); template cliffhanger `"juntos, en silencio, mirando…"` = 0/8; SCRIPT-WRITING-GUIDE "bueno sin diálogo"/"ganadora contra impulso" contradicen PAUTA §0/§6. **Regla**: una regla NO es canónica porque un doc de síntesis lo diga — solo si el transcript/frame primario lo confirma. Ver SYSTEM-LEARNINGS § Pattern 8.
+   ⭐ **REINFORCEMENT 2026-05-29 (pattern_class `synthesis_converts_flexible_principles_to_binary_rules` instances 2/5 + 3/5; refinamiento de `validation_against_synthesis_violates_primary_source_principle`)**: el principio aplica también a REGLAS DE TEXTO/GUION, no solo a frames. **Y el modo de falla NO es "regla equivocada" sino "principio flexible convertido en regla binaria"**: al auditar una regla, distinguí 🟦principio underlying (enforce) de 🟩variabilidad creativa (NO enforce — el arquitecto es libre) de 🟥anti-pattern (flag). Un validator NO debe forzar una elección creativa específica. Cuando audites una regla con claim "canónico N/M" (framing, fraseo, estructura narrativa), validá contra la FUENTE PRIMARIA directa — los transcripts Whisper en `data/referent-analysis/horror-choice/ref-XX/transcription.json` — NO contra la síntesis (PAUTA-MASTER, canonical-scenes, memorias-paráfrasis). **Caso disparador**: la regla `feedback_si_elegiste_framing` / D19 ("Si elegiste X") era paráfrasis sintética; el primary source usa "Si [acción condicional]" (6/8 @referent-a) + "Si decides/escogiste" (2/8 @referent-b). El validator `ai-video audit-spec-narrative-coherence` enforzaba la paráfrasis → FAIL sobre el canónico real. Co-findings misma clase (forensic audit 2026-05-29): `"Una noche en paz"` mandado como canónico = 0/8 (es firma de marca nuestra); template cliffhanger `"juntos, en silencio, mirando…"` = 0/8; SCRIPT-WRITING-GUIDE "bueno sin diálogo"/"ganadora contra impulso" contradicen PAUTA §0/§6. **Regla**: una regla NO es canónica porque un doc de síntesis lo diga — solo si el transcript/frame primario lo confirma. Ver SYSTEM-LEARNINGS § Pattern 8.
 
    ⭐ **REINFORCEMENT 2026-05-29 (instance 4/5 — `tests_with_synthetic_fixtures_dont_substitute_real_artifact_testing`)**: el mismo principio aplica a TESTS. Un validator que pasa sus tests con fixtures SINTÉTICAS puede crashear contra el artefacto REAL si el schema sintético no coincide con el real ("green tests, red reality"). **Caso disparador**: los validators BUILD 4/5/8 (narrative-coherence + narration-fits + lip-sync) usaban fixtures dict-form y crashearon (`AttributeError`) en el primer SPEC v11 real (string-form). **Regla auditor**: (a) en cada SPEC-AUDIT, CORRER los validators contra el SPEC real (no confiar en el self-audit del arquitecto que dice "PASS" sin correrlos); (b) HR#26 expansión — todo validator nuevo DEBE incluir un regression test contra el SCHEMA del artefacto real, no solo fixtures sintéticas.
 
@@ -645,24 +629,24 @@ Después de la tabla, el auditor concluye con UNO de:
     - t=duration*0.75 (e.g., 72s — user caught error 70-77s)
     - t=duration-10s (end-of-video forensics per GAP #30)
     - t=duration-3s (outro card moment)
-    
-    PLUS run audit-frames-granular con --interval 0.5 OR audit-frames.py interval 1.0 + visually inspect ≥10 random frame extracts.
-    
+
+    PLUS run audit-frames-granular con --interval 0.5 OR ai-video audit-frames interval 1.0 + visually inspect ≥10 random frame extracts.
+
     **Caso disparador**: cinema-abandonado iter 3 user flagged 3 error windows (t=15, t=53-62, t=70-77) que auditor (yo) NO verifiqué — solo extracted 88/91/93/95s end-of-video. Trusted engineer "0 FAIL / 8 WARN" sin independent random distributed verification. Anti-pattern #8+#10 recurrence.
-    
+
     **Rule canonical strict**:
     - Sample ≥7 distributed timestamps PER audit cycle
     - Caption overlap detection: count chunks per 5s window — if >5 chunks/5s = too dense, FLAG
     - Audio waveform analysis: ffmpeg volumedetect per 5s window — drift detection
     - Independent verify ≠ accept engineer report
-    
+
     Forward: codify in script `audit-distributed-timestamps.py` (Phase 2 priority).
 
 12. ⭐ **Trust Gemini holistic SCORE single-source (added 2026-05-21 post cinema-abandonado comparative analysis)**. Gemini holistic SCORES con ≥1 punto de inflación vs user perceptual ground truth (caso cinema-abandonado v2 = Gemini 8.6 holistic; user perceived "el peor"). Auditor NEVER concludes "video ship-ready" basado SOLO en Gemini holistic score.
 
    **Rule canonical strict**:
    - Holistic Gemini score ≥9.7 = NECESARIA pero NO SUFICIENTE (gate a)
-   - `audit-against-referent.py` empirical bands ≥85% = NECESARIA (gate b)
+   - `ai-video audit-against-referent` empirical bands ≥85% = NECESARIA (gate b)
    - Comparative analysis vs ≥3 canonical refs Gemini per-dimension = SI hay user perceptual concern
    - Dimensional comparison: si cualquier dimensión nuestra <2 below average ref → flag improvement opportunity even with holistic ≥9.7
    - User perceptual = ground truth final (Rule D PRECEDENCE)
@@ -672,12 +656,12 @@ Después de la tabla, el auditor concluye con UNO de:
    - music layers cinema=1 vs canonical 3 (-66%)
    - character consistency cinema=7/10 vs canonical 9/10 (-2pts)
    - visual artifacts cinema=7/10 vs canonical 8/10 (-1pt)
-   
+
    Holistic Gemini didn't surface these because it scored "atmosphere 9/10" + "narrative 9/10" high. Per-dimension empirical comparison surfaced them.
 
    **Auditor check obligatorio post-CP5 render**:
    - Run Gemini holistic (current standard)
-   - Run `audit-against-referent.py` empirical (current standard)
+   - Run `ai-video audit-against-referent` empirical (current standard)
    - PLUS run comparative Gemini Vision on ≥3 canonical refs same prompt → dimensional table
    - If any dimension below canonical average by ≥2pts → flag improvement opportunity (even if overall ≥9.7)
 
@@ -709,7 +693,7 @@ Después de la tabla, el auditor concluye con UNO de:
    - Auditor extracted ~12 frames distributed, didn't check caption-vs-audio per frame
    - This is methodology gap codified forward
 
-15. ⛔⛔ **Engineer multi-CP autonomous run sin auditor gates entre cada CP — FORBIDDEN** (added 2026-05-21 PM late post V3 parque-acuatico iter 1 failure root cause). Auditor (yo) spawned engineer como SINGLE sub-agent corriendo CP1+CP2+CP3+CP4+CP5 autonomous. Engineer self-declared "complete" con calibrated v4 7.7 → user perceptual 6.0 con 15 bugs surfacing AT ONCE in final render. CLAUDE.md § 0.0 dice "Cada handoff CP[N] del ingeniero pasa por auditor independiente antes de ejecutar el siguiente CP" — VIOLATED.
+15. ⛔⛔ **Engineer multi-CP autonomous run sin auditor gates entre cada CP — FORBIDDEN** (added 2026-05-21 PM late post V3 parque-acuatico iter 1 failure root cause). Auditor (yo) spawned engineer como SINGLE sub-agent corriendo CP1+CP2+CP3+CP4+CP5 autonomous. Engineer self-declared "complete" con calibrated v4 7.7 → user perceptual 6.0 con 15 bugs surfacing AT ONCE in final render. docs/OPERATING-MANUAL.md § 0.0 dice "Cada handoff CP[N] del ingeniero pasa por auditor independiente antes de ejecutar el siguiente CP" — VIOLATED.
 
    **Hard rule canonical strict (NEVER violate)**:
    - Engineer agent invocation = **ONE invocation PER CP** maximum
@@ -735,8 +719,8 @@ Después de la tabla, el auditor concluye con UNO de:
    **Forward systemic**:
    - AUTONOMOUS-FACTORY-ROADMAP orchestrator design MUST enforce CP-by-CP sequential gates
    - NO end-to-end engineer agent spawning forward video #3 iter 2+ + video #4+
-   - `scripts/orchestrator-cp-by-cp.py` Phase A scaffold (forward)
-   - CLAUDE.md Hard Rule #24 NEW: "Auditor enforce CP-by-CP gates mandatory"
+   - `ai-video orchestrator-cp-by-cp` Phase A scaffold (forward)
+   - docs/OPERATING-MANUAL.md Hard Rule #24 NEW: "Auditor enforce CP-by-CP gates mandatory"
 
 14. ⭐ **Story chain rationalization without execution check** (added 2026-05-21 post cinema-abandonado / matadero analysis). Auditor reading story-coherent doesn't mean execution-continuous. Gemini calibrated v4 can score narrative chain 9-10 BUT physical journey broken via teleport-cuts.
 
@@ -763,22 +747,22 @@ Después de la tabla, el auditor concluye con UNO de:
    - NO "mouth begins moving toward warning line" mid-state propositions — esto es exactly el anti-pattern
    - Aplica a TODOS los character faces visibles (face = lips potentially visible = strict compliance)
    - NO aplica a: matarife sin face (cleaver helmet), narrator off-screen, viewer POV (hand visible no face)
-   
+
    **Auditor check obligatorio**: frame extraction at character-non-speech moments (e.g., during narrator overlay OR countdown OR transition silence) — verify lips static. Si lips mid-articulation visible during character-silent moment → 🔴 FAIL realism.
-   
+
    **Caso disparador**: matadero iter 4 propuesta inicial mía (auditor terminal 3) sugirió "cocinera mouth begins moving toward warning line" durante countdown silence — user catch immediato: "se pierde el realismo". Confirms anti-pattern. Forward: codify en INGENIERO-PAUTA + AUDITOR-PROTOCOL para anti-recurrencia universal.
 
 ---
 
 17. ⛔ **Complete the work before passing it to the next triangle role** (added 2026-05-29, Hard Rule #27, pattern_class 5/5 `architect_self_flags_gaps_instead_of_iterating_pre_emit`). Un rol NO entrega trabajo con findings 🔴 conocidos esperando que el siguiente rol los triangule. **Arquitecto**: corre los 3 validators (narrative-coherence + narration-fits-duration + lip-sync-marks) contra su PROPIO SPEC pre-emit + itera hasta 0 FAIL. **Auditor que recibe un SPEC con 🔴** → **RETORNA al arquitecto** (no escala a Tomás salvo ambigüedad arquitectural real); el auditor NO "arregla" el SPEC ni triangula gaps que el arquitecto debió resolver. **Caso disparador**: V5 sala-limpia 2026-05-29 — arquitecto declaró "self-audit all PASS" sin correr los validators → SPEC-AUDIT surfació shot_02 320 WPM + 3 schema crashes que el self-audit cualitativo no detectó. **Corolario auditor (instance 4/5)**: en cada SPEC-AUDIT, CORRER los validators contra el SPEC real (no confiar en el "PASS" del arquitecto).
 
-18. ⛔ **Validators/builds NO asumen capacidades del modelo hardcoded — CONSULTAN `MODEL-CAPABILITIES-MATRIX.md`** (added 2026-05-30, Hard Rule #28/#29, pattern_class 6/5 `model_constraints_not_propagated_across_triangle_roles`). Todo check de "cabe en el shot / el clip / la resolución" debe leer la MATRIX (canonical_pace_wpm, i2v clip_duration_max_s, t2i constraints), NO constantes hardcoded ni supuestos. **Auditor**: en SPEC-AUDIT, verificá que el SPEC respeta las capabilities declaradas cross-CP (narración@canonical ≤ min(duration_intent_s, i2v clip max); rasgos raros t2i dentro de stability/pose-coupling). **Caso disparador V5**: el validator L1 chequeaba `WPM≤280` (comprimible) en vez de `narración@165 ≤ min(dur, hailuo 5.9s)` → 18.8s de narración truncados en 10 shots escaparon al gate. Fix: `audit-spec-narration-fits-duration.py` ahora lee la MATRIX. Forward validators: `audit-clip-timing-vs-audio.py` (atomic clip_dur ≥ narración_dur), `audit-cross-cp-output-consistency.py` (cada CP output preserva properties del anterior).
+18. ⛔ **Validators/builds NO asumen capacidades del modelo hardcoded — CONSULTAN `MODEL-CAPABILITIES-MATRIX.md`** (added 2026-05-30, Hard Rule #28/#29, pattern_class 6/5 `model_constraints_not_propagated_across_triangle_roles`). Todo check de "cabe en el shot / el clip / la resolución" debe leer la MATRIX (canonical_pace_wpm, i2v clip_duration_max_s, t2i constraints), NO constantes hardcoded ni supuestos. **Auditor**: en SPEC-AUDIT, verificá que el SPEC respeta las capabilities declaradas cross-CP (narración@canonical ≤ min(duration_intent_s, i2v clip max); rasgos raros t2i dentro de stability/pose-coupling). **Caso disparador V5**: el validator L1 chequeaba `WPM≤280` (comprimible) en vez de `narración@165 ≤ min(dur, hailuo 5.9s)` → 18.8s de narración truncados en 10 shots escaparon al gate. Fix: `ai-video audit-spec-narration-fits-duration` ahora lee la MATRIX. Forward validators: `ai-video audit-clip-timing-vs-audio` (atomic clip_dur ≥ narración_dur), `audit-cross-cp-output-consistency.py` (cada CP output preserva properties del anterior).
 
-19. ⛔ **Coverage checks DEBEN validar 3 niveles: existence + semantic + TEMPORAL** (added 2026-05-30, Hard Rule #30, instance 6 `user_perceptual_detects_what_validators_miss`). Verificar que "un caption existe" (1 frame) NO basta. Coverage real = (A) existe per shot + (B) el texto del caption matchea la narración + (C) el caption es visible durante TODA la duración hablada (temporal span), no solo la 1ª frase. **Caso disparador V5 caption bug**: el caption-burn quemaba la narración completa como UN bloque estático truncado a 2 líneas (`wrap()[:2]`) → solo la 1ª frase se veía; el resto de la narración (audio completo) quedaba SIN caption. Mi audit V5.1 reportó "caption coverage 100%" mirando 1 frame (existence) — Tomás detectó el gap temporal. **Fix**: chunkear TODAS las palabras (words.json) en cues word-timed progresivos. **Regla auditor**: para captions, extraer frames a MÚLTIPLES tiempos por shot (early/mid/late) + confirmar que la narración tardía también tiene su caption. Forward: `audit-caption-temporal-coverage.py` (caption visible durante toda la narración, por chunks). Mismo CP que el bug de truncación de audio (atomic build) — distinto mecanismo (wrap-truncation vs audio-trim).
+19. ⛔ **Coverage checks DEBEN validar 3 niveles: existence + semantic + TEMPORAL** (added 2026-05-30, Hard Rule #30, instance 6 `user_perceptual_detects_what_validators_miss`). Verificar que "un caption existe" (1 frame) NO basta. Coverage real = (A) existe per shot + (B) el texto del caption matchea la narración + (C) el caption es visible durante TODA la duración hablada (temporal span), no solo la 1ª frase. **Caso disparador V5 caption bug**: el caption-burn quemaba la narración completa como UN bloque estático truncado a 2 líneas (`wrap()[:2]`) → solo la 1ª frase se veía; el resto de la narración (audio completo) quedaba SIN caption. Mi audit V5.1 reportó "caption coverage 100%" mirando 1 frame (existence) — Tomás detectó el gap temporal. **Fix**: chunkear TODAS las palabras (words.json) en cues word-timed progresivos. **Regla auditor**: para captions, extraer frames a MÚLTIPLES tiempos por shot (early/mid/late) + confirmar que la narración tardía también tiene su caption. Forward: `ai-video audit-caption-temporal-coverage` (caption visible durante toda la narración, por chunks). Mismo CP que el bug de truncación de audio (atomic build) — distinto mecanismo (wrap-truncation vs audio-trim).
 
 ---
 
-20. ⛔ **Auditar ESTRUCTURA vs canónico (no solo linkage) — y FLAGEAR divergencias, NUNCA racionalizarlas** (added 2026-06-01, Hard Rule forward, caso V6 invernadero). En el SPEC-AUDIT, comparar el guion **beat-por-beat** contra `horror-choice-format/PAUTA-MASTER.md § 2` — § 2.1 (esqueleto) + § 2.2 (INVARIANTE: el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones) + § 2.4 (las 8 perspectivas: estructura / invariante / recorridos-secuenciales / pattern-rotación / name-labels-durante-countdown / glitch-pantalla-antigua-en-story-change / SFX-densos-matcheados-ducked / + checks pre-existentes). **Verificar el linkage de refs (¿el SPEC cita bien?) NO basta** — hay que verificar que la ESTRUCTURA matchee el canónico. **Si notás una divergencia, FLAGEALA como 🔴 que retorna al arquitecto — NUNCA la racionalices como "fortaleza/necesaria".** Caso disparador: V6 invernadero — Celeste (bueno-aparente) presente y tentando en el played path (shots 05/10), violando el invariante; yo (auditor) lo NOTÉ en el SPEC-AUDIT y lo escribí como "necesario y mejor para el doble-amable" (racionalización) en vez de flagearlo → Tomás lo cazó post-render. Enforcement programático: `audit-spec-structure-vs-canonical.py`. Memoria `feedback_spec_audit_structural_divergence`.
+20. ⛔ **Auditar ESTRUCTURA vs canónico (no solo linkage) — y FLAGEAR divergencias, NUNCA racionalizarlas** (added 2026-06-01, Hard Rule forward, caso V6 invernadero). En el SPEC-AUDIT, comparar el guion **beat-por-beat** contra `horror-choice-format/PAUTA-MASTER.md § 2` — § 2.1 (esqueleto) + § 2.2 (INVARIANTE: el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones) + § 2.4 (las 8 perspectivas: estructura / invariante / recorridos-secuenciales / pattern-rotación / name-labels-durante-countdown / glitch-pantalla-antigua-en-story-change / SFX-densos-matcheados-ducked / + checks pre-existentes). **Verificar el linkage de refs (¿el SPEC cita bien?) NO basta** — hay que verificar que la ESTRUCTURA matchee el canónico. **Si notás una divergencia, FLAGEALA como 🔴 que retorna al arquitecto — NUNCA la racionalices como "fortaleza/necesaria".** Caso disparador: V6 invernadero — Celeste (bueno-aparente) presente y tentando en el played path (shots 05/10), violando el invariante; yo (auditor) lo NOTÉ en el SPEC-AUDIT y lo escribí como "necesario y mejor para el doble-amable" (racionalización) en vez de flagearlo → Tomás lo cazó post-render. Enforcement programático: `ai-video audit-spec-structure-vs-canonical`. Memoria `feedback_spec_audit_structural_divergence`.
 
 ---
 

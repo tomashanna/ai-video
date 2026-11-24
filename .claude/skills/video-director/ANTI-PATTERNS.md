@@ -78,7 +78,7 @@ tl.set("#h3-cap-2", { opacity: 1 }, 21.2);
 
 **Por qué falla**: SIEMPRE se desincronizan. Tras regenerar audio cambian las duraciones y los timings quedan viejos. Y a ojo nunca aciertas el on/off por palabra.
 
-**Fix**: `scripts/captions.py --spec captions-spec.json` (Whisper).
+**Fix**: `ai-video captions --spec captions-spec.json` (Whisper).
 
 **Aprendido en**: bosque-abandonado v1 (captions desfasados, regeneración completa).
 
@@ -97,7 +97,7 @@ tl.set("#h3-cap-2", { opacity: 1 }, 21.2);
 
 **Por qué falla**: la UI de Instagram (description, username, music sticker, like button) tapa los bottom ~400px del feed. El caption queda invisible o cortado.
 
-**Fix**: 
+**Fix**:
 ```css
 .caption-wrap {
   bottom: 540px;    /* canónico IG Reel */
@@ -205,9 +205,9 @@ h3-walk-c: wide POV caminando, low angle             ← MAL, misma toma
 
 ```bash
 # MAL — cada imagen de "Berni" es un Berni distinto
-.venv/bin/python scripts/image.py -p "Berni caminando en bosque" -o h3-walk.png
-.venv/bin/python scripts/image.py -p "Berni mirando al espectador" -o h3-look.png
-.venv/bin/python scripts/image.py -p "Berni cerca de la mano" -o h3-hand.png
+uv run ai-video image -p "Berni caminando en bosque" -o h3-walk.png
+uv run ai-video image -p "Berni mirando al espectador" -o h3-look.png
+uv run ai-video image -p "Berni cerca de la mano" -o h3-hand.png
 ```
 
 **Por qué falla**: Gemini genera 3 "Bernis" diferentes — caras distintas, edad fluctuante, ropa varía. El espectador percibe que es **otra persona** entre tomas → rompe la inmersión narrativa.
@@ -216,12 +216,12 @@ h3-walk-c: wide POV caminando, low angle             ← MAL, misma toma
 
 ```bash
 # 1. PRIMERO: generar anchor del personaje (close-up frontal claro, sin --ref)
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "Medium close-up of [PERSONAJE], facing camera, neutral expression, soft lighting." \
   -o assets/berni-anchor.png
 
 # 2. DESPUÉS: cada escena con ese personaje pasa el anchor como --ref
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "The character from the reference walking through dark forest. Same face, same age." \
   --ref assets/berni-anchor.png \
   -o assets/h3-walk.png
@@ -474,7 +474,7 @@ Ejemplo: agregar `caption-warm` class custom cuando ya existe `text-stroke 1.5px
 
 **Por qué falla**: divergencia de la doc, próxima sesión nadie va a saber por qué existe esa class.
 
-**Fix**: leer el doc canónico del tema (`CLAUDE.md` § Mapa de docs autoritativos te dice cuál) ANTES de inventar. Si el pattern no existe Y lo necesitás, agrégalo al doc canónico al mismo tiempo que lo implementás.
+**Fix**: leer el doc canónico del tema (`docs/OPERATING-MANUAL.md` § Mapa de docs autoritativos te dice cuál) ANTES de inventar. Si el pattern no existe Y lo necesitás, agrégalo al doc canónico al mismo tiempo que lo implementás.
 
 ---
 

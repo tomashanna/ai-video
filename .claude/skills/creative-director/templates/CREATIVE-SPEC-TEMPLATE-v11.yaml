@@ -6,7 +6,7 @@
 # - Auditor charter codified in V4-LAUNCH-CHECKLIST Gate 5: SPEC-VS-CANONICAL-AUDIT.md
 #   mandatory output before CP1 advancement
 #
-# CHANGES v10 → v11 (codified per CLAUDE.md Hard Rule #25 + V4-LAUNCH-CHECKLIST Gate 3):
+# CHANGES v10 → v11 (codified per docs/OPERATING-MANUAL.md Hard Rule #25 + V4-LAUNCH-CHECKLIST Gate 3):
 #
 # v11 elevates the schema to canonical for HYBRID architecture (V4 forward) by codifying
 # the 3-layer + HyperFrames UI overlay model PLUS the enforcement-script integration
@@ -30,8 +30,8 @@
 # means filling these fields in (NOT a breaking schema change for parsing — only for the
 # AUDITOR who now enforces them).
 #
-# Validation: scripts/audit-spec-completeness.py validates v11 schema (asset_list + ui_active
-# + per-shot required fields). scripts/audit-shot-spec-compliance.py consumes per-shot fields.
+# Validation: ai-video audit-spec-completeness validates v11 schema (asset_list + ui_active
+# + per-shot required fields). ai-video audit-shot-spec-compliance consumes per-shot fields.
 
 schema_version: "v11.1"
 schema_revised: "2026-05-22"
@@ -84,7 +84,7 @@ video_capabilities:
   # Format paradigm
   format_type: "interactive_choice"         # interactive_choice | tutorial | b2b_commercial | compilation | other
   duration_intent_s: 90                     # referenced en multiple places del SPEC
-  target_fps: 30                            # PRE-4.1 (2026-05-27): output fps target. Default 30 (horror-choice reel). Override per paradigm (e.g., 24 cinema). build-video-hybrid.py normaliza output final a este target. Ausente → assume 30 + WARNING (backward compat).
+  target_fps: 30                            # PRE-4.1 (2026-05-27): output fps target. Default 30 (horror-choice reel). Override per paradigm (e.g., 24 cinema). ai-video build-video-hybrid normaliza output final a este target. Ausente → assume 30 + WARNING (backward compat).
   output_resolution: "1080x1920"            # PRE-4.1: WxH del render final per format (1080x1920 = IG reel vertical). Override per format (e.g., 1920x1080 landscape). Gate 4 valida output vs este valor.
 
 # ═══════════════════════════════════════════════════════════════
@@ -150,7 +150,7 @@ hybrid_layers:
   layer_1_per_clip_atomic:
     description: "Per-shot mp4 with visual + clip-scoped audio + captions BURNED into frame data"
     captions_source: "whisper_from_clip_audio"   # canonical: caption-audio LOCKED at frame level, cannot drift
-    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    captions_burn_script: "ai-video build-clip-atomic --bake-captions"
     audio_bundled_per_clip:
       - "narrator_segments_within_this_clip"     # if any narrator speech occurs in clip duration
       - "character_dialog_within_this_clip"
@@ -161,7 +161,7 @@ hybrid_layers:
 
   layer_2_effects_between_clips:
     description: "Transitions + stings + B&W TV static / cross-fade / flash applied AT shot boundaries"
-    effects_library_ref: "transitions/universal/transitions/"   # Carpeta GLOBAL root (2026-06-05). Universal primitives (11) + per-format en transitions/<format>/transitions/ (horror-choice: film-burn / projector-cue-cinema / static-noise / old_screen_glitch_error). Índice transición→formato: transitions/catalog.json. Principio "Disponibilidad ≠ Uso": catálogos disponibles, este SPEC elige en shot_list[].transition_in/out. Caption styles → templates/caption-styles/caption-burn-template.css
+    effects_library_ref: "assets/transitions/universal/transitions/"   # Carpeta GLOBAL root (2026-06-05). Universal primitives (11) + per-format en transitions/<format>/transitions/ (horror-choice: film-burn / projector-cue-cinema / static-noise / old_screen_glitch_error). Índice transición→formato: assets/transitions/catalog.json. Principio "Disponibilidad ≠ Uso": catálogos disponibles, este SPEC elige en shot_list[].transition_in/out. Caption styles → templates/caption-styles/caption-burn-template.css
     transition_variety_min: 3                    # at least 3 unique transition types per video
     non_diegetic_sfx_placement: "effect_layer"   # transition stings live HERE, not in clip audio
 
@@ -172,7 +172,7 @@ hybrid_layers:
       - "music_drone_base"                       # continuous tension drone
       - "ambient_continuous_environment"         # room tone / environmental wash
     sidechain_target_db: -6                      # narrator ducks music by 6 dB during speech
-    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+    overlay_pipeline: "ai-video build-video-hybrid --post-concat-overlay"
 
   layer_4_hyperframes_ui_overlay:
     description: "Countdown clips + decision UI + outro card composed via HyperFrames timeline.main"
@@ -377,8 +377,8 @@ narration_script:
     speaker: "char_a"
     voice_id: "<voice_id>"
     text_canonical: "No me elijas. Es una trampa."
-    timestamp_intent_s: [8.0, 10.5]
-    shot_id_anchor: "shot_02"
+    timestamp_intent_s: [5.5, 7.5]
+    shot_id_anchor: "shot_01"   # must reference a shot_id declared in shot_list (validated)
     lip_sync_required: true
 
   # ... etc per all narration segments
@@ -492,7 +492,7 @@ transitions:
   #                     projector_cue_cinema | film_burn_transition | old_screen_glitch_error
   #   ⭐ old_screen_glitch_error = glitch "pantalla antigua/pixelada/con error" para CAMBIOS DE HISTORIA
   #     (transición de recorrido, decisión→consecuencia, bridges entre ramas, played↔counterfactual).
-  #     horror-choice ONLY (PAUTA-MASTER § 2.4 perspectiva 6). Recipe: transitions/horror-choice/transitions/old_screen_glitch_error.json
+  #     horror-choice ONLY (PAUTA-MASTER § 2.4 perspectiva 6). Recipe: assets/transitions/horror-choice/transitions/old_screen_glitch_error.json
   - from_shot_id: "shot_01"
     to_shot_id: "shot_02"
     transition_type: "hard_cut_with_whoosh"
@@ -549,7 +549,7 @@ hyperframes_ui_overlay:
     z_index: 68
 
 # ═══════════════════════════════════════════════════════════════
-# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# 13. ASSET LIST INVENTORY (ai-video audit-spec-completeness input)
 # ═══════════════════════════════════════════════════════════════
 
 asset_list:

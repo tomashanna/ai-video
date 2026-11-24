@@ -54,7 +54,7 @@ Para qué: unir varios clips en una pieza.
 printf "file 'a.mp4'\nfile 'b.mp4'\n" > list.txt
 ffmpeg -f concat -safe 0 -i list.txt -c copy out.mp4
 
-# concat filter (heterogéneos; ej: pegar un clip de 30fps a uno de 31.58fps) — validado en Palti
+# concat filter (heterogéneos; ej: pegar un clip de 30fps a uno de 31.58fps)
 ffmpeg -i a.mp4 -i b.mp4 \
   -filter_complex "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" \
   -map "[v]" -map "[a]" -c:v libx264 -crf 18 -preset medium -pix_fmt yuv420p -c:a aac -b:a 192k out.mp4
@@ -95,7 +95,6 @@ ffmpeg -i in.mp4 -vf "crop=ih*9/16:ih,scale=1080:1920" out.mp4
 ffmpeg -i in.mp4 -vf "scale=iw:ih" -metadata:s:v:0 rotate=0 out.mp4
 ```
 
-> Referencia editorial: `client-project-d/scripts/reframe-vertical-to-horizontal.py`.
 
 ---
 
@@ -105,7 +104,7 @@ Para qué: subtítulos legibles sincronizados. **Whisper da timing + texto; vos 
 
 ```bash
 # (a) Transcribir con Whisper a SRT (español, líneas cortas, 2 líneas máx)
-WH="<ruta>/.venv/bin/whisper"   # ej. client-project-d/.venv/bin/whisper
+WH="$(command -v whisper)"   # openai-whisper CLI (uv sync --extra media)
 "$WH" input.mp4 --model small --language es --task transcribe \
   --word_timestamps True --max_line_width 26 --max_line_count 2 \
   --output_format srt --output_dir srt --fp16 False
@@ -122,7 +121,7 @@ bash scripts/burn-captions.sh input.mp4 srt_fixed/sub.srt <W> <H> <fontsize> <ma
 
 Estilo legible (lo que hacen los scripts): blanco, **contorno + sombra** para contraste, **lower-third** que no tape caras, fuente acorde al pedido. Color/fuente/tamaño/posición son **parámetros** — elegilos según lo que el user busca.
 
-> Alternativa editorial todo-en-uno: `client-project-d/scripts/burn-subtitles.py`. Sistema de clases/CSS para HyperFrames: `ai-video-production/CAPTIONS.md`.
+> Sistema de clases/CSS para HyperFrames: `ai-video-production/CAPTIONS.md`.
 
 ---
 
@@ -150,11 +149,11 @@ bash <ruta>/ai-video-production/templates/scripts/master-audio.sh out.mp4 final.
 
 Para qué: acentos sonoros (whoosh en cortes, impacto, ambiente).
 
-- **Primero reusá** lo que ya hay: `library/sfx-catalog.json` + `transitions/<fmt>/audio-stings/`.
+- **Primero reusá** lo que ya hay: `assets/library/sfx-catalog.json` + `transitions/<fmt>/audio-stings/`.
 - Si falta, **generá con ElevenLabs** (cuesta → Plan-First):
 
 ```bash
-.venv/bin/python scripts/sfx.py -t "<prompt en inglés, dry, single event>" -d 1.0 -i 0.5 -o assets/sfx/name.mp3
+uv run ai-video sfx -t "<prompt en inglés, dry, single event>" -d 1.0 -i 0.5 -o assets/sfx/name.mp3
 ```
 
 > Autoridad: `ai-video-production/SFX-PIPELINE.md` (prompts validados, loop para ambientes).
@@ -165,7 +164,7 @@ Para qué: acentos sonoros (whoosh en cortes, impacto, ambiente).
 
 Para qué: conectar clips/beats con intención (corte seco, blend, flash, glitch…).
 
-**Consultá primero el catálogo:** `transitions/catalog.json` (15 transiciones: universal + por formato). Cada una trae su recipe + sting de audio.
+**Consultá primero el catálogo:** `assets/transitions/catalog.json` (15 transiciones: universal + por formato). Cada una trae su recipe + sting de audio.
 
 ```bash
 # Cross-fade 0.5s entre dos clips, con offset = (duración clip A − 0.5)
@@ -175,7 +174,7 @@ ffmpeg -i a.mp4 -i b.mp4 \
 #   transition= fade | fadeblack | fadewhite | wipeleft | slideup | hlslice (glitch) | circleopen ...
 ```
 
-> Catálogo + helper multi-clip: `transitions/README.md` + `ai-video-production/templates/scripts/apply-effects-between-clips.py`. Default de ritmo: el hard-cut es el workhorse; reservá flash/glitch para momentos puntuales.
+> Catálogo + helper multi-clip: `assets/transitions/README.md` + `ai-video apply-effects-between-clips`. Default de ritmo: el hard-cut es el workhorse; reservá flash/glitch para momentos puntuales.
 
 ---
 
@@ -190,9 +189,8 @@ text='Nombre — Rol':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.5:boxbo
 x=60:y=h-180:enable='between(t,1,6)'" -c:a copy out.mp4
 ```
 
-Para overlays más ricos (animados, branding, logos) está la vía HyperFrames/GSAP, o renderizar un PNG con alpha y superponer con `overlay`. 
+Para overlays más ricos (animados, branding, logos) está la vía HyperFrames/GSAP, o renderizar un PNG con alpha y superponer con `overlay`.
 
-> Referencia editorial: `apply-lower-thirds.py`, `apply-section-title.py`, `render-logo-outro.py` en `client-project-d/scripts/`.
 
 ---
 
@@ -252,4 +250,4 @@ Entregá copias nuevas en una carpeta clara, decí **dónde quedaron**, reportá
 
 ## Scripts de QA reutilizables (opcionales)
 
-En `ai-video-production/templates/scripts/` hay validadores que podés correr sobre el render: `audit-mix-volumes.py`, `audit-caption-temporal-coverage.py`, `audit-sfx-audibility.py`, `audit-clip-timing-vs-audio.py`, `qa-gate.py`. Usalos cuando el trabajo lo amerite (no son obligatorios para un caption job chico).
+En `ai-video-production/templates/scripts/` hay validadores que podés correr sobre el render: `ai-video audit-mix-volumes`, `ai-video audit-caption-temporal-coverage`, `ai-video audit-sfx-audibility`, `ai-video audit-clip-timing-vs-audio`, `ai-video qa-gate`. Usalos cuando el trabajo lo amerite (no son obligatorios para un caption job chico).

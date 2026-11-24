@@ -2,7 +2,7 @@
 
 > ⛔ **ARQUITECTURA ACTUALIZADA 2026-05-23 Sub-Fase 3A.** La PAUTA canónica de este formato vive en **`horror-choice-format/PAUTA-MASTER.md`** (8 videos virales canónicos empíricos) + `PATTERNS.md` + `SCRIPT-WRITING-GUIDE.md` + `PAUTA.md`. Los docs en ESTE folder son **operacionales secundarios** — NO autoridad creativa.
 >
-> ⚠️ **`CREATIVE-BRIEF.md` fue DEPRECATED 2026-05-13 PM** (mal-grounded en V1/V2/V3 antiguos + V7 nuestro). Movido a `_archive-deprecated-docs/` durante Sub-Fase 3A. NO USAR como autoridad — solo histórico.
+> ⚠️ **`CREATIVE-BRIEF.md` fue DEPRECATED 2026-05-13 PM** (mal-grounded en V1/V2/V3 antiguos + V7 nuestro). Movido a `_archive-deprecated-docs (retirado; ver historial git)` durante Sub-Fase 3A. NO USAR como autoridad — solo histórico.
 
 ---
 
@@ -73,7 +73,7 @@ Estos docs que existían antes ahora están eliminados porque duplicaban conteni
 - ❌ `stakes-catalog.md` → ver PAUTA-MASTER § 12 Slot F body horror
 - ❌ `narrator-voice.md` → ver PAUTA-MASTER § 3 reglas + SCRIPT-WRITING-GUIDE
 - ❌ `anti-patterns.md` → ver PAUTA-MASTER § 16 checklist + AUDITOR-PROTOCOL § 6
-- ❌ `brand-and-cliffhanger.md` → ver PAUTA-MASTER § 13 cliffhanger + BRAND.md
+- ❌ `brand-and-cliffhanger.md` → ver PAUTA-MASTER § 13 cliffhanger + VISUAL-STYLE.md
 - 📂 `referent-analysis.md` → movido a `/referent-analysis/REFERENT-ANALYSIS-13-VIDEOS-SYNTHESIS.md`
 
 ---

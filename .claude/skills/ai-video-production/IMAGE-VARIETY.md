@@ -109,11 +109,11 @@ Las generaciones se pueden lanzar en background simultáneamente. Gemini Nano Ba
 
 ```bash
 # Variante principal
-.venv/bin/python scripts/image.py -p "[PROMPT_A]" -o assets/scene-a.png &
+uv run ai-video image -p "[PROMPT_A]" -o assets/scene-a.png &
 
 # Variantes B y C en paralelo
-.venv/bin/python scripts/image.py -p "[PROMPT_B_distinta_distancia]" -o assets/scene-b.png &
-.venv/bin/python scripts/image.py -p "[PROMPT_C_distinto_ángulo]"    -o assets/scene-c.png &
+uv run ai-video image -p "[PROMPT_B_distinta_distancia]" -o assets/scene-b.png &
+uv run ai-video image -p "[PROMPT_C_distinto_ángulo]"    -o assets/scene-c.png &
 wait
 ```
 

@@ -24,7 +24,7 @@ behavior: |
     (a) --ref reference image showing the signature
     (b) explicit prompt reinforcement ("6 fingers per hand, polydactyly, etc")
     (c) iteration count (3 attempts all deterministic 5-finger regression)
-  
+
   The model appears to propagate identity primarily through facial recognition.
   When face absent, defaults to most-likely interpretation (normal human anatomy) for
   rare/uncanny features.
@@ -102,12 +102,12 @@ status: **VALIDATED** (2026-05-22 PM late). Locus-anchor workaround CONFIRMED pr
         - shot_16 v11.2 (palm-DOWN resting on table) → DIFFERENT pose from anchor → 5 ✗ × 2 iter
         - shot_11 v2 (palm-down gripping ledge, DIFFERENT pose from anchor) → 6 ✓ ONLY because
           used hand-only LOCUS anchor (not full anchor) — locus anchor is pose-TOLERANT
-        
+
         Refined hypothesis: when face in frame with full anchor, Gemini balances face identity
         + hand identity. If face matches anchor but hand pose doesn't = "inconsistency penalty"
         → model regresses hand to normal anatomy as fallback. If face absent (locus anchor) =
         no penalty conflict, hand anatomy preserves regardless of pose.
-        
+
         **Three preservation paths confirmed (revised post 4th refinement)**:
         (a) Full anchor + face+hand co-located + hand pose EXACTLY matches anchor + ≤3 props → ✓
             EXACT match includes: hand configuration (both bare OR both gloved matching anchor),
@@ -115,7 +115,7 @@ status: **VALIDATED** (2026-05-22 PM late). Locus-anchor workaround CONFIRMED pr
             full pose context match (not just abstract "palm forward" category)
         (b) Locus anchor + face absent + ≤3 props → ✓ (pose-tolerant, NO exact-match needed)
         (c) Multi-ref [full + locus] + face+hand co-located + ≤3 props → UNTESTED hypothesis
-        
+
         **Failed paths confirmed**:
         (d) Full anchor + face+hand + DIFFERENT abstract pose (palm-down vs palm-forward) → ✗ V4 shot_16 v11.2
         (e) Full anchor + complex multi-action 4+ props → ✗ V4 shot_16 v3
@@ -123,13 +123,13 @@ status: **VALIDATED** (2026-05-22 PM late). Locus-anchor workaround CONFIRMED pr
             (palm-forward) BUT bare/gloved asymmetry (one bare + one gloved vs anchor showing
             both same state) OR holding-object pose (clipboard) vs anchor empty pose → ✗
             V4 shot_16 v11.3: 5/6 fingers BOTH hands despite abstract pose match.
-        
+
         **4th refinement implication**: pose-coupling is EXACT-MATCH coupling, not abstract
         category coupling. For V5+ practical design rule: SPEC shots requiring rare anatomy
         preservation must EXACTLY replicate anchor pose with zero variations (hand state +
         object holding + symmetry). For shots requiring different poses, must use:
         - Path (b) locus anchor with no face in frame, OR  
-        - Generate additional locus anchor matching the shot's specific pose (e.g., 
+        - Generate additional locus anchor matching the shot's specific pose (e.g.,
           `char_a_v1_hand_holding_clipboard.png` for clipboard-holding shots).
         Multi-ref path (c) untested — could decouple face identity from hand pose constraint.
         V4 evidence: shot_16 v2 (face+hand + simple stop-gesture pose, no other props) → 6 fingers ✓.

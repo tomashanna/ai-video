@@ -17,9 +17,9 @@ description: TOOLKIT TÉCNICO base para CUALQUIER video con IA (HyperFrames + El
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — hard rules globales + arquitectura three-agent
-2. **`<repo-root>/.claude/skills/video-director/SKILL.md`** — rol del INGENIERO + workflow 5 checkpoints + SPEC ingestion
-3. **`<repo-root>/.claude/skills/creative-director/HANDOFF-PROTOCOL.md`** — protocolo de los 5 checkpoints con architect approval gates
+1. **`docs/OPERATING-MANUAL.md`** — hard rules globales + arquitectura three-agent
+2. **`.claude/skills/video-director/SKILL.md`** — rol del INGENIERO + workflow 5 checkpoints + SPEC ingestion
+3. **`.claude/skills/creative-director/HANDOFF-PROTOCOL.md`** — protocolo de los 5 checkpoints con architect approval gates
 4. Este archivo (`SKILL.md`) entero — toolkit + hard rules técnicas
 5. Si existe `creative-specs/<project>.yaml` para ejecutar → leelo COMPLETO antes de generar assets
 3. **El sub-doc específico de tu tarea** (lista abajo en "Documentos en este skill"):
@@ -36,7 +36,7 @@ Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
    - Tarea = render + lint + audit → `PIPELINE.md` § 5+11 + `AUDIT.md`
    - Tarea = bugs HyperFrames → `HYPERFRAMES-GOTCHAS.md`
    - Tarea = retención short-form → `RETENTION-RULES.md` (📱 Reels/TikTok/Shorts solo)
-4. **`<repo-root>/library/LIBRARY.md`** — chequear si ya hay assets reutilizables ANTES de generar
+4. **`assets/library/LIBRARY.md`** — chequear si ya hay assets reutilizables ANTES de generar
 
 **Esta skill nunca se activa sola.** Para tareas de video activá también:
 - `video-director` SIEMPRE (orquestador + workflow + quality bar)
@@ -76,7 +76,7 @@ El skill del formato es responsable de la estructura narrativa, plantillas de gu
 | `MOTION-LAYER.md` | Animar planos estáticos con CSS/GSAP — Ken Burns + parallax + flicker + vignette + glitch + glow + niebla |
 | `NARRATIVE-LED-EDITING.md` ⭐ | **El narrador dicta los cortes** — taxonomía de 7 tipos (WHITE FLASH, BLACK + LOW THUD, BLACK + DRONE BAJO, BLACK + RISE DRONE, BLACK + EXHALE, BLACK + PUNCT SILENCE, WARM WHITE). Aplicar a cualquier formato con narrador + cambios narrativos. |
 | `ANIMATION-LAYER.md` | **REDIRECT** — el doc se movió a `video-animation/ANIMATION-LAYER.md` (skill propia para auto-trigger correcto en "animar/Kling/Replicate"). |
-| `SFX-PIPELINE.md` | Generar SFX vía `scripts/sfx.py`, loop expansion >22s, mix volumes |
+| `SFX-PIPELINE.md` | Generar SFX vía `ai-video sfx`, loop expansion >22s, mix volumes |
 | `IMAGE-VARIETY.md` | Diseñar variantes -a/-b/-c para escenas >4s (evita slideshow feel) |
 | **`CHARACTER-CONSISTENCY.md`** ⭐ | **Anchor + reference workflow para mantener personajes idénticos entre tomas.** Obligatorio en TODO video con personajes. |
 | **`ELEMENTS-LIBRARY.md`** | Sistema híbrido de componentes UI (countdown/loader/lower-third) — selección + compatibility check intra-video |
@@ -88,7 +88,7 @@ El skill del formato es responsable de la estructura narrativa, plantillas de gu
 | **`DELIVERY-FORMATS.md`** ⭐ | **Catálogo de formats de entrega** (reel, youtube-short, youtube-long, b2b-commercial, instagram-story, libre). Sub-docs en `formats/`. Cada genre skill se combina con un format. |
 | **`formats/<format>.md`** | Specs técnicas + reglas de cada delivery format (aspect, duration, UI safe zones, retention rules) |
 | **`RETENTION-RULES.md`** ⭐ | **Reglas de retención para vertical short-form** (Scope: 📱 Reels/TikTok/Shorts ≤2min). NO aplica a long-form ni horizontal. Heredado por `formats/reel.md`, `formats/youtube-short.md`, `formats/instagram-story.md`. |
-| `templates/` | Templates copyables: scripts (`tts.py`, `image.py` **con `--ref`**, `sfx.py`, `captions.py`), `.env-TEMPLATE`, `hyperframes.json-TEMPLATE` |
+| `templates/` | Templates copyables: scripts (`ai-video tts`, `ai-video image` **con `--ref`**, `ai-video sfx`, `ai-video captions`), `.env.example`, `templates/project/hyperframes.json` |
 
 ## Hard rules generales (cualquier video con IA)
 
@@ -118,8 +118,8 @@ Cuando crees un skill para un formato nuevo (ej: `documental-format/`, `educacio
 
 1. **Referenciar este skill** en su `SKILL.md` ("uso ai-video-production como base técnica")
 2. **Definir sus propias reglas de formato** (estructura narrativa, patterns de timing, paleta visual, dilemas si aplican)
-3. **Reusar los scripts del toolkit** (`tts.py`, `image.py`, `sfx.py`, `captions.py`) sin modificar
-4. **Parametrizar lo específico** — por ejemplo en `image.py` reemplazar `HORROR_SUFFIX` por un `STYLE_SUFFIX` configurable
+3. **Reusar los scripts del toolkit** (`ai-video tts`, `ai-video image`, `ai-video sfx`, `ai-video captions`) sin modificar
+4. **Parametrizar lo específico** — por ejemplo en `ai-video image` reemplazar `HORROR_SUFFIX` por un `STYLE_SUFFIX` configurable
 5. **Heredar el motion layer** (`MOTION-LAYER.md`) — solo elegir qué técnicas aplican a tu formato
 6. **Heredar el SFX pipeline** — solo redefinir los prompts contextuales al tema
 

@@ -91,7 +91,7 @@ Antes de tocar archivos, escribí mentalmente o en TaskCreate:
    ↓
 4. ESCENAS SIN PERSONAJES (paisajes, objetos)
    ↓
-5. SFX (buscar en library/ primero, generar solo lo faltante)
+5. SFX (buscar en assets/library/ primero, generar solo lo faltante)
    ↓
 6. MEDIR cada asset con ffprobe → Verificar → Wire en HTML
 ```
@@ -124,7 +124,7 @@ Asset que no se midió = asset que va a salir mal en el render.
 Edit → Lint → AUDIT → render-lock acquire → Render draft → release → ffprobe specs
 ```
 
-> ⛔ **Autoridad canónica = `CLAUDE.md § Pre-render gate` = 8 gates obligatorios.** Los 5 de abajo son el núcleo histórico (2026-05-13); el canónico AGREGA 3 BLOQUEANTES que NO están detallados acá: **Gate 0 `audit-spec-completeness.py`** (corre ANTES de todo — inventario SPEC asset_list/ui vs filesystem), **audit-audio** (coverage narración/música) y **continuity-check** (NARRATIVE.md vs index.html). Corré los **8**, no estos 5 solos.
+> ⛔ **Autoridad canónica = `docs/OPERATING-MANUAL.md § Pre-render gate` = 8 gates obligatorios.** Los 5 de abajo son el núcleo histórico (2026-05-13); el canónico AGREGA 3 BLOQUEANTES que NO están detallados acá: **Gate 0 `ai-video audit-spec-completeness`** (corre ANTES de todo — inventario SPEC asset_list/ui vs filesystem), **audit-audio** (coverage narración/música) y **continuity-check** (NARRATIVE.md vs index.html). Corré los **8**, no estos 5 solos.
 
 **Los 5 gates núcleo — 3 antes del render + 2 después** (subset del canónico de 8):
 
@@ -132,30 +132,30 @@ Edit → Lint → AUDIT → render-lock acquire → Render draft → release →
 
 **1. Lint** — `npx hyperframes lint`. Errores reales bloquean. Cubre schema/syntax.
 
-**2. AUDIT narrativo** — `.venv/bin/python scripts/audit-narrative.py`. Cubre lo que lint NO:
+**2. AUDIT narrativo** — `uv run ai-video audit-narrative`. Cubre lo que lint NO:
 - Imágenes con visibilidad efectiva <1s (anti-pattern)
 - data-duration < GSAP opacity:0 timestamp (imagen cortada antes de tiempo)
 - z-index conflicts (black-overlay tapando caption-wrap)
 - Asset orphans
 
-Setup en proyecto nuevo: `cp .claude/skills/ai-video-production/templates/scripts/audit-narrative.py scripts/`. Doc: `ai-video-production/AUDIT.md`.
+Disponible como `uv run ai-video audit-narrative` (nada que copiar). Doc: `ai-video-production/AUDIT.md`.
 
-**3. render-lock** — `.venv/bin/python scripts/render-lock.py acquire <project>`. Si otro agente está renderizando, este comando falla → hacer `wait` antes de continuar. Sin esto, FFmpeg muere con SIGTERM por CPU contention (aprendizaje amargo: 3 EPIPE consecutivos = 45 min perdidos).
+**3. render-lock** — `uv run ai-video render-lock acquire <project>`. Si otro agente está renderizando, este comando falla → hacer `wait` antes de continuar. Sin esto, FFmpeg muere con SIGTERM por CPU contention (aprendizaje amargo: 3 EPIPE consecutivos = 45 min perdidos).
 
 **DESPUÉS del render draft, ANTES del stop point pre-animation:**
 
-**4. AUDIT FRAMES** — `.venv/bin/python scripts/audit-frames.py --video renders/draft.mp4`. Detecta issues que Gemini holístico NO ve:
+**4. AUDIT FRAMES** — `uv run ai-video audit-frames --video renders/draft.mp4`. Detecta issues que Gemini holístico NO ve:
 - UI overlap (countdown tapa imagen — caso isla-faro v1)
 - Frames negros sin razón narrativa
 - Character drift entre frames consecutivos
 - Texto cortado o fuera de safe zone
 - Captions overlap entre sí
 
-Setup: `cp .claude/skills/ai-video-production/templates/scripts/audit-frames.py scripts/`. Costo: $0.10-0.20 con Gemini Vision Flash. Falla si >2 frames con issues.
+Disponible como `uv run ai-video audit-frames` (nada que copiar). Costo: $0.10-0.20 con Gemini Vision Flash. Falla si >2 frames con issues.
 
-**5. QA GATE pre-animation** — `.venv/bin/python scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>` (flag `--stage pre-kling` se preserva por compat con script). **BLOQUEA el stop point si score <9.7.** Forzá iteración con fixes NO-ANIMATION-AI (A→B→C — guion/captions/imágenes/wiring/mix, todo menos animar) hasta llegar a 9.7. Sin este gate, el agente productor puede reportar score bajo asumiendo "animation AI lo arregla" (anti-pattern documentado en isla-faro v1).
+**5. QA GATE pre-animation** — `uv run ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>` (flag `--stage pre-kling` se preserva por compat con script). **BLOQUEA el stop point si score <9.7.** Forzá iteración con fixes NO-ANIMATION-AI (A→B→C — guion/captions/imágenes/wiring/mix, todo menos animar) hasta llegar a 9.7. Sin este gate, el agente productor puede reportar score bajo asumiendo "animation AI lo arregla" (anti-pattern documentado en isla-faro v1).
 
-Setup: `cp .claude/skills/ai-video-production/templates/scripts/qa-gate.py scripts/`. Exit codes:
+Disponible como `uv run ai-video qa-gate` (nada que copiar). Exit codes:
 - `0`: passed, OK proceed to animation AI (modelo según MODEL-BENCHMARK)
 - `1`: blocked, iterate with no-animation-AI fixes
 - `2`: escalation required (3+ iter sin llegar a 9.7)
@@ -164,11 +164,11 @@ Comando completo del render con los 3 gates:
 
 ```bash
 npx hyperframes lint && \
-  .venv/bin/python scripts/audit-narrative.py && \
-  .venv/bin/python scripts/render-lock.py acquire <project> || \
-  .venv/bin/python scripts/render-lock.py wait <project> && \
+  uv run ai-video audit-narrative && \
+  uv run ai-video render-lock acquire <project> || \
+  uv run ai-video render-lock wait <project> && \
   npx hyperframes render --output renders/vN.mp4 && \
-  .venv/bin/python scripts/render-lock.py release
+  uv run ai-video render-lock release
 ```
 
 Si cualquier gate falla, el render NO arranca. **Cada gate cuesta <2s, ahorra hasta 12 min de re-render basura.**
@@ -179,7 +179,7 @@ Si cualquier gate falla, el render NO arranca. **Cada gate cuesta <2s, ahorra ha
 
 ```
 1. Leer <formato>/video-log.md últimas 3 filas (qué componentes usaron videos previos)
-2. Leer <repo-root>/elements.json (catálogo)
+2. Leer templates/hyperframes/elements.json (catálogo)
 3. Excluir lo que el video anterior usó
 4. Pick uno por categoría:
    - 1 countdown (pulse / glitch / slam) — el MISMO se usa en TODOS los countdowns del video
@@ -195,7 +195,7 @@ Si cualquier gate falla, el render NO arranca. **Cada gate cuesta <2s, ahorra ha
 7. Anotar la selección en <formato>/video-log.md después del render
 ```
 
-**Anti-pattern A**: hardcodear countdown/loader/lower-third sin chequear elements.json. Los 3 primeros videos lo hicieron mal.
+**Anti-pattern A**: hardcodear countdown/loader/lower-third sin chequear templates/hyperframes/elements.json. Los 3 primeros videos lo hicieron mal.
 
 **Anti-pattern B**: cambiar el countdown/loader entre dilemas del mismo video (ej: countdown-glitch en H2 y countdown-slam en H3). Rompe la identidad visual del video.
 

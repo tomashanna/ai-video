@@ -1,87 +1,67 @@
-# Python virtual environments
+# ─── Python ───────────────────────────────────────────────────────────────
 .venv/
 .venv-*/
-
-# Python bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
 
-# Renders (large video outputs)
-renders/
-
-# macOS
-.DS_Store
-
-# Large archives
-*.zip
-
-# PRE-4.1+ excluded paths (local-only artifacts, snapshots, large archives)
-# Sub-fase 3A close 2026-05-27: replace stale root project paths with archive + snapshot exclusions
-
-# Local pipeline validation (361 MB, post-V4 shakedown)
-_shakedown-v4-pipeline-validation/
-
-# Local rollback snapshots (Tier 2 cleanup + pre-3A obsolete)
-_snapshot-pre-cleanup-tier2/
-_snapshot-pre-sub-fase-3A/
-
-# Large archives (old projects 15 GB + V3 learning 1.2 GB — kept local only)
-_archive-legacy-projects/
-_archive-phase3-v3-learning/
-
-# Proyecto de video shipped — local-only (su SPEC canónico vive en creative-specs/).
-# Se había committeado entero por accidente (290 files incl .venv + clips mp4 + copia de scripts).
-# Destrackeado; el repo guarda SOLO el sistema agnóstico, no los assets por-video.
-cerro-aislado-v4/
-
-# ── Dirs de PROYECTO de video (local-only, NO sistema) — guard anti-recurrencia ──
-# Cada proyecto vive en su carpeta local; el repo solo trackea el SISTEMA (.claude/, library/,
-# creative-specs/<id>.yaml, componentes, referent-analysis). El SPEC canónico de cada proyecto
-# va a creative-specs/ (tracked); el resto (assets/clips/scripts/handoffs/.venv) es local-only.
-# Proyecto NUEVO → agregar su dir acá (o el bootstrap lo hace). Evita el leak tipo cerro-aislado-v4.
-champions-arsenal-wins/
-champions-psg-wins/
-champions-sport-choice/
-invernadero-turno-riego/
-sala-limpia-bioseguridad/
-client-project-d/
-client-project-c/
-ultimo-tren-carga/
-mexico-sudafrica/
-client-project-a/
-Videos german/
-client-project-b/
-
-# Canonical reference videos kept LOCAL (too large for repo)
-videosref_elige_tu_compa/
-Videos referencia/
-
-# Stray descargas sueltas en root (tutoriales/material que no es sistema)
-/3 Automatizaciones De Manychat.mp4
-/*.mp4
-
-# ── Secrets — NEVER commit (si alguna se pusheó, ROTAR la key) ──
+# ─── Secrets — NEVER commit (if one was ever pushed: ROTATE the key) ──────
 .env
 .env.*
+!.env.example
+*.pem
+*.key
 
-# ── Process-journal efímero por-proyecto (git history ES el log) ──
-# Handoffs/audits/regens per-CP = coordinación efímera, no documentación permanente.
-# Caso disparador: cerro-aislado-v4 (34 .md). Para los ya-trackeados: git rm --cached.
-CP[0-9]*-handoff.md
-CP[0-9]*-*-handoff.md
-*-regen-*-handoff.md
-CP[0-9]*-AUDIT-verdict.md
-*-AUDIT-verdict.md
-FINAL-AUDIT*-handoff.md
-/*/NARRATIVE.md
-# Excepciones — NO ignorar docs canónicos (flows / SPECs / mediciones, no journals):
-!.claude/**
-!referent-analysis/**
-!creative-specs/**
+# ─── Local tool state ─────────────────────────────────────────────────────
+# spend ledger, caches
+.ai-video/
+.claude/settings.local.json
+.claude/worktrees/
+.DS_Store
+# HyperFrames studio thumbnails (regenerable)
+**/.thumbnails/
+*.log
 
-# ── Re-ignorar BASURA regenerable aun bajo los paths negados arriba (last-match-wins) ──
-# Sin esto, las negaciones !.claude/** y !referent-analysis/** re-incluyen .DS_Store/__pycache__.
-**/.DS_Store
-**/__pycache__/
-*.pyc
-transitions/_previews/
+# ─── Per-video work (local only; the repo ships the system, not productions) ─
+# working specs (examples live in examples/specs/)
+/creative-specs/
+/projects/
+renders/
+**/renders/
+**/assets/clips*/
+**/assets/sfx/
+evals/out/
+assets/transitions/_previews/
+
+# Reference / research media (third-party; never commit)
+videosref_*/
+*-refs/
+data/referent-analysis/**/ref-*/
+data/referent-analysis/**/frames/
+
+# ─── Media: ignored by default, whitelisted only inside the curated asset library ─
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.aif
+*.aiff
+*.flac
+*.m4a
+*.mp3
+*.zip
+*.tar.gz
+
+!assets/library/**/*.mp3
+!assets/transitions/**/*.mp3
+!assets/avu/*.mp4

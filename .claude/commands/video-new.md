@@ -18,24 +18,24 @@ Vas a crear un video nuevo. Antes de hacer NADA, leé en orden los siguientes do
 ## ⛔ PASO 1 — Lectura obligatoria (antes de planear)
 
 ```
-1. <repo-root>/CLAUDE.md (manual operativo canónico)
-2. <repo-root>/README.md (estructura del sistema + capas)
-3. <repo-root>/.claude/skills/ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT
-4. <repo-root>/.claude/skills/ai-video-production/formats/<delivery>.md  (donde <delivery> = reel, youtube-short, etc.)
-5. <repo-root>/.claude/skills/ai-video-production/RETENTION-RULES.md  (si short-form)
-6. <repo-root>/.claude/skills/<genre>-format/SKILL.md
-7. <repo-root>/.claude/skills/<genre>-format/PAUTA.md
-8. <repo-root>/.claude/skills/<genre>-format/PATTERNS.md § 6 + § 6.5
-9. <repo-root>/.claude/skills/<genre>-format/PAUTA-MASTER.md (autoridad empírica derivada de 8 videos canónicos)
-10. ⭐ <repo-root>/.claude/skills/<genre>-format/video-log.md (AUTORITATIVO para rotación pattern)
-11. <repo-root>/.claude/skills/<genre>-format/INTRO-FORMULA.md (si genre=horror-choice + delivery=reel)
-12. <repo-root>/.claude/skills/<genre>-format/BOOTSTRAP-NEW-PROJECT.md § 9.a + 9.b
-13. <repo-root>/.claude/skills/video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md
-14. <repo-root>/.claude/skills/ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + IMAGE-VARIETY.md + MOTION-LAYER.md + SFX-PIPELINE.md + QA.md
-15. <repo-root>/.claude/skills/video-animation/SKILL.md + ANIMATION-LAYER.md § 1 PRE-GATE
-16. <repo-root>/library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
-17. <repo-root>/elements.json
-18. <repo-root>/NARRATION-RULES.md + FEEDBACK-LOOP.md
+1. docs/OPERATING-MANUAL.md (manual operativo canónico)
+2. README.md (estructura del sistema + capas)
+3. .claude/skills/ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT
+4. .claude/skills/ai-video-production/formats/<delivery>.md  (donde <delivery> = reel, youtube-short, etc.)
+5. .claude/skills/ai-video-production/RETENTION-RULES.md  (si short-form)
+6. .claude/skills/<genre>-format/SKILL.md
+7. .claude/skills/<genre>-format/PAUTA.md
+8. .claude/skills/<genre>-format/PATTERNS.md § 6 + § 6.5
+9. .claude/skills/<genre>-format/PAUTA-MASTER.md (autoridad empírica derivada de 8 videos canónicos)
+10. ⭐ .claude/skills/<genre>-format/video-log.md (AUTORITATIVO para rotación pattern)
+11. .claude/skills/<genre>-format/INTRO-FORMULA.md (si genre=horror-choice + delivery=reel)
+12. .claude/skills/<genre>-format/BOOTSTRAP-NEW-PROJECT.md § 9.a + 9.b
+13. .claude/skills/video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md
+14. .claude/skills/ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + IMAGE-VARIETY.md + MOTION-LAYER.md + SFX-PIPELINE.md + QA.md
+15. .claude/skills/video-animation/SKILL.md + ANIMATION-LAYER.md § 1 PRE-GATE
+16. assets/library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
+17. templates/hyperframes/elements.json
+18. NARRATION-RULES.md + docs/FEEDBACK-LOOP.md
 ```
 
 Memorias críticas (consultar inicio):
@@ -49,35 +49,28 @@ Memorias críticas (consultar inicio):
 
 ## ⛔ PASO 2 — Bootstrap del proyecto NUEVO
 
-Crear el directorio + copiar TODOS los scripts QA (sin esto los gates fallan):
+Preparar entorno + directorio del proyecto (los gates son comandos del paquete, no se copian):
 
 ```bash
-cd "<repo-root>"
-mkdir -p "<slug>"/{assets,scripts,renders}
-mkdir -p "<slug>/assets/sfx"
-cd "<slug>"
+# 0. Una vez por clon: entorno + CLI (los gates NO se copian: son comandos versionados y testeados)
+uv sync --all-extras                 # o: uv sync --extra providers --extra media
+cp .env.example .env                 # completar GEMINI_API_KEY / ELEVENLABS_API_KEY / REPLICATE_API_TOKEN
+uv run ai-video doctor               # ffmpeg, extras y keys (nunca imprime valores)
 
-# Scripts genéricos (production + 5 gates obligatorios)
-SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
-cp "$SKILL_DIR/scripts/"*.py scripts/
-cp "$SKILL_DIR/.env-TEMPLATE"             .env
-cp "$SKILL_DIR/hyperframes.json-TEMPLATE" hyperframes.json
+# 1. Proyecto nuevo — vive en projects/<slug>/ (git-ignored); el SPEC en creative-specs/<id>.yaml
+mkdir -p "projects/<slug>"/{assets/sfx,renders}
+cp templates/project/hyperframes.json "projects/<slug>/hyperframes.json"
+cd "projects/<slug>"
 
-# Templates específicos del genre
-HORROR_DIR="<repo-root>/.claude/skills/<genre>-format/templates"
-cp "$HORROR_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
-cp "$HORROR_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
-cp "$HORROR_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
+# 2. Templates propios del formato (Capa B), ej. horror-choice-format:
+FORMAT_DIR="../../.claude/skills/<genre>-format/templates"
+cp "$FORMAT_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
+cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
+cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
-# Verificación OBLIGATORIA (NO continuar si falla):
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py qa-gate.py; do
-  [ -f scripts/$f ] && echo "✓ scripts/$f" || echo "✗ MISSING scripts/$f — RE-COPY"
-done
-
-# venv + deps
-python3 -m venv .venv
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install elevenlabs google-genai python-dotenv openai-whisper replicate
+# 3. Verificación (NO continuar si falla): SPEC válido + todos los gates disponibles
+uv run ai-video validate-spec ../../creative-specs/<id>.yaml
+uv run ai-video list                 # gates, builders y providers disponibles
 ```
 
 ---
@@ -107,17 +100,17 @@ Ejecutar todas las fases sin frenar:
 1. TTS (atempo 2x) — eliminar "..." antes de proper nouns (causa mispronunciación)
 2. Character anchors (Gemini)
 3. Imágenes de escenas (con `--ref` a anchors)
-4. SFX (chequear `library/` primero, generar solo lo faltante)
+4. SFX (chequear `assets/library/` primero, generar solo lo faltante)
 5. Whisper captions (post-procesar para eliminar opacity:0 intermedios)
 6. index.html con HTML + GSAP + INTRO-FORMULA
 7. **Los 5 gates obligatorios**:
    - `npx hyperframes lint`
-   - `.venv/bin/python scripts/audit-narrative.py`
-   - `.venv/bin/python scripts/render-lock.py acquire <slug>`
+   - `uv run ai-video audit-narrative`
+   - `uv run ai-video render-lock acquire <slug>`
    - Render draft
-   - `.venv/bin/python scripts/audit-frames.py --video renders/draft.mp4 --interval 1.0 --max-issues 2`
+   - `uv run ai-video audit-frames --video renders/draft.mp4 --interval 1.0 --max-issues 2`
    - Gemini QA → score X.X
-   - `.venv/bin/python scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>`
+   - `uv run ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>`
 
 **Si qa-gate retorna exit 1 (BLOCKED)**: iterar A→B→C (guion/captions → assets → wiring/mix) hasta llegar a ≥9.7. Re-correr todos los gates.
 

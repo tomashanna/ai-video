@@ -7,9 +7,9 @@
 > - 🟩 **VARIABILIDAD (exploración creativa, libre)** — cómo ejecutás el principio. Múltiples formas válidas, todas vistas en los 8 virales. Ej: "Si la enciendes" / "Si decides" / "Si elegiste a Víctor". Elegí la que mejor suene; NO hay una "correcta".
 > - 🟥 **ANTI-PATTERN (conocido, evitar)** — formas que empíricamente fallan. Ej: bare label robótico "Si elegiste A".
 >
-> Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. Autoridad última = fuente primaria: `referent-analysis/horror-choice/ref-XX/transcription.json`.
+> Si algo acá suena a "regla binaria obligatoria" sobre una **elección creativa**, es un bug de framing — reportalo. Autoridad última = fuente primaria: `data/referent-analysis/horror-choice/ref-XX/transcription.json`.
 
-> 🟦 **Autoridad ESTRUCTURAL + invariante (PRINCIPIO, no negociable)**: el esqueleto canónico y el invariante "el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones con el viewer" viven en **`PAUTA-MASTER.md § 2`** (validador pre-emit: `audit-spec-structure-vs-canonical.py`). Escribí el guion contra ese esqueleto.
+> 🟦 **Autoridad ESTRUCTURAL + invariante (PRINCIPIO, no negociable)**: el esqueleto canónico y el invariante "el bueno-aparente NUNCA está en el recorrido jugado tomando decisiones con el viewer" viven en **`PAUTA-MASTER.md § 2`** (validador pre-emit: `ai-video audit-spec-structure-vs-canonical`). Escribí el guion contra ese esqueleto.
 
 ---
 
@@ -171,7 +171,7 @@ El tono tenebroso emerge del **visual + SFX + música ambient**, NO de la narrac
 
 **Test**: ¿el viewer entiende qué pasa en 1ra escucha sin caption? Si NO → reescribir.
 
-**Auto-audit D19 (corregido 2026-05-29 — primary source)** valida el 🟦 principio (la consecuencia marca su rama vía cláusula condicional `Si …`) y flaggea el 🟥 anti-pattern (bare label "Si elegiste A/B"). **NO fuerza un fraseo específico**: "Si la enciendes" y "Si decides" pasan igual. Caption "SI ELEGISTE B:" es marcador-puente válido (no el único compliance). El validator `audit-spec-narrative-coherence.py` enforza esto.
+**Auto-audit D19 (corregido 2026-05-29 — primary source)** valida el 🟦 principio (la consecuencia marca su rama vía cláusula condicional `Si …`) y flaggea el 🟥 anti-pattern (bare label "Si elegiste A/B"). **NO fuerza un fraseo específico**: "Si la enciendes" y "Si decides" pasan igual. Caption "SI ELEGISTE B:" es marcador-puente válido (no el único compliance). El validator `ai-video audit-spec-narrative-coherence` enforza esto.
 
 ---
 
@@ -343,4 +343,4 @@ Cuando recibas el guion generado, antes de pasarlo a producción:
 1. **Leelo en voz alta cronometrado.** Si pasa de 90 segundos, recortá. Si dura menos de 80s, agregá una pausa dramática.
 2. **Probá la pronunciación.** Nombres con J/G/H pueden complicar al TTS. Si elegiste "Gerald" pero tu TTS español lo dice raro, escribí "Yerald" en el script y ajustá la grafía on-screen aparte.
 3. **Verificá el dilema central.** ¿La opción "ganadora" va contra el impulso? Si dudás, pedile a Claude que regenere solo esa parte.
-4. **Reservá los nombres aprobados.** Una vez que un par de nombres funciona en producción, anotalos en `CLAUDE.md` como "FROZEN — usado en video #N".
+4. **Reservá los nombres aprobados.** Una vez que un par de nombres funciona en producción, anotalos en `docs/OPERATING-MANUAL.md` como "FROZEN — usado en video #N".

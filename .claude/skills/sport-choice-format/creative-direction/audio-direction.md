@@ -48,7 +48,7 @@
 
 ## Capa 2 — VOICEOVER (intent)
 
-- **Voz:** relator deportivo play-by-play vivo, español neutral — **El Faraón** (`QpDQJR3frbDwOhTIo8nW`, ver `library/voices-catalog.json § sport_choice_narrator_strategy`). ⛔ NO el registro grave-omnisciente de horror (`NO-HORROR-GUARD.md` G3) — el relator mete al viewer en la jugada, no susurra desde la cripta.
+- **Voz:** relator deportivo play-by-play vivo, español neutral — **El Faraón** (`QpDQJR3frbDwOhTIo8nW`, ver `assets/library/voices-catalog.json § sport_choice_narrator_strategy`). ⛔ NO el registro grave-omnisciente de horror (`NO-HORROR-GUARD.md` G3) — el relator mete al viewer en la jugada, no susurra desde la cripta.
 - 🟦 **PICO DE GOL** (directiva creator 2026-06-04): en el gol el relator **GRITA** ("¡Gooool!" moderado 3-4 oes — TTS-safe) y el estadio explota: `crowd-goal-explosion` en banda ALTA **0.55-0.65** (banda flash/impacto HR#9, NO la banda SFX normal) + `goal-net-ripple` + celebración musical entrando. El gol es el único momento donde el audio COMPITE con el narrador a propósito.
 - **Registro:** segunda persona presente ("Avanzas por la banda", "Te la deja, le pegas").
 - **Idioma:** español NEUTRAL (tú/eliges) — NUNCA voseo.
@@ -108,7 +108,7 @@ Prompt ejemplo: "packed football stadium crowd roar continuous, distant chanting
 
 > El arquitecto deja acá el prompt EXACTO en inglés (texto generación-ready) de cada SFX del catálogo (`INGENIERO-PAUTA-MASTER.md § 2`) + `duration_seconds` sugerida + capa destino + volumen target. El ingeniero los genera 1:1 después con `text_to_sound_effects` (NO los genera el arquitecto).
 >
-> **Volúmenes target** = la tabla de mix heredada (`../../choice-format-core/INGENIERO-CHOICE-CORE.md § 0` + CLAUDE.md HR#9): narración 1.0 · música 0.05-0.18 · SFX 0.20-0.35 · flash/impacto 0.55-0.65. El ambient continuo de estadio va bajo y constante (extremo bajo de la banda). Los SFX de evento NO se duckean bajo el narrador (compiten a propósito — § Ducking).
+> **Volúmenes target** = la tabla de mix heredada (`../../choice-format-core/INGENIERO-CHOICE-CORE.md § 0` + docs/OPERATING-MANUAL.md HR#9): narración 1.0 · música 0.05-0.18 · SFX 0.20-0.35 · flash/impacto 0.55-0.65. El ambient continuo de estadio va bajo y constante (extremo bajo de la banda). Los SFX de evento NO se duckean bajo el narrador (compiten a propósito — § Ducking).
 >
 > **Floor técnico:** `text_to_sound_effects` no genera clips <0.5s (`caption_floor_s`, `MODEL-CAPABILITIES-MATRIX.md`). Para ticks ultra-cortos usar el AVU bundled (ya trae los ticks muxeados).
 
