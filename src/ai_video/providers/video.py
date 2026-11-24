@@ -1,44 +1,54 @@
-#!/usr/bin/env python3
-"""
-video.py — Genera clips de video animados desde imágenes estáticas usando Kling via Replicate.
+"""Animate a still image into a short clip with Kling (image-to-video) via Replicate.
 
-Uso:
-  python scripts/video.py -i assets/h3-scene.png -p "camera moves forward into doorway" -o assets/h3-scene.mp4
-  python scripts/video.py -i assets/h3-scene.png -p "..." -o assets/out.mp4 --duration 5
+Usage:
+    ai-video video -i assets/h3-scene.png -p "camera moves forward into doorway" -o assets/h3-scene.mp4
+    ai-video video -i start.png -e end.png -p "..." -o out.mp4 --duration 10
+    ai-video video -i start.png -p "..." -o out.mp4 --dry-run
 
-Implementación: polling manual de predictions/{id} cada 5s en lugar de client.run() (que
-hace long-poll y choca con timeout server-side de 60s cuando Replicate está saturado).
+Implementation notes:
+* Predictions are created then polled manually (``client.run`` long-polls and hits a
+  60s server-side timeout when Replicate is saturated).
+* 429 (rate limit) honours the server's reset hint; 402 (credit propagation) waits;
+  transient network errors back off exponentially. Every wait is bounded.
+* Each attempt is charged against the spend budget *before* the prediction is created.
 """
+
+from __future__ import annotations
 
 import argparse
 import base64
-import os
+import re
 import sys
 import time
+import urllib.request
+from collections.abc import Callable
 from pathlib import Path
-from dotenv import load_dotenv
+from typing import Any
 
-load_dotenv()
+from ai_video import budget
+from ai_video.config import get_settings
+from ai_video.errors import AIVideoError, ProviderError
+from ai_video.log import get_logger
+from ai_video.retry import backoff_delays, poll_until
 
-import httpx
-import re
-import replicate
-import replicate.exceptions
+log = get_logger(__name__)
 
 MODEL_DEFAULT = "kwaivgi/kling-v2.5-turbo-pro"
-MAX_ATTEMPTS = 3
-POLL_INTERVAL = 5
-POLL_TIMEOUT = 600
+POLL_INTERVAL_S = 5.0
+DURATIONS = (5, 10)
+_MIME = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "webp": "image/webp"}
 
-def image_to_data_uri(path: str) -> str:
-    with open(path, "rb") as f:
-        data = base64.b64encode(f.read()).decode()
-    ext = Path(path).suffix.lower().lstrip(".")
-    mime = "image/jpeg" if ext in ("jpg", "jpeg") else "image/png"
-    return f"data:{mime};base64,{data}"
 
-def build_input(model, image_uri, prompt, duration, end_image_uri=None):
-    base = {
+def image_to_data_uri(path: Path) -> str:
+    ext = path.suffix.lower().lstrip(".")
+    if ext not in _MIME:
+        raise ValueError(f"unsupported image format ({ext}): {path}")
+    data = base64.b64encode(path.read_bytes()).decode()
+    return f"data:{_MIME[ext]};base64,{data}"
+
+
+def build_input(model: str, image_uri: str, prompt: str, duration: int, end_image_uri: str | None = None) -> dict[str, Any]:
+    base: dict[str, Any] = {
         "start_image": image_uri,
         "prompt": prompt,
         "duration": duration,
@@ -51,128 +61,162 @@ def build_input(model, image_uri, prompt, duration, end_image_uri=None):
     return base
 
 
-def create_with_429_retry(client, model, image_uri, prompt, duration, end_image_uri=None, max_429=10, max_402=8):
-    """Crea prediction reintentando en caso de rate limit 429 o insufficient credit 402."""
-    n_429 = 0
-    n_402 = 0
+def rate_limit_wait_s(message: str, default: float = 12.0) -> float:
+    """Parse Replicate's 'resets in ~Ns' hint (plus a 2s margin)."""
+    m = re.search(r"resets in ~?(\d+)s", message)
+    return int(m.group(1)) + 2 if m else default
+
+
+def create_prediction(
+    client: Any,
+    payload: dict[str, Any],
+    model: str,
+    *,
+    max_429: int = 10,
+    max_402: int = 8,
+    sleep: Callable[[float], None] = time.sleep,
+) -> Any:
+    """Create a prediction, retrying on 429 (rate limit) and 402 (credit propagation)."""
+    import replicate.exceptions
+
+    n_429 = n_402 = 0
     while True:
         try:
-            return client.predictions.create(
-                model=model,
-                input=build_input(model, image_uri, prompt, duration, end_image_uri),
-            )
+            return client.predictions.create(model=model, input=payload)
         except replicate.exceptions.ReplicateError as e:
             msg = str(e)
             if "429" in msg or "throttled" in msg.lower():
                 n_429 += 1
                 if n_429 > max_429:
-                    raise RuntimeError(f"still rate limited after {max_429} retries")
-                m = re.search(r"resets in ~?(\d+)s", msg)
-                wait_s = int(m.group(1)) + 2 if m else 12
-                print(f"  rate limited (429), waiting {wait_s}s...", file=sys.stderr)
-                time.sleep(wait_s)
+                    raise ProviderError(f"still rate limited after {max_429} retries") from e
+                wait = rate_limit_wait_s(msg)
+                log.warning("rate limited (429), waiting %.0fs", wait)
+                sleep(wait)
             elif "402" in msg or "Insufficient credit" in msg:
                 n_402 += 1
                 if n_402 > max_402:
-                    raise RuntimeError(f"still insufficient credit after {max_402} retries (~{max_402*60}s)")
-                wait_s = 60
-                print(f"  insufficient credit (402) #{n_402}/{max_402}, waiting {wait_s}s for billing propagation...", file=sys.stderr)
-                time.sleep(wait_s)
+                    raise ProviderError(f"insufficient credit after {max_402} retries") from e
+                log.warning("insufficient credit (402) %d/%d, waiting 60s", n_402, max_402)
+                sleep(60)
             else:
                 raise
 
-def run_one_attempt(client, model, image_uri, prompt, duration, output_path, end_image_uri=None):
-    """Crea prediction, polea hasta succeeded/failed, descarga MP4."""
-    prediction = create_with_429_retry(client, model, image_uri, prompt, duration, end_image_uri)
-    pid = prediction.id
-    print(f"  prediction id: {pid}")
 
-    deadline = time.time() + POLL_TIMEOUT
-    while True:
+def wait_for_prediction(prediction: Any, *, timeout_s: float, sleep: Callable[[float], None] = time.sleep) -> Any:
+    def _check() -> Any:
         prediction.reload()
-        status = prediction.status
-        if status == "succeeded":
-            break
-        if status in ("failed", "canceled"):
-            raise RuntimeError(f"prediction {pid} {status}: {prediction.error}")
-        if time.time() > deadline:
-            try:
-                prediction.cancel()
-            except Exception:
-                pass
-            raise TimeoutError(f"prediction {pid} stuck at {status} after {POLL_TIMEOUT}s")
-        time.sleep(POLL_INTERVAL)
+        if prediction.status == "succeeded":
+            return prediction
+        if prediction.status in ("failed", "canceled"):
+            raise ProviderError(f"prediction {prediction.id} {prediction.status}: {prediction.error}")
+        return None
 
-    output = prediction.output
-    if hasattr(output, "read"):
-        video_bytes = output.read()
-    else:
-        import urllib.request
-        with urllib.request.urlopen(str(output), timeout=120) as r:
-            video_bytes = r.read()
-
-    os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else ".", exist_ok=True)
-    with open(output_path, "wb") as f:
-        f.write(video_bytes)
-
-    return len(video_bytes)
-
-def run(image_path: str, prompt: str, output_path: str, duration: int = 5, model: str = MODEL_DEFAULT, end_image_path: str = None):
-    if not os.path.exists(image_path):
-        print(f"error: image not found: {image_path}", file=sys.stderr)
-        sys.exit(1)
-    if end_image_path and not os.path.exists(end_image_path):
-        print(f"error: end_image not found: {end_image_path}", file=sys.stderr)
-        sys.exit(1)
-
-    token = os.environ.get("REPLICATE_API_TOKEN")
-    if not token:
-        print("error: REPLICATE_API_TOKEN not set in .env", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"animating {image_path} → {output_path} ({duration}s) model={model}{' [+end_image]' if end_image_path else ''}")
-    print(f"prompt: {prompt}")
-
-    image_uri = image_to_data_uri(image_path)
-    end_image_uri = image_to_data_uri(end_image_path) if end_image_path else None
-
-    client = replicate.Client(
-        api_token=token,
-        timeout=httpx.Timeout(60.0, connect=30.0),
-    )
-
-    last_exc = None
-    for attempt in range(1, MAX_ATTEMPTS + 1):
-        start = time.time()
+    try:
+        return poll_until(_check, timeout_s=timeout_s, interval_s=POLL_INTERVAL_S, sleep=sleep,
+                          describe=f"prediction {prediction.id}")
+    except TimeoutError:
         try:
-            print(f"[attempt {attempt}/{MAX_ATTEMPTS}] calling Kling...")
-            size_bytes = run_one_attempt(client, model, image_uri, prompt, duration, output_path, end_image_uri)
-            elapsed = time.time() - start
-            size_kb = size_bytes // 1024
-            print(f"wrote {output_path} ({size_kb} KB, {elapsed:.0f}s)")
-            return
-        except (httpx.ReadTimeout, httpx.ConnectTimeout, httpx.RemoteProtocolError, TimeoutError, RuntimeError) as e:
-            last_exc = e
-            elapsed = time.time() - start
-            print(f"[attempt {attempt}] {type(e).__name__} after {elapsed:.0f}s: {e}", file=sys.stderr)
-            if attempt < MAX_ATTEMPTS:
-                backoff = 15 * attempt
-                print(f"retrying in {backoff}s...", file=sys.stderr)
-                time.sleep(backoff)
+            prediction.cancel()
+        except Exception as exc:  # best effort, do not mask the timeout
+            log.debug("cancel failed: %s", exc)
+        raise
 
-    print(f"FAILED after {MAX_ATTEMPTS} attempts. Last error: {last_exc}", file=sys.stderr)
-    sys.exit(1)
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--image",    required=True, help="input image path (start frame)")
-    parser.add_argument("-e", "--end-image", default=None, help="optional end frame image path (interpolation target)")
-    parser.add_argument("-p", "--prompt",   required=True, help="motion description")
-    parser.add_argument("-o", "--output",   required=True, help="output .mp4 path")
-    parser.add_argument("--duration",       type=int, default=5, choices=[5, 10], help="clip duration in seconds (default: 5)")
-    parser.add_argument("--model",          default=MODEL_DEFAULT, help=f"Replicate model identifier (default: {MODEL_DEFAULT})")
+def download_output(output: Any, timeout_s: float) -> bytes:
+    if hasattr(output, "read"):
+        data: bytes = output.read()
+        return data
+    url = str(output[0] if isinstance(output, list) else output)
+    if not url.startswith("https://"):
+        raise ProviderError(f"refusing to download non-https output URL: {url[:60]}")
+    with urllib.request.urlopen(url, timeout=timeout_s) as r:  # noqa: S310 - https enforced above
+        body: bytes = r.read()
+        return body
+
+
+def animate(
+    image: Path,
+    prompt: str,
+    output: Path,
+    *,
+    duration: int = 5,
+    model: str = MODEL_DEFAULT,
+    end_image: Path | None = None,
+    client: Any = None,
+    guard: budget.BudgetGuard | None = None,
+    sleep: Callable[[float], None] = time.sleep,
+) -> int:
+    if not image.is_file():
+        raise FileNotFoundError(f"image not found: {image}")
+    if end_image is not None and not end_image.is_file():
+        raise FileNotFoundError(f"end image not found: {end_image}")
+    if duration not in DURATIONS:
+        raise ValueError(f"duration must be one of {DURATIONS}")
+    if not prompt.strip():
+        raise ValueError("empty motion prompt")
+
+    settings = get_settings()
+    guard = guard or budget.default_guard()
+    cost = budget.estimate("kling_per_s", duration)
+    if settings.dry_run:
+        guard.check(cost, what="replicate:kling")
+        log.info("dry-run: animate %s (%ds, %s) ~$%.2f -> %s", image, duration, model, cost, output)
+        return 0
+    if client is None:
+        from ai_video.providers.clients import replicate_client
+
+        client = replicate_client(settings)
+
+    payload = build_input(model, image_to_data_uri(image), prompt, duration,
+                          image_to_data_uri(end_image) if end_image else None)
+    attempts = settings.max_retries + 1
+    delays = backoff_delays(attempts, base_s=15.0, max_s=120.0)
+    last_exc: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            with guard.charge("replicate", f"kling-{duration}s", cost):
+                pred = create_prediction(client, payload, model, sleep=sleep)
+                log.info("prediction %s created (attempt %d/%d)", pred.id, attempt, attempts)
+                pred = wait_for_prediction(pred, timeout_s=settings.poll_timeout_s, sleep=sleep)
+                data = download_output(pred.output, settings.http_timeout_s)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_bytes(data)
+            return len(data)
+        except AIVideoError as exc:
+            if not isinstance(exc, ProviderError):
+                raise  # budget/config errors are not retryable
+            last_exc = exc
+        except (TimeoutError, OSError) as exc:
+            last_exc = exc
+        if attempt < attempts:
+            log.warning("attempt %d failed (%s); retrying in %.0fs", attempt, last_exc, delays[attempt - 1])
+            sleep(delays[attempt - 1])
+    raise ProviderError(f"Kling failed after {attempts} attempts: {last_exc}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Kling image-to-video via Replicate")
+    parser.add_argument("-i", "--image", type=Path, required=True, help="Input image (start frame)")
+    parser.add_argument("-e", "--end-image", type=Path, default=None, help="Optional end frame")
+    parser.add_argument("-p", "--prompt", required=True, help="Motion description")
+    parser.add_argument("-o", "--output", type=Path, required=True, help="Output .mp4 path")
+    parser.add_argument("--duration", type=int, default=5, choices=DURATIONS, help="Clip seconds (default 5)")
+    parser.add_argument("--model", default=MODEL_DEFAULT, help=f"Replicate model (default {MODEL_DEFAULT})")
+    parser.add_argument("--dry-run", action="store_true", help="Validate and estimate cost only")
     args = parser.parse_args()
-    run(args.image, args.prompt, args.output, args.duration, args.model, args.end_image)
+
+    if args.dry_run:
+        get_settings().dry_run = True
+    try:
+        n = animate(args.image, args.prompt, args.output, duration=args.duration, model=args.model,
+                    end_image=args.end_image)
+    except (ValueError, FileNotFoundError, AIVideoError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if n:
+        print(f"wrote {args.output} ({n // 1024} KB)")
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
