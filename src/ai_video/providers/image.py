@@ -1,56 +1,45 @@
-"""
-Generate images via Gemini Nano Banana for video compositions.
-
-Supports reference images (character consistency via multimodal input).
+"""Generate still images with Gemini (Nano Banana), optionally conditioned on reference images.
 
 Usage:
-    # Sin referencia (anchor inicial, paisajes, objetos sin personaje)
-    .venv/bin/python scripts/image.py -p "prompt here" -o assets/frame.png
+    # No reference (initial character anchor, landscapes, objects)
+    ai-video image -p "prompt here" -o assets/frame.png
 
-    # Con 1 referencia (escena con un personaje conocido)
-    .venv/bin/python scripts/image.py \\
-      -p "The character from the reference walking through a dark forest." \\
-      --ref assets/berni-anchor.png \\
-      -o assets/h3-walk-a.png
+    # One or more references (character consistency via multimodal input)
+    ai-video image -p "The character from the reference walking through a dark forest." \\
+        --ref assets/char-a-anchor.png -o assets/h3-walk-a.png
 
-    # Con múltiples referencias (escena con varios personajes)
-    .venv/bin/python scripts/image.py \\
-      -p "Both characters sitting at a table, facing each other." \\
-      --ref assets/berni-anchor.png \\
-      --ref assets/yonaiker-anchor.png \\
-      -o assets/h1-both.png
+    # Per-format style suffix (default is empty = genre-agnostic)
+    ai-video image -p "..." --style-suffix " <format style>" -o assets/...
 
-    # Style suffix por formato (default AGNÓSTICO = vacío; ver BOOTSTRAP § 6)
-    .venv/bin/python scripts/image.py -p "..." --style-suffix " <estilo del formato>" -o assets/...
-
-Defaults are tuned for vertical Reels: 9:16, 1K resolution. STYLE_SUFFIX vacío por default (agnóstico).
-
-CHARACTER CONSISTENCY:
-    Para mantener un personaje visualmente idéntico entre tomas:
-    1. Generar primero el anchor del personaje (sin --ref) — close-up frontal claro.
-    2. Para CADA escena con ese personaje, pasar --ref <anchor>.
-    Ver ai-video-production/CHARACTER-CONSISTENCY.md para reglas completas.
+Defaults target vertical reels: 9:16, 1K. See
+``.claude/skills/ai-video-production/CHARACTER-CONSISTENCY.md`` for the anchor workflow.
 """
+
+from __future__ import annotations
 
 import argparse
 import base64
-import os
 import sys
 from pathlib import Path
+from typing import Any
 
-from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from ai_video import budget
+from ai_video.config import get_settings
+from ai_video.errors import AIVideoError, ProviderError
+from ai_video.log import get_logger
+from ai_video.retry import retry_call
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+log = get_logger(__name__)
 
-# STYLE_SUFFIX agnóstico: VACÍO por default (Capa A universal — NO asume género).
-# Cada formato pasa su estilo con --style-suffix, o setea STYLE_SUFFIX al customizar el
-# script copiado (ver ai-video-production/BOOTSTRAP.md § 6). El suffix de horror está abajo.
+MODEL = "gemini-3.1-flash-image-preview"
+SIZES = ("512", "1K", "2K", "4K")
+ASPECTS = ("9:16", "16:9", "1:1", "4:5", "3:4", "4:3")
+_MIME = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp"}
+
+# Layer A is genre-agnostic: no style suffix by default. Formats pass --style-suffix.
 STYLE_SUFFIX = ""
 
-# Suffix de estilo del formato HORROR (Capa B). NO se aplica por default. Horror lo usa vía
-# `--style-suffix` o seteando `STYLE_SUFFIX = HORROR_SUFFIX` en su copia del script.
+# Style suffix of the HORROR format (layer B). Not applied by default.
 HORROR_SUFFIX = (
     " Dark cinematic horror aesthetic, desaturated color grade with warm amber "
     "and orange highlights only, liminal space mood, eerie atmospheric lighting, "
@@ -61,121 +50,122 @@ HORROR_SUFFIX = (
 
 
 def resolve_style_suffix(no_mono_suffix: bool, style_suffix: str | None) -> str:
-    """Suffix de estilo agnóstico: --style-suffix (per-formato) gana; si no, STYLE_SUFFIX
-    (constante, default ''). --no-mono-suffix fuerza vacío (back-compat)."""
+    """--style-suffix wins; else STYLE_SUFFIX (''). --no-mono-suffix forces empty (back-compat)."""
     if no_mono_suffix:
         return ""
     return style_suffix if style_suffix is not None else STYLE_SUFFIX
 
 
-def load_reference_images(ref_paths):
-    """
-    Load reference images and convert them to types.Part for multimodal input.
-
-    Args:
-        ref_paths: list of Path objects pointing to PNG/JPG files.
-
-    Returns:
-        list of types.Part with inline_data (image bytes).
-    """
-    parts = []
-    for ref_path in ref_paths:
-        if not ref_path.exists():
-            sys.exit(f"error: reference image not found: {ref_path}")
-        ext = ref_path.suffix.lower().lstrip(".")
-        if ext not in {"png", "jpg", "jpeg", "webp"}:
-            sys.exit(f"error: unsupported reference format ({ext}): {ref_path}")
-        mime = "image/png" if ext == "png" else "image/jpeg" if ext in {"jpg", "jpeg"} else "image/webp"
-        with open(ref_path, "rb") as f:
-            image_bytes = f.read()
-        parts.append(
-            types.Part(
-                inline_data=types.Blob(
-                    mime_type=mime,
-                    data=image_bytes,
-                )
-            )
-        )
-    return parts
+def mime_for(path: Path) -> str:
+    ext = path.suffix.lower().lstrip(".")
+    if ext not in _MIME:
+        raise ValueError(f"unsupported reference format ({ext}): {path}")
+    return _MIME[ext]
 
 
-def main() -> None:
+def load_reference_images(ref_paths: list[Path]) -> list[tuple[str, bytes]]:
+    """Validate and read reference images -> [(mime, bytes)]."""
+    out = []
+    for ref in ref_paths:
+        if not ref.is_file():
+            raise FileNotFoundError(f"reference image not found: {ref}")
+        out.append((mime_for(ref), ref.read_bytes()))
+    return out
+
+
+def extract_image_bytes(response: Any) -> bytes:
+    """First inline image in a Gemini response (handles base64 strings)."""
+    candidates = getattr(response, "candidates", None) or []
+    for cand in candidates:
+        content = getattr(cand, "content", None)
+        for part in getattr(content, "parts", None) or []:
+            inline = getattr(part, "inline_data", None)
+            if inline is not None and getattr(inline, "data", None):
+                data = inline.data
+                return base64.b64decode(data) if isinstance(data, str) else bytes(data)
+    raise ProviderError("no image returned by Gemini (blocked by safety filter or empty response)")
+
+
+def generate(
+    prompt: str,
+    output: Path,
+    *,
+    refs: list[Path] | None = None,
+    size: str = "1K",
+    aspect: str = "9:16",
+    client: Any = None,
+    guard: budget.BudgetGuard | None = None,
+) -> int:
+    if not prompt.strip():
+        raise ValueError("empty prompt")
+    if size not in SIZES:
+        raise ValueError(f"size must be one of {SIZES}")
+    if aspect not in ASPECTS:
+        raise ValueError(f"aspect must be one of {ASPECTS}")
+    ref_data = load_reference_images(refs or [])
+    settings = get_settings()
+    guard = guard or budget.default_guard()
+    cost = budget.estimate("gemini_image_per_image")
+    if settings.dry_run:
+        guard.check(cost, what="gemini:image")
+        log.info("dry-run: image (%s, %s, %d refs) ~$%.3f -> %s", size, aspect, len(ref_data), cost, output)
+        return 0
+
+    from google.genai import types
+
+    if client is None:
+        from ai_video.providers.clients import gemini_client
+
+        client = gemini_client(settings)
+    contents: list[Any] = [types.Part(inline_data=types.Blob(mime_type=m, data=b)) for m, b in ref_data]
+    contents.append(prompt)
+    config = types.GenerateContentConfig(
+        response_modalities=["TEXT", "IMAGE"],
+        image_config=types.ImageConfig(aspect_ratio=aspect, image_size=size),
+    )
+
+    def _call() -> bytes:
+        resp = client.models.generate_content(model=MODEL, contents=contents, config=config)
+        return extract_image_bytes(resp)
+
+    with guard.charge("gemini", "image", cost):
+        data = retry_call(_call, attempts=settings.max_retries + 1, describe="gemini image")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(data)
+    return len(data)
+
+
+def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Image generator with multimodal reference support (Gemini Nano Banana)",
+        description="Image generator with multimodal reference support (Gemini)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
     parser.add_argument("-p", "--prompt", required=True, help="Base prompt")
     parser.add_argument("-o", "--output", type=Path, required=True, help="Output PNG path")
-    parser.add_argument(
-        "--ref",
-        type=Path,
-        action="append",
-        default=[],
-        help="Reference image path (for character consistency). Can be repeated for multiple references.",
-    )
-    parser.add_argument(
-        "--size",
-        default="1K",
-        choices=["512", "1K", "2K", "4K"],
-        help="Resolution (default 1K; 512 for drafts)",
-    )
-    parser.add_argument("--aspect", default="9:16", help="Aspect ratio (default 9:16)")
-    parser.add_argument("--no-mono-suffix", action="store_true", help="Forzar sin suffix (back-compat; el default ya es agnóstico)")
-    parser.add_argument("--style-suffix", default=None, help="Suffix de estilo del formato (agnóstico). Default vacío. Ej horror: pasar el HORROR_SUFFIX.")
+    parser.add_argument("--ref", type=Path, action="append", default=[], help="Reference image (repeatable)")
+    parser.add_argument("--size", default="1K", choices=SIZES, help="Resolution (default 1K; 512 for drafts)")
+    parser.add_argument("--aspect", default="9:16", choices=ASPECTS, help="Aspect ratio (default 9:16)")
+    parser.add_argument("--no-mono-suffix", action="store_true", help="Force no style suffix (back-compat)")
+    parser.add_argument("--style-suffix", default=None, help="Format style suffix (default empty)")
+    parser.add_argument("--dry-run", action="store_true", help="Validate and estimate cost only")
     args = parser.parse_args()
 
-    load_dotenv(PROJECT_ROOT / ".env")
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        sys.exit("error: GEMINI_API_KEY not found in .env")
-
+    if args.dry_run:
+        get_settings().dry_run = True
     suffix = resolve_style_suffix(args.no_mono_suffix, args.style_suffix)
     if not suffix and args.style_suffix is None and not args.no_mono_suffix:
-        print("[image.py] ⚠️ Sin style suffix (STYLE_SUFFIX vacío = agnóstico). Pasá --style-suffix "
-              "con el estilo del formato o seteá STYLE_SUFFIX (horror: = HORROR_SUFFIX). Ver BOOTSTRAP § 6.",
-              file=sys.stderr)
-    prompt_text = args.prompt + suffix
-
-    # Build multimodal contents: [ref_image_1, ref_image_2, ..., prompt_text]
-    contents = []
-    if args.ref:
-        contents.extend(load_reference_images(args.ref))
-        ref_names = ", ".join(r.name for r in args.ref)
-        print(f"[image.py] using {len(args.ref)} reference(s): {ref_names}", file=sys.stderr)
-    contents.append(prompt_text)
-
-    client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model="gemini-3.1-flash-image-preview",
-        contents=contents,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT", "IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio=args.aspect,
-                image_size=args.size,
-            ),
-        ),
-    )
-
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    image_saved = False
-    for part in response.candidates[0].content.parts:
-        if getattr(part, "inline_data", None):
-            data = part.inline_data.data
-            if isinstance(data, str):
-                data = base64.b64decode(data)
-            args.output.write_bytes(data)
-            image_saved = True
-            break
-
-    if not image_saved:
-        sys.exit("error: no image returned from Gemini")
-
-    size_kb = args.output.stat().st_size / 1024
-    ref_info = f" (refs: {len(args.ref)})" if args.ref else ""
-    print(f"wrote {args.output} ({size_kb:.1f} KB, {args.size}, {args.aspect}){ref_info}")
+        log.warning("no style suffix (agnostic default). Pass --style-suffix with the format's style.")
+    try:
+        n = generate(args.prompt + suffix, args.output, refs=args.ref, size=args.size, aspect=args.aspect)
+    except (ValueError, FileNotFoundError, AIVideoError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    if n:
+        refs = f" (refs: {len(args.ref)})" if args.ref else ""
+        print(f"wrote {args.output} ({n / 1024:.1f} KB, {args.size}, {args.aspect}){refs}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
