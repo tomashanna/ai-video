@@ -283,17 +283,35 @@ def check_location_exact(spec_loc, prior_rows):
     return gate("uniqueness_location", "pass", "location unique cross-video")
 
 
-def check_signature_semantic(spec_sig, prior_rows, model, block_thr, flag_thr):
-    if model is None:
+def lexical_similarity(a, b):
+    """Deterministic fallback similarity in [0, 1]: max(token Jaccard, char SequenceMatcher)."""
+    import difflib
+
+    na = " ".join(re.findall(r"\w+", str(a).lower()))
+    nb = " ".join(re.findall(r"\w+", str(b).lower()))
+    if not na or not nb:
+        return 0.0
+    ta, tb = set(na.split()), set(nb.split())
+    jac = len(ta & tb) / len(ta | tb)
+    return max(jac, difflib.SequenceMatcher(None, na, nb).ratio())
+
+
+def check_signature_semantic(spec_sig, prior_rows, model, block_thr, flag_thr, *, lexical_fallback=False):
+    if model is None and not lexical_fallback:
         return gate("uniqueness_signature_staging", "not_applicable",
-                    "semantic check skipped (--skip-semantic or model unavailable)")
+                    "semantic check skipped (--skip-semantic)")
     sigs = [r["signature_staging"] for r in prior_rows]
     if not sigs:
         return gate("uniqueness_signature_staging", "not_applicable",
                     "no prior signature_staging in video-log")
-    embs = model.encode([spec_sig] + sigs, normalize_embeddings=True)
-    # cosine via dot product (embeddings normalized)
-    sims = (embs[0] @ embs[1:].T).tolist()
+    if model is None:
+        # Fail-closed: without the embedding model, still catch near-verbatim reuse lexically
+        # (the old code silently returned not_applicable, letting duplicates through).
+        sims = [lexical_similarity(spec_sig, s) for s in sigs]
+    else:
+        embs = model.encode([spec_sig] + sigs, normalize_embeddings=True)
+        # cosine via dot product (embeddings normalized)
+        sims = (embs[0] @ embs[1:].T).tolist()
     if isinstance(sims, float):
         sims = [sims]
     max_sim = max(sims)
@@ -425,13 +443,17 @@ def main():
             gates.append(check_location_exact(spec["location"], prior_rows))
         if spec.get("signature_staging"):
             model = None
+            fallback = False
             if not args.skip_semantic:
                 try:
                     model = lazy_model()
                 except Exception as e:
-                    print(f"⚠️ sentence-transformers load failed: {e} — skipping semantic", file=sys.stderr)
+                    fallback = True
+                    print(f"⚠️ sentence-transformers unavailable ({type(e).__name__}) — "
+                          f"using lexical similarity fallback", file=sys.stderr)
             gates.append(check_signature_semantic(spec["signature_staging"], prior_rows,
-                                                  model, args.block_threshold, args.flag_threshold))
+                                                  model, args.block_threshold, args.flag_threshold,
+                                                  lexical_fallback=fallback))
         if patterns_map and ns.get("cliffhanger_archetype"):
             gates.append(check_pattern_rotation(ns["cliffhanger_archetype"], patterns_map))
 
