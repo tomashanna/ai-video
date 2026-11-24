@@ -32,7 +32,7 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 
 ## Listening samples
 
-Binarios viven en `library/voice-effects-presets/samples/` (NO en este skill folder — separación catalog/script aquí, artefactos binarios en library/). 5 archivos validados:
+Los demos de audio NO se versionan (se regeneran localmente con `apply-voice-preset` sobre cualquier TTS seco). Presets validados en listen-test 2026-05-27:
 
 | File | Preset | Status | Listen for |
 |------|--------|--------|-----------|
@@ -162,12 +162,6 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 └── scripts/
     └── apply-voice-preset.py (CLI wrapper + M7.7.5 verify)
 
-library/voice-effects-presets/samples/   (binaries fuera del skill template)
-├── _base_oxley_dry.mp3                  (15.3s Oxley reference)
-├── ghost_whisper_demo.mp3               ✅ validated 2026-05-27
-├── ultratumba_cavernoso_demo.mp3        ✅ validated 2026-05-27
-├── demon_growl_demo.mp3                 ✅ validated 2026-05-27
-└── possessed_child_demo.mp3             ✅ validated 2026-05-27
 ```
 
 **Por qué split**: catalog + script viven en `.claude/skills/` como template universal (CAPA 1, copiado/leído por todos los proyectos). Samples binarios viven en `library/` (junto a `voices/`, `sfx/`, `music/` — patrón canonical para artefactos reusables). Mantiene skill template liviano.

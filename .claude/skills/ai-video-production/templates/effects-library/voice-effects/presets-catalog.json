@@ -26,10 +26,19 @@
       "duration_overhead_pct": 3,
       "intelligibility_risk": "low",
       "intelligibility_mitigation": "Si Whisper <0.85 → raise lowpass de 3500 a 4500 + reduce flanger phase a 0.4",
-      "best_paired_with_voice_types": ["Oxley (2gPFXx8pN3Avh27Dw5Ma)", "any LatAm deep male"],
-      "avoid_with_voice_types": ["female voices", "youthful conversational (Bryan, Jaider, Ignacio)", "high-pitched (any soprano)"],
+      "best_paired_with_voice_types": [
+        "Oxley (2gPFXx8pN3Avh27Dw5Ma)",
+        "any LatAm deep male"
+      ],
+      "avoid_with_voice_types": [
+        "female voices",
+        "youthful conversational (Bryan, Jaider, Ignacio)",
+        "high-pitched (any soprano)"
+      ],
       "validation_status": "validated",
-      "validated_in": ["matadero-banquete CP2 M7.7.5 3/3 PASS (matarife Bryan)"],
+      "validated_in": [
+        "matadero-banquete CP2 M7.7.5 3/3 PASS (matarife Bryan)"
+      ],
       "validated_at": "2026-05-18",
       "rationale_chain": "pitch -300 baja tonalidad sin destruir consonants. flanger crea inquietud sutil sin obstaculizar inteligibilidad. highpass 80 elimina rumble. lowpass 3500 preserva consonants (NO 2000 que destruyó en Path 1/2b ffmpeg). reverb pequeño 30/50/60 = espacio cerrado industrial. norm -16 = canonical LUFS target.",
       "sample_path": null,
@@ -40,7 +49,6 @@
       },
       "revival_attempt_2026_05_29": {
         "context": "Fair-context revival demo: Oxley (2gPFXx8pN3Avh27Dw5Ma) + matarife-specific text + atempo 1.6× + matarife_canonical preset chain — replicates matadero CP2 validation context.",
-        "sample_path": "library/voice-effects-presets/samples/matarife_canonical_revival_2026_05_29.mp3",
         "validation_status": "revival_pending_user_test_2026_05_29",
         "text_used": "Hoy la carne está fresca. Pasa, no tengas miedo. Te voy a cuidar como cuido todo lo que entra aquí."
       }
@@ -54,10 +62,20 @@
       "duration_overhead_pct": 1,
       "intelligibility_risk": "low",
       "intelligibility_mitigation": "Si demasiado intima/cercana → reduce aecho decay 0.3 a 0.2",
-      "best_paired_with_voice_types": ["Kate BFP (qWWAqFomnJ99VwQLREfT)", "Valeria (9oPKasc15pfAbMr7N6Gs)", "any warm female"],
-      "avoid_with_voice_types": ["male voices", "deep narrators", "high-energy TikTok"],
+      "best_paired_with_voice_types": [
+        "Kate BFP (qWWAqFomnJ99VwQLREfT)",
+        "Valeria (9oPKasc15pfAbMr7N6Gs)",
+        "any warm female"
+      ],
+      "avoid_with_voice_types": [
+        "male voices",
+        "deep narrators",
+        "high-energy TikTok"
+      ],
       "validation_status": "validated",
-      "validated_in": ["matadero-banquete CP2 M7.7.5 Kate BFP cocinera 6/7 → Rule B PASS"],
+      "validated_in": [
+        "matadero-banquete CP2 M7.7.5 Kate BFP cocinera 6/7 → Rule B PASS"
+      ],
       "validated_at": "2026-05-19",
       "rationale_chain": "aecho 0.5/0.3/40/0.25 = warm intimate echo sin reverb cavernoso. highpass 80 elimina rumble preserve warmth. NO pitch shift — voice character stays natural. Per-segment atempo se aplica ANTES (per voices-catalog workflow).",
       "sample_path": null,
@@ -68,7 +86,6 @@
       },
       "revival_attempt_2026_05_29": {
         "context": "Fair-context revival demo: Kate BFP (qWWAqFomnJ99VwQLREfT) + cocinera-specific text + atempo 1.23× + cocinera_warm preset chain — replicates matadero CP2 user override context.",
-        "sample_path": "library/voice-effects-presets/samples/cocinera_warm_revival_2026_05_29.mp3",
         "validation_status": "revival_pending_user_test_2026_05_29",
         "text_used": "Pasa querido, la cena ya casi está. No tengas prisa, hay tiempo para todos. Quédate, ¿sí?"
       }
@@ -82,13 +99,18 @@
       "duration_overhead_pct": 8,
       "intelligibility_risk": "medium",
       "intelligibility_mitigation": "Si <0.85 → reduce reverb 80/70/80 a 60/50/60. Si ghost se pierde en mix → raise vol -8dB a -4dB.",
-      "best_paired_with_voice_types": ["any voice (designed para layer secundario)"],
-      "avoid_with_voice_types": ["primary narrator (use solo como overlay)"],
+      "best_paired_with_voice_types": [
+        "any voice (designed para layer secundario)"
+      ],
+      "avoid_with_voice_types": [
+        "primary narrator (use solo como overlay)"
+      ],
       "validation_status": "validated_user_test_2026_05_27",
-      "validated_in": ["voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"],
+      "validated_in": [
+        "voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"
+      ],
       "validated_at": "2026-05-27",
-      "rationale_chain": "highpass 200 + lowpass 4500 = airy band (no rumble, no harshness). reverb 80/70/80 cola larga = espacio ethereal. vol -8dB para sentarse bajo main. norm -22 LUFS = mix layer (no master).",
-      "sample_path": "library/voice-effects-presets/samples/ghost_whisper_demo.mp3"
+      "rationale_chain": "highpass 200 + lowpass 4500 = airy band (no rumble, no harshness). reverb 80/70/80 cola larga = espacio ethereal. vol -8dB para sentarse bajo main. norm -22 LUFS = mix layer (no master)."
     },
     {
       "preset_id": "ultratumba_cavernoso",
@@ -99,13 +121,23 @@
       "duration_overhead_pct": 12,
       "intelligibility_risk": "medium",
       "intelligibility_mitigation": "Si <0.85 → reduce reverb 95/90/90 a 70/70/70. Si demasiado oscuro → raise lowpass 1800 a 2400.",
-      "best_paired_with_voice_types": ["David C2 (K3TeN3ZVK8WnOeJ0NYqZ)", "Roy (KN9Jc4uEGSsiq5rQ7mRA)", "Salvatore", "any LatAm deep male"],
-      "avoid_with_voice_types": ["female high-pitched", "youthful conversational", "TikTok-energetic (defeats purpose)"],
+      "best_paired_with_voice_types": [
+        "David C2 (K3TeN3ZVK8WnOeJ0NYqZ)",
+        "Roy (KN9Jc4uEGSsiq5rQ7mRA)",
+        "Salvatore",
+        "any LatAm deep male"
+      ],
+      "avoid_with_voice_types": [
+        "female high-pitched",
+        "youthful conversational",
+        "TikTok-energetic (defeats purpose)"
+      ],
       "validation_status": "validated_user_test_2026_05_27",
-      "validated_in": ["voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"],
+      "validated_in": [
+        "voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"
+      ],
       "validated_at": "2026-05-27",
-      "rationale_chain": "pitch -200 baja tonalidad sin demonizar. reverb 95/90/90 + pre-delay 30 = cripta grande con reflexiones distantes. lowpass 1800 = oscurece, pierde brillo de consonants pero gana atmósfera. highpass 70 elimina rumble cavernoso parásito.",
-      "sample_path": "library/voice-effects-presets/samples/ultratumba_cavernoso_demo.mp3"
+      "rationale_chain": "pitch -200 baja tonalidad sin demonizar. reverb 95/90/90 + pre-delay 30 = cripta grande con reflexiones distantes. lowpass 1800 = oscurece, pierde brillo de consonants pero gana atmósfera. highpass 70 elimina rumble cavernoso parásito."
     },
     {
       "preset_id": "demon_growl",
@@ -116,13 +148,20 @@
       "duration_overhead_pct": 5,
       "intelligibility_risk": "high",
       "intelligibility_mitigation": "Si <0.70 (threshold demonio) → reduce overdrive 15 a 8. Si Whisper falla totalmente → captions obligatorios + acepta intelligibility floor 0.60 por intent dramatic.",
-      "best_paired_with_voice_types": ["deep narrators (David C2, Roy, Salvatore)", "Oxley + extra pitch"],
-      "avoid_with_voice_types": ["female voices (resultado uncanny WRONG)", "any voz que ya está pitcheada"],
+      "best_paired_with_voice_types": [
+        "deep narrators (David C2, Roy, Salvatore)",
+        "Oxley + extra pitch"
+      ],
+      "avoid_with_voice_types": [
+        "female voices (resultado uncanny WRONG)",
+        "any voz que ya está pitcheada"
+      ],
       "validation_status": "validated_user_test_2026_05_27",
-      "validated_in": ["voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"],
+      "validated_in": [
+        "voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"
+      ],
       "validated_at": "2026-05-27",
-      "rationale_chain": "pitch -1200 = octava completa abajo. overdrive 15/0.6 = distorsion harmonics gruesa. reverb 30/40/30 pequeño = espacio cerrado claustrofóbico. lowpass 4000 = saca hiss harshness del overdrive. ACEPTA intelligibility cost — captions mandatorios.",
-      "sample_path": "library/voice-effects-presets/samples/demon_growl_demo.mp3"
+      "rationale_chain": "pitch -1200 = octava completa abajo. overdrive 15/0.6 = distorsion harmonics gruesa. reverb 30/40/30 pequeño = espacio cerrado claustrofóbico. lowpass 4000 = saca hiss harshness del overdrive. ACEPTA intelligibility cost — captions mandatorios."
     },
     {
       "preset_id": "possessed_child",
@@ -133,13 +172,20 @@
       "duration_overhead_pct": 5,
       "intelligibility_risk": "low",
       "intelligibility_mitigation": "Si suena demasiado robot → reduce chorus delay 55 a 40 + speed 0.25 a 0.15.",
-      "best_paired_with_voice_types": ["youthful voices (Bryan hEKEQC93..., Jaider rpqlUOplj0Q...)", "female young voices"],
-      "avoid_with_voice_types": ["deep male voices (resultado uncanny WRONG)", "matarife/villains"],
+      "best_paired_with_voice_types": [
+        "youthful voices (Bryan hEKEQC93..., Jaider rpqlUOplj0Q...)",
+        "female young voices"
+      ],
+      "avoid_with_voice_types": [
+        "deep male voices (resultado uncanny WRONG)",
+        "matarife/villains"
+      ],
       "validation_status": "validated_user_test_2026_05_27",
-      "validated_in": ["voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"],
+      "validated_in": [
+        "voice-effects-presets-listen-test-2026-05-27 (Oxley dry base)"
+      ],
       "validated_at": "2026-05-27",
-      "rationale_chain": "pitch +200 sube ligeramente sin caricaturizar. chorus modulado crea efecto múltiples voces simultáneas (la posesión clásica). reverb mediano + pre-delay 0 = espacio íntimo cerca del oído. lowpass 5500 preserva brillo pero quita harshness.",
-      "sample_path": "library/voice-effects-presets/samples/possessed_child_demo.mp3"
+      "rationale_chain": "pitch +200 sube ligeramente sin caricaturizar. chorus modulado crea efecto múltiples voces simultáneas (la posesión clásica). reverb mediano + pre-delay 0 = espacio íntimo cerca del oído. lowpass 5500 preserva brillo pero quita harshness."
     },
     {
       "preset_id": "static_radio_old",
@@ -150,7 +196,9 @@
       "duration_overhead_pct": 0,
       "intelligibility_risk": "medium",
       "intelligibility_mitigation": "Si <0.85 → reduce bandpass width 1400 a 2000. Si demasiado limpio (no rota) → bits 10 a 8.",
-      "best_paired_with_voice_types": ["any voice (efecto transversal)"],
+      "best_paired_with_voice_types": [
+        "any voice (efecto transversal)"
+      ],
       "avoid_with_voice_types": [],
       "validation_status": "rejected_user_test_2026_05_27",
       "validated_in": [],
@@ -168,7 +216,9 @@
       "duration_overhead_pct": 30,
       "intelligibility_risk": "medium",
       "intelligibility_mitigation": "Si echos demasiado retro/cheesy → reduce delay 1000/1800 a 600/1200. Si difícil entender primera palabra → raise gain primer echo 0.3 a 0.5.",
-      "best_paired_with_voice_types": ["any voice (efecto transversal espacial)"],
+      "best_paired_with_voice_types": [
+        "any voice (efecto transversal espacial)"
+      ],
       "avoid_with_voice_types": [],
       "validation_status": "rejected_user_test_2026_05_27",
       "validated_in": [],
@@ -186,8 +236,14 @@
       "duration_overhead_pct": 0,
       "intelligibility_risk": "low",
       "intelligibility_mitigation": "Si suena demasiado cercano (claustrofóbico) → reduce eq gain 3 a 2 + raise lowpass 4000 a 5000.",
-      "best_paired_with_voice_types": ["deep male narrators (David C2, Roy)", "Matthew Schmitz (deprecated Tj9l48J9 — apto SOLO con este preset NO solo)"],
-      "avoid_with_voice_types": ["youthful conversational", "high-pitched voices"],
+      "best_paired_with_voice_types": [
+        "deep male narrators (David C2, Roy)",
+        "Matthew Schmitz (deprecated Tj9l48J9 — apto SOLO con este preset NO solo)"
+      ],
+      "avoid_with_voice_types": [
+        "youthful conversational",
+        "high-pitched voices"
+      ],
       "validation_status": "rejected_user_test_2026_05_27",
       "validated_in": [],
       "rejected_at": "2026-05-27",
@@ -204,7 +260,9 @@
       "duration_overhead_pct": 1,
       "intelligibility_risk": "low",
       "intelligibility_mitigation": "Si demasiado limpio (no se siente teléfono) → reduce highpass 400 a 350 + lowpass 3400 a 3200.",
-      "best_paired_with_voice_types": ["any voice (efecto transversal)"],
+      "best_paired_with_voice_types": [
+        "any voice (efecto transversal)"
+      ],
       "avoid_with_voice_types": [],
       "validation_status": "rejected_user_test_2026_05_27",
       "validated_in": [],

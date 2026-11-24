@@ -33,7 +33,7 @@
     "model_recommended": "eleven_v3 (GA Feb 2026 — flagship expressive narration, 70+ langs incl. Spanish, supports inline audio tags [whispers] [nervous]. Stability <=0.5 required to trigger tags. Latency 2-3x v2 — fine para offline render).",
     "settings_recommended": {
       "stability": 0.45,
-      "similarity_boost": 0.80,
+      "similarity_boost": 0.8,
       "style": 0.35,
       "use_speaker_boost": true,
       "rationale": "stability 0.40-0.50 = energetic without instability (>=0.5 = monotone news anchor; <0.4 = unstable). similarity_boost 0.75-0.85 (NOT 1.0 = over-enunciates). style 0.30-0.45 (v3 only, expressiveness)."
@@ -45,8 +45,7 @@
         "rationale_top_pick": "Closest match to TikTok energetic horror narrator per ElevenLabs library tags (excited+dynamic+shorts).",
         "voice_id": "T7QGPtToiqH4S8VlIkMJ",
         "discovery_path": "elevenlabs.io/voice-library filter language=Spanish + accent=Latin American",
-        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/T7QGPtToiqH4S8VlIkMJ/",
-        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/eleguar_T7QGPtToiqH4S8VlIkMJ.mp3"
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/T7QGPtToiqH4S8VlIkMJ/"
       },
       {
         "name": "Ignacio Uruguayan",
@@ -55,7 +54,6 @@
         "voice_id": "AvFwmpNEfWWu5mtNDqhH",
         "discovery_path": "elevenlabs.io/voice-library Latin American narrators",
         "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/AvFwmpNEfWWu5mtNDqhH/",
-        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/ignacio_AvFwmpNEfWWu5mtNDqhH.mp3",
         "risk": "Uruguay tiene voseo natural — verify NO voseo drift en test sample"
       },
       {
@@ -64,8 +62,7 @@
         "rationale_safe_alt": "Safe default si Eleguar feels too energetic. Neutral baseline LatAm. ⚠️ Risk: perfil 'neutral warm' similar a Vicente rejected matadero CP2 'muy plana'.",
         "voice_id": "HdHf5loDYrvGJRrbzbUX",
         "discovery_path": "elevenlabs.io/voice-library filter LatAm narrator",
-        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/HdHf5loDYrvGJRrbzbUX/",
-        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/jose_HdHf5loDYrvGJRrbzbUX.mp3"
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/HdHf5loDYrvGJRrbzbUX/"
       },
       {
         "name": "David C2",
@@ -73,14 +70,22 @@
         "rationale_horror_baseline": "User listen test 2026-05-27 elected David C2 como horror-narrator favorite. Adds 'horror-deep' axis to A/B (vs energetic-conversational Eleguar/Ignacio). Test confirms si formato prefers TikTok-energetic OR theatrical-deep.",
         "voice_id": "K3TeN3ZVK8WnOeJ0NYqZ",
         "discovery_path": "elevenlabs.io/voice-library Spanish horror filter",
-        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/",
-        "sample_a_b_test_2026_05_29": "library/voices/v5-narrator-ab-test-2026-05-29/david_c2_K3TeN3ZVK8WnOeJ0NYqZ.mp3"
+        "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/"
       }
     ],
     "avoid_voices": [
-      {"name": "Javier (Argentine)", "reason": "voseo drift conflicts with feedback_spanish_neutral"},
-      {"name": "Agustin (Buenos Aires)", "reason": "voseo drift, skip"},
-      {"name": "Tj9l48J9AJbry5yCP5eW", "reason": "whisper-grave perfil OPUESTO al energetic-conversational target. Already deprecated 2026-05-18."}
+      {
+        "name": "Javier (Argentine)",
+        "reason": "voseo drift conflicts with feedback_spanish_neutral"
+      },
+      {
+        "name": "Agustin (Buenos Aires)",
+        "reason": "voseo drift, skip"
+      },
+      {
+        "name": "Tj9l48J9AJbry5yCP5eW",
+        "reason": "whisper-grave perfil OPUESTO al energetic-conversational target. Already deprecated 2026-05-18."
+      }
     ],
     "a_b_test_protocol": [
       "1. Browse ElevenLabs voice library → grab exact voice_ids for Eleguar + Jose.",
@@ -109,7 +114,6 @@
       "jose_y2ijeTfmnXjzheHO6zeN": "Reserva — mexicano, deep powerful announcer (no relator específico)",
       "diego_tN4nkw7MBnGYAwQ71zQp": "No agregable vía API (voice_not_found en /v1/voices/add — restricción del owner)"
     },
-    "audition_samples": "library/voice-auditions-sport/audition-{faraon-relator-colombiano,jose-profundo-mexicano}.mp3",
     "audition_settings": "multilingual_v2, language=es, stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost true",
     "next_step_codification": "1. Entry El Faraón en voices[] status pending (perceptual PASS / M7 programmatic pendiente CP2 video #2). 2. Docs sport (INGENIERO-PAUTA § capas + audio-direction + NO-HORROR-GUARD G3) referencian QpDQJR3frbDwOhTIo8nW como narrador canónico sport — reemplaza el placeholder David C2. 3. M7 WPM measure en CP2 del primer video sport → flip a validated si banda canónica + intelligibility PASS."
   },
@@ -125,7 +129,18 @@
       "5. M7.7.5 semantic equivalence refinement for matarife/character voices: Rule A digit normalization + Rule B phonetic neighborhood + Rule C plurals/articles minor + Rule D user perceptual precedence",
       "6. Mark status 'validated' only if BOTH programmatic + perceptual checks pass"
     ],
-    "refs_for_canonical_match": ["ref-03", "ref-04", "ref-05", "ref-06", "ref-08", "ref-09", "ref-10", "ref-11", "ref-12", "ref-13"]
+    "refs_for_canonical_match": [
+      "ref-03",
+      "ref-04",
+      "ref-05",
+      "ref-06",
+      "ref-08",
+      "ref-09",
+      "ref-10",
+      "ref-11",
+      "ref-12",
+      "ref-13"
+    ]
   },
   "voices": [
     {
@@ -135,7 +150,10 @@
       "status": "validated",
       "canonical_validation_status": "validated",
       "validated_at": "2026-05-18",
-      "validated_in": ["matadero-banquete CP2", "bosque-abandonado v2-final (legacy use)"],
+      "validated_in": [
+        "matadero-banquete CP2",
+        "bosque-abandonado v2-final (legacy use)"
+      ],
       "validation_context": {
         "matadero_cp2_2026_05_18": {
           "user_pick_sample": "G — Oxley + atempo ×1.6 = 156 WPM matches ref-05 cluster",
@@ -161,7 +179,9 @@
       "status": "validated_canonical",
       "canonical_validation_status": "validated_canonical",
       "validated_at": "2026-05-19",
-      "validated_in": ["matadero-banquete CP2 user override 2026-05-19"],
+      "validated_in": [
+        "matadero-banquete CP2 user override 2026-05-19"
+      ],
       "validation_context": {
         "matadero_cp2_user_override_2026_05_19": {
           "user_pick_sample": "B — Kate BFP (override Sample A Valeria architect pick)",
@@ -185,7 +205,10 @@
       "status": "tested_validated_alternative",
       "canonical_validation_status": "tested_validated_alternative",
       "validated_at": "2026-05-17",
-      "validated_in": ["matadero-banquete CP1 (cocinera anchor sample A)", "matadero-banquete CP2 (cocinera 2 segments — replaced by Kate 2026-05-19)"],
+      "validated_in": [
+        "matadero-banquete CP1 (cocinera anchor sample A)",
+        "matadero-banquete CP2 (cocinera 2 segments — replaced by Kate 2026-05-19)"
+      ],
       "validation_context": {
         "matadero_cp1_cp2_2026_05_17_to_18": {
           "architect_pick_sample": "A — Valeria over Kate BFP initially",
@@ -212,7 +235,10 @@
       "deprecation_caso_disparador": "matadero-banquete CP2 — user listen test post-Path-E (176 WPM measured in band) reveló perception 'muy lento'. Voice character intrinsic NO matches canonical viral narrators (LatAm energetic conversational). Atempo workaround insufficient — voice character inherently slow.",
       "use_DEPRECATED": "Default para nuevos proyectos. Especialmente formatos horror narrativo.",
       "atempo_DEPRECATED": 2.0,
-      "validated_in": ["elige-companero V7", "bosque-abandonado v1"],
+      "validated_in": [
+        "elige-companero V7",
+        "bosque-abandonado v1"
+      ],
       "validated_in_note": "⚠️ Solo nuestras producciones — NO validation contra canonical refs. Per hard rule #19 NO es authority técnica.",
       "notes": "A 1x produce ~162s de narración para video de 90s. [DEPRECATED — superseded post matadero CP2 listen refute, replaced by 2gPFXx8pN3Avh27Dw5Ma Oxley Evil Character]"
     },
@@ -247,11 +273,18 @@
       "status": "validated_canonical_narrator_v5",
       "canonical_validation_status": "validated_canonical_narrator_v5_2026_05_29",
       "validated_at": "2026-05-29",
-      "validated_in": ["v5-narrator-ab-test-2026-05-29 (Tomás listen test PASS over Eleguar/Ignacio/José)"],
+      "validated_in": [
+        "v5-narrator-ab-test-2026-05-29 (Tomás listen test PASS over Eleguar/Ignacio/José)"
+      ],
       "validation_context": {
         "v5_a_b_test_2026_05_29": {
           "test_method": "4-way blind perceptual + WPM raw measurement (no atempo)",
-          "candidates_tested": ["Eleguar T7QGPt", "Ignacio AvFwmp", "José HdHf5l", "David C2 K3TeN3"],
+          "candidates_tested": [
+            "Eleguar T7QGPt",
+            "Ignacio AvFwmp",
+            "José HdHf5l",
+            "David C2 K3TeN3"
+          ],
           "wpm_measured": "157.2 (canonical band [152.71, 179.84] PASS)",
           "user_perceptual_pick": "David C2 — Rule D PRECEDENCE",
           "creative_direction_signal": "Deep horror profile preferred over TikTok-energetic axis. Format tolerates theatrical-narrator (refutes pre-test hypothesis that energetic-conversational was only canonical match)."
@@ -260,7 +293,6 @@
       "use_primary": "Narrator V5+ horror-choice (canonical default for narrator role). Replaces Tj9l48J9 deprecated trajectory pre-Oxley-narrator-bridge.",
       "atempo_strategy": "per-segment raw_dur/target_dur clamped [0.7, 2.5] + ×1.05 narrator-median bump opcional (157→165 WPM si SPEC pace intent median). NO heavy atempo required (raw already in canonical band).",
       "preview_url": "https://json2video.com/ai-voices/elevenlabs/voices/K3TeN3ZVK8WnOeJ0NYqZ/",
-      "sample_a_b_test": "library/voices/v5-narrator-ab-test-2026-05-29/david_c2_K3TeN3ZVK8WnOeJ0NYqZ.mp3",
       "ab_test_losers_reserved": {
         "ignacio_AvFwmpNEfWWu5mtNDqhH": "Reserva si futuro SPEC pide TikTok-energetic Uruguayan",
         "eleguar_T7QGPtToiqH4S8VlIkMJ": "Reserva si futuro SPEC pide entertainment-TV energetic narrator",
@@ -275,11 +307,13 @@
       "status": "validated_sport_choice_narrator",
       "canonical_validation_status": "validated_sport_narrator_2026_06_04",
       "validated_at": "2026-06-04",
-      "validated_in": ["voice-audition sport 2026-06-03 (Tomás pick)", "mexico-sudafrica CP2 2026-06-04 (producción real: raw 206.9 WPM → atempo 0.8 → 161.6-165.5 en banda [156,195]; M7.7 14/17 ≥0.90 + 2 flags resueltos por Tomás listen test PASS 'Muy bien' — Rule D)"],
+      "validated_in": [
+        "voice-audition sport 2026-06-03 (Tomás pick)",
+        "mexico-sudafrica CP2 2026-06-04 (producción real: raw 206.9 WPM → atempo 0.8 → 161.6-165.5 en banda [156,195]; M7.7 14/17 ≥0.90 + 2 flags resueltos por Tomás listen test PASS 'Muy bien' — Rule D)"
+      ],
       "validation_context": {
         "sport_audition_2026_06_03": {
           "user_pick": "El Faraón sobre José (y2ije) — Rule D perceptual",
-          "sample": "library/voice-auditions-sport/audition-faraon-relator-colombiano.mp3 (texto relato: tensión + explosión de gol)",
           "settings_audition": "multilingual_v2 es / stability 0.35 / similarity 0.75 / style 0.45 / speaker_boost",
           "pending_for_validated": "M7 programmatic en CP2 video sport #2 (Whisper WPM banda canónica F1 [152.71, 179.84] + intelligibility ≥0.90). Sport NO tiene refs virales propios → validación canónica plena post primeros videos shipped (igual que el resto del formato pre-empírico)."
         }
@@ -296,7 +330,7 @@
       "status": "reserved_sport_alternative",
       "canonical_validation_status": "pending",
       "validated_at": null,
-      "validated_in": ["voice-audition sport 2026-06-03 (sample library/voice-auditions-sport/audition-jose-profundo-mexicano.mp3)"],
+      "validated_in": [],
       "use_alternative": "Reserva sport: announcer de apertura/cierre, promos topical México, o si un SPEC pide registro profundo no-relator. Ya agregado a la cuenta ElevenLabs.",
       "notes": "NO confundir con José HdHf5loDYrvGJRrbzbUX (rejected horror 'muy plana'). Este es y2ije — voz distinta."
     }
