@@ -87,6 +87,10 @@ BULLET_RE = re.compile(r"^\s*(?:[-*]|•)\s+(?!-)\S")
 SCORE_RE = re.compile(r"\b(?:\d{1,2}\.\d/10|\d{1,2}/10|gemini\s+\d{1,2}(?:\.\d)?)\b", re.IGNORECASE)
 
 
+# Kept out of the f-string: nested escaped quotes are Python 3.12+ syntax only.
+_PATTERN_TOKEN = 'token "pattern"'
+
+
 def slug_normalize(s: str) -> str:
     """Normaliza para match tolerante: lower, sin backticks, espacios/_ → -, colapsa --, strip."""
     s = (s or "").lower().replace("`", "")
@@ -163,7 +167,7 @@ def evaluate_videolog_entry(entry_text, project_id, *, require_scores=False,
     has_pattern = bool(patterns) or "pattern" in (entry_text or "").lower()
     checks.append({
         "check": "b_mentions_pattern", "status": "pass" if has_pattern else "fail",
-        "detail": (f"entry menciona pattern: {patterns or 'token \"pattern\"'} ✓" if has_pattern
+        "detail": (f"entry menciona pattern: {patterns or _PATTERN_TOKEN} ✓" if has_pattern
                    else "entry NO menciona el pattern usado (Pn o 'pattern') — rotación HR#14 "
                         "no se puede trackear sin pattern declarado"),
     })
