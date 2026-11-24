@@ -27,7 +27,7 @@ echo "════════════════════════�
 # (la clase del bug cerro-aislado-v4) o adición inesperada. Escala a proyectos NUEVOS solos.
 echo "[1] Solo el sistema agnóstico en el repo (no proyectos de video)"
 STRAY=$(git ls-files | sed 's#/.*##' | sort -u | grep -vxF \
-  -e ".agents" -e ".claude" -e ".github" -e ".gitignore" -e ".gitleaks.toml" -e ".pre-commit-config.yaml" \
+  -e ".agents" -e ".claude" -e ".github" -e ".gitignore" -e ".gitleaksignore" -e ".pre-commit-config.yaml" \
   -e ".env.example" -e ".python-version" -e "AGENTS.md" -e "CHANGELOG.md" -e "CLAUDE.md" -e "CONTRIBUTING.md" \
   -e "LICENSE" -e "README.md" -e "SECURITY.md" -e "THIRD_PARTY_NOTICES.md" -e "pyproject.toml" -e "uv.lock" \
   -e "skills-lock.json" -e "assets" -e "data" -e "docs" -e "evals" -e "examples" -e "scripts" -e "src" \
