@@ -44,7 +44,7 @@ NIVEL 1 — MULTI-AGENT UNIVERSAL (no domain-specific)
 
 NIVEL 2 — DOMAIN-UNIVERSAL (video production universal)
 ├── pipeline 5-CP genérico
-├── tools reusable (image.py, tts.py, sfx.py, etc.)
+├── tools reusable (ai-video image, ai-video tts, ai-video sfx, etc.)
 ├── canonical Q-gates (LUFS, Gemini ≥9.7, audit-against-referent ≥85%)
 └── TEMPLATES vacíos (Phase 1): PAUTA-MASTER-TEMPLATE + INGENIERO-PAUTA-TEMPLATE
 
@@ -92,7 +92,7 @@ NIVEL 4 — PER-INSTANCE
 | Phase | Cuándo | Qué |
 |-------|--------|-----|
 | **Phase 0** ✅ CLOSED 2026-05-18 | Pre-CP4 matadero | TEAM-PROTOCOL NIVEL 1 + AUDITOR-MASTER-FLOW v2 + per-CP CP1-CP3 retroactive |
-| **Phase 1** | Post-CP5 matadero closure | Refactor NIVEL 2 templates (PAUTA + INGENIERO-PAUTA) + `measure-canonical-referents.py` + per-CP CP4/CP5 closure docs + refactor CLAUDE.md (separar NIVEL 1 vs NIVEL 2). ⭐ **PRIORITY BUMP 2026-05-18**: `measure-canonical-per-speaker.py` (diarization pyannote-audio + per-speaker WPM + pitch + energy bands) DEBE arrancar ANTES de 2do video (no post-CP5). Per CLAUDE.md hard rule #19 expansion "MEASURE → MATCH → VALIDATE → USE" workflow. Sin per-speaker measurement no podemos validate voice IDs canonical. Plus audit cross-library defaults (sfx-catalog, scripts defaults, elements.json). |
+| **Phase 1** | Post-CP5 matadero closure | Refactor NIVEL 2 templates (PAUTA + INGENIERO-PAUTA) + `measure-canonical-referents.py` + per-CP CP4/CP5 closure docs + refactor docs/OPERATING-MANUAL.md (separar NIVEL 1 vs NIVEL 2). ⭐ **PRIORITY BUMP 2026-05-18**: `measure-canonical-per-speaker.py` (diarization pyannote-audio + per-speaker WPM + pitch + energy bands) DEBE arrancar ANTES de 2do video (no post-CP5). Per docs/OPERATING-MANUAL.md hard rule #19 expansion "MEASURE → MATCH → VALIDATE → USE" workflow. Sin per-speaker measurement no podemos validate voice IDs canonical. Plus audit cross-library defaults (sfx-catalog, scripts defaults, templates/hyperframes/elements.json). |
 | **Phase 2** | 2do video horror-choice end-to-end | Validation NIVEL 1+2+3 con segundo video horror-choice + architect crea ARCHITECT-MASTER-FLOW + engineer ENGINEER-MASTER-FLOW |
 | **Phase 3** | 1er video FORMATO DISTINTO | Test speed-up con templates Phase 1: ¿2-3 hrs arrancar formato nuevo? |
 | **Phase 4** | Post formato distinto | Promote a canónico, deprecate working docs viejos, JSON schemas formal |
@@ -104,7 +104,7 @@ NIVEL 4 — PER-INSTANCE
 
 - Working canon actual: `creative-director/HANDOFF-PROTOCOL.md` + `creative-director/AUDITOR-PROTOCOL.md`
 - Pauta empírica del formato: `horror-choice-format/PAUTA-MASTER.md` + `INGENIERO-PAUTA-MASTER.md`
-- Sistema architecture (3-terminal): `CLAUDE.md` § 0.0
+- Sistema architecture (3-terminal): `docs/OPERATING-MANUAL.md` § 0.0
 
 ---
 

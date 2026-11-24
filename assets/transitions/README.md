@@ -1,4 +1,4 @@
-# transitions/ — Carpeta GLOBAL de transiciones (autoridad única)
+# assets/transitions/ — Carpeta GLOBAL de transiciones (autoridad única)
 
 > **Single source of truth de transiciones del sistema.** Carpeta root global (movida desde `ai-video-production/templates/effects-library/` + `<format>-format/effects-library/` el 2026-06-05 por directiva del creator). Cada transición es un JSON self-contained con `ffmpeg_recipe` + `audio_recipe` + `xfade_transition` + `xfade_fidelity` + use-cases + HyperFrames alternative + `canonical_validation_status`.
 >
@@ -9,7 +9,7 @@
 ## Estructura
 
 ```
-transitions/                              # GLOBAL root
+assets/transitions/                              # GLOBAL root
 ├── catalog.json                          # ⭐ índice transición → formato (consultar PRIMERO)
 ├── README.md                             # este archivo (autoridad)
 ├── CANONICAL-VALIDATION-REPORT-2026-05-22.md   # validation record F1 de las recipes
@@ -20,7 +20,7 @@ transitions/                              # GLOBAL root
 │   ├── transitions/*.json                # film-burn / old_screen_glitch / projector-cue / static-noise
 │   └── audio-stings/*.mp3                # projector-cue / drone-tension
 └── sport-choice/                         # SOLO formato sport-choice (bootstrapped vacío 2026-06-05)
-    ├── transitions/                      # candidatos futuros: replay-wipe, stadium-flash, scoreboard-cut
+    ├── assets/transitions/                      # candidatos futuros: replay-wipe, stadium-flash, scoreboard-cut
     └── audio-stings/
 ```
 
@@ -32,7 +32,7 @@ Compat: los paths viejos (`ai-video-production/templates/effects-library/{transi
 
 | Capa | Path | Disponible para |
 |------|------|-----------------|
-| **universal** | `transitions/universal/transitions/` | CUALQUIER formato/video |
+| **universal** | `assets/transitions/universal/transitions/` | CUALQUIER formato/video |
 | **per-format** | `transitions/<format>/transitions/` | Solo cuando `--format <ese-formato>` |
 | **SPEC (Capa C)** | `creative-specs/<id>.yaml` → `shot_list[].transition_in/out` | Este video — ES quien decide |
 
@@ -69,15 +69,15 @@ Cada recipe declara explícitamente (no inferencia):
 - `xfade_fidelity`: `literal` (el recipe ES un xfade de ese tipo) o `approximate` (otro mecanismo — concat-insert/overlay/jitter-crop — que el chained-xfade aproxima).
 - `native_mechanism_note`: descripción del mecanismo real cuando `approximate`.
 
-`apply-effects-between-clips.py` lee estos fields; recipe `approximate` en producción real emite WARNING.
+`ai-video apply-effects-between-clips` lee estos fields; recipe `approximate` en producción real emite WARNING.
 
 ---
 
 ## Usage
 
-- Assembly post-concat: `scripts/apply-effects-between-clips.py --effects-dir <dirs>` (chained-xfade desde clips atómicos). `build-video-hybrid.py` resuelve los dirs automáticamente vía `transitions/catalog.json` (walk-up desde el script).
+- Assembly post-concat: `ai-video apply-effects-between-clips --effects-dir <dirs>` (chained-xfade desde clips atómicos). `ai-video build-video-hybrid` resuelve los dirs automáticamente vía `assets/transitions/catalog.json` (walk-up desde el script).
 - Cada recipe ships `ffmpeg_recipe` (placeholders `{clip_a}`/`{clip_b}`/`{output}`) + `hyperframes_alternative` (GSAP equivalente).
-- Previews locales: `transitions/_previews/` (gitignored, regenerables).
+- Previews locales: `assets/transitions/_previews/` (gitignored, regenerables).
 
 ## Audio stings (universal)
 
@@ -109,6 +109,6 @@ Los 4 ⭐ = user-uploaded 2026-06-05 (SoundBits ×2 / InspectorJ / Cyberwave Orc
 2. **Agregar su entry a `catalog.json`** con `formats` explícito — sin entry en el catálogo, el sistema no la "ve".
 3. Universal solo si sirve a cualquier formato; si es sabor de género → `transitions/<format>/`.
 4. `canonical_validation_status: pending` salvo ≥3 referentes medidos (HR#19).
-5. Correr `test_effects_library_recipes_schema.py` (valida schema + sync catálogo↔disco).
+5. Correr `tests/unit/test_effects_library_recipes_schema.py` (valida schema + sync catálogo↔disco).
 
 ffmpeg recipes target H.264 + AAC, 1080×1920 30fps, `-crf 18 -preset medium`.

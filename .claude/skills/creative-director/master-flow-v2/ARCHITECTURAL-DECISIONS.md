@@ -1,6 +1,6 @@
 # ARCHITECTURAL-DECISIONS.md — Override + Decision Log
 
-> **Purpose**: append-only log of architectural overrides + bypass decisions for orchestrator (Script C) + any deviation from canonical workflow. Required by CLAUDE.md Hard Rule #24 + Script C gates.
+> **Purpose**: append-only log of architectural overrides + bypass decisions for orchestrator (Script C) + any deviation from canonical workflow. Required by docs/OPERATING-MANUAL.md Hard Rule #24 + Script C gates.
 >
 > **Status**: ACTIVE log. Append entries chronological. NEVER truncate or rewrite history.
 >

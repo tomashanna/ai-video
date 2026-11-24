@@ -142,7 +142,7 @@ Medium: `.png` from Gemini → readable directly, no slicing needed.
 
 | Stage | Tool | Output |
 |---|---|---|
-| Render | `scripts/image.py` (Gemini) | `.png` |
+| Render | `ai-video image` (Gemini) | `.png` |
 | Slice | — (images are already single frames) | — |
 | Read | `Read scene-factory.png` | visual perception |
 | Diagnose | on-brand / off-brand, crop, aesthetic | prompt adjustment |
@@ -151,7 +151,7 @@ Medium: `.png` from Gemini → readable directly, no slicing needed.
 
 Short-circuit: if the first generation is on-brand (monochrome, editorial, no color bleed), skip steps 4-6 and ship it. Save tokens and API calls.
 
-**Prompt-engineering the loop shut:** The smartest move is embedding brand constraints into the prompt itself so the first output is usually correct. `scripts/image.py` always appends:
+**Prompt-engineering the loop shut:** The smartest move is embedding brand constraints into the prompt itself so the first output is usually correct. `ai-video image` always appends:
 
 ```
 Pure monochromatic black and white only. Absolute black background #000000.
@@ -168,13 +168,13 @@ Medium: `.mp3` / `.wav` → cannot listen. Need two proxies: duration and transc
 
 | Stage | Tool | Output |
 |---|---|---|
-| Render | `scripts/tts.py` (ElevenLabs) | `.mp3` |
+| Render | `ai-video tts` (ElevenLabs) | `.mp3` |
 | Slice | `ffprobe -show_entries format=duration` | duration in seconds |
 | Slice (pt.2) | `npx hyperframes transcribe` | word-level `transcript.json` |
 | Read | `Read transcript.json` | text + timestamps |
 | Diagnose | is the text actually Spanish? right words? right length? | script revision |
 | Edit | rewrite `script.txt` | new text |
-| Re-render | re-run `tts.py` | new `.mp3` |
+| Re-render | re-run `ai-video tts` | new `.mp3` |
 
 Two proxies because audio can fail in two ways:
 - **Duration wrong** → too short or too long for the video (first attempt: 37.4s, needed 52s → rewrite script longer)

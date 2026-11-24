@@ -8,7 +8,7 @@
 
 ```
 <proyecto>/
-├── CLAUDE.md                    ← Governance (Plan-First, Phase rules)
+├── docs/OPERATING-MANUAL.md                    ← Governance (Plan-First, Phase rules)
 ├── DESIGN.md                    ← Colores, tipografía, safe zones
 ├── NARRATIVE.md                 ← Script + asset list
 ├── creative-brief-v1.md         ← Brief llenado (slot-based)
@@ -25,12 +25,12 @@
 │   ├── *-2x.mp3                 ← TTS procesado (usar)
 │   ├── music-*.mp3              ← Música procesada
 │   └── sfx/                     ← SFX por escena
-│       └── cuts/                ← SFX de cortes NARRATIVE-LED (copy de library/)
+│       └── cuts/                ← SFX de cortes NARRATIVE-LED (copy de assets/library/)
 ├── scripts/                     ← Copy de <formato>/templates/scripts/
-│   ├── tts.py
-│   ├── image.py
-│   ├── sfx.py
-│   └── captions.py
+│   ├── ai-video tts
+│   ├── ai-video image
+│   ├── ai-video sfx
+│   └── ai-video captions
 ├── renders/                     ← Output MP4
 │   ├── draft.mp4
 │   ├── v1-final.mp4
@@ -39,7 +39,7 @@
 ├── performance/                 ← Capturas T+48h por video
 │   └── YYYY-MM-DD-<slug>.md     ← Copy de video-director/templates/video-performance-template.md
 ├── captions-spec.json           ← Spec batch Whisper
-├── sfx-spec.json                ← Spec batch SFX (referenciar library/ donde aplique)
+├── sfx-spec.json                ← Spec batch SFX (referenciar assets/library/ donde aplique)
 └── compositions/                ← Sub-composiciones opcionales
     ├── captions.html
     └── overlays.html
@@ -53,7 +53,7 @@
 
 | Archivo | Origen | Generación | Frequency |
 |---|---|---|---|
-| `CLAUDE.md` | Copy de proyecto previo del mismo formato | Editar Phase actual + ajustes mínimos | Por proyecto |
+| `docs/OPERATING-MANUAL.md` | Copy de proyecto previo del mismo formato | Editar Phase actual + ajustes mínimos | Por proyecto |
 | `DESIGN.md` | Copy de proyecto previo | Editar colores específicos si varían | Por proyecto |
 | `AGENTS.md` | Copy de proyecto previo | Replica | Por proyecto |
 | `V<n>-VS-V<m>.md` | Vacío | Se llena cada iteración del render | Por proyecto |
@@ -77,11 +77,11 @@
 
 | Carpeta | Contenido | Generación |
 |---|---|---|
-| `assets/*.png` | Imágenes del video | `scripts/image.py` + variantes -a/-b/-c |
-| `assets/*-2x.mp3` | Narraciones TTS procesadas | `scripts/tts.py` + atempo cap ≥0.90 con ffmpeg (NO slow-down de voz — ver INGENIERO §1.6) |
-| `assets/music-*.mp3` | Música procesada | Copy de `library/music/` o procesar de raw |
-| `assets/sfx/*.mp3` | SFX específicos del video | Copy de `library/sfx/` o `scripts/sfx.py` |
-| `assets/sfx/cuts/*.mp3` | 7 cortes universales NARRATIVE-LED | **Siempre copy de `library/sfx/cuts/`** |
+| `assets/*.png` | Imágenes del video | `ai-video image` + variantes -a/-b/-c |
+| `assets/*-2x.mp3` | Narraciones TTS procesadas | `ai-video tts` + atempo cap ≥0.90 con ffmpeg (NO slow-down de voz — ver INGENIERO §1.6) |
+| `assets/music-*.mp3` | Música procesada | Copy de `assets/library/music/` o procesar de raw |
+| `assets/sfx/*.mp3` | SFX específicos del video | Copy de `assets/library/sfx/` o `ai-video sfx` |
+| `assets/sfx/cuts/*.mp3` | 7 cortes universales NARRATIVE-LED | **Siempre copy de `assets/library/sfx/cuts/`** |
 
 ### Archivos de spec (machine-readable)
 
@@ -107,7 +107,7 @@
 
 ### Paso 1 — Bootstrap (venv + deps + .env)
 
-> ⛔ **Bootstrap canónico → `CLAUDE.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Ahí viven los comandos autoritativos: `mkdir` de la estructura, `.env` template, venv + el set **COMPLETO** de deps (`elevenlabs google-genai python-dotenv openai-whisper replicate`). No dupliques los comandos acá — la receta previa de este doc estaba desactualizada (deps incompletas).
+> ⛔ **Bootstrap canónico → `docs/OPERATING-MANUAL.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Ahí viven los comandos autoritativos: `mkdir` de la estructura, `.env` template, venv + el set **COMPLETO** de deps (`elevenlabs google-genai python-dotenv openai-whisper replicate`). No dupliques los comandos acá — la receta previa de este doc estaba desactualizada (deps incompletas).
 
 ### Paso 2 — Governance + design (10 min)
 
@@ -118,13 +118,13 @@ cp ../<proyecto-previo>/DESIGN.md .
 cp ../<proyecto-previo>/AGENTS.md .
 ```
 
-Editar `CLAUDE.md`: ajustar Phase actual si cambió. Mantener Plan-First rule + Source-of-Truth rule.
+Editar `docs/OPERATING-MANUAL.md`: ajustar Phase actual si cambió. Mantener Plan-First rule + Source-of-Truth rule.
 
 ### Paso 3 — Scripts QA (copy-list + verificación)
 
-> ⛔ **Copy-list canónica de scripts → `CLAUDE.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Los scripts se copian de **`ai-video-production/templates/scripts/`** (universales — production + los gates obligatorios, incluyendo los audit-* nuevos), NO de `<formato>/templates`. La lista completa + el `for f in … done` de verificación viven en el canónico. No la dupliques acá.
+> ⛔ **Copy-list canónica de scripts → `docs/OPERATING-MANUAL.md § Bootstrap canónico` + `ai-video-production/BOOTSTRAP.md`.** Los scripts se copian de **`ai-video-production/templates/scripts/`** (universales — production + los gates obligatorios, incluyendo los audit-* nuevos), NO de `<formato>/templates`. La lista completa + el `for f in … done` de verificación viven en el canónico. No la dupliques acá.
 
-Tras copiar: verificar que `scripts/tts.py` tiene el voice ID correcto en `DEFAULT_VOICE_ID`.
+Tras copiar: verificar que `ai-video tts` tiene el voice ID correcto en `DEFAULT_VOICE_ID`.
 
 ### Paso 4 — Creative brief (20 min)
 
@@ -150,7 +150,7 @@ cp ../.claude/skills/<formato>-format/templates/NARRATIVE-TEMPLATE.md ./NARRATIV
 
 ```bash
 # Para cada personaje (malo aparente, bueno aparente, narrador POV si aplica):
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "Medium close-up portrait of [PERSONAJE]. Facing camera, neutral expression, soft frontal lighting, blurred background. Photorealistic 35mm." \
   -o assets/<personaje>-anchor.png
 ```
@@ -160,7 +160,7 @@ Verificar visualmente cada anchor. Si no convence → regenerar AHORA, antes de 
 #### 6.B — TTS por bloque de narración
 
 ```bash
-.venv/bin/python scripts/tts.py -t "<texto>" -v <voice-id> -o assets/narr-N-raw.mp3
+uv run ai-video tts -t "<texto>" -v <voice-id> -o assets/narr-N-raw.mp3
 # Pipeline real: cap atempo ≥0.90 (NUNCA slow-down de voz). atempo=2.0 está DEPRECATED — ver INGENIERO-PAUTA-MASTER §1.6
 ffmpeg -y -i assets/narr-N-raw.mp3 -filter:a "atempo=0.95" assets/narr-N-2x.mp3
 ```
@@ -171,13 +171,13 @@ ffmpeg -y -i assets/narr-N-raw.mp3 -filter:a "atempo=0.95" assets/narr-N-2x.mp3
 
 ```bash
 # Escena de un personaje
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "The character from the reference walking through dark forest. Wide shot. Same face." \
   --ref assets/berni-anchor.png \
   -o assets/h3-walk-a.png
 
 # Escena con dos personajes (pasar ambos anchors)
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "Both characters facing camera, dim candlelight." \
   --ref assets/berni-anchor.png \
   --ref assets/yonaiker-anchor.png \
@@ -186,8 +186,8 @@ ffmpeg -y -i assets/narr-N-raw.mp3 -filter:a "atempo=0.95" assets/narr-N-2x.mp3
 
 Generación en paralelo si las escenas son independientes:
 ```bash
-.venv/bin/python scripts/image.py -p "..." --ref assets/<a>-anchor.png -o assets/h3-a.png &
-.venv/bin/python scripts/image.py -p "..." --ref assets/<a>-anchor.png -o assets/h3-b.png &
+uv run ai-video image -p "..." --ref assets/<a>-anchor.png -o assets/h3-a.png &
+uv run ai-video image -p "..." --ref assets/<a>-anchor.png -o assets/h3-b.png &
 wait
 ```
 
@@ -195,18 +195,18 @@ wait
 
 ```bash
 # Sin --ref porque no hay personaje a mantener consistente
-.venv/bin/python scripts/image.py -p "Empty dark forest path at midnight, mist." -o assets/h5-road.png
+uv run ai-video image -p "Empty dark forest path at midnight, mist." -o assets/h5-road.png
 ```
 
 #### 6.E — SFX
 
 ```bash
-# Primero buscar en library/
-cp ~/AI\ video\ 1/library/sfx/cuts/*.mp3 ./assets/sfx/cuts/
-cp ~/AI\ video\ 1/library/sfx/impacts/flash-sharp.mp3 ./assets/sfx/
+# Primero buscar en assets/library/
+cp ../../assets/library/sfx/cuts/*.mp3 ./assets/sfx/cuts/
+cp ../../assets/library/sfx/impacts/flash-sharp.mp3 ./assets/sfx/
 
 # Solo generar lo que falte:
-.venv/bin/python scripts/sfx.py --spec sfx-spec.json
+uv run ai-video sfx --spec sfx-spec.json
 ```
 
 ### Paso 7 — Composición HTML (45-90 min)
@@ -215,10 +215,10 @@ cp ~/AI\ video\ 1/library/sfx/impacts/flash-sharp.mp3 ./assets/sfx/
 
 ```bash
 # 1. Ver qué usó el video anterior (para excluir)
-cat ~/AI\ video\ 1/.claude/skills/<formato>-format/video-log.md | head -25
+cat ../../.claude/skills/<formato>-format/video-log.md | head -25
 
 # 2. Ver catálogo completo
-cat ~/AI\ video\ 1/elements.json
+cat ../../templates/hyperframes/elements.json
 ```
 
 #### 7.B — COMPATIBILITY CHECK (3 chequeos obligatorios)
@@ -263,14 +263,14 @@ Doc completo del sistema: `ai-video-production/ELEMENTS-LIBRARY.md`.
 # Crear captions-spec.json con audios + offsets + element IDs
 # Ver ai-video-production/CAPTIONS.md § Batch mode
 
-.venv/bin/python scripts/captions.py --spec captions-spec.json > captions-output.txt
+uv run ai-video captions --spec captions-spec.json > captions-output.txt
 # Revisar nombres propios manualmente (Whisper falla con nombres raros)
 # Copiar al script del HTML
 ```
 
 ### Pasos 9-11 — Lint + render draft + gates pre-render
 
-> ⛔ **Secuencia canónica → `CLAUDE.md § Pre-render gate` (los 8 gates obligatorios) + `video-director/WORKFLOW.md`.** Lint (`npx hyperframes lint`), render draft (`npx hyperframes render`) y Gemini QA NO son 3 pasos sueltos: son parte de la secuencia de **8 gates** (Gate 0 spec-completeness + lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate) que se corre ANTES de declarar stop point. No dupliques los comandos sueltos acá — seguí el canónico.
+> ⛔ **Secuencia canónica → `docs/OPERATING-MANUAL.md § Pre-render gate` (los 8 gates obligatorios) + `video-director/WORKFLOW.md`.** Lint (`npx hyperframes lint`), render draft (`npx hyperframes render`) y Gemini QA NO son 3 pasos sueltos: son parte de la secuencia de **8 gates** (Gate 0 spec-completeness + lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate) que se corre ANTES de declarar stop point. No dupliques los comandos sueltos acá — seguí el canónico.
 
 ### Paso 12 — Iterar hasta ≥9.7 (variable)
 
@@ -294,7 +294,7 @@ Usuario decide. NO el editor IA.
 ### Paso 15 — Capturar performance (T+48h)
 
 ```bash
-cp ~/AI\ video\ 1/.claude/skills/video-director/templates/video-performance-template.md \
+cp ../../.claude/skills/video-director/templates/video-performance-template.md \
    performance/$(date +%Y-%m-%d)-<slug>.md
 # Llenar métricas a T+48h
 ```
@@ -315,11 +315,11 @@ Agregar fila a `<formato>-format/video-log.md` con:
 
 Para que un proyecto se considere completo:
 
-- [ ] `CLAUDE.md`, `DESIGN.md`, `AGENTS.md` presentes
+- [ ] `docs/OPERATING-MANUAL.md`, `DESIGN.md`, `AGENTS.md` presentes
 - [ ] `NARRATIVE.md` lleno con script + asset list
 - [ ] `creative-brief-v1.md` lleno con los slots (si formato lo requiere)
 - [ ] `index.html` con todas las hard rules aplicadas
-- [ ] Componentes `countdown` / `loader` / `lower-third` pickeados via `elements.json` (NO hardcoded). Distintos al video anterior del mismo formato.
+- [ ] Componentes `countdown` / `loader` / `lower-third` pickeados via `templates/hyperframes/elements.json` (NO hardcoded). Distintos al video anterior del mismo formato.
 - [ ] `assets/` con TTS, imágenes (con variantes), SFX
 - [ ] Captions vía Whisper (NO hand-timed)
 - [ ] Mix volumes canónicos aplicados
@@ -340,7 +340,7 @@ Para que un proyecto se considere completo:
 - ❌ **Cambiar la estructura.** Si necesitás algo nuevo, agregalo a `<formato>-format/` (template), no al proyecto suelto.
 - ❌ **Modificar scripts/ del proyecto.** Si encontrás un bug, fix en `<formato>/templates/scripts/` y re-copy.
 - ❌ **Saltearse el creative-brief.** En formatos narrativos, sin brief el video falla en calidad estructural.
-- ❌ **Generar SFX que ya están en library/.** Buscar primero.
+- ❌ **Generar SFX que ya están en assets/library/.** Buscar primero.
 - ❌ **Captions hand-timed.** Whisper siempre, corregir nombres propios manualmente.
 - ❌ **Borrar `assets/`.** Si renombrás un video, mové la carpeta entera. Los assets generados costaron créditos.
 

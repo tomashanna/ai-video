@@ -1,11 +1,11 @@
 {
   "_meta": {
     "description": "Catálogo GLOBAL de transiciones — índice único consultable que mapea cada transición a los formatos donde sirve. Los recipes JSON self-contained viven en <layer>/transitions/; este catálogo NO duplica su contenido (ffmpeg_recipe/audio_recipe viven en el recipe). Principio canónico: 'Disponibilidad ≠ Uso' — el SPEC (Capa C, shot_list[].transition_in/out) decide qué se aplica en cada video.",
-    "authority": "transitions/README.md (decision matrix + how-to-add)",
+    "authority": "assets/transitions/README.md (decision matrix + how-to-add)",
     "schema": {
       "layer": "universal (todo formato) | <format> (solo ese formato)",
       "formats": "['*'] = disponible para cualquier formato | lista explícita = solo esos",
-      "recipe": "path relativo a transitions/ — el JSON self-contained con ffmpeg_recipe + audio_recipe",
+      "recipe": "path relativo a assets/transitions/ — el JSON self-contained con ffmpeg_recipe + audio_recipe",
       "canonical_validation_status": "HR#19 — validated_N/8 (medido contra refs F1) | pending (autorizado pero no medido) | candidate_deprioritize"
     }
   },

@@ -2,7 +2,7 @@
 
 > ⛔ **ARQUITECTURA ACTUALIZADA 2026-05-23 Sub-Fase 3A.** La PAUTA canónica de este formato vive en **`horror-choice-format/PAUTA-MASTER.md`** (8 videos virales canónicos empíricos) + `PATTERNS.md` + `SCRIPT-WRITING-GUIDE.md` + `PAUTA.md`. Los docs en ESTE folder son **operacionales secundarios** — NO autoridad creativa.
 >
-> ⚠️ **`CREATIVE-BRIEF.md` fue DEPRECATED 2026-05-13 PM** (mal-grounded en V1/V2/V3 antiguos + V7 nuestro). Movido a `_archive-deprecated-docs/` durante Sub-Fase 3A. NO USAR como autoridad — solo histórico.
+> ⚠️ **`CREATIVE-BRIEF.md` fue DEPRECATED 2026-05-13 PM** (mal-grounded en V1/V2/V3 antiguos + V7 nuestro). Movido a `_archive-deprecated-docs (retirado; ver historial git)` durante Sub-Fase 3A. NO USAR como autoridad — solo histórico.
 
 ---
 

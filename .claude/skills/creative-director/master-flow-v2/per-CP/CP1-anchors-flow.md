@@ -26,7 +26,7 @@
 **File**: `<proyecto>/CP1-handoff.md` (or `-vN.md` si re-handoff cycle)
 
 **Required sections** (per HANDOFF-PROTOCOL L91-138):
-1. Lectura obligatoria completada (SPEC sections, MODEL-BENCHMARK, INGENIERO-PAUTA-MASTER, CLAUDE.md hard rules)
+1. Lectura obligatoria completada (SPEC sections, MODEL-BENCHMARK, INGENIERO-PAUTA-MASTER, docs/OPERATING-MANUAL.md hard rules)
 2. SPEC slots involucrados (reference_anchors.characters/settings/props)
 3. Cross-shot coverage audit (count shots per anchor — gaps detection)
 4. Estado actual de anchors generados (paths + descriptions)
@@ -53,7 +53,7 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP1:
 |---|------|----------|
 | A1 | Model selection Pro/Flash 3.1 per severity | MODEL-BENCHMARK § 2.2 character anchor row |
 | A2 | Resolution 2K/1K adequate downstream | MODEL-BENCHMARK L1220 + use case |
-| A3 | `--no-mono-suffix` flag (dual palette) | `scripts/image.py:109` flag exists |
+| A3 | `--no-mono-suffix` flag (dual palette) | `ai-video image:109` flag exists |
 | A4 | Aspect 9:16 for reel format | `formats/reel.md` |
 | A5 | Cost estimate vs pricing actual | MODEL-BENCHMARK L1222 |
 | A6 | Contact-sheet format planeado | engineer self-decision OK |

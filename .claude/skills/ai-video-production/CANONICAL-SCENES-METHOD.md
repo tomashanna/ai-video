@@ -41,7 +41,7 @@
 
 ### Input data required per referente
 
-Cada `referent-analysis/ref-XX/` debe tener (mínimo):
+Cada `data/referent-analysis/ref-XX/` debe tener (mínimo):
 
 | File | Función | Cómo se genera |
 |---|---|---|

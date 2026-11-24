@@ -2,7 +2,7 @@
 
 > ⚠️ **DOC OPERACIONAL SECUNDARIO — NO ES AUTORIDAD CREATIVA.**
 >
-> Los **specs técnicos de UI** (safe zones, posiciones Y, monospaced, decision-UI editorial pacing, no-overlap) se HEREDAN de `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 2` (UI safe zones + no-overlap matrix) + `§ 1` (decision-UI editorial pacing) + CLAUDE.md HR#4. Este doc reskinea el CONTENIDO de la UI a deporte. Si hay conflicto → gana la técnica heredada.
+> Los **specs técnicos de UI** (safe zones, posiciones Y, monospaced, decision-UI editorial pacing, no-overlap) se HEREDAN de `../../choice-format-core/INGENIERO-CHOICE-CORE.md § 2` (UI safe zones + no-overlap matrix) + `§ 1` (decision-UI editorial pacing) + docs/OPERATING-MANUAL.md HR#4. Este doc reskinea el CONTENIDO de la UI a deporte. Si hay conflicto → gana la técnica heredada.
 >
 > Si llegaste acá sin leer las pautas, parar y leerlas primero.
 

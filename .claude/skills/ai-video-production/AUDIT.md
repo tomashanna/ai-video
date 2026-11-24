@@ -20,11 +20,10 @@ Cada check **falla con razón concreta** + sugerencia de fix.
 ## Setup en un proyecto nuevo
 
 ```bash
-cp ~/AI\ video\ 1/.claude/skills/ai-video-production/templates/scripts/audit-narrative.py scripts/
-chmod +x scripts/audit-narrative.py
+uv run ai-video audit-narrative --help   # disponible en cualquier proyecto; nada que copiar
 ```
 
-No requiere dependencias extra — usa solo stdlib de Python 3.10+.
+No requiere dependencias extra — usa solo la stdlib de Python.
 
 ---
 
@@ -33,8 +32,8 @@ No requiere dependencias extra — usa solo stdlib de Python 3.10+.
 ### Manual
 
 ```bash
-.venv/bin/python scripts/audit-narrative.py          # default: ./index.html
-.venv/bin/python scripts/audit-narrative.py compositions/main.html
+uv run ai-video audit-narrative          # default: ./index.html
+uv run ai-video audit-narrative compositions/main.html
 ```
 
 Exit code 0 si todos los checks pasan, 1 si hay errores. Las WARN no fallan el exit.
@@ -44,7 +43,7 @@ Exit code 0 si todos los checks pasan, 1 si hay errores. Las WARN no fallan el e
 Wrappear el comando de render:
 
 ```bash
-.venv/bin/python scripts/audit-narrative.py && \
+uv run ai-video audit-narrative && \
   npx hyperframes render --output renders/v8.mp4
 ```
 
@@ -83,7 +82,7 @@ audit-narrative: 0 error(s), 2 warning(s)
 
 ## Cómo agregar un check nuevo
 
-El script vive en `scripts/audit-narrative.py`. Cada check es una función `check_<nombre>(...)` que devuelve `list[(severity, check_name, message)]`. Se agregan al pipeline en `main()`.
+El tool vive en `src/ai_video/audits/audit_narrative.py` (`uv run ai-video audit-narrative`). Cada check es una función `check_<nombre>(...)` que devuelve `list[(severity, check_name, message)]`. Se agregan al pipeline en `main()`.
 
 Plantilla:
 

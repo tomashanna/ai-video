@@ -2,11 +2,11 @@
   "version": "1.3",
   "updated": "2026-06-03",
   "provider": "ElevenLabs",
-  "description": "Catálogo de voice IDs ElevenLabs para TTS. Cada voice ID se referencia por string en tts.py -v <ID>.",
+  "description": "Catálogo de voice IDs ElevenLabs para TTS. Cada voice ID se referencia por string en ai-video tts -v <ID>.",
   "default_voice": "2gPFXx8pN3Avh27Dw5Ma",
   "default_voice_note": "Oxley Evil Character validated 2026-05-18 post matadero CP2 (user listen test PASS + M7.7.5 PASS Track A Path 2a SoX). Reemplaza Tj9l48J9 deprecated 2026-05-18.",
   "default_voice_DEPRECATED_2026_05_18": "Tj9l48J9AJbry5yCP5eW",
-  "deprecation_reason": "User listen test matadero CP2 2026-05-18 refutó canonical compliance. Voice character (susurro grave + lento natural) NO matches canonical viral narrators (LatAm energetic conversational). Per CLAUDE.md hard rule #19 expansion 2026-05-18, voice IDs validated solo en nuestras producciones (V7 + bosque v1) NO son default canonical viable.",
+  "deprecation_reason": "User listen test matadero CP2 2026-05-18 refutó canonical compliance. Voice character (susurro grave + lento natural) NO matches canonical viral narrators (LatAm energetic conversational). Per docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18, voice IDs validated solo en nuestras producciones (V7 + bosque v1) NO son default canonical viable.",
   "v5_narrator_strategy_2026_05_29_WINNER": {
     "winner": "David C2 (K3TeN3ZVK8WnOeJ0NYqZ)",
     "decided_at": "2026-05-29",
@@ -120,7 +120,7 @@
   "atempo_rule": "Aplicar atempo per INGENIERO-PAUTA-MASTER § 1.7 measured (per-segment raw_dur/target_dur clamped [0.7, 2.5]) + per-speaker SPEC L660-672 multipliers when applicable (narrator 1.15 / cocinera 1.23 / matarife 1.28 ceiling). Verify post-TTS measure_F1.py methodology vs canonical p25-p75 bands [152.71, 179.84].",
   "atempo_rule_DEPRECATED_2026_05_18": "Aplicar atempo 2.0 con ffmpeg después de generar TTS si la voz es lenta por naturaleza (canónico para Tj9l48J9AJbry5yCP5eW). DEPRECATED — derived from our productions, not canonical refs.",
   "canonical_validation_protocol": {
-    "rationale": "Per CLAUDE.md hard rule #19 expansion 2026-05-18: every voice ID default debe tener canonical_validation_status. States: validated | pending | deprecated_our_prod_only.",
+    "rationale": "Per docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18: every voice ID default debe tener canonical_validation_status. States: validated | pending | deprecated_our_prod_only.",
     "validation_methodology": [
       "1. Sample test voice ID con 30s typical horror narration text",
       "2. measure_F1.py WPM applied to TTS output",
@@ -338,18 +338,18 @@
   "deprecated": [
     {
       "id": "0Wj6ADitNyDvXgT6W65p",
-      "reason": "Era el default INCORRECTO en tts.py. Voz más rápida, no horror. NO usar."
+      "reason": "Era el default INCORRECTO en ai-video tts. Voz más rápida, no horror. NO usar."
     }
   ],
   "workflow": [
-    "1. Generar TTS raw: .venv/bin/python scripts/tts.py -t '<texto>' -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narr-raw.mp3  (default = Oxley)",
+    "1. Generar TTS raw: uv run ai-video tts -t '<texto>' -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narr-raw.mp3  (default = Oxley)",
     "2. Aplicar per-segment atempo: ffmpeg -y -i raw -af 'atempo=<raw_dur/target_dur clamped 0.7-2.5>' processed.mp3",
     "3. Per-speaker multiplier on top: narrator ×1.15 / matarife ×1.28 / cocinera ×1.23 (SPEC pace_correction L660-672)",
     "4. Matarife additional: SoX effects chain (pitch -300 + flanger + LPF 3500 + reverb + norm -16 + tempo)",
     "5. M7 Whisper verify per-speaker ≥152.71 + M7.7.5 semantic equivalence refinement (digit/phonetic/perceptual rules)"
   ],
   "rules": [
-    "Verificar DEFAULT_VOICE_ID en scripts/tts.py antes de cada proyecto nuevo (debe ser 2gPFXx8pN3Avh27Dw5Ma Oxley).",
+    "Verificar DEFAULT_VOICE_ID en ai-video tts antes de cada proyecto nuevo (debe ser 2gPFXx8pN3Avh27Dw5Ma Oxley).",
     "NUNCA usar el raw en el render. Siempre el processed.mp3 con per-segment atempo.",
     "Si una voz nueva se prueba y funciona, agregar acá con status 'validated' + validation_context completo.",
     "Para matarife specifically: SoX effects chain obligatorio (ffmpeg LPF 2000+rubberband destruye consonants per matadero CP2 lesson 2026-05-18)."

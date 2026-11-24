@@ -5,7 +5,7 @@
   "duration_s": 0.0,
   "xfade_transition": "hardcut",
   "xfade_fidelity": "literal",
-  "native_mechanism_note": "Pure concat (duration 0, no xfade); whoosh sting overlaid by apply-effects-between-clips.py.",
+  "native_mechanism_note": "Pure concat (duration 0, no xfade); whoosh sting overlaid by ai-video apply-effects-between-clips.",
   "description": "Frame-perfect hard cut between clips with a warm whoosh sting layered across the seam. Default workhorse for energetic scene changes in short-form horror — preserves retention pacing while masking the cut audibly.",
   "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -i audio-stings/whoosh-warm.mp3 -filter_complex \"[0:v][1:v]concat=n=2:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1[base];[2:a]adelay={whoosh_start_ms}|{whoosh_start_ms},volume=0.55[whoosh];[base][whoosh]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {

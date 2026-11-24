@@ -10,7 +10,7 @@
 ## Estructura
 
 ```
-library/
+assets/library/
 ├── LIBRARY.md                    ← Este doc (catálogo maestro)
 ├── sfx-catalog.json              ← Machine-readable de SFX
 ├── voices-catalog.json           ← Machine-readable de voces
@@ -56,7 +56,7 @@ library/
    b. Si existe: copiar a tu proyecto y wire al index.html
    c. Si no existe: agregarlo a sfx-spec.json para generar
 3. Después de generar nuevos SFX:
-   a. Si alguno es reutilizable → copiarlo de vuelta a library/
+   a. Si alguno es reutilizable → copiarlo de vuelta a assets/library/
    b. Actualizar este doc + sfx-catalog.json
 ```
 
@@ -64,11 +64,11 @@ library/
 
 ```bash
 # Single
-cp "<repo-root>/library/sfx/cuts/cut-white-flash.mp3" \
+cp "assets/library/sfx/cuts/cut-white-flash.mp3" \
    "<proyecto>/assets/sfx/cut-white-flash.mp3"
 
 # Categoría completa (ej: todos los cuts)
-cp "<repo-root>/library/sfx/cuts/"*.mp3 \
+cp "assets/library/sfx/cuts/"*.mp3 \
    "<proyecto>/assets/sfx/cuts/"
 ```
 
@@ -253,11 +253,11 @@ Mix volume recomendado: 0.05-0.18 para horror ambient, 0.13-0.18 para dawn cáli
 
 ## CATÁLOGO — Voice IDs ElevenLabs
 
-> Voces TEXT-TO-SPEECH (no SFX). Cada voice ID se referencia por string en `tts.py -v <ID>`. Después del TTS aplicar atempo 2x si la voz es lenta.
+> Voces TEXT-TO-SPEECH (no SFX). Cada voice ID se referencia por string en `ai-video tts -v <ID>`. Después del TTS aplicar atempo 2x si la voz es lenta.
 
 ### Voz primaria (default para nuevos proyectos)
 
-> ⛔ Source of truth = `library/voices-catalog.json` (Hard rule #19). Acá solo el resumen.
+> ⛔ Source of truth = `assets/library/voices-catalog.json` (Hard rule #19). Acá solo el resumen.
 
 | Voice ID | Nombre / etiqueta | Características | Status |
 |---|---|---|---|
@@ -282,13 +282,13 @@ Mix volume recomendado: 0.05-0.18 para horror ambient, 0.13-0.18 para dawn cáli
 
 | Voice ID | Por qué no usar |
 |---|---|
-| `0Wj6ADitNyDvXgT6W65p` | Era el default INCORRECTO en tts.py. Voz más rápida, no horror. |
+| `0Wj6ADitNyDvXgT6W65p` | Era el default INCORRECTO en ai-video tts. Voz más rápida, no horror. |
 
 ---
 
 ### Workflow para usar voces
 
-> ⚠️ Para voice IDs canónicos + workflow TTS actualizado, la autoridad es **`library/voices-catalog.json`** (validado, `canonical_validation_status`). NO hardcodear voice IDs ni filtros de tempo desde este doc.
+> ⚠️ Para voice IDs canónicos + workflow TTS actualizado, la autoridad es **`assets/library/voices-catalog.json`** (validado, `canonical_validation_status`). NO hardcodear voice IDs ni filtros de tempo desde este doc.
 >
 > - **Voz default (nuevos proyectos)** = `2gPFXx8pN3Avh27Dw5Ma`
 > - **Narrador V5** = `K3TeN3ZVK8WnOeJ0NYqZ`
@@ -302,7 +302,7 @@ Mix volume recomendado: 0.05-0.18 para horror ambient, 0.13-0.18 para dawn cáli
 2. **No mover, copiar.** `cp` de la library a tu proyecto. La library queda intacta.
 3. **Si generás algo reutilizable, agregalo de vuelta.** Después de un proyecto, evaluar:
    - ¿Este SFX podría servir en otro formato?
-   - Si sí → copiar a library/ + actualizar este doc + actualizar sfx-catalog.json
+   - Si sí → copiar a assets/library/ + actualizar este doc + actualizar sfx-catalog.json
 4. **No agregar todo.** Diálogos específicos (`h1-yerald-dialog`), narraciones, voces de personajes → NO van.
 5. **Categorías son ortogonales.** Un SFX vive en UNA. Si dudás entre dos, elegí la más específica.
 

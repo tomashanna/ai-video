@@ -1,9 +1,9 @@
 # A/B Test — v1 prescriptivo vs v2 identitario (protocolo PRE-REGISTRADO)
 
 > **Qué se testea.** La capa de PROMPTS de los 3 agentes — única variable. v1 = corpus
-> prescriptivo actual (CLAUDE.md 34KB + lectura obligatoria + reglas explícitas).
+> prescriptivo actual (docs/OPERATING-MANUAL.md 34KB + lectura obligatoria + reglas explícitas).
 > v2 = prompts identitarios (~1 página por rol: quién sos + valores + heurísticas +
-> límites + punteros) + CLAUDE.md router slim.
+> límites + punteros) + docs/OPERATING-MANUAL.md router slim.
 >
 > **Qué NO se testea (idéntico en ambos brazos).** Los rails: gates determinísticos
 > (8 canónicos + validators Fase 0 wave 1+2), lib/empirical_bands, F1 JSONs, library,
@@ -30,8 +30,8 @@ iteraciones.
 
 | | v1 (control) | v2 (tratamiento) |
 |---|---|---|
-| Working dir | `<repo-root>/` (main) | worktree `~/AI-video-1-v2/` (branch `v2-identity`) |
-| System prompt | CLAUDE.md prescriptivo actual | CLAUDE.md router slim → `agents/{ARCHITECT,ENGINEER,AUDITOR}.md` |
+| Working dir | `` (main) | worktree `~/AI-video-1-v2/` (branch `v2-identity`) |
+| System prompt | docs/OPERATING-MANUAL.md prescriptivo actual | docs/OPERATING-MANUAL.md router slim → `agents/{ARCHITECT,ENGINEER,AUDITOR}.md` |
 | Skills/docs | Lectura obligatoria § 0.3 (13 items) | Consulta on-demand vía punteros de identidad |
 | Rails | idénticos | idénticos |
 | Memoria auto-inyectada | la del path v1 (existente) | la del path v2 (arranca limpia — control más puro) |
@@ -104,7 +104,7 @@ En cualquier resultado: los rails construidos en Fase 0 quedan (sirven a ambos).
 - [x] Fase 0 wave 2 shipped (decision-UI + AVU + videolog + invariantes health-check) ✅ 2026-06-04
 - [x] Branch `v2-identity` + worktree creado ✅
 - [x] `agents/ARCHITECT.md` + `ENGINEER.md` + `AUDITOR.md` escritos (destilación 2026-06-04) ✅ 2026-06-04
-- [x] CLAUDE.md router slim en v2 ✅
+- [x] docs/OPERATING-MANUAL.md router slim en v2 ✅
 - [x] `.env` copiado al worktree ✅
 - [ ] Video 1 del experimento: brief definido → corrido en ambos brazos → evaluado ciego
 - [ ] Video 2 (orden invertido)

@@ -1,10 +1,10 @@
-# quality_gate_per_clip.py — Quality Gate Agent (4th role)
+# ai-video quality-gate-per-clip — Quality Gate Agent (4th role)
 
-Per-clip automated QA. Runs AFTER `build_clip_atomic.py` per shot, BEFORE assembly.
+Per-clip automated QA. Runs AFTER `ai-video build-clip-atomic` per shot, BEFORE assembly.
 
 ## Why it exists
 
-Existing gates (`audit-frames.py`, `audit-audio.py`, `audit-frames-granular.py`) measure
+Existing gates (`ai-video audit-frames`, `ai-video audit-audio`, `ai-video audit-frames-granular`) measure
 the WHOLE render. By then, bugs are baked in. This script catches bugs **per atomic clip**
 so failures halt assembly upstream — cheaper to fix one shot than reflow the full timeline.
 
@@ -15,7 +15,7 @@ ships canonical-compliant.
 ## When to run
 
 ```
-build_clip_atomic.py shot_NN  →  quality_gate_per_clip.py shot_NN  →  (🟢 PASS) assemble
+ai-video build-clip-atomic shot_NN  →  ai-video quality-gate-per-clip shot_NN  →  (🟢 PASS) assemble
                                                                   →  (🟡 NB)   review then assemble
                                                                   →  (🔴 FAIL) halt + escalate
 ```
@@ -23,7 +23,7 @@ build_clip_atomic.py shot_NN  →  quality_gate_per_clip.py shot_NN  →  (🟢 
 ## Usage
 
 ```bash
-python quality_gate_per_clip.py \
+uv run ai-video quality-gate-per-clip \
     --clip assets/clips-atomic/shot_07_atomic.mp4 \
     --captions assets/clips-atomic/shot_07_captions.json \
     --spec creative-specs/<id>.yaml \
@@ -111,8 +111,8 @@ Drop-in step right after atomic clip render:
 
 ```bash
 # In project script that wraps build_clip_atomic:
-.venv/bin/python scripts/build_clip_atomic.py --shot-id shot_07 || exit 1
-.venv/bin/python scripts/quality_gate_per_clip.py \
+uv run ai-video build-clip-atomic --shot-id shot_07 || exit 1
+uv run ai-video quality-gate-per-clip \
     --clip assets/clips-atomic/shot_07_atomic.mp4 \
     --captions assets/clips-atomic/shot_07_captions.json \
     --spec creative-specs/$(basename $PWD).yaml \

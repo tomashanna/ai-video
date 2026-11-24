@@ -100,7 +100,7 @@ Ejemplos de gaps típicos:
 **Cuando user pregunta sobre cualquier métrica técnica (pace WPM, LUFS, mix levels, ducking dB, cuts/min, motion intensity, UI timing, color grade strength, music BPM, vignette intensity, etc.) tu ÚNICA fuente válida es `<format>-format/INGENIERO-PAUTA-MASTER.md`.**
 
 Para el formato horror-choice × reel:
-- 📍 `<repo-root>/.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`
+- 📍 `.claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md`
 - Derivado de 10 referentes F1 canónicos en `/referent-analysis/ref-XX/`
 
 ### ⛔ Anti-pattern fundamental: comparar contra nuestras producciones
@@ -110,7 +110,7 @@ Para el formato horror-choice × reel:
 - `bosque-abandonado/` (nuestra producción)
 - `elige-companero/` (nuestra producción)
 - `pueblo-fantasma-desierto/` (nuestra producción)
-- Cualquier proyecto previo en `<repo-root>/<proyecto>/`
+- Cualquier proyecto previo en `<proyecto>/`
 - Archivos `ours-*.md` (movidos a `/referent-analysis/our-production-archive/` con prefijo "NO AUTORIDAD")
 
 **Razón empírica medida 2026-05-15**: nuestras producciones están **25% más lentas en pace que los referentes canónicos** (2.0 w/s vs 2.43-2.75 w/s en referentes F1). Si el ingeniero compara contra nuestras producciones, hereda nuestro bug.
@@ -250,7 +250,7 @@ SELF-AUDIT CHECKPOINT N:
 5. Solo entonces: reportar al arquitecto con output + self-audit
 ```
 
-**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 8 gates pre-render (ver `CLAUDE.md § Pre-render gate`) NO cubren los checkpoints intermedios per-CP — sin self-audit hay un valle ciego.
+**Razón**: la cultura "produce rápido, dejá que el arquitecto auditeé" desperdicia 1 iteración por checkpoint. El ingeniero conoce el SPEC tan bien como el arquitecto — debe filtrar antes de entregar. Los 8 gates pre-render (ver `docs/OPERATING-MANUAL.md § Pre-render gate`) NO cubren los checkpoints intermedios per-CP — sin self-audit hay un valle ciego.
 
 ---
 
@@ -279,11 +279,11 @@ SELF-AUDIT CHECKPOINT N:
 
 Si activaste esta skill, leé estos archivos ANTES de planear o ejecutar:
 
-1. **`<repo-root>/CLAUDE.md`** — context global del directorio + hard rules + arquitectura 3 capas + § Mapa de docs autoritativos (UN solo lugar por tema)
-2. **`<repo-root>/README.md`** — estructura del sistema (capas + 3 roles)
+1. **`docs/OPERATING-MANUAL.md`** — context global del directorio + hard rules + arquitectura 3 capas + § Mapa de docs autoritativos (UN solo lugar por tema)
+2. **`README.md`** — estructura del sistema (capas + 3 roles)
 3. Este archivo (`SKILL.md`) entero — identidad + workflow + hard rules
-4. **`<repo-root>/.claude/skills/video-director/ARCHITECTURE.md`** — las 3 capas
-5. **`<repo-root>/.claude/skills/video-director/WORKFLOW.md`** — loop maestro 5 pasos
+4. **`.claude/skills/video-director/ARCHITECTURE.md`** — las 3 capas
+5. **`.claude/skills/video-director/WORKFLOW.md`** — loop maestro 5 pasos
 
 Además, **SIEMPRE activá en paralelo `ai-video-production`** (es el toolkit técnico — sin ella no podés ejecutar tareas concretas).
 
@@ -347,7 +347,7 @@ Si un render sale 8.8/10, NO se publica. Se itera.
 **No te saltás pasos.** Detalle completo en `WORKFLOW.md`.
 
 Antes de cada nueva tarea preguntate:
-1. ¿Qué doc cubre esto? (`CLAUDE.md` § Mapa de docs autoritativos)
+1. ¿Qué doc cubre esto? (`docs/OPERATING-MANUAL.md` § Mapa de docs autoritativos)
 2. ¿La leí en esta sesión?
 3. ¿Mi plan respeta los hard rules y anti-patterns?
 4. ¿Cómo voy a medir éxito? (Gemini score, ffprobe specs, listening pass)
@@ -356,7 +356,7 @@ Antes de cada nueva tarea preguntate:
 
 ## Hard rules globales (cualquier video, cualquier formato)
 
-1. **Captions vía Whisper, nunca hand-timed.** Hay un script (`scripts/captions.py`). Úsalo.
+1. **Captions vía Whisper, nunca hand-timed.** Hay un script (`ai-video captions`). Úsalo.
 2. **Captions en safe zone IG.** `caption-wrap { bottom: 540px; height: 280px }`.
 3. **Loading bars en safe zone.** `bottom: 1000px`.
 4. **Variantes de imagen para escenas >4s.** Convención `-a/-b/-c`. Ver `IMAGE-VARIETY.md`.
@@ -474,7 +474,7 @@ Si NO podés → **claridad narrativa rota.** No es un problema técnico — es 
 | **Avg block duration** | **≥4.5s** | 6.07s | 5.24s | 4.73s | 2.34s |
 | **Sound fabric** (narr+ambient+music) | **≥99%** | 100% | 100% | 99.9% | 100% |
 
-**Verificable automáticamente** con `scripts/audit-audio.py` (gate 5 del flow).
+**Verificable automáticamente** con `ai-video audit-audio` (gate 5 del flow).
 
 ### Por qué la vara antigua estaba mal
 

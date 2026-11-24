@@ -23,7 +23,7 @@ Para horror-choice-format hay un template específico en `horror-choice-format/t
 - `ELEVENLABS_API_KEY` en `.env`
 - `elevenlabs >= 2.40.0` en el venv (`pip install elevenlabs`)
 - Carpeta `assets/sfx/` creada
-- Script `scripts/sfx.py` copiado del template (ver `templates/scripts/sfx.py`)
+- Script `ai-video sfx` copiado del template (ver `ai-video sfx`)
 
 ---
 
@@ -31,13 +31,13 @@ Para horror-choice-format hay un template específico en `horror-choice-format/t
 
 ```bash
 # Single
-.venv/bin/python scripts/sfx.py -t "<prompt>" -d <segundos> -i <influence> -o assets/sfx/<name>.mp3
+uv run ai-video sfx -t "<prompt>" -d <segundos> -i <influence> -o assets/sfx/<name>.mp3
 
 # Loop perfecto (para ambients y footsteps)
-.venv/bin/python scripts/sfx.py -t "<prompt>" -d <segundos> --loop -o assets/sfx/<name>.mp3
+uv run ai-video sfx -t "<prompt>" -d <segundos> --loop -o assets/sfx/<name>.mp3
 
 # Batch desde spec JSON
-.venv/bin/python scripts/sfx.py --spec sfx-spec.json
+uv run ai-video sfx --spec sfx-spec.json
 ```
 
 ---
@@ -106,7 +106,7 @@ ElevenLabs limita a 22s por call. Para ambient layers de 30-90s, generar 22s con
 
 ```bash
 # 1. Generar el seed loopable
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "continuous forest night wind, dead trees creaking, perfectly looping" \
   -d 22 --loop -i 0.5 \
   -o assets/sfx/ambient-wind-loop.mp3
@@ -182,21 +182,21 @@ Para generarlo, usar el batch JSON ejemplo en `NARRATIVE-LED-EDITING.md` § "Pas
 ## Workflow recomendado
 
 > ⛔ **Paso 0 obligatorio — REUSE FIRST, CREATE SECOND** (regla canónica 2026-05-16):
-> ANTES de invocar `scripts/sfx.py` para cualquier evento sonoro:
-> 1. `cat library/sfx-catalog.json | grep -i "<evento>"` (ej: "thud", "wind", "footsteps", "flash")
-> 2. Revisar también `library/sfx/cuts/` (set canónico de 7 cortes reusables — ver § "7 SFX de CORTE" abajo) y `library/sfx/ambients/` (ambients ya generados).
+> ANTES de invocar `ai-video sfx` para cualquier evento sonoro:
+> 1. `cat assets/library/sfx-catalog.json | grep -i "<evento>"` (ej: "thud", "wind", "footsteps", "flash")
+> 2. Revisar también `assets/library/sfx/cuts/` (set canónico de 7 cortes reusables — ver § "7 SFX de CORTE" abajo) y `assets/library/sfx/ambients/` (ambients ya generados).
 > 3. **Si EXISTE** → reusar path indicado en catalog. NO generar.
-> 4. **Si NO existe** → generar con `scripts/sfx.py`. Después agregar a `library/sfx-catalog.json` para próximos videos.
+> 4. **Si NO existe** → generar con `ai-video sfx`. Después agregar a `assets/library/sfx-catalog.json` para próximos videos.
 >
-> **Why**: cada SFX nuevo cuesta créditos EL ($0.05-0.20) + 3-8s de wait. Library tiene 7+ cortes canónicos + ambients reusables — empezá por ahí. Caso disparador: bosque-v3 regeneró white-flash que ya estaba en `library/sfx/cuts/cut-white-flash.mp3`.
+> **Why**: cada SFX nuevo cuesta créditos EL ($0.05-0.20) + 3-8s de wait. Library tiene 7+ cortes canónicos + ambients reusables — empezá por ahí. Caso disparador: bosque-v3 regeneró white-flash que ya estaba en `assets/library/sfx/cuts/cut-white-flash.mp3`.
 
 1. **Drafttear lista de SFX por escena** con timestamps reales del index.html (no estimados). En `horror-choice-format/` esto es la sección "Lista de SFX por hito (V8-2)" del `NARRATIVE.md`.
-2. **Cruzar lista vs `library/sfx-catalog.json`** — marcar cuáles ya existen (reuse) y cuáles requieren generación (new). Solo los NEW pasan al sfx-spec.json.
+2. **Cruzar lista vs `assets/library/sfx-catalog.json`** — marcar cuáles ya existen (reuse) y cuáles requieren generación (new). Solo los NEW pasan al sfx-spec.json.
 3. **Convertir lista de NEW a `sfx-spec.json`** (formato batch).
-4. **Ejecutar batch**: `.venv/bin/python scripts/sfx.py --spec sfx-spec.json` (corre en background, ~3-8s por SFX).
+4. **Ejecutar batch**: `uv run ai-video sfx --spec sfx-spec.json` (corre en background, ~3-8s por SFX).
 5. **Para ambients >22s**: ejecutar la expansión ffmpeg después del batch.
 6. **Verificar duraciones** con `ffprobe` (EL entrega con ±1-2% de error, aceptable).
-7. **Agregar los SFX nuevos a `library/sfx-catalog.json`** con path + descripción + prompt usado (alimenta future reuse).
+7. **Agregar los SFX nuevos a `assets/library/sfx-catalog.json`** con path + descripción + prompt usado (alimenta future reuse).
 8. **Conectar en `index.html`** con `data-track-index` reservado 60-110.
 9. **Listening pass** con auriculares — ajustar volúmenes si algo tapa la narración.
 
@@ -218,7 +218,7 @@ Workflow: copiar `horror-choice-format/templates/FREESOUND-QUERIES-TEMPLATE.md`,
 
 El MCP oficial está instalado a scope user (`uvx elevenlabs-mcp`). Útil para generar 1 SFX en conversación sin entrar a CLI.
 
-**Para producción batch siempre usar `scripts/sfx.py`** — es reproducible, versionable, y no depende de la disponibilidad del MCP.
+**Para producción batch siempre usar `ai-video sfx`** — es reproducible, versionable, y no depende de la disponibilidad del MCP.
 
 ---
 
@@ -345,9 +345,9 @@ ffmpeg -i assets/music.mp3 \
 
 ---
 
-## Validación con audit-audio.py
+## Validación con ai-video audit-audio
 
-El script `scripts/audit-audio.py` valida automáticamente:
+El script `ai-video audit-audio` valida automáticamente:
 - Narration coverage ≥70% ✓
 - Avg block duration ≥4.5s ✓
 - Sound fabric coverage ≥99% ✓

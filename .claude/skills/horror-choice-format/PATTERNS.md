@@ -621,7 +621,7 @@ El "malo aparente" rompe la 4ª pared y le dice al espectador algo críptico que
 3. **7-10s**: zoom-out volviendo a wide shot (transición al countdown H2)
 
 **Audio adicional necesario**:
-- Voz del "malo" con voice ID propio (NO el voice ID del narrador). Ver `templates/.env-TEMPLATE` o `BOOTSTRAP-NEW-PROJECT.md` para voces validadas por personaje.
+- Voz del "malo" con voice ID propio (NO el voice ID del narrador). Ver `.env.example` o `BOOTSTRAP-NEW-PROJECT.md` para voces validadas por personaje.
 - Texto típico (4-8 palabras, en primera persona, autocondena):
   - "No me elijas. No soy inocente."
   - "Hace 30 años que cruzo este bosque. No deberías venir conmigo."

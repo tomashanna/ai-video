@@ -217,7 +217,7 @@ Kling necesita la imagen **sin filtros CSS aplicados**. Si tu CSS pone:
 ### Comando base
 
 ```bash
-.venv/bin/python scripts/video.py \
+uv run ai-video video \
   -i assets/scene-source.png \
   -p "tu prompt aquí" \
   -o assets/scene.mp4 \
@@ -402,7 +402,7 @@ Antes de declarar el video animado terminado:
 Kling v2.5 turbo pro acepta **dos imágenes**: `start_image` (frame inicial) y `end_image` (frame final). El modelo interpola el motion entre ambas composiciones generando un plano continuo donde la composición A se transforma en la composición B.
 
 ```bash
-.venv/bin/python scripts/video.py \
+uv run ai-video video \
   -i  assets/scene-start.png \
   -e  assets/scene-end.png \
   -p  "prompt de motion (qué cambia entre A y B)" \

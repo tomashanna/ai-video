@@ -106,7 +106,7 @@ Implicancia: frases de tamaño medio (5-8 palabras a 165 WPM). NO frases largas 
 ### 1.6 Cómo aplicar en TTS
 
 #### ElevenLabs (`text_to_speech.convert`)
-- ⛔ **Voz default canónica = `2gPFXx8pN3Avh27Dw5Ma`** (narrador V5+ `K3TeN3ZVK8WnOeJ0NYqZ`; source of truth `library/voices-catalog.json`). Pace a target con `--speed` nativo de ElevenLabs + el cap de atempo de § 1.6 (abajo) — **NUNCA** `atempo 2.0x`. El viejo `Tj9l48J9AJbry5yCP5eW` + atempo 2.0 está DEPRECATED (workaround lento heredado de Video #1; ver § 1.7 anti-pattern)
+- ⛔ **Voz default canónica = `2gPFXx8pN3Avh27Dw5Ma`** (narrador V5+ `K3TeN3ZVK8WnOeJ0NYqZ`; source of truth `assets/library/voices-catalog.json`). Pace a target con `--speed` nativo de ElevenLabs + el cap de atempo de § 1.6 (abajo) — **NUNCA** `atempo 2.0x`. El viejo `Tj9l48J9AJbry5yCP5eW` + atempo 2.0 está DEPRECATED (workaround lento heredado de Video #1; ver § 1.7 anti-pattern)
 - **Voice IDs alternativos** (ej. `I0RpMYnjlWe6hUgHLXrb`): usar `--speed 0.95-1.0` ElevenLabs nativo (NO 0.7 — produce 120 WPM = -25% del target)
 - Validar con: `python -c "import json; d=json.load(open('output.json')); segs=d['segments']; words=sum(len(s['text'].split()) for s in segs); speak=sum(s['end']-s['start'] for s in segs); print(f'{words/speak*60:.0f} WPM speaking')"`
 
@@ -203,7 +203,7 @@ ffmpeg -i output.wav -af ebur128 -f null - 2>&1 | grep "I:"
 
 > Ownership creativo (qué suena per shot + SFX-pass del arquitecto + licencia diegética del ingeniero) → `PAUTA-MASTER § 2.4` perspectiva 7. Acá viven los **valores técnicos** de mezcla.
 
-- 🟦 **Normalización per-CLASE a dBFS ABSOLUTO, NO multiplicador plano sobre el raw.** Un multiplicador plano (p.ej. `0.28 × fuente`) asume que toda fuente SFX está al mismo nivel — no lo está (las fuentes ElevenLabs/TTS pueden abarcar ~50 dB: un goteo muerto a -67 dBFS vs un golpe metálico a -16). `0.28 × -67 dB = silencio` en el master (clase de bug "SFX wired pero inaudible"). **Fix:** medir el mean dBFS de cada fuente y aplicar `gain = target_clase − mean` (clamp ±26 dB) ANTES de mezclar, de modo que la banda HR#9 quede expresada en dBFS absoluto audible contra el bed -14 LUFS. Impl: `sfx_norm_gain()` en `build_clip_atomic.py` (Capa A).
+- 🟦 **Normalización per-CLASE a dBFS ABSOLUTO, NO multiplicador plano sobre el raw.** Un multiplicador plano (p.ej. `0.28 × fuente`) asume que toda fuente SFX está al mismo nivel — no lo está (las fuentes ElevenLabs/TTS pueden abarcar ~50 dB: un goteo muerto a -67 dBFS vs un golpe metálico a -16). `0.28 × -67 dB = silencio` en el master (clase de bug "SFX wired pero inaudible"). **Fix:** medir el mean dBFS de cada fuente y aplicar `gain = target_clase − mean` (clamp ±26 dB) ANTES de mezclar, de modo que la banda HR#9 quede expresada en dBFS absoluto audible contra el bed -14 LUFS. Impl: `sfx_norm_gain()` en `ai-video build-clip-atomic` (Capa A).
 
   | Clase SFX | Target mean dBFS | Qué cubre |
   |-----------|------------------|-----------|
@@ -216,7 +216,7 @@ ffmpeg -i output.wav -af ebur128 -f null - 2>&1 | grep "I:"
   | flash | **-16** | white-flash impact (banda HR#9 0.55-0.65, anclada a dBFS absoluto) |
 
 - 🟦 **Duck del SFX bajo la VOZ (build-time, scoped al clip):** **−6 dB (×0.50) bajo el NARRADOR**, **−12 dB (×0.25) bajo DIÁLOGO de personaje**. El diálogo necesita el duck más profundo porque comparte el bus Layer-1 del clip con los SFX (no tiene sidechain key propio); el narrador es más leve porque además recibe el sidechain duck de Layer 3 río abajo. (Disparador V7: eventos de electricidad dentro de la línea de Dario a −6 dB → Whisper devolvía garbage; −12 dB lo despejó.)
-- 🟦 **Gate de audibilidad — existencia ≠ audible.** Cada evento SFX debe **levantar el master sobre su bed local** por un delta mínimo: **Δ ≥ +2 dB** para eventos protagonistas (event/scream/transition/diegetic/ui/flash) y **Δ ≥ +1 dB** para texture. El gate (`scripts/audit-sfx-audibility.py`) mide `rms(evento) − rms(bed limpio adyacente)` per evento; la PRIMERA ocurrencia de cada (shot, sfx) es crítica (debe pasar su floor de clase), los repeats de texture/ui solo deben seguir presentes (Δ ≥ 0). Verificar EN el master, no en 1 frame.
+- 🟦 **Gate de audibilidad — existencia ≠ audible.** Cada evento SFX debe **levantar el master sobre su bed local** por un delta mínimo: **Δ ≥ +2 dB** para eventos protagonistas (event/scream/transition/diegetic/ui/flash) y **Δ ≥ +1 dB** para texture. El gate (`ai-video audit-sfx-audibility`) mide `rms(evento) − rms(bed limpio adyacente)` per evento; la PRIMERA ocurrencia de cada (shot, sfx) es crítica (debe pasar su floor de clase), los repeats de texture/ui solo deben seguir presentes (Δ ≥ 0). Verificar EN el master, no en 1 frame.
 - 🟩 Qué SFX concretos por shot, onsets y rel_scale within-class (0..1 para leer más cerca/lejos) son de género/por-video.
 
 ---
@@ -285,7 +285,7 @@ El bed musical (drone + ambient, layers 1+2 de PAUTA § 25) **cubre TODA la time
 - **Mix**: volumen bajo + ducked −3 a −6 dB bajo el narrador (§ 25.3, § 10). El bed es cama, no protagonista.
 - **Implementación**: 1 pista drone+ambient continua loopeada/extendida a `dur(video)` con `aloop`/`apad`, ANTES de mezclar accents+SFX+narrador encima. NO ensamblar el bed per-clip (genera gaps en los joins).
 - **Caso disparador V6**: hubo tramos sin música → bajó la inmersión en los beats de tensión.
-- **Check forward**: extender `audit-audio.py` para flaggear cualquier ventana >0.5s con energía musical (banda 40-2000 Hz) ausente, además del gap de narrador ya medido.
+- **Check forward**: extender `ai-video audit-audio` para flaggear cualquier ventana >0.5s con energía musical (banda 40-2000 Hz) ausente, además del gap de narrador ya medido.
 
 ---
 
@@ -345,7 +345,7 @@ Max: 116.
 
 Caso disparador: maikol-crucero (issues 8, 9, 11, 14) — múltiples shots estáticos consecutivos crearon feel "aburrido / lento / no cinemático". **Reform 2026-05-16**: Ken Burns degrada de DEFAULT a FALLBACK (último recurso). Animation AI = preferred SIEMPRE.
 
-CLAUDE.md hard rule #6 + #7 + #20 + #21 operacionalizan esta tabla:
+docs/OPERATING-MANUAL.md hard rule #6 + #7 + #20 + #21 operacionalizan esta tabla:
 
 | Shot context | Motion target | Fallback (último recurso) |
 |---|---|---|
@@ -362,7 +362,7 @@ CLAUDE.md hard rule #6 + #7 + #20 + #21 operacionalizan esta tabla:
 2. Si NO → ¿este shot es realmente necesario o es relleno?
 3. Si es necesario pero no se puede animar → **ESCALAR al arquitecto** antes de fallback a Ken Burns.
 
-**Threshold duración Ken Burns** (cuando es fallback inevitable): MAX 2-3 segundos. Más que eso = re-plan o re-spec con animation. Ver CLAUDE.md hard rule #7.
+**Threshold duración Ken Burns** (cuando es fallback inevitable): MAX 2-3 segundos. Más que eso = re-plan o re-spec con animation. Ver docs/OPERATING-MANUAL.md hard rule #7.
 
 #### Self-audit del ingeniero (POST-CHECKPOINT 4)
 
@@ -383,7 +383,7 @@ Target ratio aproximado: **≥80% animation AI shots** en videos de 80-100s (pos
 
 ### 5.7 Premium prompt quality rule (añadida 2026-05-16)
 
-Cuando uses modelo más barato (Hailuo / Seedance Lite / Wan-AI cheap tier), el prompt **DEBE** ser premium quality para cerrar el gap de calidad. Hard rule #20 CLAUDE.md.
+Cuando uses modelo más barato (Hailuo / Seedance Lite / Wan-AI cheap tier), el prompt **DEBE** ser premium quality para cerrar el gap de calidad. Hard rule #20 docs/OPERATING-MANUAL.md.
 
 **Estructura mínima del premium prompt** (5 bloques, no negociable):
 
@@ -415,7 +415,7 @@ Cuando uses modelo más barato (Hailuo / Seedance Lite / Wan-AI cheap tier), el 
 
 ## 7. UI ELEMENTS — SAFE ZONES + POSITION (medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes)
 
-> ⤴ **La versión AGNÓSTICA de la matriz de UI safe zones (caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced + no-overlap matrix + per-speaker Y-band) ahora es canónica en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 2`, de donde la heredan horror Y sport.** Este header § 7 (y § 7.10) se conservan porque los citan CLAUDE.md HR#4 ("INGENIERO-PAUTA-MASTER § 7") + AUDITOR-PROTOCOL + PAUTA-MASTER § 2.5/§ 7.4.1. Acá abajo queda la medición horror-aplicada (raw F1 + matices de horror); para layout agnóstico, gana core.
+> ⤴ **La versión AGNÓSTICA de la matriz de UI safe zones (caption Y62 / loading Y52 / countdown Y46 / name labels Y11.5 monospaced + no-overlap matrix + per-speaker Y-band) ahora es canónica en `../choice-format-core/INGENIERO-CHOICE-CORE.md § 2`, de donde la heredan horror Y sport.** Este header § 7 (y § 7.10) se conservan porque los citan docs/OPERATING-MANUAL.md HR#4 ("INGENIERO-PAUTA-MASTER § 7") + AUDITOR-PROTOCOL + PAUTA-MASTER § 2.5/§ 7.4.1. Acá abajo queda la medición horror-aplicada (raw F1 + matices de horror); para layout agnóstico, gana core.
 
 Fuente raw: `/referent-analysis/F1-UI-SAFE-ZONES.json` (n=100 detecciones de UI elements via Gemini-3.1-flash-lite).
 
@@ -465,7 +465,7 @@ Variantes observadas (n=10):
 - Width ~47% (caption box centered, X 27-73%)
 - Height ~3% per line (multi-line wraps)
 
-**⛔ Per-speaker Y-band (CAPTION-OVERLAP fix)**: **narrador (Layer 3) = Y62**; **diálogo de personaje (Layer 1) = Y52 + tag del nombre** ("BRUNO:" / "CELESTE:"). NUNCA 2 cues de caption que se solapen en TIEMPO al MISMO Y — **cross-layer narrador-L3 + diálogo-L1 incluido** (no solo char-vs-char). El burn de-conflicta en build-time: cue tardío solapado → offset Y ↑ con ≥6% de separación (≥1 alto de línea). Bug disparador invernadero V6: `base_pct=0.62` para todos los speakers → narrador + diálogo concurrentes overlap en Y62; el check A3 estaba en el audit (sidecar) pero no enforzado en el burn. Fix en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + template `build_clip_atomic.py`.
+**⛔ Per-speaker Y-band (CAPTION-OVERLAP fix)**: **narrador (Layer 3) = Y62**; **diálogo de personaje (Layer 1) = Y52 + tag del nombre** ("BRUNO:" / "CELESTE:"). NUNCA 2 cues de caption que se solapen en TIEMPO al MISMO Y — **cross-layer narrador-L3 + diálogo-L1 incluido** (no solo char-vs-char). El burn de-conflicta en build-time: cue tardío solapado → offset Y ↑ con ≥6% de separación (≥1 alto de línea). Bug disparador invernadero V6: `base_pct=0.62` para todos los speakers → narrador + diálogo concurrentes overlap en Y62; el check A3 estaba en el audit (sidecar) pero no enforzado en el burn. Fix en `cp5b_build_atomic.py` (`deconflict_cue_ys`) + template `ai-video build-clip-atomic`.
 
 ### 7.4 Character name labels — MONOSPACED canónico
 
@@ -512,7 +512,7 @@ Variantes observadas (n=10):
 
 **Fix path para los 3 issues**: aplicar 7.2 no-overlap matrix. Mover countdown más alto (Y 35-40% top de su band) si captions activas debajo. CTA outro debe usar banda diferente (probablemente Y 50-58% si captions ausentes en ese momento).
 
-### 7.7 Loading bar Y — discrepancia CLAUDE.md HR#4 (resuelta)
+### 7.7 Loading bar Y — discrepancia docs/OPERATING-MANUAL.md HR#4 (resuelta)
 
 Loading bar canónico = `bottom: 1000px` (Y 48%, banda 44-51%). Ver § 7.10.4 para el detalle canónico + la clarificación Y52 en decision-UI shots.
 
@@ -622,7 +622,7 @@ Default canonical: **Approach A** (GSAP pause). Engineer prefer runtime control.
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('library/textures/grain-8pct.png');
+  background-image: url('assets/library/textures/grain-8pct.png');
   /* OR: SVG noise filter for procedural grain */
   mix-blend-mode: overlay;
   pointer-events: none;
@@ -673,7 +673,7 @@ tl.to("#countdown-1", { opacity: 0 }, countdownStart + (digitDuration * 3));
 }
 ```
 
-⚠️ **Backward-compat**: hard rule #4 CLAUDE.md says "Loading bars: bottom: 1000px". Esta § 7.10.4 es **clarification for decision UI shots specifically**, NOT global override. Decision UI shots requieren Y52 (≥6% spacing); other shots Y48 baseline OK.
+⚠️ **Backward-compat**: hard rule #4 docs/OPERATING-MANUAL.md says "Loading bars: bottom: 1000px". Esta § 7.10.4 es **clarification for decision UI shots specifically**, NOT global override. Decision UI shots requieren Y52 (≥6% spacing); other shots Y48 baseline OK.
 
 #### 7.10.5 Audio cue per countdown digit
 
@@ -687,7 +687,7 @@ tl.to("#audio-ambient", { volume: 1.0 }, countdownStart + (digitDuration * 3)); 
 ```
 
 **SFX options canonical**:
-- `time_loop_glitch` (canonical, generated CP5 if not in library/sfx)
+- `time_loop_glitch` (canonical, generated CP5 if not in assets/library/sfx)
 - `decision-tick` (alternative, more clinical/clock-tick feel)
 - Avoid: full impact SFX (too aggressive for decision tension)
 
@@ -741,7 +741,7 @@ Pre-render-gate Q22 obligatorio (per `pre-render-gate/SKILL.md`). Required 5/5 c
 - [ ] Filter overlay class applied (sepia + contrast + hue-rotate + grain canvas)
 - [ ] Countdown `data-start` = narration_end + 0.3s (NOT loose timing)
 - [ ] Loading bar Y52 (`bottom: 940px`) ≥6% Y separation from countdown Y46
-- [ ] **Countdown tick AUDIBLE** en cada beat 3-2-1 (hook + las 3 decisiones) — AVU audio muxeado O `countdown_tick`/`decision-tick` colocado per beat, sobre el bed (V7+ § 7.10.5). **Forward check**: extender `audit-audio.py` para verificar energía de audio (transiente percibible sobre el bed) en cada timestamp de countdown — un countdown mudo (V6) DEBE flaggear.
+- [ ] **Countdown tick AUDIBLE** en cada beat 3-2-1 (hook + las 3 decisiones) — AVU audio muxeado O `countdown_tick`/`decision-tick` colocado per beat, sobre el bed (V7+ § 7.10.5). **Forward check**: extender `ai-video audit-audio` para verificar energía de audio (transiente percibible sobre el bed) en cada timestamp de countdown — un countdown mudo (V6) DEBE flaggear.
 
 Si Q22 fails → editorial canonical signature missing → BLOQUEA render hard-rule horror-choice format.
 
@@ -834,7 +834,7 @@ ffmpeg -ss <shot_start> -t <shot_duration> -vf fps=2 -i shot.mp4 frames/%04d.png
 
 ### 8.6.3 audit-frames-granular S10 sentinel detection
 
-Post Phase 1 forward — `audit-frames-granular.py S10 background_motion_detected` per shot:
+Post Phase 1 forward — `ai-video audit-frames-granular S10 background_motion_detected` per shot:
 - Compute optical flow per shot
 - Background region (top 25% + edges 10% lateral) MUST have motion vectors > threshold
 - If static background detected → flag for re-render con prompt enforcement
@@ -871,7 +871,7 @@ ffmpeg -i shot.mp4 -vf "zoompan=z='min(zoom+0.0015,1.05)':d=30*<duration>:s=1080
 
 ### 8.7.3 audit-frames-granular S10 sentinel detection
 
-Post Phase 1 forward — `audit-frames-granular.py S10 viewer_traversal_detected` per shot pair:
+Post Phase 1 forward — `ai-video audit-frames-granular S10 viewer_traversal_detected` per shot pair:
 - Compute camera ego-motion between consecutive shots
 - If `pov_traversal_intent != static` declared in SPEC → optical flow MUST confirm motion direction matches enum
 - If static framing throughout shot pair where SPEC says walking → flag re-render
@@ -990,11 +990,11 @@ Single bug class NO eliminada: cross-clip music ducking (sigue siendo layer post
 # Per shot (repeat N veces, paralelizable):
 
 # Step 1: Animate (CP4 existente — sin cambios)
-.venv/bin/python scripts/video.py -i assets/anchors/shot_NN.png -p "<motion prompt>" \
+uv run ai-video video -i assets/anchors/shot_NN.png -p "<motion prompt>" \
   -o assets/clips/shot_NN.mp4 --duration <Ws>
 
 # Steps 2-5: Atomic builder (combo TTS + SFX + ambient + mix + mux + caption sidecar)
-.venv/bin/python scripts/build_clip_atomic.py \
+uv run ai-video build-clip-atomic \
   --shot-id shot_NN \
   --spec creative-specs/<id>.yaml \
   --clip-video assets/clips/shot_NN.mp4 \
@@ -1006,7 +1006,7 @@ Single bug class NO eliminada: cross-clip music ducking (sigue siendo layer post
 #   assets/atomic/shot_NN_audio_breakdown.json (TTS + SFX + ambient mix log)
 
 # Step 6: Quality Gate Agent (per-clip verdict)
-.venv/bin/python scripts/quality_gate_per_clip.py \
+uv run ai-video quality-gate-per-clip \
   --clip assets/atomic/shot_NN_with_audio.mp4 \
   --captions assets/atomic/shot_NN_captions.json \
   --spec creative-specs/<id>.yaml \
@@ -1017,7 +1017,7 @@ Single bug class NO eliminada: cross-clip music ducking (sigue siendo layer post
 # Exit 2 = <7.0 ESCALATE (architect re-spec required)
 
 # Step 7: Mid-execution Gemini Vision hook (catches bugs ANTES de concat)
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --clip assets/atomic/shot_NN_with_audio.mp4 \
   --captions assets/atomic/shot_NN_captions.json \
   --spec creative-specs/<id>.yaml \
@@ -1030,13 +1030,13 @@ Single bug class NO eliminada: cross-clip music ducking (sigue siendo layer post
 bash scripts/concat-clips-with-audio.sh assets/atomic/ assembled.mp4
 
 # Step 9: Effects library between clips
-.venv/bin/python scripts/apply-effects-between-clips.py \
+uv run ai-video apply-effects-between-clips \
   --input assembled.mp4 \
   --spec creative-specs/<id>.yaml \
   --output assembled_with_transitions.mp4
 
 # Steps 10-12: Cross-clip music + ambient + LUTs
-.venv/bin/python scripts/apply-cross-clip-music.py \
+uv run ai-video apply-cross-clip-music \
   --input assembled_with_transitions.mp4 \
   --spec creative-specs/<id>.yaml \
   --output assembled_final.mp4
@@ -1067,7 +1067,7 @@ El INGENIERO realiza el mix **dentro del clip atomic**, NO sobre timeline global
 
 ### 8.10.4 Caption sidecar JSON per-clip schema
 
-`build_clip_atomic.py` genera `shot_NN_captions.json`:
+`ai-video build-clip-atomic` genera `shot_NN_captions.json`:
 
 ```json
 {
@@ -1110,10 +1110,10 @@ AVUs (Audio-Visual Units pre-rendered, ver § 7.11) integran **dentro del clip a
 ```bash
 # Step 4 alternativo cuando shot incluye AVU (countdown 3-2-1, decision freeze, hook transition, outro card):
 
-.venv/bin/python scripts/build_clip_atomic.py \
+uv run ai-video build-clip-atomic \
   --shot-id shot_01 \
   --clip-video assets/clips/shot_01.mp4 \
-  --avu-overlay ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4 \
+  --avu-overlay assets/avu/countdown-3-2-1-film-leader-with-ticks.mp4 \
   --avu-start-s 5.0 \
   --avu-end-s 8.0 \
   --voice-id <VOICE_ID> \
@@ -1144,7 +1144,7 @@ transitions:
 ```
 
 ```bash
-.venv/bin/python scripts/apply-effects-between-clips.py \
+uv run ai-video apply-effects-between-clips \
   --input assembled.mp4 \
   --spec creative-specs/<id>.yaml \
   --output assembled_with_transitions.mp4
@@ -1161,13 +1161,13 @@ Invocados **per clip** después de Quality Gate PASS, ANTES de concat:
 | Per clip atomic PASS (step 6) | Quality Gate exit 0 | `audits/shot_NN_gemini.json` |
 | Pre-concat checkpoint | All clips PASS individually | `audits/pre-concat-summary.md` |
 | Post-concat pre-effects | After step 8 concat | `audits/post-concat-fullvideo.json` |
-| Post-final (existing) | Step 13 final render | Existing 8 gates (canónico CLAUDE.md § Pre-render gate) |
+| Post-final (existing) | Step 13 final render | Existing 8 gates (canónico docs/OPERATING-MANUAL.md § Pre-render gate) |
 
 **Por qué mid-execution**: caso matadero iter 7 — caption fragmentation D1+D2 detectada en final render = re-build TODOS los clips. Con mid-execution hook = detectado per clip = solo re-build shot_NN (10x más barato).
 
 ```bash
 # Per clip:
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --clip assets/atomic/shot_NN_with_audio.mp4 \
   --captions assets/atomic/shot_NN_captions.json \
   --spec creative-specs/<id>.yaml \
@@ -1205,7 +1205,7 @@ Ventaja secundaria: clips atomic (shot_NN_with_audio.mp4) son **reusables across
 - Decision freeze UI + ticks → reusable
 - "Una noche en paz" cliffhanger card → reusable
 
-Estos viven en `ai-video-production/templates/avu-library/` con manifest declaring duration, resolution, audio_bundled status, canonical_validation_status.
+Estos viven en `assets/avu/` con manifest declaring duration, resolution, audio_bundled status, canonical_validation_status.
 
 ### 8.10.10 Compliance verification (pre-render-gate Q26 NEW)
 
@@ -1227,7 +1227,7 @@ Exception: matadero + cinema-abandonado legacy projects exempted (in-flight gran
 
 | Tarea | Tool |
 |-------|------|
-| Transcripción | `<repo-root>/elige-companero/.venv/bin/whisper <audio.wav> --model small --language es --output_format json` |
+| Transcripción | `elige-companero/.venv/bin/whisper <audio.wav> --model small --language es --output_format json` |
 | Pace WPM | `python -c "import json; d=json.load(open('transcription.json')); s=d['segments']; w=sum(len(x['text'].split()) for x in s); t=sum(x['end']-x['start'] for x in s); print(f'{w/t*60:.0f} WPM speaking')"` |
 | LUFS | `ffmpeg -i input.mp4 -af ebur128 -f null - 2>&1 \| grep 'I:'` |
 | LUFS por sección | recortar con `ffmpeg -ss X -t Y` + ebur128 |
@@ -1239,21 +1239,21 @@ Exception: matadero + cinema-abandonado legacy projects exempted (in-flight gran
 ### Re-correr análisis completo
 
 ```bash
-cd ~/AI\ video\ 1/referent-analysis/.venv-measurements
+cd data/referent-analysis   # (venv de mediciones: uv sync --extra research)
 source bin/activate
 python measure_F1.py  # re-genera F1-INGENIERO-MEASUREMENTS.json
 ```
 
 ### Auditar nuestro video vs canónicos (post Bloque C 2026-05-15)
 
-`audit-against-referent.py` compara nuestro draft.mp4 contra F1 n=10 (p25-p75 bands per métrica). Gate Q21 del pre-render-gate. Hard rule #1 dual gate.
+`ai-video audit-against-referent` compara nuestro draft.mp4 contra F1 n=10 (p25-p75 bands per métrica). Gate Q21 del pre-render-gate. Hard rule #1 dual gate.
 
 ```bash
 # Desde el proyecto root con .venv configurado:
-.venv/bin/python scripts/audit-against-referent.py --video renders/draft.mp4 --html index.html
+uv run ai-video audit-against-referent --video renders/draft.mp4 --html index.html
 
 # Args opcionales:
-#   --measurements <path>  (default: ../referent-analysis/F1-INGENIERO-MEASUREMENTS.json)
+#   --measurements <path>  (default: data/referent-analysis/F1-INGENIERO-MEASUREMENTS.json)
 #   --tolerance p25-p75|p5-p95  (default p25-p75)
 
 # Exit codes:
@@ -1271,7 +1271,7 @@ Smoke test validado 2026-05-15 sobre bosque-abandonado v8-FINAL: 1/4 metrics en 
 
 1. ¿Está documentado acá? → usalo
 2. ¿Puedo medirlo de los referentes? → medilo
-3. ¿Es métrica universal (no format-specific)? → consultá `referent-analysis/REFERENT-PATTERNS.md` § REGLAS UNIVERSALES
+3. ¿Es métrica universal (no format-specific)? → consultá `data/referent-analysis/REFERENT-PATTERNS.md` § REGLAS UNIVERSALES
 4. ¿Ninguna de las 3? → reportá al user: "métrica X no documentada + no medible — propongo Y basado en heurística general"
 
 **NUNCA**: hacer fallback a comparar contra `mina-abandonada/`, `bosque-abandonado/`, `elige-companero/`, o cualquier `ours-*.md`.
@@ -1349,9 +1349,9 @@ Pattern_class enforced: `tests_adversariales_obligatorios_forward`. Sub-Fase 3A 
 ```
 Engineer builds script_new.py
   ↓
-Engineer builds test_script_new.py (V4 archive case + mock cases + edge cases)
+Engineer builds tests/unit/test_script_new.py (V4 archive case + mock cases + edge cases)
   ↓
-Engineer runs test_script_new.py → all PASS
+Engineer runs tests/unit/test_script_new.py → all PASS
   ↓
 Engineer emits handoff with test results table
   ↓
@@ -1368,10 +1368,10 @@ Merge OR escalate
 canonical_validation_status: "validated_via_video_measurement"  # FLIPPED 2026-05-20
 validated_against_canonical_refs:
   - "engineer Track B Phase 1 empirical measurement 8/8 refs 2026-05-20"
-  - "Source: referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+  - "Source: data/referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
   - "Phase 0 qualitative: canonical-scenes/INDEX.md decision setup grid 3.3"
 validation_methodology: "Phase 1 empirical: ffmpeg + Whisper + librosa + frame analysis 22 decision windows across 8 refs"
-measurement_script: "measure-canonical-decision-ui-pacing.py (built + run engineer Track B Phase 1 COMPLETE)"
+measurement_script: "ai-video measure-canonical-decision-ui-pacing (built + run engineer Track B Phase 1 COMPLETE)"
 validated_at: 2026-05-20
 ```
 
@@ -1427,7 +1427,7 @@ tl.call(() => playSfx("time_loop_glitch"), null, countdownStart + (digitDuration
 #### 7.11.1 Directory structure (NIVEL 2 universal)
 
 ```
-ai-video-production/templates/avu-library/
+assets/avu/
 ├── countdown-3-2-1-film-leader-with-ticks.mp4   # 3s, 1080×1920, audio bundled (Phase 1 priority)
 ├── decision-freeze-filter-loop.mp4               # 0.5s loopable, alpha channel
 ├── hook-transition-flash-whoosh.mp4              # 0.5s transition asset
@@ -1456,7 +1456,7 @@ ai-video-production/templates/avu-library/
        data-start="5.0"
        data-duration="3.0"
        data-track-index="100"
-       src="../../.claude/skills/ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+       src="assets/avu/countdown-3-2-1-film-leader-with-ticks.mp4"
        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 60;">
 </video>
 ```
@@ -1471,7 +1471,7 @@ Para character dialogue + narrator framing question + setting captions (text var
 audio_visual_atomic_units:  # per shot in shot_list[]
   - id: hook_countdown
     type: pre_rendered_avu
-    asset_path: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4"
+    asset_path: "assets/avu/countdown-3-2-1-film-leader-with-ticks.mp4"
     inject_at_timestamp: 5.0
     bundled_audio: true
 
@@ -1515,7 +1515,7 @@ const hook_timeline = [
   {
     beat_id: "countdown_avu_film_leader_LAST",  // ⚠️ LAST 2-3s del hook
     timestamp_s: [5, 7],
-    avu_asset: "ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4",
+    avu_asset: "assets/avu/countdown-3-2-1-film-leader-with-ticks.mp4",
     avu: true
   }
   // NOTE: character dialogue NOT in hook — separate shot_02 post-hook
@@ -1534,7 +1534,7 @@ const hook_timeline = [
 # Specs per § 7.11.2
 
 # Step 2: Validate AVU
-ffprobe ai-video-production/templates/avu-library/countdown-3-2-1-film-leader-with-ticks.mp4
+ffprobe assets/avu/countdown-3-2-1-film-leader-with-ticks.mp4
 # Verify: 1080×1920, 30fps, 3.000s duration, audio stream present
 
 # Step 3: Add to manifest.json
@@ -1571,8 +1571,8 @@ validation_methodology: "direct frame extraction + visual style identification +
 validated_at: 2026-05-19
 phase_1_forward:
   - "Build full AVU library remaining 3 templates (decision-freeze + hook-transition + outro-card)"
-  - "Run extract-canonical-max-detail.py regenerate canonical-scenes docs MAX DETAIL"
-  - "Build measure-canonical-decision-ui-pacing.py + audio cue levels script"
+  - "Run ai-video extract-canonical-max-detail regenerate canonical-scenes docs MAX DETAIL"
+  - "Build ai-video measure-canonical-decision-ui-pacing + audio cue levels script"
 ```
 
 
@@ -1589,7 +1589,7 @@ phase_1_forward:
 |---|---|---|---|---|
 | **1. Drone** | Continuous 80-100% | 0.05-0.13 (peak 0.13 in horror sections) | 40-200 Hz dominant | ElevenLabs SFX "subharmonic horror tonal pad" or curated library file |
 | **2. Ambient** | Per-section (changes with setting beat) | 0.10-0.18 | 200-2000 Hz | ElevenLabs SFX setting-specific (e.g. "projector reel mechanism + dust hum", "mine drip echo + wind") |
-| **3. Accent** | Event-driven (countdown ticks, dilemma locks, climax peaks) | 0.20-0.35 (impacts 0.55-0.65) | Wide-spectrum | ElevenLabs SFX or `transitions/universal/audio-stings/*.mp3` |
+| **3. Accent** | Event-driven (countdown ticks, dilemma locks, climax peaks) | 0.20-0.35 (impacts 0.55-0.65) | Wide-spectrum | ElevenLabs SFX or `assets/transitions/universal/audio-stings/*.mp3` |
 
 ### 8.11.2 ffmpeg recipe for layer mixing
 
@@ -1654,7 +1654,7 @@ ffmpeg -y -i "$VIDEO" -i audio_3layer.aac -c:v copy -c:a copy -shortest renders/
 # Verify 3-layer presence via spectrogram analysis
 ffmpeg -i renders/draft_3layer.mp4 -lavfi showspectrumpic=s=1920x1080:mode=combined spectrogram.png
 # Visual check: 3 distinct horizontal bands (40-200 / 200-2000 / 2000+ Hz) present 60%+ of timeline width
-# OR use audit-audio.py extension (Phase 2 forward)
+# OR use ai-video audit-audio extension (Phase 2 forward)
 ```
 
 ### 8.11.5 Canonical validation status
@@ -1668,8 +1668,8 @@ validated_against_canonical_refs:
 validation_methodology: "Gemini Vision audio dimension comparative + 3-layer presence inspection"
 validated_at: 2026-05-21
 phase_2_forward:
-  - "Build audit-audio.py extension: spectrogram-based 3-layer detection threshold"
-  - "Add ElevenLabs SFX prompts library/sfx-catalog.json: drone-horror-subharmonic + ambient-cinema-projector + accent-canonical pack"
+  - "Build ai-video audit-audio extension: spectrogram-based 3-layer detection threshold"
+  - "Add ElevenLabs SFX prompts assets/library/sfx-catalog.json: drone-horror-subharmonic + ambient-cinema-projector + accent-canonical pack"
 ```
 
 ---
@@ -1772,7 +1772,7 @@ When architect adds mini-cuts to SPEC, engineer implements:
 
 ### 8.12.4 Effects library transitions counted as cuts (per § 8.13 NEW)
 
-When using `transitions/` (carpeta global root — catálogo `transitions/catalog.json`):
+When using `assets/transitions/` (carpeta global root — catálogo `assets/transitions/catalog.json`):
 - `hard-cut-with-whoosh` = +1 cut
 - `light-flash-impact` = +1 cut (use max 1-2 per reel per existing library README)
 - `glitch-transition` = +1 cut
@@ -1805,10 +1805,10 @@ phase_2_forward:
 
 ## § 8.13 — EFFECTS LIBRARY USAGE TABLE (NEW 2026-05-21 — Phase 2 forward usage rules)
 
-> **Authority**: `transitions/README.md` (carpeta global root) + índice `transitions/catalog.json` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
+> **Authority**: `assets/transitions/README.md` (carpeta global root) + índice `assets/transitions/catalog.json` + comparative analysis cinema (hard cuts + zooms only) vs canonical refs (transition variety).
 > **Trigger**: cinema-abandonado iter 1-6 used only hard cuts + zoom transitions — Gemini editing dimension 8/10 (predictable). Canonical refs use varied transitions per beat type.
 
-> ⭐ **TIERED catalogs (global root `transitions/` desde 2026-06-05, "Disponibilidad ≠ Uso")**: las transitions de la tabla viven en DOS capas de la carpeta global. **Universal** (`transitions/universal/transitions/`) = primitivas: `cross-fade-0.5s`, `cross-fade-1.0s`, `hard-cut-with-whoosh`, `black-screen-0.3s`, `fade-to-black-1.0s`, `light-flash-impact`, `glitch-transition`, `camera-shake` (0.25s acoplado al sting), `pan-left-0.2s` (whip+blur), `brightness-flash` (0.3-0.5s), `zoom-in-0.3s`. **Per-format** (`transitions/horror-choice/transitions/`) = sub-genre horror: `film-burn-transition`, `projector-cue-cinema`, `static-noise-transition`, `old_screen_glitch_error`. Índice transición→formato: `transitions/catalog.json`. El engineer pasa `--effects-dir` con AMBOS catálogos al correr `apply-effects-between-clips.py` (o deja que `build-video-hybrid.py` los resuelva vía catalog.json). Disponibilidad ≠ prescripción: el SPEC `shot_list[].transition_out` elige. Cada recipe declara `xfade_transition` + `xfade_fidelity` (Option D PRE-4.J): los `approximate` (light-flash/black-screen/fade-to-black/film-burn/static-noise/old_screen_glitch/camera-shake/pan-left) emiten WARNING en producción (chained-xfade lossy).
+> ⭐ **TIERED catalogs (global root `assets/transitions/` desde 2026-06-05, "Disponibilidad ≠ Uso")**: las transitions de la tabla viven en DOS capas de la carpeta global. **Universal** (`assets/transitions/universal/transitions/`) = primitivas: `cross-fade-0.5s`, `cross-fade-1.0s`, `hard-cut-with-whoosh`, `black-screen-0.3s`, `fade-to-black-1.0s`, `light-flash-impact`, `glitch-transition`, `camera-shake` (0.25s acoplado al sting), `pan-left-0.2s` (whip+blur), `brightness-flash` (0.3-0.5s), `zoom-in-0.3s`. **Per-format** (`assets/transitions/horror-choice/transitions/`) = sub-genre horror: `film-burn-transition`, `projector-cue-cinema`, `static-noise-transition`, `old_screen_glitch_error`. Índice transición→formato: `assets/transitions/catalog.json`. El engineer pasa `--effects-dir` con AMBOS catálogos al correr `ai-video apply-effects-between-clips` (o deja que `ai-video build-video-hybrid` los resuelva vía catalog.json). Disponibilidad ≠ prescripción: el SPEC `shot_list[].transition_out` elige. Cada recipe declara `xfade_transition` + `xfade_fidelity` (Option D PRE-4.J): los `approximate` (light-flash/black-screen/fade-to-black/film-burn/static-noise/old_screen_glitch/camera-shake/pan-left) emiten WARNING en producción (chained-xfade lossy).
 
 ### 8.13.1 When to use which transition (by beat type)
 
@@ -1849,9 +1849,9 @@ shot_list:
     type: dilemma_lock_in
     transition_out:
       effect: "light_flash_impact"
-      effects_library_ref: "transitions/universal/transitions/light-flash-impact.json"
+      effects_library_ref: "assets/transitions/universal/transitions/light-flash-impact.json"
       duration_s: 0.2
-      sting_audio: "transitions/universal/audio-stings/whoosh-warm.mp3"
+      sting_audio: "assets/transitions/universal/audio-stings/whoosh-warm.mp3"
 ```
 
 Until v10 lands, engineer reads SPEC `shot_list[].transition_out.effect` field if present, else defaults to `hard-cut-with-whoosh` for scene changes + `cross-fade-0.5s` for within-scene beats.
@@ -2068,7 +2068,7 @@ Until v10 lands, engineer applies decision table from § 8.15.1 deterministicall
 Per shot rendered via Hailuo Pro:
 ```bash
 # Visual artifact check via Gemini Vision per shot
-.venv/bin/python scripts/audit-frames-granular.py \
+uv run ai-video audit-frames-granular \
   --video assets/clips/shot_03_hands_close.mp4 \
   --check rubbery_hands,floaty_walk,anatomical_drift \
   --threshold strict
@@ -2324,13 +2324,13 @@ Per character-talking shot:
 
 ```bash
 # Step 1: Generate character anchor with mouth-closed pose (Gemini Nano Banana STRICT) — FREE
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   --prompt "character_<name> talking head, mouth closed neutral, looking at camera, [setting]" \
   --strict \
   --output assets/anchors/character_<name>_talking_anchor.png
 
 # Step 2: Generate character TTS audio for this shot (ElevenLabs) — FREE
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   --voice <voice_id> --text "<dialog>" \
   --output assets/tts/shot_<id>_dialog.mp3
 
@@ -2343,7 +2343,7 @@ Per character-talking shot:
 # Replicate model: hedra/character-3 (verify current endpoint)
 
 # Step 4: Build atomic clip (per-clip atomic pipeline)
-.venv/bin/python scripts/build_clip_atomic.py \
+uv run ai-video build-clip-atomic \
   --visual assets/clips/shot_<id>_lipsynced.mp4 \
   --audio-overrides "tts:assets/tts/shot_<id>_dialog.mp3" \
   --shot-id shot_<id>
@@ -2353,11 +2353,11 @@ Per character-talking shot:
 
 ```bash
 # Per lip-sync shot:
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --hook atomic_post \
   --clip assets/clips-atomic/shot_<id>_atomic.mp4 \
   --captions assets/clips-atomic/shot_<id>_captions.json \
-  --spec ../creative-specs/<id>.yaml \
+  --spec ../../creative-specs/<id>.yaml \
   --shot-id shot_<id>
 # Gemini Vision checks lip-sync alignment + caption sync + audio quality
 ```
@@ -2523,28 +2523,28 @@ Strategy: prompt softening + content abstraction:
 
 ```bash
 # Sample 1: SAFE shot (cinematic POV walking)
-.venv/bin/python scripts/veo3.py \
+uv run ai-video veo3 \
   --prompt "POV first-person walking through abandoned cinema corridor, dim warm lights, peeling wallpaper, dust particles in air, cinematic style" \
   --duration 6 \
   --aspect 9:16 \
   --output assets/test/veo_safe.mp4
 
 # Sample 2: BORDERLINE shot (uncanny character)
-.venv/bin/python scripts/veo3.py \
+uv run ai-video veo3 \
   --prompt "tall thin uncanny figure standing in dark hallway, slight tilt of head toward camera, ambient horror atmosphere, no explicit content" \
   --duration 6 \
   --aspect 9:16 \
   --output assets/test/veo_borderline.mp4
 
 # Sample 3: HORROR shot (gore-adjacent)
-.venv/bin/python scripts/veo3.py \
+uv run ai-video veo3 \
   --prompt "matarife character with industrial helmet, abstract industrial setting, dim ambient lights" \
   --duration 6 \
   --aspect 9:16 \
   --output assets/test/veo_horror.mp4
 
 # Plus Hailuo parallel for comparison:
-# (similar prompts via existing scripts/video.py)
+# (similar prompts via existing ai-video video)
 ```
 
 **Decision matrix from test**:
@@ -2562,7 +2562,7 @@ Strategy: prompt softening + content abstraction:
 **Workflow per Veo-character-shot**:
 ```bash
 # Single call generates visual + audio + lip-sync
-.venv/bin/python scripts/veo3.py \
+uv run ai-video veo3 \
   --prompt "character_<name>_anchor.png + dialog text + setting + motion" \
   --dialog "<exact spoken text>" \
   --duration <shot_duration_s> \
@@ -2570,7 +2570,7 @@ Strategy: prompt softening + content abstraction:
   --output assets/clips/shot_<id>_veo.mp4
 
 # Then drop into per-clip atomic builder (Veo audio already bundled):
-.venv/bin/python scripts/build_clip_atomic.py \
+uv run ai-video build-clip-atomic \
   --visual assets/clips/shot_<id>_veo.mp4 \
   --audio-source bundled \
   --shot-id shot_<id>
@@ -2608,7 +2608,7 @@ test_outputs:
   - "/tmp/veo_bench_horror.mp4"
   - "/tmp/veo_bench_speaking.mp4"
 build_outputs:
-  - "scripts/veo3.py production-ready (3-tier preview/fast/lite + httpx download + auth follow-redirects)"
+  - "ai-video veo3 production-ready (3-tier preview/fast/lite + httpx download + auth follow-redirects)"
 scenarios_resolved:
   - "Scenario A — Veo accepts ALL horror content tested. Default forward."
   - "Cost video #3 forward: ~$0 if Veo for all shots OR ~$4 mixed Hailuo for gore-specific"
@@ -2633,7 +2633,7 @@ phase_3_forward:
 
 ## 9. EFECTO GLITCH `old_screen_glitch_error` — cambios de historia (req Tomás 2026-06-01 — horror-choice ONLY)
 
-> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 6 del SPEC-AUDIT). Recipe completa (cadena ffmpeg + CSS + sting): `transitions/horror-choice/transitions/old_screen_glitch_error.json` (carpeta global root; **capa per-format horror-choice — NO universal**, NO bleed a sport-choice/editorial).
+> Autoridad estructural: `horror-choice-format/PAUTA-MASTER.md § 2.4` (perspectiva 6 del SPEC-AUDIT). Recipe completa (cadena ffmpeg + CSS + sting): `assets/transitions/horror-choice/transitions/old_screen_glitch_error.json` (carpeta global root; **capa per-format horror-choice — NO universal**, NO bleed a sport-choice/editorial).
 
 - **Cuándo**: en los **cambios de historia/recorrido** — específicamente (a) **cambios de recorrido A↔B de personajes** (transiciones de recorrido, bridges entre ramas, played↔counterfactual) Y (b) **momentos de MUERTE (consequence-A fatal)** (el corte hacia el body-horror fatal). También en decisión→consecuencia. NO en cortes normales (el default sigue siendo `hard-cut-with-whoosh`, 8/8 canónico). NO en el freeze de decisión (eso es D29 freeze+sepia, la versión MENOS pronunciada).
 - **Look**: base parque-acuatico V3 = sepia/grano/contraste + glitch xfade + sting `glitch_warm`; filtro CSS `sepia(0.45) contrast(1.22) hue-rotate(-12deg) saturate(0.85)`. **V7+ lo lleva más digital-error**: pixelación (downscale→upscale neighbor) + chromatic aberration (RGB split ±6-10px) + scanlines (1px @0.18 cada 3px) + frame-tear/datamosh-lite (banda horizontal ~12-20% desplazada ±20-40px por 1-2 frames).

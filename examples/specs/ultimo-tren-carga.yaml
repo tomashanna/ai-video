@@ -147,7 +147,7 @@ hybrid_layers:
   layer_1_per_clip_atomic:
     description: "Per-shot mp4 con visual + audio clip-scoped + captions BURNED en frame data"
     captions_source: "whisper_from_clip_audio"
-    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    captions_burn_script: "ai-video build-clip-atomic --bake-captions"
     audio_bundled_per_clip:
       # HR#25: narrator EXCLUIDO de Layer 1 → vive SOLO como narrator_master_continuous en Layer 3
       # (captions burned per-clip + narrator continuous Layer 3). Layer 1 bundlea SOLO:
@@ -163,7 +163,7 @@ hybrid_layers:
     # los boundaries muerte→bridge y bridge→ramaB (glitch corte-TV — cambio de historia); el boundary
     # played→counterfactual usa cross_fade_warm (NO glitch). white-flash en decisión→consecuencia-A; hard-cut+whoosh hook→setup.
     description: "Transiciones + stings en boundaries (alineado a §11 transitions table): hard_cut+whoosh metálico (hook→setup); freeze_into_decision_filter (setup→decisión); white_flash_impact en decisión→consecuencia-A (body horror); old_screen_glitch_error (glitch corte-TV pantalla antigua) SOLO en muerte→bridge y bridge→ramaB (PAUTA § 2.4 perspectiva 6); cross_fade_warm en resolución→played→counterfactual→cliffhanger (NO glitch en played↔counterfactual)"
-    effects_library_ref: "transitions/horror-choice/transitions/"   # carpeta global root (2026-06-05); old_screen_glitch_error horror-choice ONLY
+    effects_library_ref: "assets/transitions/horror-choice/transitions/"   # carpeta global root (2026-06-05); old_screen_glitch_error horror-choice ONLY
     transition_variety_min: 3
     non_diegetic_sfx_placement: "effect_layer"
 
@@ -174,7 +174,7 @@ hybrid_layers:
       - "music_drone_base"
       - "ambient_continuous_environment"
     sidechain_target_db: -6
-    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+    overlay_pipeline: "ai-video build-video-hybrid --post-concat-overlay"
 
   layer_4_hyperframes_ui_overlay:
     description: "Countdown film-leader academy + decision UI (loading Y52 / countdown Y46) + outro card + name labels persistentes through-countdown"
@@ -2091,7 +2091,7 @@ hyperframes_ui_overlay:
     z_index: 68
 
 # ═══════════════════════════════════════════════════════════════
-# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# 13. ASSET LIST INVENTORY (ai-video audit-spec-completeness input)
 # ═══════════════════════════════════════════════════════════════
 # Densidad SFX target 30-40 (TASTE-LOG #2). Cada consequence-A fatal tiene un SFX scream/agony.
 
@@ -2231,7 +2231,7 @@ architect_annotations:
 
   - timestamp: "2026-06-03"
     track: "INVARIANTE § 2.2 — diseño correcto desde el inicio (lección V6 invernadero F2)"
-    note: "Tobias (bueno_aparente) NUNCA está en el played path — aparece SOLO en shot_01 (hook dyad) + shot_21 (counterfactual cozy) + shot_22 (cliffhanger). En el played path la tentación viene del INSTINTO/ENTORNO (riel firme y seco que invita a pisarlo / ruido del charco que invita a correr / barra que cae que invita a atraparla) + Dario (el ELEGIDO, malo-aparente) da las contra-reglas procedurales. Dario SÍ está en el played path porque es el COMPAÑERO ELEGIDO (permitido por el invariante — solo el bueno-aparente está prohibido en el played path). Diseñado correcto desde el inicio para que audit-spec-structure-vs-canonical.py pase sin amendment."
+    note: "Tobias (bueno_aparente) NUNCA está en el played path — aparece SOLO en shot_01 (hook dyad) + shot_21 (counterfactual cozy) + shot_22 (cliffhanger). En el played path la tentación viene del INSTINTO/ENTORNO (riel firme y seco que invita a pisarlo / ruido del charco que invita a correr / barra que cae que invita a atraparla) + Dario (el ELEGIDO, malo-aparente) da las contra-reglas procedurales. Dario SÍ está en el played path porque es el COMPAÑERO ELEGIDO (permitido por el invariante — solo el bueno-aparente está prohibido en el played path). Diseñado correcto desde el inicio para que ai-video audit-spec-structure-vs-canonical pase sin amendment."
 
   - timestamp: "2026-06-03"
     track: "Self-validation HR#27 + D14-D27 (creative-director skill validation)"
@@ -2305,7 +2305,7 @@ engineer_notes:
   lip_sync_strategy: "deferred_phase_3 (Hedra/Sync.so) para shots con has_lip_sync_required:true. v11.2: shot_01 (Tobias — lure de hook, boca VISIBLE → lip-sync clásico aplica), shot_05/10/15 (Dario). NOTA Dario: habla bajo una máscara de respirador → la boca NO es visible; lip-sync clásico no aplica, usar el patrón characters-sin-boca-visible (glow/movimiento sutil de la máscara + caption-as-mouth + voz procesada zumbido) — ref-13 Miro pattern. NOTA Tobias: rostro humano con boca visible → lip-sync estándar Hedra/Sync.so para 'Ven conmigo. Abajo hace frío.'. Engineer flaguea al arquitecto si requiere ajuste."
   dario_locus_anchors: "char_a_v1 (full) + char_a_v1_mask. Shots que aíslan la máscara en close-up POV (shot_05/shot_15 — Dario da regla / visto desde abajo) usan --ref char_a_v1_mask (MODEL-BEHAVIOR-LOG Entry 1 locus-anchor; la máscara de doble filtro puede regresar a cara normal si no hay cuerpo completo + se usa full anchor)."
   prompt_style_note: "Prompts en frases descriptivas, NUNCA label-prefix (POV:/ANGLE:/ACTION:) — MODEL-BEHAVIOR-LOG Entry 2 (texto burned-in). camera_intent ya escrito como frase descriptiva."
-  horror_suffix_note: "image.py inyecta HORROR_SUFFIX warm amber por default — encaja con amber_emergency_tunnel_v1 (paleta ámbar). Para cold_horror_tunnel_v1 (consecuencias azul-frías) usar --no-mono-suffix + bloque de estilo cool propio (ver MODEL-CAPABILITIES-MATRIX gemini_flash_image)."
+  horror_suffix_note: "ai-video image inyecta HORROR_SUFFIX warm amber por default — encaja con amber_emergency_tunnel_v1 (paleta ámbar). Para cold_horror_tunnel_v1 (consecuencias azul-frías) usar --no-mono-suffix + bloque de estilo cool propio (ver MODEL-CAPABILITIES-MATRIX gemini_flash_image)."
   total_duration_note: "v11.2: narración re-chunkeada termina ~93s en los timestamps de §9 (incluye hook 9s + freezes + beats no-narrados). Con el ensamble per-clip-atomic (suma de duration_intent de los 31 shots ≈ 113s de clip bruto, pero los freezes/decisión solapan con narración y los reaction inserts son cortos) el corte final cae en banda 80-100s. Engineer reconcilia el corte final a la banda (target ~90s) ajustando solapes de freeze/countdown. NB-3 reconciliado: §9 ya no excede el total."
   veo_quota_observations: "NOT enterprise free — billing confirmado. Avoid Veo. Hailuo stack canonical."
 

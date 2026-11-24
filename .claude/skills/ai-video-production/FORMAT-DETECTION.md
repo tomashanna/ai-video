@@ -27,7 +27,7 @@ Estas 4 SIEMPRE aplican. Sin excepciones:
 
 | # | Regla | Doc | Script |
 |---|-------|-----|--------|
-| U1 | **LUFS -14 ±0.5 dB integrated** | `AUDIO-MASTERING.md` | `master-audio.sh` |
+| U1 | **LUFS -14 ±0.5 dB integrated** | `AUDIO-MASTERING.md` | `scripts/master-audio.sh` |
 | U2 | **Drop shadow > thick stroke** en todo texto | `CAPTIONS.md` | n/a |
 | U3 | **Vignette aplicado** (sutil a pronunciado según formato) | `COLOR-GRADING.md` | n/a |
 | U4 | **Crushed blacks + high contrast** | `COLOR-GRADING.md` | n/a |

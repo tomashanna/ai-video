@@ -149,10 +149,10 @@ Symmetrical composition, cold blue-green overhead lighting.
 
 Texto: `"Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]."`
 
-> ⚠️ **Voz + pace (DEPRECATED workaround abajo — consultar fuentes canónicas):** voz default = `2gPFXx8pN3Avh27Dw5Ma` (narrador V5+ = `K3TeN3ZVK8WnOeJ0NYqZ`). El ID viejo `Tj9l48J9...` está DEPRECATED (`library/voices-catalog.json`). El `atempo=2.0` que aparece en los bloques de abajo es un workaround DEPRECATED derivado de nuestras producciones — el pipeline real cappea ≥0.90 sin slow-down de voz (ver `INGENIERO-PAUTA-MASTER.md § 1.6`). Usá la voz/pace canónicos, NO los literales heredados de Video #1.
+> ⚠️ **Voz + pace (DEPRECATED workaround abajo — consultar fuentes canónicas):** voz default = `2gPFXx8pN3Avh27Dw5Ma` (narrador V5+ = `K3TeN3ZVK8WnOeJ0NYqZ`). El ID viejo `Tj9l48J9...` está DEPRECATED (`assets/library/voices-catalog.json`). El `atempo=2.0` que aparece en los bloques de abajo es un workaround DEPRECATED derivado de nuestras producciones — el pipeline real cappea ≥0.90 sin slow-down de voz (ver `INGENIERO-PAUTA-MASTER.md § 1.6`). Usá la voz/pace canónicos, NO los literales heredados de Video #1.
 
 ```bash
-.venv/bin/python scripts/tts.py -t "Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narration-raw.mp3
+uv run ai-video tts -t "Elige a tu compañero. Para esta noche, [NOMBRE_MALO]... o [NOMBRE_BUENO]." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/narration-raw.mp3
 ffmpeg -y -i assets/narration-raw.mp3 -filter:a "atempo=2.0" assets/narration.mp3
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/narration.mp3
 # Guardar duración como DUR_H1_NARR
@@ -219,10 +219,10 @@ Este es el hito de mayor producción. Seguir este orden exacto.
 
 ```bash
 # Generar los 4 raw
-.venv/bin/python scripts/tts.py -t "[NARR1_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr1-raw.mp3
-.venv/bin/python scripts/tts.py -t "[NARR2_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr2-raw.mp3
-.venv/bin/python scripts/tts.py -t "Ahora decide." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr3-raw.mp3
-.venv/bin/python scripts/tts.py -t "[NARR4_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr4-raw.mp3
+uv run ai-video tts -t "[NARR1_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr1-raw.mp3
+uv run ai-video tts -t "[NARR2_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr2-raw.mp3
+uv run ai-video tts -t "Ahora decide." -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr3-raw.mp3
+uv run ai-video tts -t "[NARR4_TEXT]" -v 2gPFXx8pN3Avh27Dw5Ma -o assets/hN-narr4-raw.mp3
 
 # Procesar todos a 2x
 for f in hN-narr1 hN-narr2 hN-narr3 hN-narr4; do
@@ -261,11 +261,11 @@ T_CAP1A_END = T_START + (DUR_N1 × 0.5)
 **Comando para variantes en paralelo:**
 ```bash
 # Generar A primero (la principal)
-.venv/bin/python scripts/image.py -p "[PROMPT_A]" -o assets/hN-wide-a.png &
+uv run ai-video image -p "[PROMPT_A]" -o assets/hN-wide-a.png &
 
 # Variantes B y C en paralelo
-.venv/bin/python scripts/image.py -p "[PROMPT_B_distinta_distancia]" -o assets/hN-wide-b.png &
-.venv/bin/python scripts/image.py -p "[PROMPT_C_distinto_ángulo]" -o assets/hN-wide-c.png &
+uv run ai-video image -p "[PROMPT_B_distinta_distancia]" -o assets/hN-wide-b.png &
+uv run ai-video image -p "[PROMPT_C_distinto_ángulo]" -o assets/hN-wide-c.png &
 wait
 ```
 
@@ -602,7 +602,7 @@ Lista todos los audios narración con su `offset` (data-start real en el video) 
 ### 6.3.2 Ejecutar Whisper
 
 ```bash
-.venv/bin/python scripts/captions.py --spec captions-spec.json
+uv run ai-video captions --spec captions-spec.json
 ```
 
 Output: bloques `<div>` HTML + GSAP `tl.set()` calls listos para pegar en `index.html`.
@@ -638,7 +638,7 @@ Mínimo 2 segmentos, idealmente 3:
 **Opción A — ElevenLabs Sound Effects con prompts musicales** (rápido, integrado al pipeline):
 ```bash
 # Música horror — drone largo
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "dark ambient horror drone music, low sub-bass evolving slowly, no melody no rhythm, cinematic tension, perfectly looping" \
   -d 22 --loop -i 0.5 \
   -o assets/music-horror-loop.mp3
@@ -649,7 +649,7 @@ ffmpeg -y -stream_loop 2 -i assets/music-horror-loop.mp3 -t 70 \
   assets/music-horror.mp3
 
 # Música cliffhanger — pad cálido
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "warm cinematic resolution music, soft acoustic pad with subtle major chord progression, hopeful peaceful, no drums, perfectly looping" \
   -d 15 --loop -i 0.5 \
   -o assets/music-dawn-loop.mp3
@@ -706,7 +706,7 @@ Cada entrada:
 ### 6.5.2 Generar todos los SFX en batch
 
 ```bash
-.venv/bin/python scripts/sfx.py --spec sfx-spec.json
+uv run ai-video sfx --spec sfx-spec.json
 ```
 
 Tiempo: ~3-8s por SFX. Total ~3-5 min para 25-30 SFX.

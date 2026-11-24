@@ -4,7 +4,7 @@
 >
 > **Quién lo consulta (OBLIGATORIO)**:
 > - 🏛️ **Arquitecto (CP0)**: antes de fijar `duration_intent_s` + escribir narración. Calcula `narración_dur_canonical = palabras/canonical_pace_wpm*60` y verifica `≤ min(duration_intent_s, model.clip_duration_max_s)`.
-> - 🔍 **Validator L1** (`audit-spec-narration-fits-duration.py`): lee este archivo, chequea canonical-pace-fit vs límite del modelo.
+> - 🔍 **Validator L1** (`ai-video audit-spec-narration-fits-duration`): lee este archivo, chequea canonical-pace-fit vs límite del modelo.
 > - 🔍 **Auditor**: anti-pattern #12 — ningún validator asume capacidades hardcoded; consulta esta matriz.
 > - 🛠️ **Ingeniero**: usa los settings canónicos + respeta los límites al generar.
 >
@@ -143,7 +143,7 @@ gemini_flash_image:
   resolution: "1080x1920 (vertical reel)"
   cost_per_image_usd: ~0.04
   ⚠️_HORROR_SUFFIX_gotcha: |
-    scripts/image.py inyecta HORROR_SUFFIX (paleta warm amber). Para paletas cool/clínicas
+    ai-video image inyecta HORROR_SUFFIX (paleta warm amber). Para paletas cool/clínicas
     usar --no-mono-suffix + bloque de estilo propio (V5 CP3).
   constraints_canonical (ver MODEL-BEHAVIOR-LOG entry 1 para detalle empírico):
     - "face-coupling: identidad propaga vía cara; rasgo raro sin cara → regresa a normal"
@@ -152,7 +152,7 @@ gemini_flash_image:
     - "hand-configuration: bare/gloved + holding/empty deben coincidir con anchor"
     - "locus-anchors para rasgos raros aislados de la cara"
     - "prompts en frases descriptivas, NUNCA label-prefix (POV:/ANGLE:) → texto burned-in"
-  pro_tier: "image.py NO soporta tier Pro actualmente (hardcoded flash) — forward gap"
+  pro_tier: "ai-video image NO soporta tier Pro actualmente (hardcoded flash) — forward gap"
 ```
 
 ## Cómo se usa (resumen enforcement)

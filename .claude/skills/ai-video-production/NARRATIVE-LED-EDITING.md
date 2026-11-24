@@ -136,7 +136,7 @@ tl.set("#black-overlay", { opacity: 0 }, T_mid + 0.75);
 // <audio> data-start=T_mid data-duration=0.5 data-volume=0.45 src="assets/sfx/cut-rise-drone.mp3"
 ```
 
-### Paso 3: Generar los 7 SFX con `scripts/sfx.py`
+### Paso 3: Generar los 7 SFX con `ai-video sfx`
 
 Los 7 sonidos van a `assets/sfx/cuts/` para mantenerlos separados de los SFX por escena:
 

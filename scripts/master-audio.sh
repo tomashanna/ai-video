@@ -1,5 +1,5 @@
 #!/bin/bash
-# master-audio.sh — 2-pass LUFS normalization to Instagram Reels standard (-14 LUFS / TP -1.5)
+# scripts/master-audio.sh — 2-pass LUFS normalization to Instagram Reels standard (-14 LUFS / TP -1.5)
 #
 # Empírico: 7 referentes (LUFS -13.76 a -14.45). True-peak ceiling -1.5 dBTP da headroom de
 # inter-sample peaks para el re-encode AAC de la plataforma. Output siempre 48 kHz (delivery std).
@@ -9,8 +9,8 @@
 #   Pass 2: aplicar corrección lineal (preserva dinámica vs single-pass dinámico), -ar 48000
 #
 # Usage:
-#   master-audio.sh renders/draft.mp4                  # outputs renders/draft-mastered.mp4
-#   master-audio.sh renders/draft.mp4 renders/final.mp4
+#   scripts/master-audio.sh renders/draft.mp4                  # outputs renders/draft-mastered.mp4
+#   scripts/master-audio.sh renders/draft.mp4 renders/final.mp4
 
 set -e
 
@@ -18,7 +18,7 @@ INPUT="$1"
 OUTPUT="${2:-${INPUT%.mp4}-mastered.mp4}"
 
 if [ -z "$INPUT" ]; then
-  echo "Usage: master-audio.sh <input.mp4> [output.mp4]"
+  echo "Usage: scripts/master-audio.sh <input.mp4> [output.mp4]"
   exit 1
 fi
 

@@ -9,13 +9,13 @@
 ### Comando base
 
 ```bash
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "Texto a narrar." \
   -v <VOICE_ID> \
   -o assets/nombre-raw.mp3
 ```
 
-### Voice IDs canonical (post 2026-05-18 — siempre consultar `library/voices-catalog.json` como autoridad)
+### Voice IDs canonical (post 2026-05-18 — siempre consultar `assets/library/voices-catalog.json` como autoridad)
 
 | Voz | ID | Estado | Característica |
 |-----|-----|--------|----------------|
@@ -29,7 +29,7 @@
 | ~~Matthew Schmitz Nosferatu~~ | ~~`Tj9l48J9AJbry5yCP5eW`~~ | ❌ DEPRECATED 2026-05-18 | Susurro grave lento. Matadero CP2 user listen test refuted canonical compliance ('muy lento'). |
 | Reservada | `1BfrkuYXmEwp8AWqSLWk` | 🟡 untested | Sin testear. |
 
-**Verificar `DEFAULT_VOICE_ID` en `scripts/tts.py` antes de cada video nuevo (debe ser `2gPFXx8pN3Avh27Dw5Ma` Oxley).** Cada formato puede definir su voz canónica via `<format>-format/INGENIERO-PAUTA-MASTER.md`.
+**Verificar `DEFAULT_VOICE_ID` en `ai-video tts` antes de cada video nuevo (debe ser `2gPFXx8pN3Avh27Dw5Ma` Oxley).** Cada formato puede definir su voz canónica via `<format>-format/INGENIERO-PAUTA-MASTER.md`.
 
 ### Post-procesado obligatorio — atempo per-segment (post 2026-05-18)
 
@@ -63,7 +63,7 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre-atempo.
 ### Comando base
 
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "prompt aquí" \
   -o assets/nombre.png
 ```
@@ -82,7 +82,7 @@ HORROR_SUFFIX = (
 )
 ```
 
-**Para un formato nuevo:** copiar `image.py` del template y reemplazar `HORROR_SUFFIX` por tu propio `STYLE_SUFFIX`.
+**Para un formato nuevo:** copiar `ai-video image` del template y reemplazar `HORROR_SUFFIX` por tu propio `STYLE_SUFFIX`.
 
 Flag `--no-mono-suffix` desactiva el suffix (útil para escenas en colores naturales).
 
@@ -221,12 +221,12 @@ Generación automática de timings con Whisper: ver `CAPTIONS.md`.
 npx hyperframes lint
 
 # 2. Audit narrativo (visibilidad <1s, z-index conflicts, data-duration mismatch)
-.venv/bin/python scripts/audit-narrative.py
+uv run ai-video audit-narrative
 
 # 3. Render lock (coordinación entre agentes — evita FFmpeg SIGTERM por CPU contention)
-.venv/bin/python scripts/render-lock.py acquire <project-name>
+uv run ai-video render-lock acquire <project-name>
 # si falla, esperá:
-.venv/bin/python scripts/render-lock.py wait <project-name> --timeout 1800
+uv run ai-video render-lock wait <project-name> --timeout 1800
 ```
 
 Detalle: `AUDIT.md` y sección 11 (multi-agent coordination) abajo. Los scripts viven en `templates/scripts/` — copiar a `scripts/` del proyecto.
@@ -239,7 +239,7 @@ npx hyperframes render . \
   --fps 30 \
   --quality draft
 # liberar el lock al terminar:
-.venv/bin/python scripts/render-lock.py release
+uv run ai-video render-lock release
 ```
 
 `hyperframes render .` (directorio) — NO `hyperframes render index.html` (falla).
@@ -383,7 +383,7 @@ Mantiene composiciones previas funcionando.
 ### Comando base
 
 ```bash
-.venv/bin/python scripts/video.py \
+uv run ai-video video \
   -i assets/imagen.png \
   -p "motion prompt aquí" \
   -o assets/nombre.mp4 \
@@ -441,22 +441,22 @@ Cuando dos agentes Claude lanzan `npx hyperframes render` simultáneos:
 - HyperFrames mata el ffmpeg con SIGTERM por timeout interno
 - Result: ambos renders fallan
 
-### La solución — `scripts/render-lock.py`
+### La solución — `ai-video render-lock`
 
 Lockfile global en `~/.claude-render-lock.json` que cualquier agente puede leer/escribir.
 
 ```bash
 # Antes del render
-.venv/bin/python scripts/render-lock.py acquire <project> --duration 15
+uv run ai-video render-lock acquire <project> --duration 15
 
 # Si falla (otro agente lo tiene), esperar
-.venv/bin/python scripts/render-lock.py wait <project> --timeout 1800
+uv run ai-video render-lock wait <project> --timeout 1800
 
 # Render
 npx hyperframes render . --output renders/v8.mp4
 
 # Después (siempre, incluso si el render falla)
-.venv/bin/python scripts/render-lock.py release
+uv run ai-video render-lock release
 ```
 
 ### Comandos disponibles
@@ -468,7 +468,7 @@ npx hyperframes render . --output renders/v8.mp4
 | `release` | Libera si somos los holders | 0 = ok |
 | `status` | Muestra quién tiene el lock + si está vivo | 0 = libre, 2 = stale, 0 = alive |
 
-Setup: `cp .claude/skills/ai-video-production/templates/scripts/render-lock.py scripts/`.
+Disponible como `uv run ai-video render-lock` (nada que copiar).
 
 ### Buenas prácticas
 
@@ -489,15 +489,15 @@ Antes de cualquier render:
 - [ ] Música procesada en 2 pasos (no -ss + -af)
 - [ ] Symlinks creados si aplica
 - [ ] `data-duration` de la composición = T_fin del último elemento
-- [ ] Voice ID verificado en scripts/tts.py
-- [ ] STYLE_SUFFIX correcto en scripts/image.py si aplica
+- [ ] Voice ID verificado en ai-video tts
+- [ ] STYLE_SUFFIX correcto en ai-video image si aplica
 - [ ] Variantes de imagen para escenas >4s (V8-1)
 - [ ] Capa SFX dedicada (V8-2 — ver SFX-PIPELINE.md)
 - [ ] Motion mínimo en planos estáticos (V8-3 — ver MOTION-LAYER.md)
 - [ ] Captions auto-generadas con Whisper (no manuales)
 - [ ] **`npx hyperframes lint` sin errores**
-- [ ] **`scripts/audit-narrative.py` sin errores** (ver `AUDIT.md`)
-- [ ] **`scripts/render-lock.py acquire` exitoso** (ver sección 11)
+- [ ] **`ai-video audit-narrative` sin errores** (ver `AUDIT.md`)
+- [ ] **`ai-video render-lock acquire` exitoso** (ver sección 11)
 - [ ] **HUMAN-CHECKLIST corrido después del último Gemini QA** (ver `video-director/HUMAN-CHECKLIST.md`)
 
 Para checklists específicos por formato, ver el SKILL del formato (ej: `horror-choice-format/PAUTA.md`).
@@ -576,17 +576,17 @@ Benefits:
 
 | Script | Función |
 |--------|---------|
-| `scripts/build_clip_atomic.py` | Steps 2-5: TTS + SFX + ambient + mix + mux + caption sidecar PER clip. Self-contained atomic builder. |
-| `scripts/quality_gate_per_clip.py` | Step 6: Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate. Inputs: clip mp4 + caption JSON + SPEC shot data. |
-| `scripts/gemini_midexec_vision.py` | Step 7: Mid-execution Gemini Vision hook — Gemini Vision frame extraction per clip, AVU detect, character consistency vs anchor, caption Y position. Invoked AFTER step 6 PASS, BEFORE concat. |
+| `ai-video build-clip-atomic` | Steps 2-5: TTS + SFX + ambient + mix + mux + caption sidecar PER clip. Self-contained atomic builder. |
+| `ai-video quality-gate-per-clip` | Step 6: Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate. Inputs: clip mp4 + caption JSON + SPEC shot data. |
+| `ai-video gemini-midexec-vision` | Step 7: Mid-execution Gemini Vision hook — Gemini Vision frame extraction per clip, AVU detect, character consistency vs anchor, caption Y position. Invoked AFTER step 6 PASS, BEFORE concat. |
 | `scripts/concat-clips-with-audio.sh` | Step 8: ffmpeg concat protocol for shot_NN_with_audio.mp4 chain. |
-| `scripts/apply-effects-between-clips.py` | Step 9: Effects library applier (crossfade/hard-cut/flash/glitch/wipe) per SPEC transition spec. |
-| `scripts/apply-cross-clip-music.py` | Step 10-11: Music + ambient cross-clip layer with ducking + section LUFS targets. |
+| `ai-video apply-effects-between-clips` | Step 9: Effects library applier (crossfade/hard-cut/flash/glitch/wipe) per SPEC transition spec. |
+| `ai-video apply-cross-clip-music` | Step 10-11: Music + ambient cross-clip layer with ducking + section LUFS targets. |
 | `scripts/master-audio.sh` (legacy) | ⛔ DEPRECATED for video #3+. Mantener solo para regenerate de matadero/cinema-abandonado si needed. |
 
 ### 13.5 Effects library reference
 
-Between-clip transitions live en la carpeta **GLOBAL root `transitions/`** (migrada 2026-06-05; principio "Disponibilidad ≠ Uso" intacto): **universal** `transitions/universal/transitions/` (11: cross-fade ×2, hard-cut-with-whoosh, black-screen, fade-to-black, light-flash, glitch, camera-shake, pan-left, brightness-flash, zoom-in) + **per-format** `transitions/<format>/transitions/` (horror-choice: film-burn, projector-cue-cinema, static-noise, old_screen_glitch_error). **Índice transición→formato = `transitions/catalog.json`** (consultar PRIMERO); autoridad = `transitions/README.md`. Los paths viejos effects-library quedan como symlinks de compat. Caption burn styles → `templates/caption-styles/caption-burn-template.css`. (La tabla de abajo es un sketch Phase 2 histórico):
+Between-clip transitions live en la carpeta **GLOBAL root `assets/transitions/`** (migrada 2026-06-05; principio "Disponibilidad ≠ Uso" intacto): **universal** `assets/transitions/universal/transitions/` (11: cross-fade ×2, hard-cut-with-whoosh, black-screen, fade-to-black, light-flash, glitch, camera-shake, pan-left, brightness-flash, zoom-in) + **per-format** `transitions/<format>/transitions/` (horror-choice: film-burn, projector-cue-cinema, static-noise, old_screen_glitch_error). **Índice transición→formato = `assets/transitions/catalog.json`** (consultar PRIMERO); autoridad = `assets/transitions/README.md`. Los paths viejos effects-library quedan como symlinks de compat. Caption burn styles → `templates/caption-styles/caption-burn-template.css`. (La tabla de abajo es un sketch Phase 2 histórico):
 
 | Effect | File | Use case |
 |--------|------|----------|
@@ -597,7 +597,7 @@ Between-clip transitions live en la carpeta **GLOBAL root `transitions/`** (migr
 | `shader-wipe-vertical` | `shader-wipe-vertical.mp4` (AVU) | Hook → dilemma transition |
 | `dip-to-black-0.4s` | `dip-to-black-0.4.json` (xfade spec) | Outro card transition |
 
-Cada transition declared en SPEC schema v10 `transitions[]` array. Engineer applies via `apply-effects-between-clips.py`.
+Cada transition declared en SPEC schema v10 `transitions[]` array. Engineer applies via `ai-video apply-effects-between-clips`.
 
 ### 13.6 Quality Gate Agent (NEW 4th role — operates per clip)
 
@@ -616,7 +616,7 @@ Cada transition declared en SPEC schema v10 `transitions[]` array. Engineer appl
 Invocados en step 7 per clip (post Quality Gate PASS). NO esperar final render para audit.
 
 ```bash
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --clip assets/clips/shot_NN_with_audio.mp4 \
   --captions assets/captions/shot_NN_captions.json \
   --spec creative-specs/<id>.yaml \
@@ -636,7 +636,7 @@ Output: 5 dimensions per clip (UI overlap, frame negros, AVU detect, character c
 ┌─────────────────────────────────────────────────────────────────────┐
 │ LAYER 1 — PER-CLIP ATOMIC (scene-bound, diegetic)                  │
 │ ────────────────────────────────────────────────                    │
-│ Lives in: clip_NN_atomic.mp4 audio mux (via build_clip_atomic.py)   │
+│ Lives in: clip_NN_atomic.mp4 audio mux (via ai-video build-clip-atomic)   │
 │ Contents:                                                           │
 │   • TTS narration for this clip's window                            │
 │   • Diegetic SFX (occurs IN scene: cocinera spoon tap, projector   │
@@ -721,7 +721,7 @@ Examples:
    - No speech bleed (Whisper voiceprint check)
    - Spectrum analysis (drone <300Hz, accent 200-2000Hz, ambient broadband)
    
-4. ASSEMBLE post-concat (apply-cross-clip-music.py):
+4. ASSEMBLE post-concat (ai-video apply-cross-clip-music):
    ffmpeg amix assembled.mp4 + drone_base.mp3 + accent_drama.mp3 + ambient_room.mp3
    + sidechain ducking layer 1+2 UNDER TTS speech (-8 ±1 dB during VO segments)   # PRE-4.C tolerance (2026-05-25): SPEC-declared band (plumbing). Outcome verifiable via final dynamic_range_db (F1 canonical 14.49-22.34, typical ducking 10-25 dB).
    + final master loudnorm -14 ±0.5 LUFS / -1 ±0.3 dBTP   # PRE-4.C tolerance (2026-05-25): LUFS CANONICAL-ANCHORED to F1 (avg -14.06 ±0.41, p25 -14.03, p75 -13.86 per F1-INGENIERO-MEASUREMENTS.json). dBTP headroom SPEC-anchored (F1 NOT measure).
@@ -733,12 +733,12 @@ Per PRE-4.B F1 coverage audit (29 properties × dual-source classification):
 - **CANONICAL-ANCHORED (F1 measured)**: final master LUFS (F1 p25-p75 -14.03 to -13.86), dynamic_range_db (F1 14.49-22.34), cuts_per_min, brightness_mean, etc.
 - **SPEC-DECLARED (plumbing, F1 NOT measure)**: per-layer pre-mix LUFS, sidechain duck target dB, dBTP headroom, layer length tolerance, codec/fps/sample rate, etc.
 
-Tests in Paso 4 (apply-cross-clip-music.py, build-video-hybrid.py) reference these tolerance bands per α + γ-1 plan: canonical-anchored where F1 measures, SPEC-anchored otherwise. NO golden reference V4 per Tomás canonical principle.
+Tests in Paso 4 (ai-video apply-cross-clip-music, ai-video build-video-hybrid) reference these tolerance bands per α + γ-1 plan: canonical-anchored where F1 measures, SPEC-anchored otherwise. NO golden reference V4 per Tomás canonical principle.
 
 **transition_post hook expansion (Q2 resuelta)**:
 
 ```
-gemini_midexec_vision.py hook `transition_post` EXTEND from visual-only to visual + audio:
+ai-video gemini-midexec-vision hook `transition_post` EXTEND from visual-only to visual + audio:
 
 Visual checks (existing):
   - visual_continuity (frames pre-boundary vs post-boundary)
@@ -761,13 +761,13 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 ```
 
 **Forward script implementations** (status as of 2026-05-23 Sub-Fase 3A inventory):
-- `scripts/audit-effects-audio.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q22 gate post-concat audit done via combination of `audit-audio.py` + manual ffmpeg volumedetect + Gemini Vision audit-frames for visual+audio sync verification. NOT a blocker for V4+ ship.
-- `scripts/audit-music-layers.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q23 gate done via `audit-audio.py` narration coverage + sound fabric thresholds (≥99% fabric required). Music layer count + duration verified manually via ffprobe per layer file pre-mix. NOT a blocker for V4+ ship.
-- `scripts/apply-cross-clip-music.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Layer 3 assemble protocol with sidechain ducking. Engineer V4 used inline ffmpeg; Paso 4 consolidates as reusable script per Sprint M defense in depth.
-- `scripts/concat-clips-with-audio.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Inter-clip concat with audio properly muxed.
-- `scripts/apply-effects-between-clips.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Effects library application between atomic clips.
-- `scripts/build-video-hybrid.py` — **TO BUILD (Sub-Fase 3A Paso 4)**. Consolidates V4 engineer inline ffmpeg as reusable script. Encapsulates full HYBRID Layer 1-4 pipeline.
-- `gemini_midexec_vision.py transition_post` — extend with 4 audio dimensions (existing script, extension forward Phase 3 priority).
+- `scripts/audit-effects-audio.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q22 gate post-concat audit done via combination of `ai-video audit-audio` + manual ffmpeg volumedetect + Gemini Vision audit-frames for visual+audio sync verification. NOT a blocker for V4+ ship.
+- `scripts/audit-music-layers.py` — **FORWARD — not built, audit done manually via existing audio scripts**. Q23 gate done via `ai-video audit-audio` narration coverage + sound fabric thresholds (≥99% fabric required). Music layer count + duration verified manually via ffprobe per layer file pre-mix. NOT a blocker for V4+ ship.
+- `ai-video apply-cross-clip-music` — **TO BUILD (Sub-Fase 3A Paso 4)**. Layer 3 assemble protocol with sidechain ducking. Engineer V4 used inline ffmpeg; Paso 4 consolidates as reusable script per Sprint M defense in depth.
+- `ai-video concat-clips-with-audio` — **TO BUILD (Sub-Fase 3A Paso 4)**. Inter-clip concat with audio properly muxed.
+- `ai-video apply-effects-between-clips` — **TO BUILD (Sub-Fase 3A Paso 4)**. Effects library application between atomic clips.
+- `ai-video build-video-hybrid` — **TO BUILD (Sub-Fase 3A Paso 4)**. Consolidates V4 engineer inline ffmpeg as reusable script. Encapsulates full HYBRID Layer 1-4 pipeline.
+- `ai-video gemini-midexec-vision transition_post` — extend with 4 audio dimensions (existing script, extension forward Phase 3 priority).
 
 ---
 
@@ -779,7 +779,7 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 | `matadero/`, `cinema-abandonado/` | LEGACY global master (in-flight) | Terminar con pipeline legacy. NO refactor mid-project. |
 | Video #3+ (cualquier proyecto NUEVO 2026-05-20 forward) | **MANDATORY per-clip atomic** | Usar pipeline § 13.3. Hard Rule #23. |
 
-**Bootstrap nuevo proyecto**: copiar los 3 nuevos scripts (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) en step 2 del `BOOTSTRAP.md`.
+**Bootstrap nuevo proyecto**: copiar los 3 nuevos scripts (`ai-video build-clip-atomic` + `ai-video quality-gate-per-clip` + `ai-video gemini-midexec-vision`) en step 2 del `BOOTSTRAP.md`.
 
 **SPEC schema v10**: arquitecto declara `assembly_strategy: per_clip_atomic` (default forward) o `global_master` (legacy backcompat solo).
 
@@ -818,15 +818,15 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 │  concat'd stream AT clip boundaries. NO pre-rendered effect mp4s.    │
 │                                                                      │
 │  Implementation (V4 empirical via cp5-layer2-concat.py):             │
-│    Step 1 — 4.2 concat-clips-with-audio.py:                          │
+│    Step 1 — 4.2 ai-video concat-clips-with-audio:                          │
 │      Concat atomic clips back-to-back, audio properly muxed.         │
 │      Output: assets/concat/clips_concat_only.mp4                     │
-│    Step 2 — 4.4 apply-effects-between-clips.py:                      │
+│    Step 2 — 4.4 ai-video apply-effects-between-clips:                      │
 │      xfade filter at boundaries per SPEC.shot_list[].transition_in   │
 │      + sting audio overlaid per transitions/<layer>/transitions/*.json│
 │      Output: assets/concat/clips_with_effects.mp4                    │
 │                                                                      │
-│  Transition recipes available (transitions/ global — catalog.json):  │
+│  Transition recipes available (assets/transitions/ global — catalog.json):  │
 │    - B&W TV static interference (NEW 2026-05-21 user request)        │
 │    - Cross-fade, hard-cut-whoosh, light-flash, film-burn, glitch     │
 │    - Each recipe bundles audio_sting + visual filter params          │
@@ -864,10 +864,10 @@ Cost impact: +$0.05/transition × ~10 transitions/video = +$0.50/video
 
 #### 13.9.1.1 LAYER 2 — I/O clarification + tiered catalogs (PRE-4.J / PRE-4.K 2026-05-27)
 
-- **I/O (Finding #1):** `apply-effects-between-clips.py` reads the **atomic clips** (`--clips-dir`), NOT the 4.2 `clips_concat_only.mp4`. xfade physically requires N separate inputs, so the chain is rebuilt from atomic clips (V4 empirical `cp5-layer2-concat.py`). The 4.2 concat output is consumed ONLY by the **passthrough** branch (`has_layer_2_effects: false` → copy).
+- **I/O (Finding #1):** `ai-video apply-effects-between-clips` reads the **atomic clips** (`--clips-dir`), NOT the 4.2 `clips_concat_only.mp4`. xfade physically requires N separate inputs, so the chain is rebuilt from atomic clips (V4 empirical `cp5-layer2-concat.py`). The 4.2 concat output is consumed ONLY by the **passthrough** branch (`has_layer_2_effects: false` → copy).
 - **Tiered catalogs ("Disponibilidad ≠ Uso"):** transitions live in TWO catalogs — Capa A universal primitives (7) + Capa B format sub-genre. `--effects-dir` accepts ONE OR MORE catalog dirs (searched in order), REQUIRED in the effects branch (no silent format default = agnostic-by-design). Availability ≠ prescription: the SPEC `shot_list[].transition_in/out` (Capa C) decides what is applied; a format may reference Capa A primitives + add its own Capa B without duplicating.
 - **Option D fidelity:** each recipe declares `xfade_transition` + `xfade_fidelity` (literal|approximate) + `native_mechanism_note`. Chained-xfade is LOSSY for the 5 `approximate` recipes (native mechanisms = concat-insert / overlay / terminal-fade ≠ a single xfade); a WARNING fires on production use. Full fidelity = Option B hybrid dispatch (`transition_method` enum) — GAPS-LOG trigger.
-- **Schema:** per-shot `transition_in/out` canonical (PRE-4.J Decision 3); legacy top-level `transitions[]` arrays normalized via `lib/spec_transitions_adapter.py`.
+- **Schema:** per-shot `transition_in/out` canonical (PRE-4.J Decision 3); legacy top-level `transitions[]` arrays normalized via `src/ai_video/core/spec_transitions_adapter.py`.
 
 #### 13.9.2 Why HYBRID solves caption-audio drift permanently
 
@@ -901,7 +901,7 @@ CP3 shot refs:            Gemini Nano Banana STRICT (unchanged)
 CP4 animation:            Hailuo/Veo image-to-video (unchanged)
 
 CP4.5 NEW — Per-clip atomic mux:
-  build_clip_atomic.py extension:
+  ai-video build-clip-atomic extension:
     For each shot N:
       1. Load shot_N.mp4 (Hailuo/Veo visual)
       2. Determine clip-scoped audio:
@@ -926,9 +926,9 @@ CP5 — HyperFrames composition + Layer 3:
   Step 7: 8 pre-render gates
 ```
 
-#### 13.9.4 Updated build_clip_atomic.py spec
+#### 13.9.4 Updated ai-video build-clip-atomic spec
 
-Forward modification of `scripts/build_clip_atomic.py`:
+Forward modification of `ai-video build-clip-atomic`:
 
 ```python
 def build_atomic_clip(shot_id, spec, output_path):
@@ -1009,7 +1009,7 @@ V4+ (next video): HYBRID architecture MANDATORY per this § 13.9 + 3 enforcement
 
 #### 13.9.7 ⛔ Enforcement structural, no procedural
 
-CP-by-CP gates + HYBRID architecture se enforcan vía scripts (build_clip_atomic.py caption-burn + orchestrator state machine), NO vía texto que el agente decide aplicar. Texto sin enforcement = decoración. Detalle del blocker + razón estructural → **Hard Rule #24** (CLAUDE.md) + **AUDITOR-PROTOCOL § 6 anti-pattern #15** (engineer multi-CP autonomous FORBIDDEN).
+CP-by-CP gates + HYBRID architecture se enforcan vía scripts (ai-video build-clip-atomic caption-burn + orchestrator state machine), NO vía texto que el agente decide aplicar. Texto sin enforcement = decoración. Detalle del blocker + razón estructural → **Hard Rule #24** (docs/OPERATING-MANUAL.md) + **AUDITOR-PROTOCOL § 6 anti-pattern #15** (engineer multi-CP autonomous FORBIDDEN).
 
 ---
 
@@ -1102,11 +1102,11 @@ La ley se enforce en **4 capas** (defense-in-depth):
 
 | Capa | Dónde | Qué chequea | Cuándo |
 |------|-------|-------------|--------|
-| **L1 SPEC** | `audit-spec-voice-exclusivity.py --mode spec --format <f> --spec <yaml>` | Parsea §9 `narration_script` (TODOS los speakers). `ventana = [timestamp_intent_s[0], start + palabras/pace_wpm*60]` con `pace_wpm` = `canonical_pace_wpm` de `MODEL-CAPABILITIES-MATRIX.md` (fallback 165). FAIL si dos ventanas se intersectan, o si el gap entre dos speakers DISTINTOS < 0.30s. | Pre-emit del SPEC (arquitecto) + SPEC-audit (auditor). |
-| **L2 TTS** | `audit-spec-voice-exclusivity.py --mode tts --manifest <json> [--spec <yaml>] [--atomic-dir <dir>] [--exclude-segments <ids>]` | Ídem pero con **duraciones REALES** del manifest CP2. El `start` se reconstruye como el del assembly: `shot_start` reconciliado (de `--atomic-dir`) + lead per-speaker (narrador 0.10s / diálogo 0.45s), o `timestamp_intent_s` del SPEC si no hay atomic-dir. `--exclude-segments` para voces que un fix-pack muteó en el corte (presentes como dato en el manifest pero NO en el render). | Post-TTS, pre-assembly + pre-render-gate. |
+| **L1 SPEC** | `ai-video audit-spec-voice-exclusivity --mode spec --format <f> --spec <yaml>` | Parsea §9 `narration_script` (TODOS los speakers). `ventana = [timestamp_intent_s[0], start + palabras/pace_wpm*60]` con `pace_wpm` = `canonical_pace_wpm` de `MODEL-CAPABILITIES-MATRIX.md` (fallback 165). FAIL si dos ventanas se intersectan, o si el gap entre dos speakers DISTINTOS < 0.30s. | Pre-emit del SPEC (arquitecto) + SPEC-audit (auditor). |
+| **L2 TTS** | `ai-video audit-spec-voice-exclusivity --mode tts --manifest <json> [--spec <yaml>] [--atomic-dir <dir>] [--exclude-segments <ids>]` | Ídem pero con **duraciones REALES** del manifest CP2. El `start` se reconstruye como el del assembly: `shot_start` reconciliado (de `--atomic-dir`) + lead per-speaker (narrador 0.10s / diálogo 0.45s), o `timestamp_intent_s` del SPEC si no hay atomic-dir. `--exclude-segments` para voces que un fix-pack muteó en el corte (presentes como dato en el manifest pero NO en el render). | Post-TTS, pre-assembly + pre-render-gate. |
 | **L3 assembly assertion** | `assert_voice_exclusivity()` en el driver per-clip-atomic (`cp5b_run_all.py` phase3) | Sobre los cues de voz FINALES, antes del mix Layer1+Layer3. En colisión entre speakers DISTINTOS intenta **desplazar la voz de menor prioridad** (diálogo cede; en el hook el narrador va primero → prioridad 0) **±1s MÁX dentro de su shot**. Si no cabe → **ABORT** con error claro (NUNCA desplaza >1s ni a aire muerto). Same-speaker overlap → ABORT (bug de assembly). | En cada render del driver. |
 | **L4 render audit** *(forward)* | `audit-render-voice-overlap.py` | Mediría sobre el MP4 final (VAD / diarización) que ningún instante tenga dos voces. Red de seguridad post-render. | Forward — aún no implementado. |
 
-**Companion test** (HR#26): `test_audit-spec-voice-exclusivity.py` — adversarial (FAIL sobre el solape v2 narrador+personaje, PASS sobre el layout v3 separado) + fixtures sintéticas + unit tests del shift/abort de `assert_voice_exclusivity()`.
+**Companion test** (HR#26): `tests/unit/test_audit_spec_voice_exclusivity.py` — adversarial (FAIL sobre el solape v2 narrador+personaje, PASS sobre el layout v3 separado) + fixtures sintéticas + unit tests del shift/abort de `assert_voice_exclusivity()`.
 
-**Forward (Capa A):** portar `assert_voice_exclusivity()` al driver canónico `build-video-hybrid.py` (cualquier per-clip-atomic que mezcle voces en Layer 3) + implementar L4.
+**Forward (Capa A):** portar `assert_voice_exclusivity()` al driver canónico `ai-video build-video-hybrid` (cualquier per-clip-atomic que mezcle voces en Layer 3) + implementar L4.

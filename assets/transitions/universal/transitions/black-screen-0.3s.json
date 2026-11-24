@@ -26,7 +26,7 @@
     "More than 1-2 per reel — overuse turns into dead air",
     "Climax peak (use light-flash-impact)"
   ],
-  "hyperframes_alternative": "GSAP: 0.3s gap between clipA end and clipB start, with a full-screen black div z-index 99 opacity 1.0. Audio bed continues underneath via library/ambient track.",
+  "hyperframes_alternative": "GSAP: 0.3s gap between clipA end and clipB start, with a full-screen black div z-index 99 opacity 1.0. Audio bed continues underneath via assets/library/ambient track.",
   "canonical_validation_status": "validated_2/8",
   "validated_against_canonical_refs": ["ref-03", "ref-08"],
   "canonical_observations": "Observed in ref-03 (fade negro rápido at 28.5-29.0s + 49.2-49.7s + 71.7-72.0s — quick black inserts hiding death cuts, descriptive § 6 'fade a negro muy rápido o impacto visual oculta el corte') and ref-08 ('Hard cut a fade negro post-muerte' descriptive § 6 + Beat 8 'Pablo apaga luces / visual fade to dark'). ref-12 has fade out at 111-113s but that is outro-length not 0.3s breath. ref-06/09/10/11/13 show no explicit black-screen breath inserts in narrative descriptions. Pattern: F1 uses 0.3s black mainly to mask death-cut frames, not as inter-beat narrative comma.",

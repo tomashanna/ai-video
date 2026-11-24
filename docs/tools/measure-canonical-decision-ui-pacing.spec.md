@@ -1,4 +1,4 @@
-# measure-canonical-decision-ui-pacing.py — Phase 1 priority spec
+# ai-video measure-canonical-decision-ui-pacing — Phase 1 priority spec
 
 > **Status**: SPEC ONLY (script to be built post-matadero ship)
 > **Trigger**: Hard Rule #19 EXPANSION 2026-05-18 ("NEVER ESTIMATE, ALWAYS MEASURE") + GAP #16 countdown duration USER-VALIDATED + GAP #21 per-segment WPM intra-speaker variance + canonical_validation_status pending_video_measurement flags in PAUTA-MASTER + INGENIERO-PAUTA + SPEC schema v8.
@@ -35,7 +35,7 @@ sources:
   - /videosref_elige_tu_compa/ScreenRecording_05-13-2026 11-25-03_1.MP4  # ref-13 miro+bryan
 ```
 
-Per-ref existing data: `referent-analysis/ref-XX/metadata.json` + `transcription.json` + `ui-elements.json`.
+Per-ref existing data: `data/referent-analysis/ref-XX/metadata.json` + `transcription.json` + `ui-elements.json`.
 
 ---
 
@@ -161,7 +161,7 @@ Per-ref existing data: `referent-analysis/ref-XX/metadata.json` + `transcription
 ### 4.1 Per-ref measurements JSON
 
 ```
-referent-analysis/empirical-decision-ui-pacing/
+data/referent-analysis/empirical-decision-ui-pacing/
 ├── ref-03-measurements.json
 ├── ref-06-measurements.json
 ├── ref-08-measurements.json

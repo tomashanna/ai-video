@@ -101,7 +101,7 @@ Un video muestra **los DOS recorridos completos, uno y luego el otro** (= el cou
 
 ### 🟦 Tagging canónico — cómo mapea al guard estructural
 
-> Para que el guard `audit-spec-structure-vs-canonical.py` enforce el invariante (foil fuera del played path), cada video taguea sus `section_id` así:
+> Para que el guard `ai-video audit-spec-structure-vs-canonical` enforce el invariante (foil fuera del played path), cada video taguea sus `section_id` así:
 
 - **Recorrido JUGADO** (el del jugador que elegís = protagonista) → `setup_pre_decision` → `decision_N` → `consequence_*` (= el played path; sus compuertas son las que cuenta el guard).
 - **Recorrido del FOIL** (el contraste, el camino no-elegido) → `counterfactual_*` (opening o final). La **estrella foil** aparece SOLO acá + en `hook` + `cliffhanger`. **NUNCA en el played path.**
@@ -112,7 +112,7 @@ Un video muestra **los DOS recorridos completos, uno y luego el otro** (= el cou
 
 ## §5 — LAS DECISIONES = JUGADAS (compuertas)
 
-- 🟩 **Compuertas del recorrido jugado (played path):** 2 (favorito) a 3 (no-favorito) — banda canónica; el guard `audit-spec-structure-vs-canonical.py` flagea >3. El recorrido del foil = `counterfactual_*` (ver §4 tagging).
+- 🟩 **Compuertas del recorrido jugado (played path):** 2 (favorito) a 3 (no-favorito) — banda canónica; el guard `ai-video audit-spec-structure-vs-canonical` flagea >3. El recorrido del foil = `counterfactual_*` (ver §4 tagging).
 - 🟦 **✓ = avanza** (sigue el plano hacia el arco) · **✗ = perdés la jugada Y el partido** (inserto corto dead-end; luego el video sigue por el camino correcto).
 - 🟩 **Tipos distintos** por compuerta (regate/encare, pase/visión, definición), presión escalando zona por zona.
 - 🟥 **"B" no siempre correcta** — rotar qué opción paga.
@@ -221,7 +221,7 @@ Un video muestra **los DOS recorridos completos, uno y luego el otro** (= el cou
 
 - Cada **compuerta** = un micro-evento editorial (setup de la jugada → pregunta → countdown 3-2-1 + botones A/B + loading bar → consecuencia ✗ dead-end / ✓ avanza). El pacing técnico de ese micro-evento es agnóstico → `../choice-format-core/INGENIERO-CHOICE-CORE.md §1`.
 - Las compuertas se distribuyen **a lo largo del recorrido**, escalando con la zona del campo (la cancha es la línea de tiempo §4): compuerta temprana en zona de creación (mediocampo/banda), compuerta tardía en zona de definición (borde del área / mano a mano). 🟩 La posición exacta de cada compuerta dentro del recorrido es variabilidad de diseño.
-- **Cuántas:** 2 (favorito) a 3 (no-favorito) **por recorrido jugado** — banda §4/§5; el guard `audit-spec-structure-vs-canonical.py` flagea >3.
+- **Cuántas:** 2 (favorito) a 3 (no-favorito) **por recorrido jugado** — banda §4/§5; el guard `ai-video audit-spec-structure-vs-canonical` flagea >3.
 
 ### 🟦 El PIVOTE — el único corte no-continuo permitido
 
@@ -293,7 +293,7 @@ Un video muestra **los DOS recorridos completos, uno y luego el otro** (= el cou
 
 ## §10.C — PLANTILLA DE CADENA CAUSAL (checklist pre-SPEC)
 
-> ⛔ **El arquitecto corre esta plantilla por video ANTES de emitir el SPEC** (es la bajada operativa de la cadena de §10 + la self-validation de HR#27). Cada eslabón debe cerrar; si uno no cierra, el SPEC NO sale. Complementa (no reemplaza) los validators estructurales que el arquitecto corre pre-emit (`audit-spec-structure-vs-canonical.py` + `audit-spec-narrative-coherence.py`) + el `NO-HORROR-GUARD.md`.
+> ⛔ **El arquitecto corre esta plantilla por video ANTES de emitir el SPEC** (es la bajada operativa de la cadena de §10 + la self-validation de HR#27). Cada eslabón debe cerrar; si uno no cierra, el SPEC NO sale. Complementa (no reemplaza) los validators estructurales que el arquitecto corre pre-emit (`ai-video audit-spec-structure-vs-canonical` + `ai-video audit-spec-narrative-coherence`) + el `NO-HORROR-GUARD.md`.
 
 **Eslabón por eslabón (marcá cada uno por recorrido):**
 
@@ -354,8 +354,8 @@ Consultar `video-log.md` ANTES de diseñar. Rotar: **liga/equipos** (no repetir 
 |------|--------------------|
 | **Códigos / scripts de edición** (build_clip_atomic, cp*.py, effects, captions, etc.) | `ai-video-production/templates/` (Capa A) |
 | **Comunicación entre agentes** (arquitecto / ingeniero / auditor, handoffs `CP[N]-handoff.md`) | `creative-director/master-flow-v2/` + `AUDITOR-PROTOCOL.md` + `HANDOFF-PROTOCOL.md` |
-| **Pipeline CP0 → CP5** + gates obligatorios por CP | `master-flow-v2` + CLAUDE.md |
-| **8 gates pre-render** + dual quality bar + **Gemini QA** (audit-frames, audit-gemini-calibrated, audit-audio, continuity) | CLAUDE.md § Pre-render gate |
+| **Pipeline CP0 → CP5** + gates obligatorios por CP | `master-flow-v2` + docs/OPERATING-MANUAL.md |
+| **8 gates pre-render** + dual quality bar + **Gemini QA** (audit-frames, audit-gemini-calibrated, audit-audio, continuity) | docs/OPERATING-MANUAL.md § Pre-render gate |
 | **Ensamblado HYBRID per-clip atomic** + captions Whisper word-timed (HR#3/#25/#30) | `PIPELINE.md §13` |
 | **MODEL-CAPABILITIES** (clip_max, pace WPM, constraints Gemini) HR#28/#29 | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` |
 | **Cost cap 25%** sobre último video exitoso · **TDD** (HR#26) · medir-no-estimar | SYSTEM-LEARNINGS-V3-V4 |

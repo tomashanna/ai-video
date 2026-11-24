@@ -48,7 +48,7 @@
 
 - ⛔ **Sora 2:** API shutdown 2026-09-24. NO incorporar nuevos workflows.
 - ⛔ **Imagen 4:** retirement 2026-06-30. Migrar antes de mayo 30.
-- ⛔ **Midjourney v7:** sin API pública. NO scriptable desde `scripts/image.py`. Skip para automation.
+- ⛔ **Midjourney v7:** sin API pública. NO scriptable desde `ai-video image`. Skip para automation.
 - ⛔ **NSFW / horror gore:** Veo 3.1, Sora 2, Midjourney, Ideogram, Runway, Imagen rechazan. Para gore explícito: Wan 2.7 self-host o Hunyuan 1.5 cozy. Para horror "suggestive": Kling 2.5 con prompts cuidadosos / Hailuo 2.3.
 - ⛔ **Watermark:** Sora 2 fuerza watermark en todos los tiers. Pika free-tier también. NUNCA usar tier con watermark para publicación final.
 
@@ -87,7 +87,7 @@
 │   NO → ir a Q2                                                │
 └─────────────────────────────────────────────────────────────┘
 
-> ⚠️ **HOOK VIRAL OVERRIDE**: si el shot está en primeros 30s del Reel (hard rule #6 CLAUDE.md + `animation_30s_rule.md` memoria), Kling 2.5 Turbo Pro es default INDEPENDIENTEMENTE de motion narrativo. Razón: hook viral leaderboard-validated en § 1.1 cheat sheet. Hailuo entra como default para motion narrativo SOLO en escenas data-start ≥ 30s.
+> ⚠️ **HOOK VIRAL OVERRIDE**: si el shot está en primeros 30s del Reel (hard rule #6 docs/OPERATING-MANUAL.md + `animation_30s_rule.md` memoria), Kling 2.5 Turbo Pro es default INDEPENDIENTEMENTE de motion narrativo. Razón: hook viral leaderboard-validated en § 1.1 cheat sheet. Hailuo entra como default para motion narrativo SOLO en escenas data-start ≥ 30s.
 
 ┌─────────────────────────────────────────────────────────────┐
 │  Q2: ¿Escena es CINEMATIC ESTÁTICA con character preservation?│
@@ -187,7 +187,7 @@
 
 **Anti-pattern (rationale de la conexión)**: prompt de 1 línea "Maikol uncanny en faro horror atmosphere" → cheap model produce slop. Mismo prompt expandido 5-clause + camera + lighting + literal physical mood → cheap model competitivo con tier HERO.
 
-**Dependencia crítica del SPEC**: si SPEC v6 tiene gap en `scene_context.who_does_what` para algún shot → ENGINEER ESCALA al arquitecto antes de generar prompt. Sin scene description completa, premium prompt es imposible. Ver hard rule #20 + #21 CLAUDE.md.
+**Dependencia crítica del SPEC**: si SPEC v6 tiene gap en `scene_context.who_does_what` para algún shot → ENGINEER ESCALA al arquitecto antes de generar prompt. Sin scene description completa, premium prompt es imposible. Ver hard rule #20 + #21 docs/OPERATING-MANUAL.md.
 
 ---
 
@@ -449,7 +449,7 @@
 
 **Default model in this project**: `kwaivgi/kling-v2.5-turbo-pro` (Replicate).
 
-**Schema diffs vs v2.0** (impacts `scripts/video.py` → `build_input()`):
+**Schema diffs vs v2.0** (impacts `ai-video video` → `build_input()`):
 - `cfg_scale` REMOVIDO (deprecated, ignored if sent)
 - `guidance_scale` deprecated / ignored
 - Accepts: `start_image`, `prompt`, `duration` (5 or 10), `negative_prompt`
@@ -1254,7 +1254,7 @@ Cada job descartado = $0.35-0.70 perdido. Re-Klingear tras rewrite = 2x costo.
 **Evidence**
 - Refs: [Vertex Imagen 4 docs](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/imagen/4-0-generate) · [Subject customization (Imagen 3)](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/image/subject-customization)
 
-**⛔ ACCIÓN:** Auditar `scripts/image.py` para llamadas a `imagen-4.0-*`. Migrar a `gemini-2.5-flash-image-preview` o forward a Nano Banana Pro. Plazo: 2026-05-30 (new access blocking) / 2026-06-30 (full shutdown).
+**⛔ ACCIÓN:** Auditar `ai-video image` para llamadas a `imagen-4.0-*`. Migrar a `gemini-2.5-flash-image-preview` o forward a Nano Banana Pro. Plazo: 2026-05-30 (new access blocking) / 2026-06-30 (full shutdown).
 
 ---
 
@@ -1563,7 +1563,7 @@ Cada job descartado = $0.35-0.70 perdido. Re-Klingear tras rewrite = 2x costo.
   - [Vertex model versions](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions)
   - [Gemini API deprecations](https://ai.google.dev/gemini-api/docs/deprecations)
   - [Google Dev forum](https://discuss.google.dev/t/imagen-4-0-deprecation-and-canada-hosted-alternatives/342923)
-- **Acción director:** Auditar `scripts/image.py` antes 2026-05-30. Migrar a `gemini-2.5-flash-image` (Nano Banana) o forward a Nano Banana Pro.
+- **Acción director:** Auditar `ai-video image` antes 2026-05-30. Migrar a `gemini-2.5-flash-image` (Nano Banana) o forward a Nano Banana Pro.
 
 ### 4.9 LTX legacy NO viable como draft tier
 - **Verdict:** **REFUTED** ❌

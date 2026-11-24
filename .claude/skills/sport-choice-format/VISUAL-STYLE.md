@@ -92,9 +92,9 @@
 | Captions principales | Anton / Bebas Neue | 80px (68px si frase >8 palabras) | Hereda fonts de horror, **tono sport** (deportivo broadcast, no siniestro) |
 | Choice labels A/B (equipos) | Anton | 64px | Color = color del equipo correspondiente |
 | **Name labels jugadores** (SAKA / DEMBÉLÉ) | Anton | **76px+ (GRANDES)** | ⭐ Los name labels son GRANDES — el viewer debe leer al instante quién es cada crack. Monospaced safe-zone Y11.5 (hereda `choice-format-core` UI safe zones) |
-| Countdown 3-2-1 | Anton | 400px | AVU universal (`ai-video-production/templates/avu-library/`) |
+| Countdown 3-2-1 | Anton | 400px | AVU universal (`assets/avu/`) |
 | Marcador / minuto (opcional broadcast) | Bebas Neue / monospaced | 40-52px | Lower-third estilo broadcast (minuto, marcador) si aplica |
-| Lower thirds | Variable según elemento (ver `elements.json`) | Variable | – |
+| Lower thirds | Variable según elemento (ver `templates/hyperframes/elements.json`) | Variable | – |
 
 **Drop shadow obligatorio en todos los textos**: receta canónica universal en `ai-video-production/ELEMENTS-LIBRARY.md` § "Receta universal — Drop shadow para texto sobre IA-generated images" (4 strokes diagonales + drop shadow + glow envelope). **NO duplicar acá** — apuntar. (Hereda regla referent-validated: drop shadow > thick stroke.)
 

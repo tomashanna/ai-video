@@ -8,7 +8,7 @@
 
 **Universal** (convención + JSON catálogo):
 - Sistema de "elements" como concepto se aplica a CUALQUIER template
-- `elements.json` en raíz cataloga todo
+- `templates/hyperframes/elements.json` en raíz cataloga todo
 - Convenciones de naming, duración, aspect-ratio
 
 **Por estilo** (implementaciones concretas):
@@ -22,18 +22,18 @@
 
 ```
 AI video 1/
-├── elements.json                ← Catálogo machine-readable (raíz)
-├── countdown-pulse/             ← horror-bw-crt style
-├── countdown-glitch/            ← horror-bw-crt style
-├── countdown-slam/              ← horror-bw-crt style
-├── loader-bar/                  ← horror-bw-crt style
-├── loader-radial/               ← horror-bw-crt style
-├── loader-segments/             ← horror-bw-crt style
-├── lower-blackletter/           ← horror-bw-crt style
-├── lower-typewriter/            ← horror-bw-crt style
-├── lower-stamp/                 ← horror-bw-crt style
-├── lower-handwritten/           ← horror-bw-crt style
-└── lower-distressed/            ← horror-bw-crt style
+├── templates/hyperframes/elements.json                ← Catálogo machine-readable (raíz)
+├── templates/hyperframes/countdown-pulse/             ← horror-bw-crt style
+├── templates/hyperframes/countdown-glitch/            ← horror-bw-crt style
+├── templates/hyperframes/countdown-slam/              ← horror-bw-crt style
+├── templates/hyperframes/loader-bar/                  ← horror-bw-crt style
+├── templates/hyperframes/loader-radial/               ← horror-bw-crt style
+├── templates/hyperframes/loader-segments/             ← horror-bw-crt style
+├── templates/hyperframes/lower-blackletter/           ← horror-bw-crt style
+├── templates/hyperframes/lower-typewriter/            ← horror-bw-crt style
+├── templates/hyperframes/lower-stamp/                 ← horror-bw-crt style
+├── templates/hyperframes/lower-handwritten/           ← horror-bw-crt style
+└── templates/hyperframes/lower-distressed/            ← horror-bw-crt style
 ```
 
 **Estado actual**: todos los componentes son estilo `horror-bw-crt`. Cuando aparezca un template que requiera otro estilo, se creará una sub-biblioteca paralela.
@@ -46,9 +46,9 @@ AI video 1/
 
 | ID | Path | Variant | Duración | Cuándo usar |
 |---|---|---|---|---|
-| `countdown-pulse` | `countdown-pulse/index.html` | SMPTE film-leader | 3.5s | Cuando querés look "cine clásico" |
-| `countdown-glitch` | `countdown-glitch/index.html` | VHS static | 3.2s | Cuando querés look "VHS roto", más urgente |
-| `countdown-slam` | `countdown-slam/index.html` | Impact | ~3s | Cuando querés impacto físico (slam down) |
+| `countdown-pulse` | `templates/hyperframes/countdown-pulse/index.html` | SMPTE film-leader | 3.5s | Cuando querés look "cine clásico" |
+| `countdown-glitch` | `templates/hyperframes/countdown-glitch/index.html` | VHS static | 3.2s | Cuando querés look "VHS roto", más urgente |
+| `countdown-slam` | `templates/hyperframes/countdown-slam/index.html` | Impact | ~3s | Cuando querés impacto físico (slam down) |
 
 **Para variedad entre videos**: pick random uno distinto al video anterior.
 
@@ -56,19 +56,19 @@ AI video 1/
 
 | ID | Path | Variant | Duración | Cuándo usar |
 |---|---|---|---|---|
-| `loader-bar` | `loader-bar/index.html` | Linear bar | 3.5s | Estándar, simple |
-| `loader-radial` | `loader-radial/index.html` | Circle ring SVG | 3.5s | Cuando querés algo más circular/moderno |
-| `loader-segments` | `loader-segments/index.html` | 12 segments | 3.5s | Cuando querés look "industrial" o tracking |
+| `loader-bar` | `templates/hyperframes/loader-bar/index.html` | Linear bar | 3.5s | Estándar, simple |
+| `loader-radial` | `templates/hyperframes/loader-radial/index.html` | Circle ring SVG | 3.5s | Cuando querés algo más circular/moderno |
+| `loader-segments` | `templates/hyperframes/loader-segments/index.html` | 12 segments | 3.5s | Cuando querés look "industrial" o tracking |
 
 ### Lower-thirds
 
 | ID | Path | Variant | Font | Cuándo usar |
 |---|---|---|---|---|
-| `lower-blackletter` | `lower-blackletter/index.html` | Gothic medieval | UnifrakturMaguntia | Para introducir personajes/lugares dramáticos |
-| `lower-typewriter` | `lower-typewriter/index.html` | Typewriter | Special Elite | Para "evidencia" / "investigación" |
-| `lower-stamp` | `lower-stamp/index.html` | Impact stamp | Bebas Neue | Para reveals impactantes |
-| `lower-handwritten` | `lower-handwritten/index.html` | Manuscript | Caveat | Para algo más personal/íntimo |
-| `lower-distressed` | `lower-distressed/index.html` | Worn | (varía) | Para look "archivo viejo" |
+| `lower-blackletter` | `templates/hyperframes/lower-blackletter/index.html` | Gothic medieval | UnifrakturMaguntia | Para introducir personajes/lugares dramáticos |
+| `lower-typewriter` | `templates/hyperframes/lower-typewriter/index.html` | Typewriter | Special Elite | Para "evidencia" / "investigación" |
+| `lower-stamp` | `templates/hyperframes/lower-stamp/index.html` | Impact stamp | Bebas Neue | Para reveals impactantes |
+| `lower-handwritten` | `templates/hyperframes/lower-handwritten/index.html` | Manuscript | Caveat | Para algo más personal/íntimo |
+| `lower-distressed` | `templates/hyperframes/lower-distressed/index.html` | Worn | (varía) | Para look "archivo viejo" |
 
 ---
 
@@ -77,7 +77,7 @@ AI video 1/
 ### Opción 1: Sub-composition via data-composition-src
 
 ```html
-<div data-composition-src="countdown-pulse/index.html"
+<div data-composition-src="templates/hyperframes/countdown-pulse/index.html"
      data-start="11" 
      data-duration="3.5"
      data-track-index="50"></div>
@@ -102,14 +102,14 @@ Cuando aparezca un template que requiera identidad visual distinta:
 
 1. Crear: `elements/<estilo-nuevo>/`
 2. Generar versiones de countdowns/loaders/lower-thirds en ese estilo
-3. Actualizar `elements.json` con sub-categoría bajo `style_libraries`
+3. Actualizar `templates/hyperframes/elements.json` con sub-categoría bajo `style_libraries`
 4. El `PATTERNS.md` del nuevo formato referencia explícitamente `use elements/<estilo-nuevo>/*`
 
 ---
 
-## Sistema de tags en elements.json
+## Sistema de tags en templates/hyperframes/elements.json
 
-`elements.json` tagga cada elemento para discovery. Útil para queries:
+`templates/hyperframes/elements.json` tagga cada elemento para discovery. Útil para queries:
 
 ```python
 # "Dame todos los countdowns horror"
@@ -192,7 +192,7 @@ Pickear distinto al video anterior. Doc: `<formato>/video-log.md`.
 
 Si necesitás variación, copy + adapt en tu proyecto.
 
-### Regla 5: Actualizar elements.json al agregar componente nuevo
+### Regla 5: Actualizar templates/hyperframes/elements.json al agregar componente nuevo
 
 Sin esto, el sistema no encuentra tu nuevo componente.
 

@@ -15,7 +15,7 @@
 | **`cost_total_usd`** | Suma final API + Replicate per video | Engineer reporta CP5 closeout |
 | **`gaps_new / codified / deprecated`** | Trio de gap velocity per video | Auditor extrae de GAPS-LOG diff |
 | **`user_overrides_count`** | Veces que Rule D PRECEDENCE invocada (user reject/redirect system PASS) | Auditor cuenta en session log |
-| **`audit_vs_referent_final_score`** | `audit-against-referent.py` final % (gate b dual-quality) | Engineer reporta final |
+| **`audit_vs_referent_final_score`** | `ai-video audit-against-referent` final % (gate b dual-quality) | Engineer reporta final |
 | **`user_perceptual_score`** ⭐ | Manual 1-10 que USER provee post-PUBLISH ("¿qué tan satisfecho?") | **USER (manual input 30s post-PUBLISH)** |
 | **`gemini_user_delta`** ⭐ | Calculado: `gemini_holistic_final - user_perceptual_score` (signal de inflación) | Auditor calcula auto |
 | **`production_duration_days`** | Wall-clock real (first commit → PUBLISH) | Auditor extrae git log |
@@ -42,7 +42,7 @@
 
 ⭐⭐ = **gemini_calibrated** uses prompt v2 with 11-datapoint few-shot calibration. **Mean abs Δ_calibrated = 0.227** (vs generic mean abs Δ ~2.0). Calibrated prompt narrows gap **~10x** for canonical refs. ONE outlier: matadero +2.00 needs investigation (Gemini sees features GAPS-LOG memos claim absent — auditing reality vs codified gaps required).
 
-*audit_vs_ref cinema estimate — final número no recorded explícitamente en handoffs cinema; needs Auditor backfill from `audit-against-referent.py` cinema run.
+*audit_vs_ref cinema estimate — final número no recorded explícitamente en handoffs cinema; needs Auditor backfill from `ai-video audit-against-referent` cinema run.
 
 ### Notas retroactive matadero v1
 - Iter 6 Gemini 10/10 (FIRST TIME crossed gate a) then iter 7 polish dropped to 9.5/10 (still above ≥9.7 threshold). Average iter 6+7 = 9.75 PASS gate a cumulative.
@@ -213,7 +213,7 @@ User confirmed Gemini Enterprise (Business Edition) includes Veo 3.1 as capacity
 - Per-clip pipeline simplification: Veo bundles audio in clip = skip separate TTS/SFX for character shots
 - Production wall-clock: ~25 min generation for 22 shots sequential (parallel TBD)
 
-**Production script ready**: `<repo-root>/.claude/skills/ai-video-production/templates/scripts/veo3.py` (3-tier preview/fast/lite + httpx download + image-ref support)
+**Production script ready**: `ai-video veo3` (3-tier preview/fast/lite + httpx download + image-ref support)
 
 ### Matadero outlier RESOLVED
 

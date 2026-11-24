@@ -37,14 +37,14 @@ Todo proyecto de video se define por DOS ejes ortogonales (ver `DELIVERY-FORMATS
 **⚠️ Gates obligatorios del flow** (cubierto en `video-director/WORKFLOW.md` Sub-loop HTML/GSAP):
 
 Todo proyecto de video pasa por **8 gates bloqueantes** antes del stop point pre-animation:
-0. ⛔ `scripts/audit-spec-completeness.py` (Gate 0 BLOQUEANTE PRIORIDAD ABSOLUTA — SPEC asset_list + ui_active inventory vs actual filesystem + index.html. Falla = STOP point INVÁLIDO. Caso disparador: matadero CP5 2026-05-19 gap #13)
+0. ⛔ `ai-video audit-spec-completeness` (Gate 0 BLOQUEANTE PRIORIDAD ABSOLUTA — SPEC asset_list + ui_active inventory vs actual filesystem + index.html. Falla = STOP point INVÁLIDO. Caso disparador: matadero CP5 2026-05-19 gap #13)
 1. `npx hyperframes lint` (sintaxis)
-2. `scripts/audit-narrative.py` (visibilidad <1s, z-index, orphans)
-3. `scripts/render-lock.py acquire <project>` (coordinación)
-4. `scripts/audit-frames.py` (Gemini Vision frame-by-frame — UI overlaps, frames negros, etc.)
-5. `scripts/audit-audio.py` (narración coverage >40% + música presente + sin gaps narrativos >2s — detecta lo que Gemini holístico NO ve. Caso disparador: pueblo-fantasma-desierto v2 2026-05-13)
-6. `scripts/continuity-check.py` (NARRATIVE.md vs index.html — caminos narrativos rotos, hitos under-narrated, balance temporal)
-7. `scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>` (bloquea sub-9.7)
+2. `ai-video audit-narrative` (visibilidad <1s, z-index, orphans)
+3. `ai-video render-lock acquire <project>` (coordinación)
+4. `ai-video audit-frames` (Gemini Vision frame-by-frame — UI overlaps, frames negros, etc.)
+5. `ai-video audit-audio` (narración coverage >40% + música presente + sin gaps narrativos >2s — detecta lo que Gemini holístico NO ve. Caso disparador: pueblo-fantasma-desierto v2 2026-05-13)
+6. `ai-video continuity-check` (NARRATIVE.md vs index.html — caminos narrativos rotos, hitos under-narrated, balance temporal)
+7. `ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>` (bloquea sub-9.7)
 
 Los 8 scripts (audit-spec-completeness, lint, audit-narrative, render-lock, audit-frames, audit-audio, continuity-check, qa-gate) se copian del `templates/scripts/` en el paso 2 abajo. Sin estos scripts copiados al proyecto, el flow NO puede llegar al stop point.
 
@@ -56,7 +56,7 @@ Los 8 scripts (audit-spec-completeness, lint, audit-narrative, render-lock, audi
 
 ```
 AI video 1/                                       ← raíz workspace
-├── PAUTA.md, NARRATION-RULES.md, FEEDBACK-LOOP.md  ← entry docs generales
+├── PAUTA.md, NARRATION-RULES.md, docs/FEEDBACK-LOOP.md  ← entry docs generales
 ├── .claude/skills/
 │   ├── ai-video-production/                      ← skill TOOLKIT (general)
 │   │   └── templates/scripts/{tts,image,sfx,captions}.py  ← FUENTE de scripts
@@ -127,13 +127,28 @@ Implicaciones operativas:
 
 ---
 
-## 1. CREAR DIRECTORIO DEL PROYECTO
+## 1. ENTORNO + DIRECTORIO DEL PROYECTO
 
 ```bash
-cd "<repo-root>"
-mkdir -p "<TU_PROYECTO>"/{assets,scripts,renders}
-mkdir -p "<TU_PROYECTO>/assets"/{sfx,clips-atomic,concat,music,ambient,narration}
-cd "<TU_PROYECTO>"
+# 0. Una vez por clon: entorno + CLI (los gates NO se copian: son comandos versionados y testeados)
+uv sync --all-extras                 # o: uv sync --extra providers --extra media
+cp .env.example .env                 # completar GEMINI_API_KEY / ELEVENLABS_API_KEY / REPLICATE_API_TOKEN
+uv run ai-video doctor               # ffmpeg, extras y keys (nunca imprime valores)
+
+# 1. Proyecto nuevo — vive en projects/<PROYECTO>/ (git-ignored); el SPEC en creative-specs/<id>.yaml
+mkdir -p "projects/<PROYECTO>"/{assets/sfx,renders}
+cp templates/project/hyperframes.json "projects/<PROYECTO>/hyperframes.json"
+cd "projects/<PROYECTO>"
+
+# 2. Templates propios del formato (Capa B), ej. horror-choice-format:
+FORMAT_DIR="../../.claude/skills/<format>-format/templates"
+cp "$FORMAT_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
+cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
+cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
+
+# 3. Verificación (NO continuar si falla): SPEC válido + todos los gates disponibles
+uv run ai-video validate-spec ../../creative-specs/<id>.yaml
+uv run ai-video list                 # gates, builders y providers disponibles
 ```
 
 **Convención de naming**: `kebab-case`, descriptivo. Ejemplos: `elige-companero`, `bosque-abandonado`, `bosque-encantado`, `faro-vacio`.
@@ -161,80 +176,34 @@ Los 4 scripts Paso 4 (`concat-clips-with-audio` / `apply-effects-between-clips` 
 
 ---
 
-## 2. COPIAR TEMPLATES (genéricos del toolkit)
+## 2. TOOLKIT DISPONIBLE (no se copia nada)
 
-Desde la raíz del proyecto nuevo:
+Todo el toolkit vive en el paquete `ai_video` (`src/ai_video/`) y se invoca con `uv run ai-video <tool>`
+desde cualquier carpeta del repo. `uv run ai-video list` muestra la lista completa; los grupos son:
 
-```bash
-SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
+| Grupo | Tools |
+|---|---|
+| Generación (APIs pagas, con presupuesto + retries) | `tts`, `sfx`, `image`, `video` (Kling), `veo3`, `captions` (Whisper local), `gemini-midexec-vision` |
+| Gate 0 + gates canónicos | `audit-spec-completeness`, `audit-narrative`, `render-lock`, `audit-frames`, `audit-audio`, `continuity-check`, `qa-gate` |
+| Per-clip atomic (HR#23/#25) | `build-clip-atomic`, `quality-gate-per-clip`, `audit-shot-spec-compliance`, `orchestrator-cp-by-cp` |
+| Calidad calibrada (HR#1) | `audit-gemini-calibrated` (prompt v4 empaquetado en `src/ai_video/prompts/`) |
+| Paso 4 HYBRID | `concat-clips-with-audio`, `apply-effects-between-clips`, `apply-cross-clip-music`, `build-video-hybrid` |
+| Validators de SPEC | `validate-spec` (schema v11) + `audit-spec-*`, `audit-language-style`, `audit-variant-coverage`, … |
 
-# Scripts de producción (general) — incluye los 8 gates obligatorios + Phase 2 per-clip atomic (2026-05-20):
-#   - tts.py, image.py, sfx.py, captions.py, video.py (generación)
-#   - audit-spec-completeness.py (⛔ gate 0 PRIORIDAD ABSOLUTA — SPEC inventory diff, added 2026-05-19)
-#   - (gate 1 = `npx hyperframes lint` — sintaxis HTML, NO es script copiado)
-#   - audit-narrative.py (gate 2 — visibilidad <1s, z-index, orphans)
-#   - render-lock.py    (gate 3 — coordinación entre agentes)
-#   - audit-frames.py   (gate 4 — Gemini Vision frame-by-frame)
-#   - audit-audio.py    (gate 5 — narración coverage >40% + música presente + sin gaps >2s)
-#   - continuity-check.py (gate 6 — NARRATIVE.md vs index.html: caminos rotos, hitos under-narrated)
-#   - qa-gate.py        (gate 7 — bloquea sub-9.7 pre-animation)
-#   - audit-frames-granular.py (red adicional, NO es uno de los 8 gates canónicos — sentinel patterns: audio-visual mismatch, dup text, AVU sync, caption Y canonical)
-#   ⭐ NEW Phase 2 per-clip atomic (2026-05-20, Hard Rule #23):
-#   - build_clip_atomic.py        (steps 2-5 atomic builder per clip: TTS + SFX + ambient + mix + mux + caption sidecar)
-#   - quality_gate_per_clip.py    (Quality Gate Agent — per-clip verdict ≥9.0 PASS / 7.0-8.9 iterate / <7.0 escalate)
-#   - gemini_midexec_vision.py    (mid-execution Gemini Vision hook per clip ANTES de concat = 10x más barato detectar bugs)
-#   ⭐⭐ NEW Phase 3 calibrated v4 + Veo enterprise (2026-05-21, Hard Rule #1 updated):
-#   - audit-gemini-calibrated.py  (Tomás-calibrated Gemini scoring, 10-dim EXECUTION CONTINUITY 30% — primary quality gate forward)
-#   - veo3.py                     (Veo 3.1 generation via Gemini API enterprise FREE, native audio+lip-sync, 3 tiers preview/fast/lite)
-#   ⭐⭐⭐ NEW Phase 4 enforcement scripts BEFORE V4+ (2026-05-21 PM late, Hard Rule #24 + #25):
-#   - build_clip_atomic.py        (EXTENDED with caption-burn per clip — Whisper-from-audio + ffmpeg drawtext = caption-audio LOCKED frame level, drift physically impossible)
-#   - audit-shot-spec-compliance.py (Script B — per-shot SPEC compliance verifier, 8 dimensions including dim 0 scope creep + caption-audio sync + character anchor + visual+action match — runs DURING CP4 per shot, NOT post-CP5)
-#   - orchestrator-cp-by-cp.py    (Script C — state machine enforcing per-CP gates structurally, override flag + ARCHITECTURAL-DECISIONS.md log, timeout 50 min default, cost cap $5 default)
-#   ⛔ MANDATORY for V4+: NO video production without these 3 scripts present + adversarial tested (per V4-LAUNCH-CHECKLIST.md)
-cp "$SKILL_DIR/scripts/"*.py scripts/
-# Bug #14 fix Sub-Fase 3A.2 2026-05-24: cp glob no recursivo, lib/ subdir requires explicit copy
-mkdir -p scripts/lib && cp "$SKILL_DIR/scripts/lib/"*.py scripts/lib/
-
-# Templates de proyecto genéricos
-cp "$SKILL_DIR/.env-TEMPLATE"                            .env
-cp "$SKILL_DIR/hyperframes.json-TEMPLATE"                hyperframes.json
-cp "$SKILL_DIR/calibrated-gemini-prompt-v4.txt"          .  # calibrated v4 prompt template (NEW 2026-05-21)
-cp "$SKILL_DIR/calibrated-gemini-prompt-v2.txt"          .  # v2 symlink (retrocompat — points to v4)
-
-# (Sin POST-MORTEM — deprecated 2026-05-15; learnings van a video-log.md del formato)
-```
-
-**Verificación post-copy** — confirmar que TODOS los scripts del flow están presentes:
-```bash
-for script in tts.py image.py sfx.py captions.py video.py audit-spec-completeness.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py qa-gate.py build_clip_atomic.py quality_gate_per_clip.py gemini_midexec_vision.py audit-gemini-calibrated.py veo3.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py audit-variant-coverage.py audit-anchor-coverage.py; do
-  [ -f scripts/$script ] && echo "✓ scripts/$script" || echo "✗ MISSING scripts/$script"
-done
-# Plus check calibrated prompt template
-[ -f calibrated-gemini-prompt-v4.txt ] && echo "✓ calibrated-gemini-prompt-v4.txt" || echo "✗ MISSING calibrated-gemini-prompt-v4.txt"
-```
-
-Si falta alguno → re-correr el `cp` desde `$SKILL_DIR`. Los scripts marcados ⭐ (audit-spec-completeness, audit-narrative, render-lock, audit-frames, audit-frames-granular, qa-gate) son **gates bloqueantes** del workflow — sin ellos, el agente no puede llegar al stop point pre-animation. Los 3 scripts Phase 2 per-clip atomic (`build_clip_atomic.py` + `quality_gate_per_clip.py` + `gemini_midexec_vision.py`) son **MANDATORY para video #3+** per Hard Rule #23. Los 2 scripts NEW Phase 3 (`audit-gemini-calibrated.py` + `veo3.py`) + `calibrated-gemini-prompt-v4.txt` son **MANDATORY para video #3+** per Hard Rule #1 updated 2026-05-21 — sin ellos, no se puede aplicar el calibrated quality gate primario.
-
-**⛔ NEW Hard Rule #26 enforcement (codificado 2026-05-23 Sub-Fase 3A)** — **Cada script en el copy list mandatorio debe tener su `test_*.py` companion sidecar.** Verificación adicional:
+Cada tool tiene tests en `tests/unit/` (HR#26: un tool nuevo entra con su test). Para verificar el entorno:
 
 ```bash
-# Plus check test sidecars (Hard Rule #26 enforcement)
-for script in build_clip_atomic.py audit-shot-spec-compliance.py orchestrator-cp-by-cp.py audit-spec-completeness.py qa-gate.py; do
-  test_file="scripts/test_${script}"
-  [ -f "$test_file" ] && echo "✓ $test_file" || echo "✗ MISSING test_$script — Hard Rule #26 violation"
-done
+uv run ai-video doctor && uv run pytest -q
 ```
-
-Scripts SIN test sidecar son flagged. Engineer NO declara script complete sin tests passing. Auditor NO acepta merge sin test sidecar present + passing. Tests deben validar contra V4 archive (`cerro-aislado-v4/`) como ground truth caso real cuando posible. Forward Sprint M validators ship with test sidecars from day 1.
 
 ### 📍 Paths canónicos referenciados (cierre hidden gap 3 — 2026-05-23)
 
-- `elements.json` se ubica en **root del proyecto** (`<repo-root>/elements.json`), NO en `library/` ni en `.claude/skills/`. Esto es codificación canonical post inventory Sub-Fase 3A.
+- `templates/hyperframes/elements.json` se ubica en **root del proyecto** (`templates/hyperframes/elements.json`), NO en `assets/library/` ni en `.claude/skills/`. Esto es codificación canonical post inventory Sub-Fase 3A.
 
 Si vas a producir un video del formato horror-choice, copiar también los templates específicos del formato:
 
 ```bash
-HORROR_DIR="<repo-root>/.claude/skills/horror-choice-format/templates"
+HORROR_DIR=".claude/skills/horror-choice-format/templates"
 
 cp "$HORROR_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
 cp "$HORROR_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
@@ -247,50 +216,28 @@ Para un formato distinto, copiar de su skill correspondiente.
 
 ## 3. CONFIGURAR `.env`
 
-Editar y poner las API keys reales:
+`.env` vive en la raíz del repo (copiado de `.env.example`, git-ignored). Variables:
 
+- `GEMINI_API_KEY` → https://aistudio.google.com/apikey
+- `ELEVENLABS_API_KEY` → https://elevenlabs.io/app/settings/api-keys
+- `REPLICATE_API_TOKEN` → solo para animación image-to-video (Kling/Seedance/Hailuo según MODEL-BENCHMARK)
+- `AIVIDEO_BUDGET_USD` → tope de gasto estimado (el guard rechaza llamadas que lo superen)
+
+Verificar (nunca imprime los valores):
 ```bash
-nano .env
-```
-
-Necesarias:
-- `GEMINI_API_KEY` → https://aistudio.google.com/apikey (free tier alcanza)
-- `ELEVENLABS_API_KEY` → https://elevenlabs.io/app/settings/api-keys (paid ~$22/mes)
-- `REPLICATE_API_TOKEN` → solo si vas a usar animation AI para animar imágenes (Kling/Seedance/Hailuo según MODEL-BENCHMARK, ~$3/video)
-
-Verificar:
-```bash
-source .env
-[ -n "$GEMINI_API_KEY" ] && echo "✓ Gemini" || echo "✗ Gemini missing"
-[ -n "$ELEVENLABS_API_KEY" ] && echo "✓ ElevenLabs" || echo "✗ ElevenLabs missing"
+uv run ai-video doctor
 ```
 
 ---
 
-## 4. CREAR VIRTUALENV PYTHON
+## 4. DEPENDENCIAS
+
+Las gestiona `uv` desde `pyproject.toml` (lockfile `uv.lock`). No se crean venvs por proyecto:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install elevenlabs google-genai python-dotenv openai-whisper replicate
-deactivate
+uv sync --extra providers            # APIs (ElevenLabs, Gemini, Replicate)
+uv sync --extra providers --extra media   # + Whisper / OpenCV / Pillow (captions, frame audits)
 ```
-
-Verificación:
-```bash
-.venv/bin/python -c "import elevenlabs, google.genai, dotenv; print('✓ deps ok, elevenlabs', elevenlabs.__version__)"
-```
-
-Debe imprimir `✓ deps ok, elevenlabs 2.44.0` o superior.
-
-### Alternativa rápida (reusar venv existente)
-
-```bash
-ln -sf "<repo-root>/elige-companero/.venv" .venv
-```
-
-Funciona si estás en la misma máquina; rompe si moves el proyecto.
 
 ---
 
@@ -353,18 +300,18 @@ Ver `QA.md` dimensión #10 — agregado al prompt Gemini.
 
 ---
 
-## 6. STYLE_SUFFIX por formato en `scripts/image.py` (AGNÓSTICO por default)
+## 6. STYLE_SUFFIX por formato en `ai-video image` (AGNÓSTICO por default)
 
 El template es **agnóstico**: `STYLE_SUFFIX = ""` (no aplica estilo por default — Capa A NO asume género). Dos formas de dar el estilo de tu formato:
 
 **(a) Por call (recomendado, sin editar el script):**
 ```bash
-.venv/bin/python scripts/image.py -p "..." --style-suffix " <estilo de tu formato>" -o assets/...
+uv run ai-video image -p "..." --style-suffix " <estilo de tu formato>" -o assets/...
 ```
 
 **(b) Seteando la constante en tu copia** (si todas las imágenes llevan el mismo estilo):
 ```python
-# scripts/image.py
+# ai-video image
 STYLE_SUFFIX = " <estilo de tu formato>"   # horror: STYLE_SUFFIX = HORROR_SUFFIX (ya definido en el script)
 ```
 
@@ -377,7 +324,7 @@ STYLE_SUFFIX = " <estilo de tu formato>"   # horror: STYLE_SUFFIX = HORROR_SUFFI
 Copiar el esqueleto de un proyecto existente del mismo formato:
 
 ```bash
-cp "<repo-root>/bosque-abandonado/index-v2.html" index.html
+cp "bosque-abandonado/index-v2.html" index.html
 # Editar el <title> y limpiar el contenido por hito
 ```
 
@@ -391,7 +338,7 @@ Para formato nuevo: empezar con el esqueleto base (canvas vacío 1080×1920) y c
 ### TTS
 
 ```bash
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "Prueba de voz." \
   -o assets/_smoketest.mp3 && \
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/_smoketest.mp3 && \
@@ -403,7 +350,7 @@ Si imprime duración (~2s) y borra → OK.
 ### SFX
 
 ```bash
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "low sub-bass impact" -d 0.5 -o assets/sfx/_smoketest.mp3 && \
 ffprobe -v error -show_entries format=duration -of csv=p=0 assets/sfx/_smoketest.mp3 && \
 rm assets/sfx/_smoketest.mp3
@@ -412,7 +359,7 @@ rm assets/sfx/_smoketest.mp3
 ### Image
 
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "test prompt: simple black square" -o assets/_smoketest.png && \
 ls -la assets/_smoketest.png && \
 rm assets/_smoketest.png
@@ -431,7 +378,7 @@ Antes de pasar a producción del video, confirmar:
 - [ ] `.env` con API keys reales (Gemini + ElevenLabs mínimo)
 - [ ] `.venv/` creado con deps instaladas
 - [ ] `hyperframes.json` con nombre del proyecto
-- [ ] `image.py` personalizado con tu STYLE_SUFFIX si aplica
+- [ ] `ai-video image` personalizado con tu STYLE_SUFFIX si aplica
 - [ ] Templates del formato específico copiados (si vas a usar uno)
 - [ ] Smoke tests pasados (TTS + SFX + image)
 - [ ] Inputs creativos recolectados del usuario (según lo que pida el formato)
@@ -459,13 +406,13 @@ Para combo nuevo (genre o format no validado todavía):
 ## ERRORES COMUNES EN BOOTSTRAP
 
 ### `ModuleNotFoundError: No module named 'elevenlabs'`
-El venv no se activó o las deps no se instalaron. Re-run paso 4.
+Faltan los extras de providers: `uv sync --extra providers` (paso 4).
 
 ### `ELEVENLABS_API_KEY environment variable is not set`
-El script no encuentra `.env`. Verificar que `python-dotenv` esté instalado y que `.env` esté en la raíz del proyecto (no en `scripts/`).
+No hay key configurada. Copiar `.env.example` a `.env` en la raíz del repo y completar la key; verificar con `uv run ai-video doctor`.
 
-### `Gemini API key not found` en image.py
-Mismo problema. `load_dotenv()` busca `.env` en `PROJECT_ROOT` (el padre de `scripts/`). Confirmar que `.env` está en la raíz.
+### `Gemini API key not found` en ai-video image
+Mismo problema. La configuración se lee de variables de entorno o de `.env` en el directorio actual / raíz del repo. Verificar con `uv run ai-video doctor`.
 
 ### Hyperframes no reconoce el directorio
 Falta `hyperframes.json` o `index.html` en la raíz. Crear ambos antes de cualquier `hyperframes render`.
@@ -473,7 +420,7 @@ Falta `hyperframes.json` o `index.html` en la raíz. Crear ambos antes de cualqu
 ### SFX salen silenciosos
 Venv tiene `elevenlabs < 2.40` (sin `text_to_sound_effects`). Actualizar:
 ```bash
-.venv/bin/pip install --upgrade elevenlabs
+uv lock --upgrade-package elevenlabs && uv sync --extra providers
 ```
 
 ---

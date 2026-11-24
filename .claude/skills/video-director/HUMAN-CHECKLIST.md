@@ -24,7 +24,7 @@ Por eso: **después de Gemini ≥9.7, correr este checklist en 2 minutos** antes
 Mirá el video UNA VEZ de principio a fin, con auriculares. Marcá sí/no en cada uno:
 
 ### 1. ¿Aparece alguna imagen menos que parpadear?
-Específicamente: alguna imagen que aparezca <1 segundo. Si la sentís como "flash que pasó y no entendí qué fue" — es un anti-pattern (ver `ANTI-PATTERNS.md` § Imágenes <1s). El audit script (`audit-narrative.py`) debería haberlo agarrado, pero el ojo humano detecta los casos sutiles.
+Específicamente: alguna imagen que aparezca <1 segundo. Si la sentís como "flash que pasó y no entendí qué fue" — es un anti-pattern (ver `ANTI-PATTERNS.md` § Imágenes <1s). El audit script (`ai-video audit-narrative`) debería haberlo agarrado, pero el ojo humano detecta los casos sutiles.
 
 **Si "sí" → identificá el timestamp y el id del `<img>`. Removelo del GSAP o extendé su duración.**
 
@@ -105,7 +105,7 @@ Cada vez que un bug llega a producción que ninguno de estos 7 checks hubiera at
 ## Relación con otros gates
 
 ```
-Gemini QA (≥9.7)  →  audit-narrative.py (0 errors)  →  HUMAN CHECKLIST (este)  →  PUBLICAR
+Gemini QA (≥9.7)  →  ai-video audit-narrative (0 errors)  →  HUMAN CHECKLIST (este)  →  PUBLICAR
    automático         automático                         humano (~2 min)
 ```
 

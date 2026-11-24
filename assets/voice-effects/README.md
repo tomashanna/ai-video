@@ -1,6 +1,6 @@
 # Voice Effects Presets — creepy effects library
 
-> **Library de presets reusables para procesar voces TTS** con efectos creepy/horror. 10 presets documentados: 4 user-validated en listen test 2026-05-27 (ghost/ultratumba/demon/possessed) + 2 matadero-validated en contexto original (matarife/cocinera) + 4 recipe-archived (static_radio/distant_echo/vampire_whisper/phone_call). Reusable cross-project via `apply-voice-preset.py`.
+> **Library de presets reusables para procesar voces TTS** con efectos creepy/horror. 10 presets documentados: 4 user-validated en listen test 2026-05-27 (ghost/ultratumba/demon/possessed) + 2 matadero-validated en contexto original (matarife/cocinera) + 4 recipe-archived (static_radio/distant_echo/vampire_whisper/phone_call). Reusable cross-project via `ai-video apply-voice-preset`.
 
 **Status post listen-test 2026-05-27**:
 - ✅ **4 user-validated** (Oxley dry base): `ghost_whisper`, `ultratumba_cavernoso`, `demon_growl`, `possessed_child`
@@ -13,16 +13,16 @@
 
 ```bash
 # 1. Listar presets disponibles
-python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py --list
+uv run ai-video apply-voice-preset --list
 
 # 2. Aplicar preset a un archivo TTS ya procesado
-python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py \
+uv run ai-video apply-voice-preset \
   --preset ultratumba_cavernoso \
   --input <project>/assets/narr-processed.mp3 \
   --output <project>/assets/narr-final.mp3
 
 # 3. Validar intelligibility (M7.7.5 enforcement)
-python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py \
+uv run ai-video apply-voice-preset \
   --preset demon_growl \
   --input raw.mp3 \
   --output processed.mp3 \
@@ -95,7 +95,7 @@ characters:
 # Per character con creepy_effect_preset declared en SPEC:
 
 # 1. TTS raw (no atempo yet)
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "<character line>" \
   -v "<voice_id>" \
   -o assets/tts/${char}-raw.mp3
@@ -106,13 +106,13 @@ ffmpeg -y -i assets/tts/${char}-raw.mp3 \
   assets/tts/${char}-atempo.mp3
 
 # 3. Apply creepy preset
-python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py \
+uv run ai-video apply-voice-preset \
   --preset <preset_id> \
   --input assets/tts/${char}-atempo.mp3 \
   --output assets/tts/${char}-final.mp3
 
 # 4. M7.7.5 audit (Rule D = user perceptual precedence)
-python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py \
+uv run ai-video apply-voice-preset \
   --preset <preset_id> \
   --input assets/tts/${char}-atempo.mp3 \
   --output /tmp/${char}-verify.mp3 \
@@ -140,7 +140,7 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 ## Adding new presets
 
 1. Edit `presets-catalog.json` añadiendo entry al array `presets[]` con todos los fields requeridos.
-2. Generate demo sample: `python3 apply-voice-preset.py --preset <new_id> --input samples/_base_oxley_dry.mp3 --output samples/<new_id>_demo.mp3`
+2. Generate demo sample: `uv run ai-video apply-voice-preset --preset <new_id> --input samples/_base_oxley_dry.mp3 --output samples/<new_id>_demo.mp3`
 3. User listen test → si OK, flip `validation_status: validated` + agregar `validated_in: [<project>]`.
 4. Commit catalog + sample to repo.
 
@@ -156,18 +156,18 @@ python3 .claude/skills/ai-video-production/templates/scripts/apply-voice-preset.
 
 ```
 .claude/skills/ai-video-production/templates/
-├── effects-library/voice-effects/
+├── assets/voice-effects/
 │   ├── README.md             (this file — workflow + docs)
 │   └── presets-catalog.json  (10 presets canonical — recipes + metadata)
 └── scripts/
-    └── apply-voice-preset.py (CLI wrapper + M7.7.5 verify)
+    └── ai-video apply-voice-preset (CLI wrapper + M7.7.5 verify)
 
 ```
 
-**Por qué split**: catalog + script viven en `.claude/skills/` como template universal (CAPA 1, copiado/leído por todos los proyectos). Samples binarios viven en `library/` (junto a `voices/`, `sfx/`, `music/` — patrón canonical para artefactos reusables). Mantiene skill template liviano.
+**Por qué split**: catalog + script viven en `.claude/skills/` como template universal (CAPA 1, copiado/leído por todos los proyectos). Samples binarios viven en `assets/library/` (junto a `voices/`, `sfx/`, `music/` — patrón canonical para artefactos reusables). Mantiene skill template liviano.
 
 ## Cross-references
 
-- `library/voices-catalog.json` § voices[] — per-voice atempo_strategy + effects_chain inline (matarife + cocinera entries)
+- `assets/library/voices-catalog.json` § voices[] — per-voice atempo_strategy + effects_chain inline (matarife + cocinera entries)
 - `.claude/skills/creative-director/master-flow-v2/GAPS-LOG.md` row 45 — Gap #45 audit-tts-perceptual.py Sprint B priority (extend con preset-aware intelligibility check)
-- `CLAUDE.md` Hard Rule #19 — NEVER ESTIMATE, ALWAYS MEASURE (per-preset validation_status + measurement required)
+- `docs/OPERATING-MANUAL.md` Hard Rule #19 — NEVER ESTIMATE, ALWAYS MEASURE (per-preset validation_status + measurement required)

@@ -1,6 +1,6 @@
 # SFX-LIST.md — [NOMBRE_PROYECTO]
 
-Lista de efectos de sonido para la pasada de animación. Motor único: **ElevenLabs Sound Effects API** (vía `scripts/sfx.py`). Para ambient loops >22s usar `loop:true` + expansión ffmpeg `stream_loop` (ver `PRODUCTION-PIPELINE.md` § 12.5). Freesound queda como fallback opcional avanzado solo si un asset puntual sale uncanny.
+Lista de efectos de sonido para la pasada de animación. Motor único: **ElevenLabs Sound Effects API** (vía `ai-video sfx`). Para ambient loops >22s usar `loop:true` + expansión ffmpeg `stream_loop` (ver `PRODUCTION-PIPELINE.md` § 12.5). Freesound queda como fallback opcional avanzado solo si un asset puntual sale uncanny.
 
 **Convención de naming:** `assets/sfx/<scene>-<descriptor>.mp3`
 **Volumen objetivo (mezcla):** todos los SFX a `data-volume="0.25"` excepto white-flash impacts a `0.6`. Narración siempre `1.0`. Ver `PRODUCTION-PIPELINE.md` § 12 para tabla completa.
@@ -99,7 +99,7 @@ Lista de efectos de sonido para la pasada de animación. Motor único: **ElevenL
 
 1. Editar este archivo con los timestamps reales del proyecto (no estimados).
 2. Convertir a `sfx-spec.json` (formato batch — ver `templates/sfx-spec-TEMPLATE.json`).
-3. Ejecutar: `python scripts/sfx.py --spec sfx-spec.json`
+3. Ejecutar: `uv run ai-video sfx --spec sfx-spec.json`
 4. Verificar duraciones con ffprobe.
 5. Para ambient loops >22s: expandir con ffmpeg `stream_loop` (ver PIPELINE § 12.5).
 6. Wire en `index.html` con `data-track-index` 60-110 reservado para SFX.

@@ -18,7 +18,7 @@ Este proyecto produce Instagram Reels verticales (1080×1920, 30fps) en formato 
 | # | Archivo | Por qué leerlo |
 |---|---------|----------------|
 | 1 | `.claude/skills/horror-choice-format/PAUTA.md` (este) | Punto de entrada AL FORMATO. Define orden, criterios, reglas V7+V8 del formato horror-choice. |
-| 2 | `<proyecto>/CLAUDE.md` | Gobernanza del proyecto (Plan-First rule, Phase 2 simplicity). Cada proyecto tiene su CLAUDE.md. |
+| 2 | `<proyecto>/CLAUDE.md` | Gobernanza del proyecto (Plan-First rule, Phase 2 simplicity). Cada proyecto tiene su docs/OPERATING-MANUAL.md. |
 | 3 | `.claude/skills/ai-video-production/BOOTSTRAP.md` | **Solo si arrancás proyecto nuevo desde cero.** Setup genérico: dir, venv, .env, scripts, smoke tests. |
 | 4 | `.claude/skills/horror-choice-format/BOOTSTRAP-NEW-PROJECT.md` | Adaptación al formato: inputs FASE 0 horror-specific, templates específicos a copiar. |
 | 5 | `.claude/skills/horror-choice-format/PATTERNS.md` | Reglas perennes del formato (timing %, personajes, dilemas, cliffhanger, choice mechanics). |
@@ -28,12 +28,12 @@ Este proyecto produce Instagram Reels verticales (1080×1920, 30fps) en formato 
 | 9 | `<proyecto>/DESIGN.md` | Colores y tipografía específicos del video. |
 | 10 | `.claude/skills/ai-video-production/PIPELINE.md` | Pipeline técnico GENERAL: TTS, image, render, music, GSAP base, symlinks. Reusable a cualquier formato. |
 | 11 | `.claude/skills/ai-video-production/MOTION-LAYER.md` | Motion patterns GENERAL: Ken Burns + parallax + flicker + vignette + glitch + glow + niebla. |
-| 12 | `.claude/skills/ai-video-production/SFX-PIPELINE.md` | SFX pipeline GENERAL: scripts/sfx.py + loop expansion >22s + mix volumes canónicos. |
+| 12 | `.claude/skills/ai-video-production/SFX-PIPELINE.md` | SFX pipeline GENERAL: ai-video sfx + loop expansion >22s + mix volumes canónicos. |
 | 13 | `.claude/skills/ai-video-production/IMAGE-VARIETY.md` | Regla V8-1 universal: variantes -a/-b/-c para escenas >4s. |
 | 14 | `.claude/skills/ai-video-production/CAPTIONS.md` | Whisper auto-captions. |
 | 15 | `.claude/skills/ai-video-production/QA.md` | Gemini Video Analyzer pattern + interpretación de feedback. |
 | 16 | `.claude/skills/horror-choice-format/PRODUCTION-PIPELINE.md` | Detalles técnicos APLICADOS al formato horror (V7 rules CSS, Kling prompts horror). |
-| 17 | `FEEDBACK-LOOP.md` (raíz) | Método para verificar video sin poder verlo. General — complementa Gemini QA. |
+| 17 | `docs/FEEDBACK-LOOP.md` (raíz) | Método para verificar video sin poder verlo. General — complementa Gemini QA. |
 | 17 | `<proyecto>/V6-VS-V7.md` | Historia de iteraciones del proyecto (V6→V7→V8). |
 | 18 | `.claude/skills/horror-choice-format/VIDEO-PLAYBOOK.md` | Playbook secuencial fases 0→7 con templates HTML/GSAP por tipo de hito. |
 
@@ -109,12 +109,12 @@ Entre outcome A y outcome B: pulso oscuro suave + caption "SI [opción B]:" en a
 **DOS capas obligatorias en los últimos 2.4s del video:**
 
 - **Visual:** caption "¿SOBREVIVISTE? 💬 COMENTA A o B" en 60px
-- **Audio:** narración del MISMO voice ID que el narrador del video (voz canónica — ver `library/voices-catalog.json`; default `2gPFXx8pN3Avh27Dw5Ma`, narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`. ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED) preguntando directamente al espectador. Plantilla:
+- **Audio:** narración del MISMO voice ID que el narrador del video (voz canónica — ver `assets/library/voices-catalog.json`; default `2gPFXx8pN3Avh27Dw5Ma`, narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`. ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED) preguntando directamente al espectador. Plantilla:
   > "Y tú... ¿qué habrías elegido? Comenta A o B abajo, y dinos por qué."
 
 **Por qué la voz es obligatoria:** el texto solo invita a comentar "A" o "B" (1 carácter, bajo peso algorítmico). La voz pide "y por qué" → comentarios largos → mejor distribución en el feed.
 
-**Implementación:** generar `assets/cta-narration.mp3` con `tts.py`. (⛔ `atempo 2.0`/2x DEPRECATED — el pipeline real cappea velocidad a ≥0.90 y NO ralentiza la voz; ver `INGENIERO-PAUTA-MASTER.md` § 1.6.) Track-index libre en la franja de narración del Hito 6.
+**Implementación:** generar `assets/cta-narration.mp3` con `ai-video tts`. (⛔ `atempo 2.0`/2x DEPRECATED — el pipeline real cappea velocidad a ≥0.90 y NO ralentiza la voz; ver `INGENIERO-PAUTA-MASTER.md` § 1.6.) Track-index libre en la franja de narración del Hito 6.
 
 ### V7-6. Gemini QA gate antes de aprobar
 Vara DUAL obligatoria antes de publicar (AMBAS): Gemini calibrado **≥9.7** + `audit-against-referent` **≥85%** (ver § 2 + `quality_standards`). Sin excepciones. (El ≥9.0 histórico = legacy V7, NO gate de publicación.) **Prompt extendido en sección 2** evalúa también motion y sound design.
@@ -159,7 +159,7 @@ Las variantes deben cambiar ángulo / distancia / pose / framing — no escenari
 
 Cada escena necesita SFX granulares más allá de narración + música + ticks de countdown: footsteps en cada plano de caminata, breaths/whispers en momentos de tensión, impactos en cada white flash, ambient continuo (wind/dawn) por debajo de todo el video.
 
-**Motor único:** ElevenLabs Sound Effects API vía `scripts/sfx.py` con `sfx-spec.json` batch. Para ambient loops >22s, generar 22s con `loop:true` y expandir con ffmpeg `stream_loop` — patrón en `PRODUCTION-PIPELINE.md` § 12.5.
+**Motor único:** ElevenLabs Sound Effects API vía `ai-video sfx` con `sfx-spec.json` batch. Para ambient loops >22s, generar 22s con `loop:true` y expandir con ffmpeg `stream_loop` — patrón en `PRODUCTION-PIPELINE.md` § 12.5.
 **Fallback opcional:** Freesound solo si un asset puntual sale notoriamente uncanny y no se arregla iterando el prompt. **No es parte del workflow estándar.** Decisión 2026-05-10 validada en bosque-abandonado v3.
 
 **Mix volumes** → tabla canónica completa en `../ai-video-production/SFX-PIPELINE.md § Mix volumes` (narración 1.0 / música 0.05–0.18 / SFX 0.20–0.35 / flash 0.55–0.65 / ambient continuo 0.10–0.18 / clinks 0.25–0.35). No dupliques la tabla acá. Reservar `data-track-index` 60–110 para SFX en `index.html`.
@@ -217,7 +217,7 @@ Tier de prioridad por escena: Ken Burns siempre. Parallax + flicker + vignette d
 │  TTS (ElevenLabs voz canónica — voices-catalog.json;     │
 │   ⛔ NO Tj9l48J9 ni atempo 2x, ver INGENIERO-PAUTA §1.6)  │
 │  Imágenes + VARIANTES -a/-b/-c (V8-1) — regla obligatoria│
-│  SFX dedicado vía scripts/sfx.py + sfx-spec.json (V8-2)  │
+│  SFX dedicado vía ai-video sfx + sfx-spec.json (V8-2)  │
 │  Ambient loops >22s: EL loop:true + ffmpeg stream_loop   │
 │  Video animado (Kling, prompts validados)                │
 │  Música (Pixabay, procesar en 2 pasos — no -ss + -af)    │
@@ -296,7 +296,7 @@ Sin puente V7-4, el cambio de tono de horror a paz se percibe como glitch. Detec
 En bosque-abandonado v2, `h3-forest-walk.png` se referenciaba 10× en el HTML para 4 captions distintas de la misma escena. Gemini lo detectó como "PowerPoint narrado". Aplicar **V8-1**: cualquier escena >4s necesita 2-3 variantes con sufijos `-a`/`-b`/`-c`. Generar las variantes ANTES de aplicar motion — el parallax y Ken Burns delatan la repetición todavía más.
 
 ### 5.12 Video sin SFX dedicados se siente plano
-Solo música ambient + ticks de countdown + narración **no es sound design**. El video se siente "narrador con música", no cine. Aplicar **V8-2**: capa SFX granular por escena (footsteps, breaths, impactos, ambient continuo). Motor: `scripts/sfx.py` con `sfx-spec.json`. Auxiliar: Freesound para lo que ElevenLabs no genera bien.
+Solo música ambient + ticks de countdown + narración **no es sound design**. El video se siente "narrador con música", no cine. Aplicar **V8-2**: capa SFX granular por escena (footsteps, breaths, impactos, ambient continuo). Motor: `ai-video sfx` con `sfx-spec.json`. Auxiliar: Freesound para lo que ElevenLabs no genera bien.
 
 ### 5.13 Symlinks para variantes de imagen (backward-compat)
 Cuando renombrás un asset existente para soportar variantes (`nombre.png → nombre-a.png`), dejá un symlink desde el nombre original al nuevo `-a` para no romper renders previos de la composición:
@@ -325,7 +325,7 @@ En V7 draft, names estaban en `top:180px` y captions en `bottom:0 height:400px`.
 | Pixabay | Música royalty-free | Free |
 | Freesound | Fallback opcional (solo si EL falla puntualmente) | Free |
 
-**Plan-First rule (CLAUDE.md):** antes de cualquier llamada a API, proponer un plan y esperar confirmación explícita del usuario. Incluso si la API es gratis — porque consume créditos y tiempo.
+**Plan-First rule (docs/OPERATING-MANUAL.md):** antes de cualquier llamada a API, proponer un plan y esperar confirmación explícita del usuario. Incluso si la API es gratis — porque consume créditos y tiempo.
 
 API keys: `.env` en raíz del proyecto. Verificar `GEMINI_API_KEY`, `ELEVENLABS_API_KEY`, `REPLICATE_API_TOKEN`.
 
@@ -357,7 +357,7 @@ API keys: `.env` en raíz del proyecto. Verificar `GEMINI_API_KEY`, `ELEVENLABS_
 
 ## 9. CONTACTO Y REFERENCIAS
 
-**Proyecto:** AI video 1 — elige-companero
+**Proyecto:** elige-companero
 **Inspiración:** `@referent-a` (3 videos virales analizados en `REFERENCE-ANALYSIS.md`)
 **Stack:**
 - HyperFrames (composition + render)
@@ -368,4 +368,4 @@ API keys: `.env` en raíz del proyecto. Verificar `GEMINI_API_KEY`, `ELEVENLABS_
 - Pixabay (música royalty-free)
 - `~/.claude/skills/video-analyzer/` (skill local de QA con Gemini)
 
-**Voice ID del narrador horror:** ver `library/voices-catalog.json` (default `2gPFXx8pN3Avh27Dw5Ma`; narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`). ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED — NO usar.
+**Voice ID del narrador horror:** ver `assets/library/voices-catalog.json` (default `2gPFXx8pN3Avh27Dw5Ma`; narrador V5 `K3TeN3ZVK8WnOeJ0NYqZ`). ⛔ `Tj9l48J9AJbry5yCP5eW` DEPRECATED — NO usar.

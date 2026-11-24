@@ -5,14 +5,14 @@
 # (en macOS no siempre hay fonts.conf -> libass no resuelve la fuente por nombre).
 #
 # Uso:
-#   burn-captions.sh <input.mp4> <sub.srt> <W> <H> <fontsize> <marginV> <output.mp4> [bold] [FontName]
+#   scripts/burn-captions.sh <input.mp4> <sub.srt> <W> <H> <fontsize> <marginV> <output.mp4> [bold] [FontName]
 #
 #   <W> <H>     dimensiones de DISPLAY del video (las que ves; ojo con rotación)
 #   bold        0 (regular, default) | -1 (bold)
 #   FontName    familia (default "Georgia"); debe existir en el sistema
 #
 # Ej. testimonio vertical 576x1024, Georgia serif:
-#   burn-captions.sh in.mp4 sub.srt 576 1024 38 130 out.mp4 0 Georgia
+#   scripts/burn-captions.sh in.mp4 sub.srt 576 1024 38 130 out.mp4 0 Georgia
 set -euo pipefail
 if [ "$#" -lt 7 ]; then
   sed -n '2,14p' "$0" >&2

@@ -149,11 +149,11 @@ bash <ruta>/ai-video-production/templates/scripts/master-audio.sh out.mp4 final.
 
 Para qué: acentos sonoros (whoosh en cortes, impacto, ambiente).
 
-- **Primero reusá** lo que ya hay: `library/sfx-catalog.json` + `transitions/<fmt>/audio-stings/`.
+- **Primero reusá** lo que ya hay: `assets/library/sfx-catalog.json` + `transitions/<fmt>/audio-stings/`.
 - Si falta, **generá con ElevenLabs** (cuesta → Plan-First):
 
 ```bash
-.venv/bin/python scripts/sfx.py -t "<prompt en inglés, dry, single event>" -d 1.0 -i 0.5 -o assets/sfx/name.mp3
+uv run ai-video sfx -t "<prompt en inglés, dry, single event>" -d 1.0 -i 0.5 -o assets/sfx/name.mp3
 ```
 
 > Autoridad: `ai-video-production/SFX-PIPELINE.md` (prompts validados, loop para ambientes).
@@ -164,7 +164,7 @@ Para qué: acentos sonoros (whoosh en cortes, impacto, ambiente).
 
 Para qué: conectar clips/beats con intención (corte seco, blend, flash, glitch…).
 
-**Consultá primero el catálogo:** `transitions/catalog.json` (15 transiciones: universal + por formato). Cada una trae su recipe + sting de audio.
+**Consultá primero el catálogo:** `assets/transitions/catalog.json` (15 transiciones: universal + por formato). Cada una trae su recipe + sting de audio.
 
 ```bash
 # Cross-fade 0.5s entre dos clips, con offset = (duración clip A − 0.5)
@@ -174,7 +174,7 @@ ffmpeg -i a.mp4 -i b.mp4 \
 #   transition= fade | fadeblack | fadewhite | wipeleft | slideup | hlslice (glitch) | circleopen ...
 ```
 
-> Catálogo + helper multi-clip: `transitions/README.md` + `ai-video-production/templates/scripts/apply-effects-between-clips.py`. Default de ritmo: el hard-cut es el workhorse; reservá flash/glitch para momentos puntuales.
+> Catálogo + helper multi-clip: `assets/transitions/README.md` + `ai-video apply-effects-between-clips`. Default de ritmo: el hard-cut es el workhorse; reservá flash/glitch para momentos puntuales.
 
 ---
 
@@ -250,4 +250,4 @@ Entregá copias nuevas en una carpeta clara, decí **dónde quedaron**, reportá
 
 ## Scripts de QA reutilizables (opcionales)
 
-En `ai-video-production/templates/scripts/` hay validadores que podés correr sobre el render: `audit-mix-volumes.py`, `audit-caption-temporal-coverage.py`, `audit-sfx-audibility.py`, `audit-clip-timing-vs-audio.py`, `qa-gate.py`. Usalos cuando el trabajo lo amerite (no son obligatorios para un caption job chico).
+En `ai-video-production/templates/scripts/` hay validadores que podés correr sobre el render: `ai-video audit-mix-volumes`, `ai-video audit-caption-temporal-coverage`, `ai-video audit-sfx-audibility`, `ai-video audit-clip-timing-vs-audio`, `ai-video qa-gate`. Usalos cuando el trabajo lo amerite (no son obligatorios para un caption job chico).

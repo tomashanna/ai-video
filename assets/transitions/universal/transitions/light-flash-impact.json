@@ -7,7 +7,7 @@
   "xfade_fidelity": "approximate",
   "native_mechanism_note": "ACCEPTABLE approximation: recipe = concat + white-frame insert + flash sting; fadewhite reproduces the white snap; flash sting preserved via overlay.",
   "description": "Quick white-flash impact between clips. Reads as 'sudden shock' or 'reality snap'. Pairs with sharp flash SFX. Reserved for climax peaks — overuse destroys impact.",
-  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.2 -i \"color=c=white:s=1080x1920:r=30\" -i library/sfx/impacts/flash-sharp.mp3 -filter_complex \"[0:v]fade=t=out:st={fadeout_start}:d=0.06:color=white[a_out];[1:v]fade=t=in:st=0:d=0.06:color=white[b_in];[a_out][2:v][b_in]concat=n=3:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1[base];[3:a]adelay={flash_start_ms}|{flash_start_ms},volume=0.65[flash];[base][flash]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
+  "ffmpeg_recipe": "ffmpeg -y -i {clip_a} -i {clip_b} -f lavfi -t 0.2 -i \"color=c=white:s=1080x1920:r=30\" -i assets/library/sfx/impacts/flash-sharp.mp3 -filter_complex \"[0:v]fade=t=out:st={fadeout_start}:d=0.06:color=white[a_out];[1:v]fade=t=in:st=0:d=0.06:color=white[b_in];[a_out][2:v][b_in]concat=n=3:v=1:a=0[v];[0:a][1:a]concat=n=2:v=0:a=1[base];[3:a]adelay={flash_start_ms}|{flash_start_ms},volume=0.65[flash];[base][flash]amix=inputs=2:duration=first:normalize=0[a]\" -map \"[v]\" -map \"[a]\" -c:v libx264 -preset medium -crf 18 -c:a aac -b:a 192k {output}",
   "ffmpeg_params": {
     "fadeout_start": "Set = duration(clip_a) - 0.06. Last 60ms of clip_a fades to white.",
     "flash_start_ms": "Set = (duration(clip_a) * 1000) - 20. Flash SFX peak aligns with white frame.",

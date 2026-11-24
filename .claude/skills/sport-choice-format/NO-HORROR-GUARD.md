@@ -21,7 +21,7 @@
 > 2. `sport-choice-format/` (Capa B — sabor deportivo: SFX fútbol, LUTs sport, narrador deportivo, paleta cálida)
 > 3. `ai-video-production/` (Capa A — técnica universal: CAPTIONS, MOTION-LAYER CSS, AUDIO-MASTERING, PIPELINE, SFX-PIPELINE mecánica)
 >
-> ⛔ **NUNCA hereda de `horror-choice-format/`.** Ahí viven el preset CSS lúgubre (`VISUAL-STYLE.md`), el voice_id del narrador grave de horror, los presets de voz de horror (`effects-library/voice-effects/`), la paleta SFX de terror (drones/susurros/gritos) y las LUTs `cool_horror`. Si el ingeniero leyó/copió cualquier cosa de `horror-choice-format/` para producir un sport-choice → **fuga de género garantizada**.
+> ⛔ **NUNCA hereda de `horror-choice-format/`.** Ahí viven el preset CSS lúgubre (`VISUAL-STYLE.md`), el voice_id del narrador grave de horror, los presets de voz de horror (`assets/voice-effects/`), la paleta SFX de terror (drones/susurros/gritos) y las LUTs `cool_horror`. Si el ingeniero leyó/copió cualquier cosa de `horror-choice-format/` para producir un sport-choice → **fuga de género garantizada**.
 
 Si una decisión técnica no aparece ni en core, ni en sport, ni en universal → **FLAGGEAR + escalar al arquitecto**, NO ir a buscarla a horror.
 
@@ -64,8 +64,8 @@ Si una decisión técnica no aparece ni en core, ni en sport, ni en universal �
 Para los ítems que viven en el SPEC (G2 SFX, G3 voz, G4 música, G5 narración/visual, G6 LUT), correr:
 
 ```bash
-.venv/bin/python scripts/audit-spec-genre-fidelity.py \
-  --format sport-choice --spec ../creative-specs/<id>.yaml
+uv run ai-video audit-spec-genre-fidelity \
+  --format sport-choice --spec ../../creative-specs/<id>.yaml
 # Exit 0 → sin horror-leak en el SPEC (G2-G6 limpios) → seguir con la verificación humana de G1/G7/G8
 # Exit 1 → horror-leak detectado → el reporte JSON lista los hits (campo + término + ítem) → corregir
 # Exit 2 → error (SPEC no encontrado / sin video_capabilities)

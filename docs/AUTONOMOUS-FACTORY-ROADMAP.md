@@ -54,7 +54,7 @@ orchestrator.py per video:
 
 **Why this matters**: bug detection cost scales linearly per CP vs exponentially at end-of-pipeline. Catching missing decision UI at CP2 = 5 min fix vs catching at CP5 = full reassembly hour.
 
-**Forward implementation**: `scripts/orchestrator-cp-by-cp.py` enforces this pattern. No "execute end-to-end" allowed.
+**Forward implementation**: `ai-video orchestrator-cp-by-cp` enforces this pattern. No "execute end-to-end" allowed.
 
 ---
 
@@ -435,7 +435,7 @@ Source: `ai-video-production/QA.md § Prompt UNIVERSAL`. Used pre-2026-05-21 cal
 
 ### 10.5.2 NEW Calibrated Gemini v4 10-dim — TOMÁS-CALIBRATED (replaces holistic for our use case)
 
-Source: `ai-video-production/templates/calibrated-gemini-prompt-v4.txt`. Tested 2026-05-21 against 5 known scored videos. Mean abs Δ 0.14 vs user perceptual scores.
+Source: `src/ai_video/prompts/calibrated-gemini-prompt-v4.txt`. Tested 2026-05-21 against 5 known scored videos. Mean abs Δ 0.14 vs user perceptual scores.
 
 | # | Dimension | Weight | What it measures |
 |---|-----------|:------:|-------------------|

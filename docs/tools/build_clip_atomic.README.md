@@ -1,4 +1,4 @@
-# build_clip_atomic.py — Per-clip atomic assembly
+# ai-video build-clip-atomic — Per-clip atomic assembly
 
 Per-clip atomic AVU builder (Phase 2 architectural refactor). Each clip becomes a self-contained `<shot>_atomic.mp4` with visual + audio + captions + manifest bundled, eliminating end-of-timeline sync drift bugs that compound under the legacy global-master pipeline.
 
@@ -27,8 +27,8 @@ Cross-clip layers (continuous ambient, music shifts) are applied AFTER the conca
 ### Single shot
 
 ```bash
-.venv/bin/python scripts/build_clip_atomic.py \
-  --spec ../creative-specs/cinema-abandonado.yaml \
+uv run ai-video build-clip-atomic \
+  --spec ../../creative-specs/cinema-abandonado.yaml \
   --shot-id shot_01_hook \
   --output-dir assets/clips-atomic/
 ```
@@ -36,8 +36,8 @@ Cross-clip layers (continuous ambient, music shifts) are applied AFTER the conca
 ### Single shot with AVU overlay
 
 ```bash
-.venv/bin/python scripts/build_clip_atomic.py \
-  --spec ../creative-specs/cinema-abandonado.yaml \
+uv run ai-video build-clip-atomic \
+  --spec ../../creative-specs/cinema-abandonado.yaml \
   --shot-id shot_01_hook \
   --avu countdown \
   --output-dir assets/clips-atomic/
@@ -50,8 +50,8 @@ Override AVU inject offset: `--avu-inject-s 6.0` (default = end-aligned).
 ### Batch (all shots in SPEC)
 
 ```bash
-.venv/bin/python scripts/build_clip_atomic.py \
-  --spec ../creative-specs/cinema-abandonado.yaml \
+uv run ai-video build-clip-atomic \
+  --spec ../../creative-specs/cinema-abandonado.yaml \
   --batch \
   --output-dir assets/clips-atomic/
 ```
@@ -76,7 +76,7 @@ JSON schema:
 ```json
 [
   {"path": "assets/sfx/footsteps.mp3", "start_s": 3.5, "volume": 0.22},
-  {"path": "library/sfx/warm-cliffhanger/bird-distant-dawn.mp3", "start_s": 87.5, "volume": 0.30}
+  {"path": "assets/library/sfx/warm-cliffhanger/bird-distant-dawn.mp3", "start_s": 87.5, "volume": 0.30}
 ]
 ```
 
@@ -111,7 +111,7 @@ JSON schema:
 }
 ```
 
-**Note on LUFS at this stage:** atomic clips intentionally measure *low* LUFS (typically -22 to -30) because music + continuous ambient are NOT yet layered in. The cross-clip post-concat layer + final `master-audio.sh` brings the assembly to -14 ±0.5 LUFS. The per-clip LUFS check is a sanity gate (audio is present + peak not clipping), not the final mastering target.
+**Note on LUFS at this stage:** atomic clips intentionally measure *low* LUFS (typically -22 to -30) because music + continuous ambient are NOT yet layered in. The cross-clip post-concat layer + final `scripts/master-audio.sh` brings the assembly to -14 ±0.5 LUFS. The per-clip LUFS check is a sanity gate (audio is present + peak not clipping), not the final mastering target.
 
 ## Mix levels applied (Hard Rule #9)
 
@@ -140,7 +140,7 @@ After all atomic clips are built and PASS audit:
 ffmpeg -f concat -safe 0 -i atomic-concat.txt -c copy assembled.mp4
 
 # Then add cross-clip music + ambient layer
-# Then run master-audio.sh assembled.mp4 → mastered.mp4
+# Then run scripts/master-audio.sh assembled.mp4 → mastered.mp4
 ```
 
 Concat list file format (one per line):
@@ -161,8 +161,8 @@ Both produced valid mp4 + captions sidecar + manifest. Verified streams: `h264` 
 
 ## Related
 
-- `master-audio.sh` — replaced for per-clip pipeline; still used as final master step post-concat.
+- `scripts/master-audio.sh` — replaced for per-clip pipeline; still used as final master step post-concat.
 - `cp5-audio-master.py` — legacy global master script; this script reads its `SFX_EVENTS` as source of truth.
-- `audit-frames-granular.py` S11 — per-clip caption sync gate (Phase 2 amendment).
+- `ai-video audit-frames-granular` S11 — per-clip caption sync gate (Phase 2 amendment).
 - Memory `feedback_per_clip_atomic_assembly` — architectural rationale.
 - Hard Rules #9 + #15 + #16 — mix levels + HyperFrames timing.

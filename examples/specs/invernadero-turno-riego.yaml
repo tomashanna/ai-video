@@ -23,7 +23,7 @@
 #
 # AMENDMENT F2 (CANONICAL-STRUCTURE § 2 fix, 2026-06-01 — QUIRÚRGICO):
 #   Celeste SACADA del played path (antes en shots 05/06/07/10/11 tentando → violaba el invariante § 2 →
-#   audit-spec-structure-vs-canonical.py 🔴 FAIL). La tentación pasó al INSTINTO/ENTORNO (objeto-fruta glowing +
+#   ai-video audit-spec-structure-vs-canonical 🔴 FAIL). La tentación pasó al INSTINTO/ENTORNO (objeto-fruta glowing +
 #   planta lloriqueando de hambre + cubo de carne) + las reglas de Bruno (scary-savior que da las contra-reglas).
 #   shot_05/10: dialog de Celeste eliminado, Bruno da la regla (lip-sync). shot_06: narración "Celeste te
 #   extiende..." → "La fruta brilla en la mesa, te invita." shot_07: POV puro (sin Celeste serena observando).
@@ -133,7 +133,7 @@ hybrid_layers:
   layer_1_per_clip_atomic:
     description: "Per-shot mp4 con visual + audio clip-scoped + captions BURNED en frame data"
     captions_source: "whisper_from_clip_audio"
-    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    captions_burn_script: "ai-video build-clip-atomic --bake-captions"
     audio_bundled_per_clip:
       # HR#25 FIX A (auditor F1, 2026-05-31): narrator is EXCLUDED from Layer 1. It lives ONLY as
       # narrator_master_continuous in Layer 3 (captions burned per-clip + narrator continuous Layer 3).
@@ -146,7 +146,7 @@ hybrid_layers:
 
   layer_2_effects_between_clips:
     description: "Transiciones + stings en boundaries (hard-cut+whoosh húmedo, white-flash en body horror, green-strobe-glitch en decisión)"
-    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/transitions/"
+    effects_library_ref: "assets/transitions/universal/transitions/"
     transition_variety_min: 3
     non_diegetic_sfx_placement: "effect_layer"
 
@@ -157,7 +157,7 @@ hybrid_layers:
       - "music_drone_base"
       - "ambient_continuous_environment"
     sidechain_target_db: -6
-    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+    overlay_pipeline: "ai-video build-video-hybrid --post-concat-overlay"
 
   layer_4_hyperframes_ui_overlay:
     description: "Countdown film-leader + decision UI (loading Y52 / countdown Y46) + outro card"
@@ -1622,7 +1622,7 @@ hyperframes_ui_overlay:
     z_index: 68
 
 # ═══════════════════════════════════════════════════════════════
-# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# 13. ASSET LIST INVENTORY (ai-video audit-spec-completeness input)
 # ═══════════════════════════════════════════════════════════════
 # Densidad SFX target 30-40 (TASTE-LOG #2). Cada consequence-A fatal tiene un SFX scream/agony.
 
@@ -1759,7 +1759,7 @@ architect_annotations:
 
   - timestamp: "2026-06-01"
     track: "AMENDMENT F2 — CANONICAL-STRUCTURE § 2 INVARIANT fix QUIRÚRGICO (auditor 🔴 FAIL → retorna arquitecto, HR#27)"
-    note: "El auditor + Tomás detectaron que Celeste (bueno_aparente) estaba en el RECORRIDO JUGADO tentando (shots 05/06/07/10/11) → violaba el invariante CANONICAL-STRUCTURE § 2 (audit-spec-structure-vs-canonical.py 🔴 FAIL). Fix MÍNIMO: Celeste sacada del played path; la tentación pasa al INSTINTO/ENTORNO (fruta glowing de la planta madre como objeto + planta carnívora que llora néctar de hambre + cubo de carne) + las contra-reglas de Bruno (scary-savior: 'No comas la fruta' / nueva 'No la alimentes' / 'No la riegues, abre el gas'). Celeste queda SOLO en shot_01 (hook dyad) + shot_02 (counterfactual cozy) + shot_22 (cliffhanger). P9 intacto. Concepto/setting/pattern/anchors/countdowns/LUTs/cliffhanger/counterfactual/SFX/22-shots SIN tocar. NO se aplicaron enhancements V7 (name-labels-durante-countdown/glitch/más-SFX) — son scope V7. Ver self_audit.fix_f2_2026_06_01."
+    note: "El auditor + Tomás detectaron que Celeste (bueno_aparente) estaba en el RECORRIDO JUGADO tentando (shots 05/06/07/10/11) → violaba el invariante CANONICAL-STRUCTURE § 2 (ai-video audit-spec-structure-vs-canonical 🔴 FAIL). Fix MÍNIMO: Celeste sacada del played path; la tentación pasa al INSTINTO/ENTORNO (fruta glowing de la planta madre como objeto + planta carnívora que llora néctar de hambre + cubo de carne) + las contra-reglas de Bruno (scary-savior: 'No comas la fruta' / nueva 'No la alimentes' / 'No la riegues, abre el gas'). Celeste queda SOLO en shot_01 (hook dyad) + shot_02 (counterfactual cozy) + shot_22 (cliffhanger). P9 intacto. Concepto/setting/pattern/anchors/countdowns/LUTs/cliffhanger/counterfactual/SFX/22-shots SIN tocar. NO se aplicaron enhancements V7 (name-labels-durante-countdown/glitch/más-SFX) — son scope V7. Ver self_audit.fix_f2_2026_06_01."
 
   - timestamp: "2026-05-31"
     track: "AMENDMENT F1 — auditor SPEC-AUDIT 🟡 GO CONDICIONAL (fix QUIRÚRGICO, NO re-diseño)"
@@ -1791,9 +1791,9 @@ self_audit:
     fix_a_layer_model: "narrador REMOVIDO de hybrid_layers.layer_1_per_clip_atomic.audio_bundled_per_clip; queda EXCLUSIVAMENTE como narrator_master_continuous en Layer 3 (HR#25). Layer 1 = dialog Bruno + diegetic SFX + clip-scoped ambient."
     fix_b_single_source_of_truth: "SINGLE SOURCE OF TRUTH = narration_in_this_shot por shot. §9 narration_script = concatenación derivada (driver del master continuo Layer 3). Caption-burn per-clip (HR#30) y master continuo derivan del MISMO texto per-shot → no desync (anti-pattern #16). Reconciliados: shot_02(expand)/shot_03(trim+§9 cut)/shot_07/shot_09/shot_12(wording)/shot_16(§9 lead cut)/shot_19+20(SPLIT)/shot_21(anchor fix)."
   fix_f2_2026_06_01:                                                        # CANONICAL-STRUCTURE § 2 INVARIANT fix — QUIRÚRGICO (auditor 🔴 FAIL → retorna arquitecto, HR#27)
-    violation: "bueno-aparente Celeste (char_b) presente en el played path (who_is_there/anchor_id_required) de shots de decisión/consecuencia 05/06/07/10/11 → audit-spec-structure-vs-canonical.py 🔴 FAIL (viola invariante CANONICAL-STRUCTURE § 2: el bueno-aparente SOLO puede estar en hook/counterfactual/cliffhanger)."
+    violation: "bueno-aparente Celeste (char_b) presente en el played path (who_is_there/anchor_id_required) de shots de decisión/consecuencia 05/06/07/10/11 → ai-video audit-spec-structure-vs-canonical 🔴 FAIL (viola invariante CANONICAL-STRUCTURE § 2: el bueno-aparente SOLO puede estar en hook/counterfactual/cliffhanger)."
     fix: "Celeste SACADA de shots 05/06/07/10/11 (who_is_there + anchor_id_required + visual_intent + character_active_gesture + dialog). La tentación pasó al INSTINTO/ENTORNO + las contra-reglas de Bruno (scary-savior). shot_05: fruta glowing de la planta madre sobre la mesa = objeto-tentación; Bruno niega + 'No comas la fruta' (dialog mantenido). shot_06 narración: 'Celeste te extiende una fruta brillante' → 'La fruta brilla en la mesa, te invita.' (resto 'Ahora decides...' intacto). shot_07: POV puro (sin Celeste serena observando). shot_10: planta carnívora llora néctar de hambre + cubo de carne (instinto); Bruno aprensivo + nueva regla corta lip-sync 'No la alimentes' (reemplaza la oferta de Celeste 'Tiene hambre, dale de comer'). shot_11: who_is_there sin Celeste; narración instinto-based intacta. §9 reconciliado: celeste_d1_offer ELIMINADO, narrator_d1_question reescrito, celeste_d2_offer → bruno_d2_rule. cross_clip layer-1 + hybrid_layers comments + ref-08 informs + lip_sync_strategy actualizados."
-    structure_validator_after_fix: "audit-spec-structure-vs-canonical.py exit 0 / overall_status PASS (Celeste solo en shot_01/02/22 = hook/counterfactual/cliffhanger ✓)."
+    structure_validator_after_fix: "ai-video audit-spec-structure-vs-canonical exit 0 / overall_status PASS (Celeste solo en shot_01/02/22 = hook/counterfactual/cliffhanger ✓)."
     p9_preserved: "P9 INTACTO — obedecer a Bruno (musgoso, da miedo) + resistir el instinto/entorno (fruta que invita / planta que llora de hambre / regarla) = sobrevivir. Counterfactual letal de Celeste (path cozy) intacto. 3 decisiones A-muerte/B-sobrevive intactas."
     minimal_scope: "NO tocados: setting, pattern P9, anchors de Bruno (char_a_v1/_neck/_knuckles), countdowns, LUTs, cliffhanger, counterfactual opening (shot_02), resolución, SFX(31), transitions, 22 shots. Solo shots 05/06/07/10/11 + §9 + refs/notes de coherencia."
   fix_f3_2026_06_01:                                                        # COVERAGE-AMEND — narración del played path para recuperar coverage post-F2 (auditor F1-coverage 73.75% < piso 82.68%)
@@ -1803,7 +1803,7 @@ self_audit:
     duration_bumps: "shot_03 5.5→7.0, shot_07 6.0→6.5, shot_09 5.5→6.0, shot_12 6.0→7.0, shot_14 5.0→5.5, shot_17 6.0→6.5, shot_19 5.0→5.5, shot_21 4.5→5.5. sum_dur 101.9→107.9s (+6.0s); render mapea a banda 80-100s vía overlap de countdowns/loadings (engineer ajusta corte final). Narrado ~71→~82s."
     freeze_extend_added: "shot_03 (6.55s) + shot_07 (6.18s) + shot_12 (6.91s) > 5.9s → freeze_extend_required:true (tpad último frame, como shot_02). shot_09/14/17/19/21 ≤5.9s (sin freeze)."
     ssot_preserved: "§9 narration_script narrador reconciliado palabra-por-palabra con narration_in_this_shot (§10) en los 8 shots editados. Verificación programática: narrador §9 concat == §10 nis VERBATIM (15/15), dialog §9 ⊆ dialog_text (100%), timestamps monotónicos."
-    validators_after_fix: "audit-spec-structure-vs-canonical.py exit 0 (Celeste sigue FUERA del played path — F2 INTACTO, 0 fail/0 flag); audit-spec-narration-fits-duration.py exit 0 (15/15 ok, 0 fail/0 flag); audit-spec-narrative-coherence.py exit 0 (0 FAIL, 2 flag PRE-EXISTENTES idénticos al baseline: shot_08/13/18 bridge-caption framing + shot_16/shot_20 WPM stylistic-band advisory — NO regresión)."
+    validators_after_fix: "ai-video audit-spec-structure-vs-canonical exit 0 (Celeste sigue FUERA del played path — F2 INTACTO, 0 fail/0 flag); ai-video audit-spec-narration-fits-duration exit 0 (15/15 ok, 0 fail/0 flag); ai-video audit-spec-narrative-coherence exit 0 (0 FAIL, 2 flag PRE-EXISTENTES idénticos al baseline: shot_08/13/18 bridge-caption framing + shot_16/shot_20 WPM stylistic-band advisory — NO regresión)."
     minimal_scope: "NO tocados: concepto, setting, pattern P9, anchors, countdowns/UI, LUTs, cliffhanger, counterfactual opening (shot_02), Celeste (sigue solo en shot_01/02/22), SFX(31), transitions, 22 shots, visual_intent/visual_action_match. Solo narration_in_this_shot + duration_intent_s + freeze_extend de 8 shots + §9 segmentos espejo + notas."
   all_passed: true                                                          # D14-D22 + D24-D27 + FIX A/B + FIX F2 (structure-vs-canonical PASS) + FIX F3 (3 validators exit 0, coverage ≈83.76%)
   spec_listo_para_handoff: true
@@ -1821,7 +1821,7 @@ engineer_notes:
   lip_sync_strategy: "deferred_phase_3 (Hedra/Sync.so) para shots con has_lip_sync_required:true (shot_05/10/15) — SOLO Bruno habla on-screen (boca humana, NO voice-off). FIX § 2: Celeste removida del played path → ya NO tiene shots con lip-sync (solo aparece en hook/counterfactual/cliffhanger como narrador, sin diálogo)."
   bruno_locus_anchors: "char_a_v1 (full) + char_a_v1_neck + char_a_v1_knuckles. Shots que aíslan nudillos (shot_15/shot_19 — Bruno gira válvula) usan --ref char_a_v1_knuckles (MODEL-BEHAVIOR-LOG Entry 1 locus-anchor; musgo nudillos se regresa a piel normal si no hay cara + se usa full anchor)."
   prompt_style_note: "Prompts en frases descriptivas, NUNCA label-prefix (POV:/ANGLE:/ACTION:) — MODEL-BEHAVIOR-LOG Entry 2 (texto burned-in). camera_intent ya escrito como frase descriptiva."
-  horror_suffix_note: "image.py inyecta HORROR_SUFFIX warm amber por default; para LUT verdosa-húmeda (warm_humid_greenhouse_v1 / sickly_green_horror_v1) ver MODEL-CAPABILITIES-MATRIX gemini_flash_image (--no-mono-suffix + bloque estilo propio)."
+  horror_suffix_note: "ai-video image inyecta HORROR_SUFFIX warm amber por default; para LUT verdosa-húmeda (warm_humid_greenhouse_v1 / sickly_green_horror_v1) ver MODEL-CAPABILITIES-MATRIX gemini_flash_image (--no-mono-suffix + bloque estilo propio)."
   total_duration_note: "Narración ~71s; con countdowns(3×3s)+loadings+beats el total cae en banda 80-100s. Outro card extiende a ~90s. Engineer ajusta el corte final."
   veo_quota_observations: "NOT enterprise free — billing confirmado. Avoid Veo. Hailuo stack canonical."
 

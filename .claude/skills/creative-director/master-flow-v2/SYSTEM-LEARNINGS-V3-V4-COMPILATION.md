@@ -34,7 +34,7 @@ V4 fue el primer video que ejecutó la arquitectura hybrid completa con:
 - Script B (audit-shot-spec-compliance per shot, 8 dimensions)
 - Script C (orchestrator-cp-by-cp con CP gates obligatorios)
 - ARCHITECTURAL-DECISIONS.md con schema YAML
-- V4-LAUNCH-CHECKLIST.md con 5 gates binarios
+- V4-LAUNCH-CHECKLIST.md (retirado; ver historial git) con 5 gates binarios
 - MODEL-BEHAVIOR-LOG.md (nuevo, NIVEL 1.5)
 - SPEC v11.1 con references_canonical[] mandatorio
 
@@ -298,13 +298,13 @@ context: "shot_16 regen produjo composition distinta a SPEC (static confrontatio
 user_choice: "Option 1 — Regen matching SPEC literal"
 structural_reason: "Consistencia con precedente voseo + polydactyly. SPEC contrato vinculante. Auditor self-bug es valioso documentar pero no justifica amend retrospectivo del SPEC."
 forward_codification:
-  proposed: "Sprint B add: audit-engineer-brief-vs-spec.py. Recibe brief proposed + SPEC + valida que brief contains literal visual_intent text. Exit 1 si Auditor brief omits OR reformulates. Plus AUDITOR-PROTOCOL amend: pre-spawn engineer narrow, paste LITERAL visual_intent verbatim, NO compress."
+  proposed: "Sprint B add: ai-video audit-engineer-brief-vs-spec. Recibe brief proposed + SPEC + valida que brief contains literal visual_intent text. Exit 1 si Auditor brief omits OR reformulates. Plus AUDITOR-PROTOCOL amend: pre-spawn engineer narrow, paste LITERAL visual_intent verbatim, NO compress."
   status: "Sprint B priority media, codificado como Gap #47"
 category: structural
 pattern_class: "no_informal_spec_reformulation_during_production"
 automation_potential:
   code_able: true
-  proposed_script: "audit-engineer-brief-vs-spec.py"
+  proposed_script: "ai-video audit-engineer-brief-vs-spec"
 ```
 
 ```yaml
@@ -414,9 +414,9 @@ evidence:
   - "V4 CP3 shot_16 regen primera vez con 'palm-forward stop gesture' (compressed) vs SPEC literal 'ladder descent + clipboard + glove removal'"
 current_workaround: "AUDITOR-PROTOCOL amend section: 'pre-spawn Engineer narrow, paste LITERAL visual_intent verbatim, NO compress, NO reformulation'"
 prevention_proposal:
-  - "Sprint B add: audit-engineer-brief-vs-spec.py. Recibe brief proposed + SPEC. Valida brief contains literal visual_intent text exact match. Exit 1 si omits OR reformulates."
+  - "Sprint B add: ai-video audit-engineer-brief-vs-spec. Recibe brief proposed + SPEC. Valida brief contains literal visual_intent text exact match. Exit 1 si omits OR reformulates."
 codification_status: "queue Sprint B priority media. AUDITOR-PROTOCOL amend already in place."
-sprint_b_action: "audit-engineer-brief-vs-spec.py"
+sprint_b_action: "ai-video audit-engineer-brief-vs-spec"
 ```
 
 ```yaml
@@ -456,7 +456,7 @@ current_workaround: "Decisiones humanas explicit aplicando 'SPEC contrato vincul
 prevention_proposal:
   - "Cluster de Sprint B validators que protegen SPEC integrity:"
   - "  - audit-spec-language-neutral.py"
-  - "  - audit-engineer-brief-vs-spec.py"
+  - "  - ai-video audit-engineer-brief-vs-spec"
   - "  - audit-anchor-vs-spec-signature.py"
   - "  - audit-spec-model-constraints.py"
   - "  - audit-deliverable-vs-spec-manifest.py"
@@ -606,17 +606,17 @@ Esto es información empírica nueva que NO existía documentada antes de V4. Cr
 
 **pattern_class:** `synthesis_converts_flexible_principles_to_binary_rules` (refinamiento 2026-05-29 de `validation_against_synthesis_violates_primary_source_principle` — Tomás precisó el framing: el problema no es "regla equivocada → regla correcta" sino que **la síntesis convierte PRINCIPIOS FLEXIBLES en REGLAS BINARIAS**. El fix correcto = expresar **principio (mandatorio) + variabilidad (libre) + anti-pattern (evitar)**, NO cambiar una regla rígida por otra.)
 
-**Definición:** Una regla/validator que se valida contra un doc de SÍNTESIS (PAUTA-MASTER, canonical-scenes, memorias-paráfrasis) en vez de contra la FUENTE PRIMARIA (transcripts Whisper de los 8 virales en `referent-analysis/horror-choice/ref-XX/`) hereda la paráfrasis del sintetizador, no el dato real. Si V_n respeta el canónico correcto, el validator FAIL; si respeta la paráfrasis, PASS pero el output sale robótico. Familia directa del anti-pattern #10 (trust docs/intermediate sin direct verification).
+**Definición:** Una regla/validator que se valida contra un doc de SÍNTESIS (PAUTA-MASTER, canonical-scenes, memorias-paráfrasis) en vez de contra la FUENTE PRIMARIA (transcripts Whisper de los 8 virales en `data/referent-analysis/horror-choice/ref-XX/`) hereda la paráfrasis del sintetizador, no el dato real. Si V_n respeta el canónico correcto, el validator FAIL; si respeta la paráfrasis, PASS pero el output sale robótico. Familia directa del anti-pattern #10 (trust docs/intermediate sin direct verification).
 
 **Instancias detectadas (threshold canonical promotion = 5):**
 - **1/5** — matadero canonical-scenes countdown (auditor concluyó "2/6 refs tienen countdown" desde docs sampleados cada 5s; direct frame extraction reveló 4/4 FILM LEADER ACADEMY universal). Origen del anti-pattern #10. 2026-05-19.
-- **2/5** — ⭐ regla `feedback_si_elegiste_framing` / D19 "Si elegiste X" (síntesis) vs primary source "Si [acción condicional]" (6/8 @referent-a) + "Si decides/escogiste" (2/8 @referent-b). El validator `audit-spec-narrative-coherence.py` enforzaba el substring `si elegiste` → FAIL sobre el 6/8 canónico real. Detectado por Tomás (user_perceptual_catch). Fix: primary-source enforcement + 17 tests. 2026-05-29. **Co-findings TAREA 2** (misma clase, NO fixeados — Tomás decide): `"Una noche en paz"` mandado como "canónico" pero 0/8 (es nuestra firma de marca); template cliffhanger rígido `"juntos, en silencio, mirando…"` 0/8; SCRIPT-WRITING-GUIDE "bueno sin diálogo" + "ganadora contra impulso" contradicen PAUTA §0/§6.
+- **2/5** — ⭐ regla `feedback_si_elegiste_framing` / D19 "Si elegiste X" (síntesis) vs primary source "Si [acción condicional]" (6/8 @referent-a) + "Si decides/escogiste" (2/8 @referent-b). El validator `ai-video audit-spec-narrative-coherence` enforzaba el substring `si elegiste` → FAIL sobre el 6/8 canónico real. Detectado por Tomás (user_perceptual_catch). Fix: primary-source enforcement + 17 tests. 2026-05-29. **Co-findings TAREA 2** (misma clase, NO fixeados — Tomás decide): `"Una noche en paz"` mandado como "canónico" pero 0/8 (es nuestra firma de marca); template cliffhanger rígido `"juntos, en silencio, mirando…"` 0/8; SCRIPT-WRITING-GUIDE "bueno sin diálogo" + "ganadora contra impulso" contradicen PAUTA §0/§6.
 
 - **3/5** — ⭐ cluster `SCRIPT-WRITING-GUIDE.md` convertía principios flexibles en reglas binarias: (a) "ganadora contra impulso" como ley (PAUTA §6 lo refuta → principio real = DUDA real); (b) "bueno NO tiene diálogo" binario (ref-08 Hugo habla → variabilidad); (c) cliffhanger template rígido "…juntos, en silencio, mirando…" (0/8 → principio = cozy ESPECÍFICO al setting); (d) "Una noche en paz" como regla canónica (0/8 → es firma de marca @elige_tucompanero). **Fix 2026-05-29** (Tomás override authority): SCRIPT-WRITING-GUIDE refactoreado a 🟦principio/🟩variabilidad/🟥anti-pattern + validator `check_consequence_framing` refinado (missing marker → FLAG no FAIL; solo bare-label = FAIL). **2da pasada forense** (INGENIERO-PAUTA + canonical-scenes + TASTE-LOG + validators L1/lip-sync): **superficie de ENFORCEMENT limpia** — métricas técnicas ya son bandas (principio), TASTE-LOG ya es prosa no-taxonómica, validators L1/lip-sync gatean física/realismo, NO elecciones creativas. Único residual 🟡 cosmético: canonical-scenes ref-09/ref-13 usan label "Si elegiste X framing" pero los ejemplos capturados son correctos (action/choice) → relabel forward. **Propagación Categoría C limpiada 2026-05-29 (scope Opción 1 — 5 docs teaching: PAUTA-MASTER §3, creative-director SKILL D19, ARCHITECT-MASTER-FLOW, CP2-script-flow, AUDITOR-PROTOCOL L201 → 🟦/🟩/🟥). Categoría B (canonical-scenes ~68 hits, cosmético) + D (bridge-caption válido) deferred forward. ⭐ LESSON: una paráfrasis sintética introducida en 1 doc PROPAGA cross-docs (113 raw hits / solo ~10 genuine-template) — forward, todo doc creative nuevo debe pasar audit "principio vs variabilidad vs anti-pattern" ANTES de commit canonical.**
 
 - **4/5** — ⭐ `tests_with_synthetic_fixtures_dont_substitute_real_artifact_testing` (sub-nombre de la MISMA familia: un stand-in sintético sustituyendo el ground-truth). Los validators BUILD 4/5/8 (narrative-coherence + narration-fits-duration + lip-sync-marks) se escribieron + testearon con fixtures **dict-form SINTÉTICAS** y **nunca corrieron contra un SPEC v11 real**. El schema v11 canónico (cerro-aislado-v4 + V5: `narration_in_this_shot` **string** + sibling `dialog_text`/`has_lip_sync_required` + `section_id` + hook_sub_beats **dicts**) NO coincide con el dict-form de las fixtures → los 3 validators **CRASHEAN** (`AttributeError`) en el primer SPEC v11 real (sala-limpia-bioseguridad SPEC-AUDIT 2026-05-29). Detectado por el AUDITOR al **correr** los validators (el arquitecto reportó "all PASS" sin correrlos — exactamente el rol del 3er ojo independiente). **Fix Opción A 2026-05-29** (Tomás): helpers both-forms (`_narr_text`/`_beat_role`/`_wpm_band_for` + section_id + has_lip_sync_required sibling + dilema_placement opcional + hook dict beats) → parsean el schema v11 real Y mantienen fixtures legacy; + **real-artifact regression tests** (v11-string-schema) en los 3 test files → 34/34 PASS. NO se tocó SPEC V5 ni cerro (D38) ni template. ⭐ **LESSON: tests adversariales (HR#26) DEBEN incluir un regression test contra el SCHEMA del artefacto REAL, no solo fixtures sintéticas — sino el validator pasa sus propios tests pero crashea en producción ("green tests, red reality").**
 
-- **5/5 — THRESHOLD ALCANZADO → forced canonical promotion.** ⭐ `architect_self_flags_gaps_instead_of_iterating_pre_emit`. El arquitecto entregó el SPEC V5 declarando "self-audit all PASS" PERO sin correr los 3 validators de enforcement contra su propio SPEC → el SPEC-AUDIT del auditor surfació shot_02 320 WPM (real) + schema crashes. Patrón: un rol del triángulo pasa trabajo incompleto/con-gaps-conocidos al siguiente rol en vez de completarlo+iterar pre-handoff. **PROMOCIÓN CANÓNICA 2026-05-29**: Hard Rule #27 (CLAUDE.md) "arquitecto entrega SPEC con 0 findings 🔴 known; self-validation pre-emit corriendo los validators; auditor RETORNA al arquitecto si recibe 🔴, NO escala a Tomás salvo ambigüedad arquitectural" + creative-director SKILL § self-validation + CP2-script-flow nuevo flow + AUDITOR-PROTOCOL §6 anti-pattern #17 "complete the work before passing it to the next triangle role".
+- **5/5 — THRESHOLD ALCANZADO → forced canonical promotion.** ⭐ `architect_self_flags_gaps_instead_of_iterating_pre_emit`. El arquitecto entregó el SPEC V5 declarando "self-audit all PASS" PERO sin correr los 3 validators de enforcement contra su propio SPEC → el SPEC-AUDIT del auditor surfació shot_02 320 WPM (real) + schema crashes. Patrón: un rol del triángulo pasa trabajo incompleto/con-gaps-conocidos al siguiente rol en vez de completarlo+iterar pre-handoff. **PROMOCIÓN CANÓNICA 2026-05-29**: Hard Rule #27 (docs/OPERATING-MANUAL.md) "arquitecto entrega SPEC con 0 findings 🔴 known; self-validation pre-emit corriendo los validators; auditor RETORNA al arquitecto si recibe 🔴, NO escala a Tomás salvo ambigüedad arquitectural" + creative-director SKILL § self-validation + CP2-script-flow nuevo flow + AUDITOR-PROTOCOL §6 anti-pattern #17 "complete the work before passing it to the next triangle role".
 
 **Codificación forward:** si llega 5/5 → promote a Hard Rule / structural validator (`audit-rule-vs-primary-source.py`: toda regla con claim "canónico N/M" debe citar el transcript/frame primario, no la síntesis; + toda regla sobre una elección creativa debe declararse como principio+variabilidad+anti-pattern, NO regla binaria). Hasta entonces: el Auditor, al validar CUALQUIER regla, distingue principio underlying (enforce) de variabilidad creativa (NO enforce) de anti-pattern (flag), y lee la fuente primaria directa (transcript/frame), NO la síntesis. Refuerza anti-pattern #10 en AUDITOR-PROTOCOL §6.
 
@@ -624,9 +624,9 @@ Esto es información empírica nueva que NO existía documentada antes de V4. Cr
 
 **Caso disparador V5** (2026-05-30, user_perceptual_catch): 18.8s de narración + captions truncados en 10 shots. Raíz: los límites del modelo (i2v `clip_duration_max_s` Hailuo Std 5.9s, tts canonical pace 165 WPM, t2i constraints) NO estaban codificados en un lugar que los 3 roles consultaran. El arquitecto fijó `duration_intent_s` + narración más larga que el límite Hailuo; el validator L1 chequeaba `WPM≤280` (comprimible) en vez de `narración@165 ≤ min(dur, 5.9)`; Hailuo generó 5.0s; el atomic trim cortó la narración muxeada. **Promoción canónica 2026-05-30**: `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` (Capa A agnóstico, per-model limits+constraints+canonical settings) + **HR#28/#29** + Architect lee MATRIX pre-SPEC (creative-director SKILL §) + validator L1 lee MATRIX (canonical-pace-fit) + AUDITOR-PROTOCOL anti-pattern #18.
 
-**Sub-pattern `user_perceptual_detects_what_validators_miss`**: mis gates CP5 (silencedetect>2s=0, freezedetect, frame-sampling) NO captaron narración truncada (palabras truncadas ≠ silencio). **Lección**: audit comparativo cross-CP es mandatorio cuando user_perceptual detecta bug en el output final (aislar el CP raíz midiendo property-preservation entre stages). Validators forward: `audit-clip-timing-vs-audio.py` (atomic clip_dur ≥ narración_dur per shot — habría cazado V5), `audit-caption-vs-narration-coverage.py`, `audit-cross-cp-output-consistency.py`.
+**Sub-pattern `user_perceptual_detects_what_validators_miss`**: mis gates CP5 (silencedetect>2s=0, freezedetect, frame-sampling) NO captaron narración truncada (palabras truncadas ≠ silencio). **Lección**: audit comparativo cross-CP es mandatorio cuando user_perceptual detecta bug en el output final (aislar el CP raíz midiendo property-preservation entre stages). Validators forward: `ai-video audit-clip-timing-vs-audio` (atomic clip_dur ≥ narración_dur per shot — habría cazado V5), `audit-caption-vs-narration-coverage.py`, `audit-cross-cp-output-consistency.py`.
 
-**Instance 6 (V5 caption coverage gap, 2026-05-30) + HR#30**: tras fixear la truncación de AUDIO, Tomás detectó que los captions solo mostraban la 1ª frase por clip. Root cause (mismo CP atomic-build, distinto mecanismo): el caption-burn (`cp5b_build_atomic.py words_span` + `wrap()[:2]`) quemaba la narración completa como UN bloque estático truncado a 2 líneas. Mi audit V5.1 dijo "caption coverage 100%" mirando 1 frame = **existence check, NO temporal**. Fix: `chunk_caption_cues()` (todas las palabras → cues word-timed progresivos ≤2 líneas; verificado draft-v4 shot_12 t=1 "Si te inyectas…" → t=5 "Las venas se ponen negras."). Codificado: **HR#30** (coverage = existence+semantic+temporal) + AUDITOR-PROTOCOL anti-pattern #19. ⚠️ **Forward para V6+**: el fix está en el PROJECT-local `cp5b_build_atomic.py` (Capa C); para prevenir recurrencia, portar `chunk_caption_cues` al TEMPLATE `build_clip_atomic.py` (Capa A, que además tiene el v11-schema-incompat pendiente) + buildear `audit-caption-temporal-coverage.py`. Hasta entonces, el caption-burn correcto NO está en el template (pendiente, honest).
+**Instance 6 (V5 caption coverage gap, 2026-05-30) + HR#30**: tras fixear la truncación de AUDIO, Tomás detectó que los captions solo mostraban la 1ª frase por clip. Root cause (mismo CP atomic-build, distinto mecanismo): el caption-burn (`cp5b_build_atomic.py words_span` + `wrap()[:2]`) quemaba la narración completa como UN bloque estático truncado a 2 líneas. Mi audit V5.1 dijo "caption coverage 100%" mirando 1 frame = **existence check, NO temporal**. Fix: `chunk_caption_cues()` (todas las palabras → cues word-timed progresivos ≤2 líneas; verificado draft-v4 shot_12 t=1 "Si te inyectas…" → t=5 "Las venas se ponen negras."). Codificado: **HR#30** (coverage = existence+semantic+temporal) + AUDITOR-PROTOCOL anti-pattern #19. ⚠️ **Forward para V6+**: el fix está en el PROJECT-local `cp5b_build_atomic.py` (Capa C); para prevenir recurrencia, portar `chunk_caption_cues` al TEMPLATE `ai-video build-clip-atomic` (Capa A, que además tiene el v11-schema-incompat pendiente) + buildear `ai-video audit-caption-temporal-coverage`. Hasta entonces, el caption-burn correcto NO está en el template (pendiente, honest).
 
 ---
 
@@ -644,15 +644,15 @@ Estos componentes funcionan para cualquier formato (horror-choice, AI influencer
 - Quality Gate per artifact + Auditor independent + User perceptual (3-level review)
 
 **Scripts enforcement:**
-- Script A — build_clip_atomic.py (bake captions per clip)
-- Script B — audit-shot-spec-compliance.py (8 dimensions per shot)
-- Script C — orchestrator-cp-by-cp.py (CP gates state machine)
+- Script A — ai-video build-clip-atomic (bake captions per clip)
+- Script B — ai-video audit-shot-spec-compliance (8 dimensions per shot)
+- Script C — ai-video orchestrator-cp-by-cp (CP gates state machine)
 - All Sprint B validators (cuando se buildeen)
 
 **Docs estructurales:**
 - AUDITOR-PROTOCOL.md activation protocol
 - BOOTSTRAP.md
-- V4-LAUNCH-CHECKLIST.md template (con format-specific equivalent)
+- V4-LAUNCH-CHECKLIST.md (retirado; ver historial git) template (con format-specific equivalent)
 - ARCHITECTURAL-DECISIONS.md schema YAML
 - MODEL-BEHAVIOR-LOG.md (4 constraints Gemini empíricos aplicables a cualquier proyecto que use Gemini Image)
 - SYSTEM-ROADMAP.md
@@ -726,7 +726,7 @@ Depende del formato. Posibles ejemplos:
 
 **Manifestación V4:** Auditor brief al engineer compressed visual_intent. Engineer regen produjo output diferente. Reverse engineering tentación rejected.
 
-**Mitigación:** AUDITOR-PROTOCOL: pre-spawn engineer narrow, paste LITERAL visual_intent verbatim. Sprint B: audit-engineer-brief-vs-spec.py.
+**Mitigación:** AUDITOR-PROTOCOL: pre-spawn engineer narrow, paste LITERAL visual_intent verbatim. Sprint B: ai-video audit-engineer-brief-vs-spec.
 
 ### Anti-pattern V4 #6 — Cost surprise hidden
 
@@ -753,7 +753,7 @@ Lista priorizada de scripts/amendments pendientes que deberían existir antes de
 6. INGENIERO-PAUTA amend: intermediate handoff protocol mandatorio CP3+CP4
 
 **MEDIAS:**
-7. `audit-engineer-brief-vs-spec.py` — brief literal verify
+7. `ai-video audit-engineer-brief-vs-spec` — brief literal verify
 8. `audit-spec-pose-coupling.py` — hand pose match anchor
 9. `audit-spec-stability-budget.py` — ≤3 elementos rare anatomy
 10. `audit-tts-perceptual.py` — distorsión + pronunciación (70% audio automation)
@@ -779,7 +779,7 @@ Antes de empezar, ejecutá AUDITOR ACTIVATION PROTOCOL.
 Auditor self-bootstrap reads automáticamente:
 - AUDITOR-PROTOCOL.md (activation section)
 - BOOTSTRAP.md
-- CLAUDE.md Hard Rules
+- docs/OPERATING-MANUAL.md Hard Rules
 - SYSTEM-ROADMAP.md
 - PIPELINE.md
 - **SYSTEM-LEARNINGS-V3-V4-COMPILATION.md (este documento)**

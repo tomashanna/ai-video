@@ -10,7 +10,7 @@
 
 sport-choice es un **formato NUEVO** (creado 2026-05-31). A diferencia de horror-choice (8 referentes virales propios), sport-choice **aún no tiene referentes virales propios**. La rotación, por ahora, se ajusta a mano sobre nuestros propios videos. Cuando haya ≥3 videos shipped, se derivarán bandas + reglas de rotación empíricas (igual que horror-choice las derivó de sus 8 virales).
 
-**Pattern numbering canonical** (la FORMA abstracta apariencia×verdad del enum choice vive en `../choice-format-core/CHOICE-MECHANIC.md § 7`; el catálogo concreto P1-P10 con contenido y el enum exacto usado por el validator `audit-spec-narrative-coherence.py` se heredan de `horror-choice-format/PAUTA-MASTER.md` — sport reusa esa numeración hasta tener catálogo propio):
+**Pattern numbering canonical** (la FORMA abstracta apariencia×verdad del enum choice vive en `../choice-format-core/CHOICE-MECHANIC.md § 7`; el catálogo concreto P1-P10 con contenido y el enum exacto usado por el validator `ai-video audit-spec-narrative-coherence` se heredan de `horror-choice-format/PAUTA-MASTER.md` — sport reusa esa numeración hasta tener catálogo propio):
 
 | Pattern | Significado | Aplicación a sport-choice |
 |---------|-------------|----------------------------|
@@ -36,7 +36,7 @@ sport-choice es un **formato NUEVO** (creado 2026-05-31). A diferencia de horror
 
 ## Cross-video uniqueness fields (heredado del schema de horror-choice — validator cross-video)
 
-> Igual que horror-choice, el validator `audit-spec-narrative-coherence.py` compara `location` + `signature_staging` cross-video (exact-match location → FAIL; semantic similarity de staging ≥0.85 → hard-block). Forward rows declaran estos fields al producirse.
+> Igual que horror-choice, el validator `ai-video audit-spec-narrative-coherence` compara `location` + `signature_staging` cross-video (exact-match location → FAIL; semantic similarity de staging ≥0.85 → hard-block). Forward rows declaran estos fields al producirse.
 
 | # | Proyecto | location | signature_staging | Confidence |
 |---|----------|----------|-------------------|------------|

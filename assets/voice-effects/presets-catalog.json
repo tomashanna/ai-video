@@ -4,15 +4,15 @@
   "purpose": "Reusable creepy voice effects presets para character voices en horror-choice + other horror formats. Catalog forward V5+.",
   "integration": {
     "spec_field_new": "characters[].creepy_effect_preset",
-    "engineer_script": ".claude/skills/ai-video-production/templates/scripts/apply-voice-preset.py",
+    "engineer_script": "ai-video apply-voice-preset",
     "audit_enforcement": "audit-tts-perceptual.py (Gap #45 Sprint B) — intelligibility >=0.85 post-effect mandatory",
     "spec_schema_example": "characters:\n  - id: char_proyector\n    voice_id: K3TeN3ZVK8WnOeJ0NYqZ\n    creepy_effect_preset: ultratumba_cavernoso\n    atempo_strategy: per-segment + 1.15 narrator multiplier"
   },
   "workflow_canonical": [
     "1. SPEC arquitecto declara character.creepy_effect_preset = <preset_id>",
-    "2. Engineer CP4 audio genera raw.mp3 via tts.py (no atempo yet)",
+    "2. Engineer CP4 audio genera raw.mp3 via ai-video tts (no atempo yet)",
     "3. Engineer apply per-segment atempo per voices-catalog.json strategy",
-    "4. Engineer aplica preset: apply-voice-preset.py --preset <id> --input processed.mp3 --output final.mp3",
+    "4. Engineer aplica preset: ai-video apply-voice-preset --preset <id> --input processed.mp3 --output final.mp3",
     "5. Auditor M7.7.5: Whisper transcribe final.mp3 + intelligibility_score vs SPEC text >= 0.85",
     "6. IF intelligibility < 0.85 → reduce preset intensity (intelligibility_mitigation recipe) o escalar"
   ],

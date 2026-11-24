@@ -103,7 +103,7 @@ Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `forma
 
 ```
 1. README.md (front door — qué es el sistema + arquitectura de capas)
-2. CLAUDE.md (este archivo) — completo
+2. docs/OPERATING-MANUAL.md (este archivo) — completo
 3. ai-video-production/DELIVERY-FORMATS.md § Matriz GENRE × FORMAT (validar combo)
 4. ai-video-production/formats/<delivery>.md (reel / youtube-short / etc. — specs + safe zones)
 5. ai-video-production/RETENTION-RULES.md (si short-form)
@@ -115,9 +115,9 @@ Si el usuario solo dijo uno, **preguntá el otro**. Default si no aclara: `forma
 8. video-director/SKILL.md + WORKFLOW.md + ANTI-PATTERNS.md (workflow del ingeniero)
 9. ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md + CAPTIONS.md + MOTION-LAYER.md + IMAGE-VARIETY.md + SFX-PIPELINE.md + QA.md (toolkit técnico universal)
 10. video-animation/SKILL.md + ANIMATION-LAYER.md § 1 PRE-GATE
-11. library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
-12. elements.json (countdown/loader/lower-third disponibles)
-13. FEEDBACK-LOOP.md
+11. assets/library/LIBRARY.md + voices-catalog.json + sfx-catalog.json
+12. templates/hyperframes/elements.json (countdown/loader/lower-third disponibles)
+13. docs/FEEDBACK-LOOP.md
 ```
 
 ### 0.4 Plan-First Rule
@@ -153,7 +153,7 @@ Antes de modificar archivos, llamar APIs externas (ElevenLabs, Gemini, Replicate
 ```
 CAPA A UNIVERSAL (ingeniero)  → .claude/skills/video-director/ + .claude/skills/ai-video-production/
                               → .claude/skills/creative-director/ (arquitecto) + INTERVIEW-FLOW + HANDOFF-PROTOCOL
-                              → library/, elements.json, root docs
+                              → assets/library/, templates/hyperframes/elements.json, root docs
 
 CAPA A.5 FAMILIA CHOICE       → .claude/skills/choice-format-core/ (mecánica AGNÓSTICA del formato choice:
    (agnóstica al género)        hook dyad + countdown + botones A/B + decisión→consecuencia + counterfactual +
@@ -175,23 +175,23 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 
 ## 🔒 Hard rules globales (NO negociables)
 
-> ⛔ **Detalle completo** (GATING per rule + razón estructural + casos disparadores + doc canónico extendido) → **`HARD-RULES.md`** (root). Esta tabla = **resumen autoritativo + capability gates + pointer doc**. Para edge case GATING / ambigüedad / contexto histórico → consultar HARD-RULES.md.
+> ⛔ **Detalle completo** (GATING per rule + razón estructural + casos disparadores + doc canónico extendido) → **`docs/HARD-RULES.md`** (root). Esta tabla = **resumen autoritativo + capability gates + pointer doc**. Para edge case GATING / ambigüedad / contexto histórico → consultar docs/HARD-RULES.md.
 
 | # | Regla (resumen) | Gate (Pattern 7) | Doc canónico |
 |---|---|---|---|
-| 1 | Quality gate primario: `calibrated_v4 ≥9.0` OR `user_perceptual ≥8.5` (OR logic) | `format_type ∈ {interactive_choice, reel}` AND `has_ai_generated_clips` | `audit-gemini-calibrated.py` + `quality_standards.md` |
+| 1 | Quality gate primario: `calibrated_v4 ≥9.0` OR `user_perceptual ≥8.5` (OR logic) | `format_type ∈ {interactive_choice, reel}` AND `has_ai_generated_clips` | `ai-video audit-gemini-calibrated` + `quality_standards.md` |
 | 2 | Stop point pre-animation ≥9.7 (iter A→B→C antes de animar) | `has_ai_generated_clips` | `quality_standards.md` |
 | 3 | Captions vía Whisper, NUNCA hand-timed | `has_captions_baked` | `CAPTIONS.md` |
-| 4 | UI safe zones IG Reel (caption Y62 / loading banda 44-52 — Y52 en decision shots / name Y11.5) | `format_type ∈ {interactive_choice, reel}` OR vertical 1080×1920 | `formats/reel.md` + `choice-format-core/INGENIERO-CHOICE-CORE § 2` + `<format>-format/INGENIERO-PAUTA-MASTER § 7` · gate: `audit-ui-safe-zones.py` (bandas F1 vía `lib/empirical_bands.py`) |
+| 4 | UI safe zones IG Reel (caption Y62 / loading banda 44-52 — Y52 en decision shots / name Y11.5) | `format_type ∈ {interactive_choice, reel}` OR vertical 1080×1920 | `formats/reel.md` + `choice-format-core/INGENIERO-CHOICE-CORE § 2` + `<format>-format/INGENIERO-PAUTA-MASTER § 7` · gate: `ai-video audit-ui-safe-zones` (bandas F1 vía `src/ai_video/core/empirical_bands.py`) |
 | 5 | Variantes -a/-b/-c en shots >4s (TIPOS de plano distintos) | `has_ai_generated_clips` | `IMAGE-VARIETY.md` |
-| 6 | ⛔ Primeros 30s = animation AI obligatoria (no Ken Burns) | `has_ai_generated_clips` AND `format_type ∈ {interactive_choice, reel}` | `animation_30s_rule.md` · gate: `audit-first30s-animation.py` |
-| 7 | Animation AI preferred (Ken Burns fallback ≤20%, max 2-3s) | `has_ai_generated_clips` | `MOTION-LAYER.md` + `<format>-format/INGENIERO-PAUTA-MASTER § 5.6` · gate: `audit-first30s-animation.py` |
-| 8 | Capa SFX dedicada obligatoria (track-index 60-110) | `has_sfx_layer` | `SFX-PIPELINE.md` · gate: `audit-sfx-layer.py` (wired, no solo on-disk) |
-| 9 | Mix volumes canónicos (narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65) | `audio_mix_target: lufs_-14` | `SFX-PIPELINE.md` · gate: `audit-mix-volumes.py` |
+| 6 | ⛔ Primeros 30s = animation AI obligatoria (no Ken Burns) | `has_ai_generated_clips` AND `format_type ∈ {interactive_choice, reel}` | `animation_30s_rule.md` · gate: `ai-video audit-first30s-animation` |
+| 7 | Animation AI preferred (Ken Burns fallback ≤20%, max 2-3s) | `has_ai_generated_clips` | `MOTION-LAYER.md` + `<format>-format/INGENIERO-PAUTA-MASTER § 5.6` · gate: `ai-video audit-first30s-animation` |
+| 8 | Capa SFX dedicada obligatoria (track-index 60-110) | `has_sfx_layer` | `SFX-PIPELINE.md` · gate: `ai-video audit-sfx-layer` (wired, no solo on-disk) |
+| 9 | Mix volumes canónicos (narración 1.0 / música 0.05-0.18 / SFX 0.20-0.35 / flash 0.55-0.65) | `audio_mix_target: lufs_-14` | `SFX-PIPELINE.md` · gate: `ai-video audit-mix-volumes` |
 | 10 | Atempo 2x sobre TTS lento | `has_tts_narration` | `PIPELINE.md § 1` |
-| 11 | Render lock entre agentes (`render-lock.py acquire`) | universal | `PIPELINE.md § 11` |
+| 11 | Render lock entre agentes (`ai-video render-lock acquire`) | universal | `PIPELINE.md § 11` |
 | 12 | Plot twist coherente (3 condiciones: lógica + imágenes + narración) | `format_type: interactive_choice` | `archetype_system.md` |
-| 13 | Audio coverage técnicos (narración ≥70% + block ≥4.5s + fabric ≥99%) | `has_tts_narration` AND `has_layer_3_music` | `audit-audio.py` |
+| 13 | Audio coverage técnicos (narración ≥70% + block ≥4.5s + fabric ≥99%) | `has_tts_narration` AND `has_layer_3_music` | `ai-video audit-audio` |
 | 14 | Rotación pattern (NO repetir mismo pattern 2 consecutivos) | familia choice (horror/sport/…) | `<format>-format/video-log.md` + `choice-format-core/ROTATION-RULES.md` |
 | 15 | HyperFrames namespace `window.__timelines.main = tl` único | universal | `quality_standards.md` |
 | 16 | `data-duration > clip real` → negro total (fix `ffmpeg tpad`) | universal | `HYPERFRAMES-GOTCHAS.md` |
@@ -200,17 +200,17 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 | 19 | Nuestras producciones **NO** autoridad técnica — "NEVER ESTIMATE, ALWAYS MEASURE" (`canonical_validation_status` mandatorio) | universal | `video-director/SKILL.md` + `voices-catalog.json` |
 | 20 | Modelo barato = prompt premium quality (5-block: subject+camera+lighting+action+atmosphere) | `has_ai_generated_clips` | `<format>-format/INGENIERO-PAUTA-MASTER § 5.7` + `MODEL-BENCHMARK` |
 | 21 | SPEC storyboard-level obligatorio (D19-D22 architect audit) | universal | `CREATIVE-SPEC-TEMPLATE-v11.yaml` + `creative-director/SKILL.md` |
-| 23 | Per-clip atomic assembly canonical V3+ (HYBRID Layer 1) | `has_ai_generated_clips` AND `source_clips_origin ∈ {ai_generated, mixed}` | `PIPELINE.md § 13` + `build_clip_atomic.py` |
+| 23 | Per-clip atomic assembly canonical V3+ (HYBRID Layer 1) | `has_ai_generated_clips` AND `source_clips_origin ∈ {ai_generated, mixed}` | `PIPELINE.md § 13` + `ai-video build-clip-atomic` |
 | 24 ⛔⛔ | Auditor enforce CP-by-CP gates MANDATORY (engineer multi-CP autonomous FORBIDDEN) | universal | `AUDITOR-PROTOCOL § 6 anti-pattern #15` |
 | 25 ⛔⛔ | HYBRID architecture canonical V4+ (captions BURNED per clip + narrator continuous Layer 3) | `has_captions_baked` | `PIPELINE.md § 13.9` |
 | 26 ⛔ | Tests adversariales obligatorios (`test_*.py` companion per new script) | universal | `BOOTSTRAP.md § script copy list` + Sprint M |
 | 27 ⛔ | Arquitecto entrega SPEC con **0 findings 🔴 known** (self-validation pre-emit: corre los validators contra su PROPIO SPEC + itera hasta 🟢; NO entrega con gaps 🔴 declarados). Auditor que recibe SPEC con 🔴 → **RETORNA al arquitecto**, NO escala a Tomás salvo ambigüedad arquitectural real | universal | `creative-director/SKILL.md` § self-validation + `CP2-script-flow.md` + `AUDITOR-PROTOCOL §6 #17` |
-| 28/29 ⛔ | **Pipeline models DECLARAN capabilities en `MODEL-CAPABILITIES-MATRIX.md`; los 3 roles del triángulo CONSULTAN antes de producir/validar.** Arquitecto: per shot `narración@165WPM ≤ min(duration_intent_s, i2v.clip_max_s)` pre-SPEC. Validator/Auditor: NO asumir capacidades hardcoded — leer la MATRIX. Modelo nuevo → agregar entrada ANTES de usarlo. (pattern_class 6/5 `model_constraints_not_propagated_across_triangle_roles`; V5 bug: narración truncada 18.8s) | universal | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` + `audit-spec-narration-fits-duration.py` |
-| 30 ⛔ | **Caption coverage = 3 niveles: (A) existence + (B) semantic-match texto + (C) TEMPORAL span.** El caption burn DEBE chunkear TODA la narración del clip en cues word-timed progresivos (≤2 líneas c/u), NO un bloque estático (que se trunca a la 1ª frase). Auditor: verificar 1 frame = existence only (insuficiente) — chequear coverage temporal (caption presente durante TODA la narración hablada). (V5 caption bug: solo la 1ª frase se mostraba; instance 6 `user_perceptual_detects_what_validators_miss`) | `has_captions_baked` | `AUDITOR-PROTOCOL §6` + forward `audit-caption-temporal-coverage.py` |
+| 28/29 ⛔ | **Pipeline models DECLARAN capabilities en `MODEL-CAPABILITIES-MATRIX.md`; los 3 roles del triángulo CONSULTAN antes de producir/validar.** Arquitecto: per shot `narración@165WPM ≤ min(duration_intent_s, i2v.clip_max_s)` pre-SPEC. Validator/Auditor: NO asumir capacidades hardcoded — leer la MATRIX. Modelo nuevo → agregar entrada ANTES de usarlo. (pattern_class 6/5 `model_constraints_not_propagated_across_triangle_roles`; V5 bug: narración truncada 18.8s) | universal | `ai-video-production/MODEL-CAPABILITIES-MATRIX.md` + `ai-video audit-spec-narration-fits-duration` |
+| 30 ⛔ | **Caption coverage = 3 niveles: (A) existence + (B) semantic-match texto + (C) TEMPORAL span.** El caption burn DEBE chunkear TODA la narración del clip en cues word-timed progresivos (≤2 líneas c/u), NO un bloque estático (que se trunca a la 1ª frase). Auditor: verificar 1 frame = existence only (insuficiente) — chequear coverage temporal (caption presente durante TODA la narración hablada). (V5 caption bug: solo la 1ª frase se mostraba; instance 6 `user_perceptual_detects_what_validators_miss`) | `has_captions_baked` | `AUDITOR-PROTOCOL §6` + forward `ai-video audit-caption-temporal-coverage` |
 
-| 31 ⛔ | **VOICE EXCLUSIVITY — máx UNA voz hablada por instante** (narrador O personaje, nunca simultáneos; buffer ≥0.3s entre voces DISTINTAS; música/SFX/ambient conviven con ducking). Enforcement 4 capas: L1 SPEC pre-emit + L2 TTS real (`audit-spec-voice-exclusivity.py --mode spec|tts`) + L3 assembly assertion (shift ≤1s o ABORT, nunca silencioso) + L4 forward `audit-render-voice-overlap.py`. Ley AGNÓSTICA (aplica a relator+jugadores sport, testimonial editorial). Caso disparador V7 ultimo-tren-carga 2026-06-04: narrador + dialog Dario/Tobias pisados (Layer 1 vs Layer 3 sin check cruzado); directiva Tomás "regla de código al guion midiendo timestamps, ley del sistema agnóstico" | `has_tts_narration` AND multi-speaker | `PIPELINE.md § 14` + `audit-spec-voice-exclusivity.py` |
+| 31 ⛔ | **VOICE EXCLUSIVITY — máx UNA voz hablada por instante** (narrador O personaje, nunca simultáneos; buffer ≥0.3s entre voces DISTINTAS; música/SFX/ambient conviven con ducking). Enforcement 4 capas: L1 SPEC pre-emit + L2 TTS real (`ai-video audit-spec-voice-exclusivity --mode spec|tts`) + L3 assembly assertion (shift ≤1s o ABORT, nunca silencioso) + L4 forward `audit-render-voice-overlap.py`. Ley AGNÓSTICA (aplica a relator+jugadores sport, testimonial editorial). Caso disparador V7 ultimo-tren-carga 2026-06-04: narrador + dialog Dario/Tobias pisados (Layer 1 vs Layer 3 sin check cruzado); directiva Tomás "regla de código al guion midiendo timestamps, ley del sistema agnóstico" | `has_tts_narration` AND multi-speaker | `PIPELINE.md § 14` + `ai-video audit-spec-voice-exclusivity` |
 
-> ⚠️ **#22 = empty slot** (accidental skip 2026-05-21, blast radius 54 refs externos > beneficio cosmético). Detalle Numbering note → `HARD-RULES.md`.
+> ⚠️ **#22 = empty slot** (accidental skip 2026-05-21, blast radius 54 refs externos > beneficio cosmético). Detalle Numbering note → `docs/HARD-RULES.md`.
 
 ---
 
@@ -218,67 +218,47 @@ CAPA C POR-VIDEO              → creative-specs/<id>.yaml (output del arquitect
 
 | Recurso | Path canonical | Notes |
 |---------|----------------|-------|
-| `elements.json` | `<repo-root>/elements.json` (root, NOT inside library/ ni skills/) | Components UI catalog (countdown/loader/lower-third). Codificado post inventory 2026-05-23 (Hidden gap 3). |
-| `library/voices-catalog.json` | `<repo-root>/library/voices-catalog.json` | ElevenLabs voice IDs validados |
-| `library/sfx-catalog.json` | `<repo-root>/library/sfx-catalog.json` | SFX reusables |
-| ⭐ `transitions/` | `<repo-root>/transitions/` (root) | **Carpeta GLOBAL de transiciones** (migrada de effects-library 2026-06-05). `catalog.json` = índice transición→formato (consultar PRIMERO); `README.md` = decision matrix + how-to-add; `universal/` + `horror-choice/` + `sport-choice/`. Paths viejos effects-library = symlinks compat. |
-| ⭐ `filters/` | `<repo-root>/filters/` (root) | **Carpeta GLOBAL de filtros de video** (LUTs .cube + futuros grain/vignettes/overlays; creada 2026-06-05). `catalog.json` = índice filtro→formato; `luts/wildebeast.cube` 1er LUT físico. Autoridad de aplicación per formato = `COLOR-GRADING.md`. |
-| ⭐ `choice-format-core/` | `<repo-root>/.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
-| 🎬 `video-editor/` | `<repo-root>/.claude/skills/video-editor/` | **Rol EDITOR** (footage YA grabado, NO generación IA). `SKILL.md` = system prompt (identidad/triggers/principios/workflow); `TOOLBOX.md` = paleta de herramientas (ffmpeg: cortes/velocidad/captions/transiciones/color/mezcla/-14 LUFS — no recetas fijas); `scripts/` = `make_ass.py` + `burn-captions.sh` (captions validados en producción). Reusa `ai-video-production`. Creada 2026-06-10. |
-| `videosref_elige_tu_compa/` | `<repo-root>/videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
-| `referent-analysis/` | `<repo-root>/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
-| `creative-specs/<id>.yaml` | `<repo-root>/creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
-| `_archive-deprecated-docs/` | `<repo-root>/_archive-deprecated-docs/` | DEPRECATED docs preserved as historical reference (CREATIVE-BRIEF + POST-MORTEM-TEMPLATE + ARCHITECT-BRIEFING-VIDEO-3 + plain/v10 SPEC templates) |
-| `_archive-legacy-projects/` | `<repo-root>/_archive-legacy-projects/` | Pre-V1 dev projects archived (cabina-14 + bosque-abandonado + mina-abandonada + pueblo-fantasma + maikol-crucero + cabana-tormenta + calabozo-catacumbas + isla-faro + elige-companero) |
-| `_archive-phase3-v3-learning/` | `<repo-root>/_archive-phase3-v3-learning/` | V3 parque-acuatico learning archive |
+| `templates/hyperframes/elements.json` | `templates/hyperframes/elements.json` (root, NOT inside assets/library/ ni skills/) | Components UI catalog (countdown/loader/lower-third). Codificado post inventory 2026-05-23 (Hidden gap 3). |
+| `assets/library/voices-catalog.json` | `assets/library/voices-catalog.json` | ElevenLabs voice IDs validados |
+| `assets/library/sfx-catalog.json` | `assets/library/sfx-catalog.json` | SFX reusables |
+| ⭐ `assets/transitions/` | `assets/transitions/` (root) | **Carpeta GLOBAL de transiciones** (migrada de effects-library 2026-06-05). `catalog.json` = índice transición→formato (consultar PRIMERO); `README.md` = decision matrix + how-to-add; `universal/` + `horror-choice/` + `sport-choice/`. Paths viejos effects-library = symlinks compat. |
+| ⭐ `filters/` | `filters/` (root) | **Carpeta GLOBAL de filtros de video** (LUTs .cube + futuros grain/vignettes/overlays; creada 2026-06-05). `catalog.json` = índice filtro→formato; `luts/wildebeast.cube` 1er LUT físico. Autoridad de aplicación per formato = `COLOR-GRADING.md`. |
+| ⭐ `choice-format-core/` | `.claude/skills/choice-format-core/` | **Capa A.5** — mecánica AGNÓSTICA de la familia choice (CHOICE-MECHANIC + INGENIERO-CHOICE-CORE + ROTATION-RULES). La heredan horror-choice + sport-choice; apunta a ai-video-production para lo universal. Creada 2026-06-01. |
+| 🎬 `video-editor/` | `.claude/skills/video-editor/` | **Rol EDITOR** (footage YA grabado, NO generación IA). `SKILL.md` = system prompt (identidad/triggers/principios/workflow); `TOOLBOX.md` = paleta de herramientas (ffmpeg: cortes/velocidad/captions/transiciones/color/mezcla/-14 LUFS — no recetas fijas); `scripts/` = `ai-video make-ass` + `scripts/burn-captions.sh` (captions validados en producción). Reusa `ai-video-production`. Creada 2026-06-10. |
+| `videosref_elige_tu_compa/` | `videosref_elige_tu_compa/` (root) | 8 reference videos canónicos **del formato horror-choice** (refs de género, NO global; cada formato trae las suyas) |
+| `data/referent-analysis/` | `data/referent-analysis/` (root) | Empirical analysis outputs F1 measurements |
+| `creative-specs/<id>.yaml` | `creative-specs/<id>.yaml` | Per-video SPEC outputs from architect |
+| `_archive-deprecated-docs (retirado; ver historial git)` | `_archive-deprecated-docs (retirado; ver historial git)` | DEPRECATED docs preserved as historical reference (CREATIVE-BRIEF + POST-MORTEM-TEMPLATE + ARCHITECT-BRIEFING-VIDEO-3 + plain/v10 SPEC templates) |
+| `_archive-legacy-projects/` | `_archive-legacy-projects/` | Pre-V1 dev projects archived (cabina-14 + bosque-abandonado + mina-abandonada + pueblo-fantasma + maikol-crucero + cabana-tormenta + calabozo-catacumbas + isla-faro + elige-companero) |
+| `_archive-phase3-v3-learning/` | `_archive-phase3-v3-learning/` | V3 parque-acuatico learning archive |
 
 ---
 
 ## 🚀 Bootstrap canónico — proyecto NUEVO
 
-Si es un proyecto nuevo desde cero, los scripts QA NO existen todavía. **Copiarlos del template ANTES de hacer cualquier cosa**:
+Los scripts ya no se copian a cada proyecto: todo el toolkit es el paquete `ai_video` y se invoca como `uv run ai-video <tool>` desde cualquier carpeta del repo.
 
 ```bash
-cd "<repo-root>"
-mkdir -p "<PROYECTO>"/{assets,scripts,renders}
-mkdir -p "<PROYECTO>/assets/sfx"
-cd "<PROYECTO>"
+# 0. Una vez por clon: entorno + CLI (los gates NO se copian: son comandos versionados y testeados)
+uv sync --all-extras                 # o: uv sync --extra providers --extra media
+cp .env.example .env                 # completar GEMINI_API_KEY / ELEVENLABS_API_KEY / REPLICATE_API_TOKEN
+uv run ai-video doctor               # ffmpeg, extras y keys (nunca imprime valores)
 
-# 1. Scripts genéricos (production + 8 gates obligatorios):
-SKILL_DIR="<repo-root>/.claude/skills/ai-video-production/templates"
-cp "$SKILL_DIR/scripts/"*.py scripts/
-cp "$SKILL_DIR/scripts/"*.sh scripts/      # ⭐ master-audio.sh + check-pacing.sh (antes NO se copiaban — gates Q17/Q18 los necesitan)
-cp -r "$SKILL_DIR/scripts/lib" scripts/lib  # ⭐ lib compartida (hard_rules_parser + empirical_bands + orchestrator_state)
-#   → tts.py, image.py, sfx.py, captions.py, video.py
-#   → audit-narrative.py, render-lock.py, audit-frames.py, audit-audio.py, continuity-check.py, qa-gate.py
-#   ⭐ audit-audio.py + continuity-check.py agregados 2026-05-13 (post pueblo-fantasma-desierto v2)
-#   ⭐ audit-spec-completeness.py agregado 2026-05-19 (post matadero CP5 gap #13 — SPEC asset_list + ui_active inventory diff)
-#   ⭐ Fase 0 wave 1 agregados 2026-06-04 (clasificación codifiable_backlog → gates): audit-ui-safe-zones.py +
-#     audit-first30s-animation.py + audit-mix-volumes.py + audit-sfx-layer.py + audit-spec-declarations.py +
-#     audit-language-style.py + audit-style-markup.py + lib/empirical_bands.py (bandas F1 per-formato, NO hardcodear)
+# 1. Proyecto nuevo — vive en projects/<PROYECTO>/ (git-ignored); el SPEC en creative-specs/<id>.yaml
+mkdir -p "projects/<PROYECTO>"/{assets/sfx,renders}
+cp templates/project/hyperframes.json "projects/<PROYECTO>/hyperframes.json"
+cd "projects/<PROYECTO>"
 
-# 2. Templates de configuración:
-cp "$SKILL_DIR/.env-TEMPLATE"            .env
-cp "$SKILL_DIR/hyperframes.json-TEMPLATE" hyperframes.json
-
-# 3. Si el formato tiene templates propios (Capa B), copialos de <format>-format/templates/:
-FORMAT_DIR="<repo-root>/.claude/skills/<format>-format/templates"   # ej: horror-choice-format
+# 2. Templates propios del formato (Capa B), ej. horror-choice-format:
+FORMAT_DIR="../../.claude/skills/<format>-format/templates"
 cp "$FORMAT_DIR/NARRATIVE-TEMPLATE.md"   NARRATIVE.md
 cp "$FORMAT_DIR/SFX-LIST-TEMPLATE.md"    SFX-LIST.md
 cp "$FORMAT_DIR/sfx-spec-TEMPLATE.json"  sfx-spec.json
 
-# 4. Verificación obligatoria (NO continuar si falla):
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py audit-frames.py audit-frames-granular.py audit-audio.py continuity-check.py audit-against-referent.py audit-spec-completeness.py audit-clip-timing-vs-audio.py audit-render-audio-coverage.py audit-caption-temporal-coverage.py audit-variant-coverage.py audit-anchor-coverage.py qa-gate.py audit-ui-safe-zones.py audit-first30s-animation.py audit-mix-volumes.py audit-sfx-layer.py audit-spec-declarations.py audit-language-style.py audit-style-markup.py audit-decision-ui-pacing.py audit-avu-sync-contract.py audit-videolog-appended.py audit-spec-voice-exclusivity.py audit-sfx-audibility.py audit-engineer-brief-vs-spec.py master-audio.sh check-pacing.sh lib/empirical_bands.py; do
-  [ -f scripts/$f ] && echo "✓ scripts/$f" || echo "✗ MISSING scripts/$f"
-done
-
-# 5. venv + deps:
-python3 -m venv .venv
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install elevenlabs google-genai python-dotenv openai-whisper replicate
+# 3. Verificación (NO continuar si falla): SPEC válido + todos los gates disponibles
+uv run ai-video validate-spec ../../creative-specs/<id>.yaml
+uv run ai-video list                 # gates, builders y providers disponibles
 ```
-
-Sin esos scripts en `scripts/`, los gates del flow fallan con `FileNotFoundError`.
 
 Detalle completo: `ai-video-production/BOOTSTRAP.md` + `horror-choice-format/BOOTSTRAP-NEW-PROJECT.md`.
 
@@ -290,14 +270,14 @@ Detalle completo: `ai-video-production/BOOTSTRAP.md` + `horror-choice-format/BOO
 >
 > **Actualizado 2026-05-13 (PM)** tras análisis de 7 referentes Instagram (incluye 4 @referent-a). Pre-render-gate checklist: **24 preguntas Y/N (Q1–Q25, salta Q23)** — 16 base + Q17-Q20 referent-validated (cuts/min, LUFS -14 ±0.5, vignette, monospaced names) + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU. El body de `pre-render-gate/SKILL.md` manda sobre cualquier conteo legacy.
 >
-> **Actualizado 2026-05-19** tras matadero CP5 STOP point gap #13 — Gate 0 NUEVO (`audit-spec-completeness.py`) que mide SPEC asset_list + ui_active INVENTORY vs actual filesystem + index.html wired. BLOQUEANTE pre-todo-otro-gate porque audits 1-7 miden CALIDAD de lo que existe, NO INVENTARIO contra SPEC (caso disparador: engineer declared CP5 done con 0/10 SFX + 0/3 music + 0/2 ambient + 0/3 countdown wired pero audits 4-6 no lo detectaron).
+> **Actualizado 2026-05-19** tras matadero CP5 STOP point gap #13 — Gate 0 NUEVO (`ai-video audit-spec-completeness`) que mide SPEC asset_list + ui_active INVENTORY vs actual filesystem + index.html wired. BLOQUEANTE pre-todo-otro-gate porque audits 1-7 miden CALIDAD de lo que existe, NO INVENTARIO contra SPEC (caso disparador: engineer declared CP5 done con 0/10 SFX + 0/3 music + 0/2 ambient + 0/3 countdown wired pero audits 4-6 no lo detectaron).
 
 Después del render draft, ANTES de declarar stop point al usuario, correr en orden:
 
 ```bash
 # ⛔ Gate 0 NUEVO (BLOQUEANTE PRIORIDAD ABSOLUTA) — SPEC asset_list + ui_active completeness
-.venv/bin/python scripts/audit-spec-completeness.py \
-  --spec ../creative-specs/<id>.yaml --project-dir . --cp 5 --html index.html
+uv run ai-video audit-spec-completeness \
+  --spec ../../creative-specs/<id>.yaml --project-dir . --cp 5 --html index.html
 # Exit 0 → CONTINUE a gates 1-7
 # Exit 1 → STOP point INVÁLIDO, engineer continue execute (CP4-audio / CP5-UI / etc.) hasta ALL inventory PASS
 # Razón: previene declarar STOP con sub-paquetes ungenerated (SFX/music/ambient/UI countdown/buttons/loading)
@@ -308,48 +288,48 @@ npx hyperframes lint
 # Falla → fix root cause, NO --no-verify
 
 # Gate 2 — Audit narrativo (visibilidad <1s, z-index, asset orphans)
-.venv/bin/python scripts/audit-narrative.py
+uv run ai-video audit-narrative
 # Falla → revisar visibility, z-index 68 black-overlay, orphans
 
 # Gate 3 — Render lock (coordinación entre agentes)
-.venv/bin/python scripts/render-lock.py acquire <proyecto>
+uv run ai-video render-lock acquire <proyecto>
 # Falla con lock tomado → wait, NO romper el lock
 
 # ⭐ Gate 4.5a NUEVO — Clip timing vs audio (PER ATOMIC CLIP, en CP4) [Wave 3]
 # Correr 1× por clip atómico ANTES de ensamblar (path HYBRID per-clip-atomic)
-.venv/bin/python scripts/audit-clip-timing-vs-audio.py --mode clip \
+uv run ai-video audit-clip-timing-vs-audio --mode clip \
   --format <format> --video renders/clips/<shot_id>.mp4 \
-  --spec ../creative-specs/<id>.yaml --shot-id <shot_id>
+  --spec ../../creative-specs/<id>.yaml --shot-id <shot_id>
 # Exit 0 → clip OK | Exit 1 → FAIL, regenerar clip (narración truncada / dur ≠ intent), BLOQUEA stop point
 
 # Render draft
 npx hyperframes render --output renders/draft.mp4
 
 # ⭐ Gate 4.5b NUEVO — Clip timing vs audio (PER FINAL RENDER) [Wave 3]
-.venv/bin/python scripts/audit-clip-timing-vs-audio.py --mode render \
+uv run ai-video audit-clip-timing-vs-audio --mode render \
   --format <format> --video renders/draft.mp4
 # Exit 0 → A/V sync OK | Exit 1 → FAIL (|video_dur - audio_dur| > tol), BLOQUEA stop point
 
 # Gate 4 — Audit frames (Gemini Vision frame-by-frame)
-.venv/bin/python scripts/audit-frames.py --video renders/draft.mp4 --interval 1.0 --max-issues 2
+uv run ai-video audit-frames --video renders/draft.mp4 --interval 1.0 --max-issues 2
 # Falla → fix issues localizados (UI overlap, frames negros, texto sobre rostros)
 
 # ⭐ Gate 5 — Audit audio coverage (narración coverage + música + gaps)
-# ⭐ [Wave 3] PATH HYBRID per-clip-atomic → usar audit-render-audio-coverage.py (opera sobre el MP4, NO el HTML):
-.venv/bin/python scripts/audit-render-audio-coverage.py \
-  --format <format> --video renders/draft.mp4 --spec ../creative-specs/<id>.yaml
+# ⭐ [Wave 3] PATH HYBRID per-clip-atomic → usar ai-video audit-render-audio-coverage (opera sobre el MP4, NO el HTML):
+uv run ai-video audit-render-audio-coverage \
+  --format <format> --video renders/draft.mp4 --spec ../../creative-specs/<id>.yaml
 # Exit 0 → coverage OK | Exit 1 → FAIL (coverage <min, gaps narrativos, música ausente), BLOQUEA stop point
-# PATH LEGACY HTML (timeline global, NO per-clip-atomic) → usar audit-audio.py contra el HTML:
-# .venv/bin/python scripts/audit-audio.py --video renders/draft.mp4 --html index.html --max-issues 2
+# PATH LEGACY HTML (timeline global, NO per-clip-atomic) → usar ai-video audit-audio contra el HTML:
+# uv run ai-video audit-audio --video renders/draft.mp4 --html index.html --max-issues 2
 # Falla → fix gaps narrativos >2s, cobertura narración <40%, música ausente
 # CRÍTICO: detecta lo que Gemini holístico NO ve (ambient/SFX tapan silencios narrativos)
 
 # ⭐ Gate 6 NUEVO — Continuity check (NARRATIVE.md vs index.html)
-.venv/bin/python scripts/continuity-check.py --narrative NARRATIVE.md --html index.html --video-duration <X>
+uv run ai-video continuity-check --narrative NARRATIVE.md --html index.html --video-duration <X>
 # Falla → fix caminos narrativos rotos, hitos under-narrated, balance temporal
 
 # ⭐ Gate 6.5 NUEVO — Caption temporal coverage (post-render, red de seguridad HR#30) [Wave 3]
-.venv/bin/python scripts/audit-caption-temporal-coverage.py \
+uv run ai-video audit-caption-temporal-coverage \
   --format <format> --video renders/draft.mp4 --project-dir .
 # Exit 0 → coverage temporal OK | Exit 1 → FAIL (caption NO cubre toda la narración hablada,
 #   bloque estático truncado a 1ª frase, cue span >max), BLOQUEA stop point
@@ -361,31 +341,31 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py renders/draft.m
 # Si dimensión (12), (13) o (14) falla → score TOPE 8.0 (no compensar con atmósfera)
 
 # Gate 7 — QA gate (bloquea sub-9.7)
-.venv/bin/python scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>
+uv run ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>
 # Exit 0 → OK para Kling
 # Exit 1 → BLOCKED, iterar A→B→C con fixes NO-KLING
 # Exit 2 → ESCALAR (3 iter sin llegar a 9.7)
 
 # ⭐ Validators Fase 0 (2026-06-04) — NO alteran el conteo canónico de 8 gates; corren como red adicional
 # (mismo patrón que los sub-gates Wave 3 4.5a/4.5b/6.5). Reemplazan checks que eran prosa/checklist manual:
-.venv/bin/python scripts/audit-spec-declarations.py --format <format> --spec ../creative-specs/<id>.yaml
+uv run ai-video audit-spec-declarations --format <format> --spec ../../creative-specs/<id>.yaml
 #   → Q26 ambient per shot + Q27 atmospheric ≥3 + Q28 not-all-static + canonical_validation_status (HR#19)
-.venv/bin/python scripts/audit-language-style.py --format <format> --spec ../creative-specs/<id>.yaml
+uv run ai-video audit-language-style --format <format> --spec ../../creative-specs/<id>.yaml
 #   → español neutral (no voseo) + anti-cliché + nombres reales (no oficios) + handle @elige_tucompanero
-.venv/bin/python scripts/audit-first30s-animation.py --format <format> --spec ../creative-specs/<id>.yaml \
+uv run ai-video audit-first30s-animation --format <format> --spec ../../creative-specs/<id>.yaml \
   --manifest cp4-manifest*.yaml   # (o --html index.html en path legacy)
 #   → HR#6 primeros 30s animados AI + HR#7 Ken Burns ≤20% / ≤3s c/u
-.venv/bin/python scripts/audit-sfx-layer.py --format <format> --spec ../creative-specs/<id>.yaml --project-dir .
+uv run ai-video audit-sfx-layer --format <format> --spec ../../creative-specs/<id>.yaml --project-dir .
 #   → HR#8 capa SFX dedicada WIRED (no solo en disco — matadero gap #13)
-.venv/bin/python scripts/audit-mix-volumes.py --format <format> --spec ../creative-specs/<id>.yaml --project-dir .
+uv run ai-video audit-mix-volumes --format <format> --spec ../../creative-specs/<id>.yaml --project-dir .
 #   → HR#9 bandas de volumen por elemento (declaradas)
-.venv/bin/python scripts/audit-ui-safe-zones.py --format <format> --spec ../creative-specs/<id>.yaml --html index.html
-#   → HR#4 safe zones leyendo bandas F1 vía lib/empirical_bands.py (NO hardcodea Y) — solo path con index.html
-.venv/bin/python scripts/audit-style-markup.py --format <format> --spec ../creative-specs/<id>.yaml --html index.html
+uv run ai-video audit-ui-safe-zones --format <format> --spec ../../creative-specs/<id>.yaml --html index.html
+#   → HR#4 safe zones leyendo bandas F1 vía src/ai_video/core/empirical_bands.py (NO hardcodea Y) — solo path con index.html
+uv run ai-video audit-style-markup --format <format> --spec ../../creative-specs/<id>.yaml --html index.html
 #   → Q19 vignette + Q20 monospaced names — solo path con index.html
 
 # Si los 8 gates pasan: append learnings (2-3 bullets) a <format>-format/video-log.md y reportar al usuario.
-.venv/bin/python scripts/render-lock.py release <proyecto>
+uv run ai-video render-lock release <proyecto>
 ```
 
 **NO declarar stop point al usuario hasta que los 8 gates retornen exit 0.**
@@ -404,7 +384,7 @@ Para cada tema crítico, hay UN doc autoritativo. **NO buscar en otros docs ni e
 | **Autoridad CREATIVA del formato activo** (arquitecto) | ⭐ `<format>-format/PAUTA-MASTER.md` (ej. horror-choice, sport-choice) |
 | **Autoridad TÉCNICA del formato activo** (ingeniero) | ⭐ `<format>-format/INGENIERO-PAUTA-MASTER.md` |
 | **Mecánica AGNÓSTICA de la familia choice** | ⭐ `choice-format-core/CHOICE-MECHANIC.md` (creativa) + `INGENIERO-CHOICE-CORE.md` (técnica) |
-| **NUNCA AUTORIDAD** (post-mortem propio) | `referent-analysis/our-production-archive/` con README "NO AUTORIDAD" |
+| **NUNCA AUTORIDAD** (post-mortem propio) | `data/referent-analysis/our-production-archive/` con README "NO AUTORIDAD" |
 | Vara de calidad + pre-animation gate + QA protocol | memoria `quality_standards.md` |
 | Selección de modelo AI (animation + imagen) — benchmark + decision tree + cost matrix | `video-director/MODEL-BENCHMARK.md` |
 | Regla 30s universal short-form (model-agnostic) | memoria `animation_30s_rule.md` |
@@ -418,16 +398,16 @@ Para cada tema crítico, hay UN doc autoritativo. **NO buscar en otros docs ni e
 | Character consistency | `ai-video-production/CHARACTER-CONSISTENCY.md` |
 | HyperFrames bugs sutiles | `ai-video-production/HYPERFRAMES-GOTCHAS.md` |
 | Anti-patterns universales | `video-director/ANTI-PATTERNS.md` |
-| Voice IDs ElevenLabs validados | `library/voices-catalog.json` |
-| SFX disponibles para reuse | `library/sfx-catalog.json` + `library/LIBRARY.md` |
-| Components UI (countdown/loader/lower-third) | `elements.json` |
+| Voice IDs ElevenLabs validados | `assets/library/voices-catalog.json` |
+| SFX disponibles para reuse | `assets/library/sfx-catalog.json` + `assets/library/LIBRARY.md` |
+| Components UI (countdown/loader/lower-third) | `templates/hyperframes/elements.json` |
 | Templates copy-paste | `.claude/skills/ai-video-production/templates/` |
 | **Audio mastering -14 LUFS** (post 2026-05-13) | `ai-video-production/AUDIO-MASTERING.md` + `scripts/master-audio.sh` |
 | **Color grading 2 LUTs** (post 2026-05-13) | `ai-video-production/COLOR-GRADING.md` (NARRATIVE warm/eerie vs CHOICE cool/cinematic) |
 | **Pacing cuts/min 2-7** (post 2026-05-13) | `ai-video-production/PACING-MARKERS.md` + `scripts/check-pacing.sh` |
 | **Captions 3 clases** (post 2026-05-13) | `ai-video-production/CAPTIONS.md` § "Sistema de 3 clases" (name/narration/warning) |
 | **Character names archetype** (post 2026-05-13) | `horror-choice-format/CHARACTER-NAMES-CATALOG.md` |
-| **Síntesis referent analysis** (post 2026-05-13) | `referent-analysis/REFERENT-PATTERNS.md` (35 frames Gemini Vision + 7 videos LUFS) |
+| **Síntesis referent analysis** (post 2026-05-13) | `data/referent-analysis/REFERENT-PATTERNS.md` (35 frames Gemini Vision + 7 videos LUFS) |
 
 ---
 
@@ -446,7 +426,7 @@ Para el formato activo: ver `<format>-format/BOOTSTRAP-NEW-PROJECT.md` § 9.a (D
 
 **Aplica a:**
 - Modificación de archivos (HTML, configs, scripts, docs, NARRATIVE.md)
-- Llamadas a APIs externas: Gemini (image.py), ElevenLabs (tts.py / sfx.py), Replicate (video.py — Kling/Hailuo/Seedance según MODEL-BENCHMARK)
+- Llamadas a APIs externas: Gemini (ai-video image), ElevenLabs (ai-video tts / ai-video sfx), Replicate (ai-video video — Kling/Hailuo/Seedance según MODEL-BENCHMARK)
 - Render (`npx hyperframes render`) cuando modifica versiones existentes
 
 **No aplica a:**

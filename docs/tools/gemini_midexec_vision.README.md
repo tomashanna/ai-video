@@ -1,9 +1,9 @@
-# gemini_midexec_vision.py — quick reference
+# ai-video gemini-midexec-vision — quick reference
 
 Mid-execution Gemini Vision hooks (Phase 2). Catch visual/audio mismatches
 **per-shot during CP execution**, regen ONE asset vs full iter cycle.
 
-Companion to `audit-frames.py` (post-render holistic) — this script runs
+Companion to `ai-video audit-frames` (post-render holistic) — this script runs
 **during** CP2 / CP4 / CP5 / assembly.
 
 ## Exit codes
@@ -21,7 +21,7 @@ Companion to `audit-frames.py` (post-render holistic) — this script runs
 After Hailuo / Kling / Seedance generates `shot_NN.mp4`:
 
 ```bash
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --hook hailuo_post \
   --clip assets/clips/shot_05_film_reveal.mp4 \
   --spec creative-specs/cinema-abandonado.yaml \
@@ -44,7 +44,7 @@ Cost ~$0.05 per shot.
 After ElevenLabs generates `segment_NN.mp3` and `atempo` is applied:
 
 ```bash
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --hook tts_post \
   --tts assets/tts/decision_1_question.mp3 \
   --spec creative-specs/cinema-abandonado.yaml \
@@ -62,10 +62,10 @@ Cost $0 (all local).
 
 ### Hook 3 — `atomic_post` (CP5, per atomic muxed clip)
 
-After `build_clip_atomic.py` outputs `shot_NN_atomic.mp4` (image + audio + caption synced):
+After `ai-video build-clip-atomic` outputs `shot_NN_atomic.mp4` (image + audio + caption synced):
 
 ```bash
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --hook atomic_post \
   --clip assets/clips-atomic/shot_05_atomic.mp4 \
   --spec creative-specs/cinema-abandonado.yaml \
@@ -88,7 +88,7 @@ Cost ~$0.05 per atomic clip.
 After ffmpeg concats `clip_N + transition_effect + clip_N+1`:
 
 ```bash
-.venv/bin/python scripts/gemini_midexec_vision.py \
+uv run ai-video gemini-midexec-vision \
   --hook transition_post \
   --concat assets/clips-atomic/concat_05_06.mp4 \
   --from-shot shot_05_film_reveal \
@@ -126,10 +126,10 @@ import subprocess
 
 # After Hailuo finishes shot_05.mp4:
 result = subprocess.run([
-    ".venv/bin/python", "scripts/gemini_midexec_vision.py",
+    "uv", "run", "ai-video", "gemini-midexec-vision",
     "--hook", "hailuo_post",
     "--clip", "assets/clips/shot_05.mp4",
-    "--spec", "creative-specs/cinema-abandonado.yaml",
+    "--spec", "creative-specs/<id>.yaml",
     "--shot-id", "shot_05_film_reveal",
     "--output", f"reports/midexec/shot_05.json"
 ])

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# system-health-check.sh — Verifica los invariantes de higiene del repo (READ-ONLY).
+# scripts/health-check.sh — Verifica los invariantes de higiene del repo (READ-ONLY).
 #
 # Codifica el cleanup manual (2026-06) para que se sostenga solo: el repo trackea SOLO
 # el sistema agnóstico (skills, library, creative-specs, componentes, referent-analysis),
 # nunca proyectos de video, secretos, bytecode, ni handoffs efímeros per-CP.
 #
-# Uso:   bash system-health-check.sh
+# Uso:   bash scripts/health-check.sh
 # Exit:  0 = todo verde · 1 = hay invariantes violados
 # NO escribe ni borra NADA. Seguro de ejecutar siempre (incl. mientras corre un video).
 
 set -uo pipefail
-cd "$(dirname "$0")" || exit 2
+cd "$(dirname "$0")/.." || exit 2
 
 PASS=0; FAIL=0
 ok()   { printf "  \033[32m✅ %s\033[0m\n" "$1"; PASS=$((PASS+1)); }
@@ -27,22 +27,17 @@ echo "════════════════════════�
 # (la clase del bug cerro-aislado-v4) o adición inesperada. Escala a proyectos NUEVOS solos.
 echo "[1] Solo el sistema agnóstico en el repo (no proyectos de video)"
 STRAY=$(git ls-files | sed 's#/.*##' | sort -u | grep -vxF \
-  -e ".agents" -e ".claude" -e ".gitignore" \
-  -e "AB-TEST-PROTOCOL.md" -e "AB-VIDEO-1-BRIEF.md" -e "AUTONOMOUS-FACTORY-ROADMAP.md" -e "CLAUDE.md" -e "EXCALIDRAW-SYSTEM-OVERVIEW.md" \
-  -e "FEEDBACK-LOOP.md" -e "HARD-RULES.md" -e "README.md" -e "V4-LAUNCH-CHECKLIST.md" \
-  -e "_archive-deprecated-docs" -e "_freeze-manifests" \
-  -e "countdown-glitch" -e "countdown-pulse" -e "countdown-slam" \
-  -e "creative-specs" -e "elements.json" -e "library" -e "transitions" -e "filters" \
-  -e "loader-bar" -e "loader-radial" -e "loader-segments" \
-  -e "lower-blackletter" -e "lower-distressed" -e "lower-handwritten" \
-  -e "lower-stamp" -e "lower-typewriter" \
-  -e "referent-analysis" -e "skills-lock.json" -e "system-health-check.sh" || true)
+  -e ".agents" -e ".claude" -e ".github" -e ".gitignore" -e ".gitleaks.toml" -e ".pre-commit-config.yaml" \
+  -e ".env.example" -e ".python-version" -e "AGENTS.md" -e "CHANGELOG.md" -e "CLAUDE.md" -e "CONTRIBUTING.md" \
+  -e "LICENSE" -e "README.md" -e "SECURITY.md" -e "THIRD_PARTY_NOTICES.md" -e "pyproject.toml" -e "uv.lock" \
+  -e "skills-lock.json" -e "assets" -e "data" -e "docs" -e "evals" -e "examples" -e "scripts" -e "src" \
+  -e "templates" -e "tests" || true)
 if [ -z "$STRAY" ]; then ok "0 entradas top-level inesperadas (solo sistema)"
 else bad "entradas top-level NO esperadas (¿proyecto leakeado? agregalas al .gitignore o al allowlist si son sistema):"; list $STRAY; fi
 
 # ── [2] Sin secretos tracked ──
 echo "[2] Secretos (.env / keys)"
-SEC=$(git ls-files | grep -iE '(^|/)\.env($|\.)|(^|/)secret|credential' | grep -v -- '-TEMPLATE' || true)
+SEC=$(git ls-files | grep -iE '(^|/)\.env($|\.)|(^|/)secret|credential' | grep -v -- '-TEMPLATE' | grep -vxF '.env.example' || true)
 if [ -z "$SEC" ]; then ok "0 secretos tracked"; else bad "SECRETOS tracked (ROTAR la key + git rm --cached):"; list $SEC; fi
 
 # ── [3] Sin bytecode Python tracked ──
@@ -60,16 +55,20 @@ echo "[5] Arquitectura en skills (three-agent, no 'two-agent' stale)"
 TA=$(grep -rlnE 'two-agent|two agent|sistema de dos agentes|2 agentes' .claude/skills --include='*.md' 2>/dev/null || true)
 if [ -z "$TA" ]; then ok "sin 'two-agent' stale"; else bad "'two-agent' stale en:"; list $TA; fi
 
-# ── [6] Scripts core del bootstrap presentes en templates ──
-echo "[6] Scripts core del bootstrap (copy-list canónica)"
-TPL=".claude/skills/ai-video-production/templates/scripts"
+# ── [6] Tools core registrados en el CLI (el bootstrap ya no copia scripts) ──
+echo "[6] Tools core del CLI ai-video presentes"
 MISS=""
-for f in tts.py image.py sfx.py captions.py video.py audit-narrative.py render-lock.py \
-         audit-frames.py audit-audio.py continuity-check.py qa-gate.py build_clip_atomic.py; do
-  [ -f "$TPL/$f" ] || MISS="$MISS $f"
+for f in tts image sfx captions video audit-narrative render-lock audit-frames audit-audio \
+         continuity-check qa-gate build-clip-atomic validate-spec; do
+  grep -q "\"$f\":" src/ai_video/cli.py || MISS="$MISS $f"
 done
-if [ -z "$MISS" ]; then ok "scripts core presentes en templates/scripts"
-else bad "FALTAN en $TPL:$MISS"; fi
+if [ -z "$MISS" ]; then ok "tools core registrados en src/ai_video/cli.py"
+else bad "FALTAN en el registro del CLI:$MISS"; fi
+
+# ── [6b] Media grande tracked (guard 5 MB) ──
+echo "[6b] Media tracked ≤ 5 MB"
+BIG=$(git ls-files -z | xargs -0 -I{} sh -c 'f="{}"; [ -f "$f" ] && [ $(wc -c < "$f") -gt 5242880 ] && echo "$f"' || true)
+if [ -z "$BIG" ]; then ok "ningún archivo tracked > 5 MB"; else bad "archivos > 5 MB tracked:"; list $BIG; fi
 
 # ── [7] Pointer-targets de la consolidación resuelven (homes canónicos existen) ──
 echo "[7] Homes canónicos de los punteros (consolidate-to-pointer)"
@@ -87,7 +86,7 @@ if [ -z "$PT_MISS" ]; then ok "homes canónicos presentes"; else bad "pointer-ta
 
 # ── [8] Consistencia de gate-count (canónico = 8 pre-render gates) ──
 # Caza el cascade 5/6/7→8: cualquier doc que diga "N gates" (N≠8) sin contextualizar como
-# subset. El canónico es CLAUDE.md § Pre-render gate = 8 (Gate 0 + 7). Reconciliado 2026-06.
+# subset. El canónico es docs/OPERATING-MANUAL.md § Pre-render gate = 8 (Gate 0 + 7). Reconciliado 2026-06.
 echo "[8] Consistencia gate-count (canónico = 8, sin counts contradictorios)"
 GC=$(grep -rniE '\b[567] gates\b' .claude/skills --include='*.md' 2>/dev/null \
   | grep -viE 'canónico de 8|subset|núcleo|de calidad|binarios|V4-LAUNCH|los 3 gates' || true)
@@ -115,7 +114,7 @@ echo "[10] Membresía del gate-set (8 nombres canónicos, no listas divergentes)
 GATE_PROBES="audit-spec-completeness|spec-completeness lint|lint audit-narrative|audit-narrative render-lock|render-lock audit-frames|audit-frames(\.py)?[^-] audit-audio|audit-audio continuity-check|continuity-check qa-gate|qa-gate"
 GATESET_BAD=""
 for doc in \
-  CLAUDE.md \
+  docs/OPERATING-MANUAL.md \
   .claude/skills/ai-video-production/BOOTSTRAP.md \
   .claude/skills/video-director/WORKFLOW.md \
   .claude/skills/pre-render-gate/SKILL.md \
@@ -151,9 +150,9 @@ else bad "gate-set divergente en docs clave (reconciliar a los 8 nombres canóni
 
 # ── [11] Q-count del pre-render-gate (canónico = 24 Q, Q1-Q25 salta Q23) ──
 # Ningún doc activo puede decir "20 Q"/"21 Q"/"20 preguntas"/"21 preguntas" del pre-render-gate.
-# Scope: .claude/skills/ + root .md (CLAUDE.md INCLUIDO — reconciliado completo 2026-06-04), sin _archive*.
+# Scope: .claude/skills/ + root .md (docs/OPERATING-MANUAL.md INCLUIDO — reconciliado completo 2026-06-04), sin _archive*.
 echo "[11] Q-count del pre-render-gate (canónico = 24 Q, no '20/21 Q' stale)"
-QC=$(grep -rniE '\b(20|21)[ -]?(Q|preguntas)\b' .claude/skills *.md --include='*.md' 2>/dev/null \
+QC=$(grep -rniE '\b(20|21)[ -]?(Q|preguntas)\b' .claude/skills docs *.md --include='*.md' 2>/dev/null \
   | grep -vE '/_archive|(^|/)_archive' \
   | grep -iE 'pre-render|pregunta|gate|técnic|[^A-Za-z]Q[^A-Za-z]' || true)
 if [ -z "$QC" ]; then ok "sin Q-counts '20/21 Q' stale del pre-render-gate (todo = 24, Q1-Q25 salta Q23)"

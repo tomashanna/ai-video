@@ -4,7 +4,7 @@
 # Genre: horror-choice × reel | Pattern P1 (Verdad visible) | Dyad DOBLE-MONSTRUOSA
 # Authority basis: PAUTA-MASTER §§ 1-25 + SCRIPT-WRITING-GUIDE (framing 2026-05-29)
 #   + canonical-scenes ref-10/ref-03/ref-09 deep-dives + primary transcripts
-#   (referent-analysis/horror-choice/ref-{03,09,10}/transcription.json)
+#   (data/referent-analysis/horror-choice/ref-{03,09,10}/transcription.json)
 # Self-audit D14-D22: ver bloque architect_annotations al final + reporte de chat.
 
 schema_version: "v11.1"
@@ -108,7 +108,7 @@ hybrid_layers:
   layer_1_per_clip_atomic:
     description: "Per-shot mp4 con visual + audio clip-scoped + captions BURNED en frame data"
     captions_source: "whisper_from_clip_audio"
-    captions_burn_script: "scripts/build_clip_atomic.py --bake-captions"
+    captions_burn_script: "ai-video build-clip-atomic --bake-captions"
     audio_bundled_per_clip:
       - "narrator_segments_within_this_clip"
       - "character_dialog_within_this_clip"        # Axel (voz off filtrada — sin boca) + Hugo (lip-sync)
@@ -119,7 +119,7 @@ hybrid_layers:
 
   layer_2_effects_between_clips:
     description: "Transiciones + stings en boundaries (hard-cut+whoosh, white-flash en body horror, UV-strobe-glitch en decisión)"
-    effects_library_ref: ".claude/skills/ai-video-production/templates/effects-library/transitions/"
+    effects_library_ref: "assets/transitions/universal/transitions/"
     transition_variety_min: 3
     non_diegetic_sfx_placement: "effect_layer"
 
@@ -130,7 +130,7 @@ hybrid_layers:
       - "music_drone_base"
       - "ambient_continuous_environment"
     sidechain_target_db: -6
-    overlay_pipeline: "scripts/build-video-hybrid.py --post-concat-overlay"
+    overlay_pipeline: "ai-video build-video-hybrid --post-concat-overlay"
 
   layer_4_hyperframes_ui_overlay:
     description: "Countdown film-leader + decision UI (loading Y52 / countdown Y46) + outro card"
@@ -1510,7 +1510,7 @@ hyperframes_ui_overlay:
     z_index: 68
 
 # ═══════════════════════════════════════════════════════════════
-# 13. ASSET LIST INVENTORY (audit-spec-completeness.py input)
+# 13. ASSET LIST INVENTORY (ai-video audit-spec-completeness input)
 # ═══════════════════════════════════════════════════════════════
 
 asset_list:

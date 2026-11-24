@@ -27,21 +27,19 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
 > **Q-count nota** (corregido post long-doc-audit): el checklist tiene **24 preguntas reales** numeradas **Q1–Q25** — la numeración **salta Q23** (slot vacío, nunca asignado). Breakdown: 16 base (Q1-Q16) + 4 referent-validated (Q17-Q20) + Q21 referent-profile + Q22 editorial-UI + Q24/Q25 AVU. El body manda sobre cualquier conteo legacy.
 >
-> **Gates = 8** (canónico `CLAUDE.md` § Pre-render gate): Gate 0 `audit-spec-completeness.py` (BLOQUEANTE, corre 1º) + Lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate. Q11 abajo los lista los 8 (Gate 0 incluido).
+> **Gates = 8** (canónico `docs/OPERATING-MANUAL.md` § Pre-render gate): Gate 0 `ai-video audit-spec-completeness` (BLOQUEANTE, corre 1º) + Lint + audit-narrative + render-lock + audit-frames + audit-audio + continuity-check + qa-gate. Q11 abajo los lista los 8 (Gate 0 incluido).
 
 ### Setup técnico (verificar primero)
 
-1. **¿Los 6 scripts QA están copiados a `<proyecto>/scripts/`?** (audit-audio + continuity-check agregados 2026-05-13)
+1. **¿El toolkit está instalado y los gates disponibles?**
    ```bash
-   for f in audit-narrative.py render-lock.py audit-frames.py audit-audio.py continuity-check.py qa-gate.py; do
-     [ -f scripts/$f ] && echo "✓" || echo "✗"
-   done
+   uv run ai-video doctor && uv run ai-video list | grep -E 'audit-narrative|render-lock|audit-frames|audit-audio|continuity-check|qa-gate'
    ```
-   Si alguno falta: `cp ../.claude/skills/ai-video-production/templates/scripts/$f scripts/`
+   Si falta algo: `uv sync --all-extras` en la raíz del repo.
 
 2. **¿`<genre>-format/video-log.md` leído antes de elegir pattern?**
    ```bash
-   [ -f ../.claude/skills/<genre>-format/video-log.md ] && echo "✓ exists" || echo "✗ MISSING — bootstrap del formato incompleto"
+   [ -f ../../.claude/skills/<genre>-format/video-log.md ] && echo "✓ exists" || echo "✗ MISSING — bootstrap del formato incompleto"
    ```
    El video-log.md es autoritativo para rotación pattern + alimenta learnings post-render (reemplaza POST-MORTEM standalone, deprecated 2026-05-15 por write-only — learnings nunca se propagaban).
 
@@ -93,28 +91,28 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 ### Render + QA (verificar antes de reportar al usuario)
 
 11. **¿Los 8 gates pasaron exit 0 después del render draft?**
-    - **⛔ `scripts/audit-spec-completeness.py --spec ../creative-specs/<id>.yaml --cp 5` → exit 0 (Gate 0 BLOQUEANTE — inventario SPEC asset_list/ui vs filesystem, corre ANTES de todo)**
+    - **⛔ `ai-video audit-spec-completeness --spec ../../creative-specs/<id>.yaml --cp 5` → exit 0 (Gate 0 BLOQUEANTE — inventario SPEC asset_list/ui vs filesystem, corre ANTES de todo)**
     - `npx hyperframes lint` → 0 errors reales
-    - `scripts/audit-narrative.py` → 0 issues críticos
-    - `scripts/render-lock.py acquire <proyecto>` → lock obtenido
-    - `scripts/audit-frames.py --max-issues 2` → ≤2 frames con issues
-    - **⭐ `scripts/audit-audio.py --video renders/draft.mp4 --html index.html` → ≤2 issues** (NUEVO 2026-05-13 — detecta gaps narrativos + música ausente)
-    - **⭐ `scripts/continuity-check.py --narrative NARRATIVE.md --html index.html` → ≤2 issues** (NUEVO 2026-05-13 — detecta caminos rotos + cobertura <40%)
-    - `scripts/qa-gate.py --score <X.X> --stage pre-kling --iteration <N>` → exit 0 (score ≥9.7)
+    - `ai-video audit-narrative` → 0 issues críticos
+    - `ai-video render-lock acquire <proyecto>` → lock obtenido
+    - `ai-video audit-frames --max-issues 2` → ≤2 frames con issues
+    - **⭐ `ai-video audit-audio --video renders/draft.mp4 --html index.html` → ≤2 issues** (NUEVO 2026-05-13 — detecta gaps narrativos + música ausente)
+    - **⭐ `ai-video continuity-check --narrative NARRATIVE.md --html index.html` → ≤2 issues** (NUEVO 2026-05-13 — detecta caminos rotos + cobertura <40%)
+    - `ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>` → exit 0 (score ≥9.7)
 
-12. **¿Cobertura de narración ≥70%?** (`audit-audio.py` v2 lo reporta como `narration_pct`)
+12. **¿Cobertura de narración ≥70%?** (`ai-video audit-audio` v2 lo reporta como `narration_pct`)
     Vara basada en 3 videos exitosos: mina v15 77%, bosque v10 70%, elige V7 73%. Pueblo fallido tuvo 30.9%. Si <70% → el viewer percibe trama fragmentada aunque Gemini lo apruebe holísticamente.
 
-13. **¿Avg block duration ≥4.5s?** (`audit-audio.py` v2 lo reporta como `avg_block`)
+13. **¿Avg block duration ≥4.5s?** (`ai-video audit-audio` v2 lo reporta como `avg_block`)
     Vara basada en exitosos: mina 6.07s, bosque 5.24s, elige 4.73s. Pueblo fallido tuvo 2.34s = tartamudeo. **MÁS IMPORTANTE que cobertura** — narrador con frases cortas suena entrecortado aunque sume mucho tiempo total.
 
-14. **¿Sound fabric ≥99%?** (`audit-audio.py` v2 lo reporta como `sound_fabric_pct`)
+14. **¿Sound fabric ≥99%?** (`ai-video audit-audio` v2 lo reporta como `sound_fabric_pct`)
     Narración + ambient + música cubren prácticamente todo. Dead zones ≥1s sin nada sonoro = bug.
     Los exitosos: 99.9-100%. Pueblo también 100% (su problema NO era dead zones, era narración corta).
 
 15. **¿Learnings de este proyecto agregados a `<genre>-format/video-log.md`?** (NUEVO 2026-05-15 — POST-MORTEM standalone deprecated)
     Append 2-3 bullets al video-log incluyendo:
-    - Pattern usado (matriz § 3.5) + score Gemini final + audit-against-referent match % (cuando audit-against-referent.py disponible, Bloque C)
+    - Pattern usado (matriz § 3.5) + score Gemini final + audit-against-referent match % (cuando ai-video audit-against-referent disponible, Bloque C)
     - 1 bullet "qué funcionó" (replicar en futuros videos)
     - 1 bullet "qué no funcionó" (anti-pattern descubierto, si aplica)
     - Costo total del proyecto
@@ -146,23 +144,23 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 19. **¿Vignette aplicado en composición?** (universal 7/7 referentes)
     ```bash
     # ⭐ Fase 0 (2026-06-04): gate determinístico reemplaza el grep manual — cubre Q19 Y Q20 en una corrida
-    .venv/bin/python scripts/audit-style-markup.py --format <format> \
-      --spec ../creative-specs/<id>.yaml --html index.html
+    uv run ai-video audit-style-markup --format <format> \
+      --spec ../../creative-specs/<id>.yaml --html index.html
     # Exit 0 → ✓ ambas · Exit 1 → falta vignette markup (Q19) o mono font en names (Q20) · Exit 2 → can't-measure
     ```
     Si no hay vignette → agregar `<div id="vignette-overlay">` con CSS según `ai-video-production/COLOR-GRADING.md`.
 
 20. **¿Font monospaced presente para character names (si archetype usa nombres)?**
-    ⭐ Cubierto por la MISMA corrida de `audit-style-markup.py` de Q19 (lee `characters[]` del SPEC — ya no hace falta el grep manual con lista hardcodeada de nombres; detecta labels por selector canónico O por texto matching los nombres del SPEC; sin name labels → not_applicable automático).
+    ⭐ Cubierto por la MISMA corrida de `ai-video audit-style-markup` de Q19 (lee `characters[]` del SPEC — ya no hace falta el grep manual con lista hardcodeada de nombres; detecta labels por selector canónico O por texto matching los nombres del SPEC; sin name labels → not_applicable automático).
     Ver `horror-choice-format/CHARACTER-NAMES-CATALOG.md` y `ai-video-production/CAPTIONS.md` sistema 3 clases.
 
 ### Referent profile matching (post 2026-05-15 — dual gate hard rule #1)
 
-21. **¿`audit-against-referent.py` retorna exit 0 (≥85% métricas críticas en rango canónico)?** (NUEVO 2026-05-15 — referent profile matching, complemento de Gemini ≥9.7)
+21. **¿`ai-video audit-against-referent` retorna exit 0 (≥85% métricas críticas en rango canónico)?** (NUEVO 2026-05-15 — referent profile matching, complemento de Gemini ≥9.7)
     ```bash
-    .venv/bin/python scripts/audit-against-referent.py --video renders/draft.mp4 --html index.html
+    uv run ai-video audit-against-referent --video renders/draft.mp4 --html index.html
     ```
-    Compara nuestro video vs F1 canonical n=10 (`referent-analysis/F1-INGENIERO-MEASUREMENTS.json`). Tolerance per métrica = **p25-p75 bands** (interquartile range).
+    Compara nuestro video vs F1 canonical n=10 (`data/referent-analysis/F1-INGENIERO-MEASUREMENTS.json`). Tolerance per métrica = **p25-p75 bands** (interquartile range).
 
     **Critical metrics** (failure relevant):
     - `pace.wpm_total` (sweet spot ~153-180 wpm)
@@ -209,7 +207,7 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 
     Razón: compose-time GSAP timing + CSS race conditions + audio mix wiring = múltiple failure points (matadero iter 3-4 demonstrated). AVU pre-rendered .mp4 = 1 failure point = bullet-proof sync.
 
-    Detection: grep SPEC.yaml `audio_visual_atomic_units` field present per shot con audio+visual coupled. Asset paths exist en `ai-video-production/templates/avu-library/`. Sync contracts validated pre-render via script.
+    Detection: grep SPEC.yaml `audio_visual_atomic_units` field present per shot con audio+visual coupled. Asset paths exist en `assets/avu/`. Sync contracts validated pre-render via script.
 
     **Y → PASS, N → 🔴 FAIL ship-blocking** (compose-time fragility risk demonstrated).
 
@@ -239,17 +237,17 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
 | **4+ No** | ❌ Bootstrap incompleto o flow saltado. Volver al inicio del flow (PASO 1 del `/video-new`). |
 | **Score qa-gate < 9.7** | ❌ Iterar fixes NO-ANIMATION-AI (A→B→C — guion/captions/imágenes/wiring/mix). Re-invocar gate. Máx 3 iter → ESCALAR usuario. |
 | **Q17-Q20 No (referent-validated)** | ⚠️ Completar el fix correspondiente. Estos son non-blocking si justificación documentada en video-log.md, pero recomendado fixear. |
-| **Q21 No (referent-profile matching)** | ⛔ BLOQUEA — falla de hard rule #1 dual gate. Iterar fixes NO-ANIMATION-AI hasta que `audit-against-referent.py` retorne exit 0. |
+| **Q21 No (referent-profile matching)** | ⛔ BLOQUEA — falla de hard rule #1 dual gate. Iterar fixes NO-ANIMATION-AI hasta que `ai-video audit-against-referent` retorne exit 0. |
 | **Q22 No (decision UI editorial pacing)** | ⛔ BLOQUEA en formato horror-choice — falla canonical signature decision moment. Fix per `PAUTA-MASTER § decision-UI-pacing` + `INGENIERO-PAUTA § 7.X`. NB en otros formatos. |
 | **Q24 No (AVU + sync_contract)** | ⛔ BLOQUEA ship — compose-time fragility risk demonstrated (matadero iter 3-4). Build AVU pre-rendered .mp4 OR declare sync_contract explicit en SPEC. |
 | **Q25 No (countdown FILM LEADER ACADEMY)** | 🟡 NB style drift — acceptable si justified per video tone, sino fix con AVU template canonical. |
-| **Q26 No (background ambient creature/object animated per shot — GAP #23)** | ⛔ BLOQUEA — setting feels DEAD. Each shot SPEC must declare `setting_ambient_creature_or_object` non-empty + engineer Hailuo prompt must request animation. Canonical refs 100% have ≥1 animated background element. ⭐ Fase 0: scripted — `audit-spec-declarations.py --checks q26`. |
-| **Q27 No (atmospheric motions ≥3 per shot — GAP #26)** | ⛔ BLOQUEA — setting less "alive" than canonical. Each shot SPEC must declare `atmospheric_motions_count ≥3` with list (smoke/vapor/dust/light_flicker/water_drip/insect/etc.). Engineer prompt request 3+ atmospheric elements. ⭐ Fase 0: scripted — `audit-spec-declarations.py --checks q27`. |
-| **Q28 No (POV traversal continuity — GAP #25)** | 🟡 NB — acceptable some shots `static` PERO must NOT have ALL shots static framing throughout video (viewer teleports between cuts = anti-canonical). Each shot SPEC `pov_traversal_intent` enum. ⭐ Fase 0: el sentinel automated ya existe — `audit-spec-declarations.py --checks q28` (all-static check). |
+| **Q26 No (background ambient creature/object animated per shot — GAP #23)** | ⛔ BLOQUEA — setting feels DEAD. Each shot SPEC must declare `setting_ambient_creature_or_object` non-empty + engineer Hailuo prompt must request animation. Canonical refs 100% have ≥1 animated background element. ⭐ Fase 0: scripted — `ai-video audit-spec-declarations --checks q26`. |
+| **Q27 No (atmospheric motions ≥3 per shot — GAP #26)** | ⛔ BLOQUEA — setting less "alive" than canonical. Each shot SPEC must declare `atmospheric_motions_count ≥3` with list (smoke/vapor/dust/light_flicker/water_drip/insect/etc.). Engineer prompt request 3+ atmospheric elements. ⭐ Fase 0: scripted — `ai-video audit-spec-declarations --checks q27`. |
+| **Q28 No (POV traversal continuity — GAP #25)** | 🟡 NB — acceptable some shots `static` PERO must NOT have ALL shots static framing throughout video (viewer teleports between cuts = anti-canonical). Each shot SPEC `pov_traversal_intent` enum. ⭐ Fase 0: el sentinel automated ya existe — `ai-video audit-spec-declarations --checks q28` (all-static check). |
 
 > ⭐ **Fase 0 (2026-06-04) — corrida consolidada de los 4 checks de declaración del SPEC** (Q26+Q27+Q28+status de validación canónica HR#19):
 > ```bash
-> .venv/bin/python scripts/audit-spec-declarations.py --format <format> --spec ../creative-specs/<id>.yaml
+> uv run ai-video audit-spec-declarations --format <format> --spec ../../creative-specs/<id>.yaml
 > # Exit 0 → los 4 ✓ · Exit 1 → FAIL con offenders por shot · Exit 2 → can't-measure (Bug #9)
 > ```
 | **Q29 No (character active gesture per shot — GAP #27)** | 🟡 NB — character on-screen MUST have ONE active gesture per shot (hand reach/breath/blink/turn). If character signature limits (e.g. cleaver helmet), compensate alive signals (light, breath visible, environmental interaction). |

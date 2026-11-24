@@ -29,7 +29,7 @@ TOOLS   = ElevenLabs (audio) + Replicate Hailuo (video) + Gemini Vision (audit +
 1 USER (👤): perceptual ground truth (Rule D PRECEDENCE) + final PUBLISH approval
 
 5 LAYERS:
-  NIVEL 0 — Universal AI principles (Hard Rules CLAUDE.md, now 23 rules)
+  NIVEL 0 — Universal AI principles (Hard Rules docs/OPERATING-MANUAL.md, now 23 rules)
   NIVEL 1 — Multi-agent protocols (TEAM + AUDITOR + HANDOFF)
   NIVEL 2 — Video production universal (ai-video-production/* + Phase 2 scripts + effects-library)
   NIVEL 3 — Format-specific (horror-choice-format/* PAUTA + INGENIERO-PAUTA)
@@ -139,7 +139,7 @@ ITER PATTERN:
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ NIVEL 0 — Universal AI principles                                   │
-│   CLAUDE.md (project root)                                          │
+│   docs/OPERATING-MANUAL.md (project root)                                          │
 │   • Hard Rule #1-#22 (canonical compliance + quality bar + dual gate)│
 │   • Bootstrap canonical procedure                                   │
 │   • Pre-render gate 8 gates                                         │
@@ -164,10 +164,10 @@ ITER PATTERN:
 │   • SFX-PIPELINE.md / CAPTIONS.md / AUDIO-MASTERING.md / etc.       │
 │   • templates/scripts/* (13 scripts: 10 audit + 3 Phase 2 NEW)      │
 │     ⭐ Phase 2 NEW 2026-05-20:                                       │
-│       - build_clip_atomic.py (per-clip mux pipeline)                │
-│       - quality_gate_per_clip.py (4th role automated)               │
-│       - gemini_midexec_vision.py (4 mid-exec hooks)                 │
-│   • templates/avu-library/ (4 AVU pre-rendered clips)               │
+│       - ai-video build-clip-atomic (per-clip mux pipeline)                │
+│       - ai-video quality-gate-per-clip (4th role automated)               │
+│       - ai-video gemini-midexec-vision (4 mid-exec hooks)                 │
+│   • assets/avu/ (4 AVU pre-rendered clips)               │
 │   • effects-library TIERED (PRE-4.K "Disponibilidad≠Uso")           │
 │     - Capa A universal: 7 primitives + stings (whoosh/drone/flash)  │
 │     - Capa B horror: 3 sub-genre (film-burn/projector/static-noise) │
@@ -311,21 +311,21 @@ START
 │ • 8 gates pre-render obligatorios                              │
 │                                                                 │
 │ 8 Gates pre-render:                                             │
-│ • Gate 0: audit-spec-completeness.py (inventory diff)          │
+│ • Gate 0: ai-video audit-spec-completeness (inventory diff)          │
 │ • Gate 1: hyperframes lint                                     │
-│ • Gate 2: audit-narrative.py (z-index/orphans)                 │
-│ • Gate 3: render-lock.py (coordination)                        │
-│ • Gate 4: audit-frames.py (Gemini Vision frame-by-frame)       │
-│ • Gate 5: audit-frames-granular.py (S1-S6 sentinels NEW)       │
-│ • Gate 6: audit-audio.py (coverage + LUFS + gaps)              │
-│ • Gate 7: qa-gate.py (dual gate score check)                   │
+│ • Gate 2: ai-video audit-narrative (z-index/orphans)                 │
+│ • Gate 3: ai-video render-lock (coordination)                        │
+│ • Gate 4: ai-video audit-frames (Gemini Vision frame-by-frame)       │
+│ • Gate 5: ai-video audit-frames-granular (S1-S6 sentinels NEW)       │
+│ • Gate 6: ai-video audit-audio (coverage + LUFS + gaps)              │
+│ • Gate 7: ai-video qa-gate (dual gate score check)                   │
 │                                                                 │
 │ Plus auditor § 3 CP5 step 9 C-INVENTORY-WIRED (BLOQUEANTE)     │
 │ Plus auditor § 3 CP5 step 10 D29 editorial pacing audit         │
 │                                                                 │
 │ Dual quality gate (Hard Rule #1):                              │
 │ (a) Gemini holistic 14-dim ≥9.7                                │
-│ (b) audit-against-referent.py ≥85% metrics canonical band     │
+│ (b) ai-video audit-against-referent ≥85% metrics canonical band     │
 │                                                                 │
 │ 🤖 Gemini: Vision frame-by-frame + holistic 14-dim scoring     │
 └─────────────────────────────────────────────────────────────────┘
@@ -500,10 +500,10 @@ ALL agents ↔ SHARED   :
 | **9** | **Audio-visual lip-sync realism violations** | CP5 character speech | Frame extract at character-silent moments (matadero GAP #9) |
 | **10** | **Trust docs canonical-scenes sin direct frame verification** | All canonical pattern verification | Extract source video frames directly (matadero GAP #20) |
 
-### 6.2 Sentinel patterns automated (audit-frames-granular.py)
+### 6.2 Sentinel patterns automated (ai-video audit-frames-granular)
 
 ```
-Gate 5 — audit-frames-granular.py sentinels:
+Gate 5 — ai-video audit-frames-granular sentinels:
 
 S1. Audio-visual character mismatch
     "if speaker=character + character.face_visible == false → 🚨 FLAG"
@@ -555,7 +555,7 @@ Gate (a): Gemini holistic 14-dim ≥9.7
    FAIL → iter A→B→C engineer fixes
    3x FAIL → ESCALATE user
 
-Gate (b): audit-against-referent.py ≥85% metrics canonical band
+Gate (b): ai-video audit-against-referent ≥85% metrics canonical band
    PASS → continue
    FAIL → architect verdict residuals (accept signature OR amend)
    Both gates FAIL → STOP + escalate
@@ -656,10 +656,10 @@ sprint_id: A
 status: COMPLETED (2026-05-22)
 scope: |
   3 enforcement scripts required structurally pre-V4 launch:
-  - build_clip_atomic.py (Script A — caption-burn extension)
-  - audit-shot-spec-compliance.py (Script B — 8-dim per-shot compliance)
-  - orchestrator-cp-by-cp.py (Script C — CP-by-CP state machine)
-  Plus lib helpers: similarity.py + orchestrator_state.py
+  - ai-video build-clip-atomic (Script A — caption-burn extension)
+  - ai-video audit-shot-spec-compliance (Script B — 8-dim per-shot compliance)
+  - ai-video orchestrator-cp-by-cp (Script C — CP-by-CP state machine)
+  Plus lib helpers: src/ai_video/core/similarity.py + src/ai_video/core/orchestrator_state.py
   Plus CONTRACT-A-B-INTERFACE.md binding contract
 owner: auditor + engineer collaboration
 budget_used: $0 (all local + FREE Gemini Vision)
@@ -681,7 +681,7 @@ scope: |
   - audit-anchor-vs-spec-signature.py (Gap #44+#44b — anchor signature compliance)
   - audit-tts-perceptual.py (Gap #45 — TTS distortion/intelligibility automated)
   - audit-deliverable-vs-spec-manifest.py (Gap #46 — 1:1 manifest check per CP)
-  - audit-engineer-brief-vs-spec.py (Gap #47 — auditor brief literal SPEC paste)
+  - ai-video audit-engineer-brief-vs-spec (Gap #47 — auditor brief literal SPEC paste)
   - audit-spec-stability-budget.py (Gap #48 — ≤3 prop elements model constraint)
   - audit-spec-pose-coupling.py (Gap #49 — exact pose match anchor)
   - audit-engineer-prompt-syntax.py (Gap #50 — label-prefix overlay text)
@@ -704,21 +704,21 @@ scope: |
   cost discipline + tier strategy.
   
   CRÍTICA (Bug #12 defense in depth — 4 scripts):
-  - audit-spec-narration-fits-duration.py (L1 — WPM band pre-emit SPEC)
-  - audit-tts-vs-spec-duration.py (L2 — TTS actual vs SPEC intent post-CP2)
-  - audit-clip-timing-vs-audio.py (L4 — per-clip + render total pre-CP5)
+  - ai-video audit-spec-narration-fits-duration (L1 — WPM band pre-emit SPEC)
+  - ai-video audit-tts-vs-spec-duration (L2 — TTS actual vs SPEC intent post-CP2)
+  - ai-video audit-clip-timing-vs-audio (L4 — per-clip + render total pre-CP5)
   - audit-auditor-decision-scope.py (Gap #52 — auditor escalation enforcement)
   
   ALTA:
   - audit-spec-tier-strategy.py (Gap #53 — default tier per shot position)
   
   Plus Sub-Fase 3A products (in flight 2026-05-23):
-  - build-video-hybrid.py + 3 sub-scripts (Layer 1-4 assembly consolidation)
-  - lib/hard_rules_parser.py (dynamic threshold helper)
+  - ai-video build-video-hybrid + 3 sub-scripts (Layer 1-4 assembly consolidation)
+  - src/ai_video/core/hard_rules_parser.py (dynamic threshold helper)
   - 6 test_*.py companions (Hard Rule #26 enforcement)
   
   Plus 10 user_claim_no_primary_source candidates (validate before build):
-  - cost-tracker-unified.py, audit-spec-narrative-coherence.py, 
+  - cost-tracker-unified.py, ai-video audit-spec-narrative-coherence, 
     audit-spec-language-neutral.py, audit-spec-cost-estimates-vs-real.py,
     audit-thresholds-vs-hardrules.py, audit-spec-consequence-effects.py,
     audit-architect-bootstrap-reads.py, cost-cap-auto-scale.py,
@@ -749,9 +749,9 @@ marina_specific_consideration: |
 | Redundancy | Current state | Optimization opportunity |
 |------------|---------------|--------------------------|
 | Engineer self-audit + Auditor independent audit | Both run Gemini holistic | Consolidate Tier 2 audit-frames-granular handle both |
-| canonical-scenes/ref-XX.md sampled every 5s + manual frame review | Two parallel sources | Phase 1 `extract-canonical-max-detail.py` regenerate at 0.5s granularity (single source) |
+| canonical-scenes/ref-XX.md sampled every 5s + manual frame review | Two parallel sources | Phase 1 `ai-video extract-canonical-max-detail` regenerate at 0.5s granularity (single source) |
 | HTML+GSAP countdown D1/D2 + AVU library | Two patterns for same element | Migrate D1/D2 to AVU (1 pattern universal) |
-| audit-frames.py (interval 1s) + audit-frames-granular.py (0.5s) | Two scripts | audit-frames-granular Tier 2 subsumes audit-frames |
+| ai-video audit-frames (interval 1s) + ai-video audit-frames-granular (0.5s) | Two scripts | audit-frames-granular Tier 2 subsumes audit-frames |
 | Multiple architect-domain residuals (cuts/coverage/Gemini false-positive) | Manual verdicts per video | Codify standard "ref-13 signature accepted" templates |
 
 ### 9.2 Improvements priorities (next sprint candidates)
@@ -760,8 +760,8 @@ marina_specific_consideration: |
 |----------|-------------|--------|--------|
 | ⭐ HIGH | Build remaining 3 AVUs (decision-freeze + hook-transition + outro-card) | ~$1.00 + 4-6h | Eliminate GAP #22 class entirely + universal cross-template |
 | ⭐ HIGH | audit-frames-granular Tier 2 (Gemini Vision per-frame text dedup) | 4-6h + $0.30/run | Auto-catch D1/D2-style render-time visual issues |
-| ⭐ HIGH | measure-canonical-decision-ui-pacing.py | 8h | Flip pending → validated canonical_validation_status × 6 amendments |
-| MEDIUM | extract-canonical-max-detail.py | 6h | Regenerate canonical-scenes MAX DETAIL anti-recurrencia GAP #20 |
+| ⭐ HIGH | ai-video measure-canonical-decision-ui-pacing | 8h | Flip pending → validated canonical_validation_status × 6 amendments |
+| MEDIUM | ai-video extract-canonical-max-detail | 6h | Regenerate canonical-scenes MAX DETAIL anti-recurrencia GAP #20 |
 | MEDIUM | measure-canonical-audio-cue-levels.py | 4h | Empirical SFX mix bands canonical (GAP #17) |
 | MEDIUM | character_visible_config schema + Gemini Vision S1 sentinel | 6h | Auto-catch anti-pattern #9 hidden form |
 | LOW | Phase 5 orchestrator (auto-coordinate 3 agents) | TBD | Reduce user-in-loop to perceptual review only |
@@ -774,7 +774,7 @@ marina_specific_consideration: |
 - Pattern rotation tracking via video-log.md OBLIGATORIO
 
 **For engineering team**:
-- Bootstrap canonical procedure (CLAUDE.md L196-229) for new projects
+- Bootstrap canonical procedure (docs/OPERATING-MANUAL.md L196-229) for new projects
 - Audit-spec-completeness Gate 0 BLOQUEANTE pre-everything
 - audit-frames-granular Gate 5 auto-detect bug classes
 
@@ -795,7 +795,7 @@ marina_specific_consideration: |
 | **Dual gate** | (a) Gemini holistic ≥9.7 + (b) audit-against-referent ≥85% — BOTH required |
 | **Gate 0-7** | Pre-render bloqueante gates (audit-spec-completeness + lint + audit-narrative + render-lock + audit-frames + audit-frames-granular + audit-audio + qa-gate) |
 | **GAP #N** | Tracked gap in GAPS-LOG.md (22 codified post-matadero) |
-| **Hard Rule #N** | Canonical compliance rule in CLAUDE.md (22 rules total) |
+| **Hard Rule #N** | Canonical compliance rule in docs/OPERATING-MANUAL.md (22 rules total) |
 | **Iter cap** | Default engineer iter limit = 2 per overnight authorization |
 | **NIVEL 0-4** | Layer architecture (universal → format → SPEC) |
 | **P1-P10** | Pattern matrix horror-choice archetypes (per PAUTA-MASTER § 15) |
@@ -841,7 +841,7 @@ Arrows (bidirectional with labels):
 [4 stacked rectangles vertical]:
 
 ┌─────────────────────────────────┐
-│ NIVEL 0 — CLAUDE.md             │  RED  (#EF4444)
+│ NIVEL 0 — docs/OPERATING-MANUAL.md             │  RED  (#EF4444)
 │ Hard Rules + Bootstrap          │
 └─────────────────────────────────┘
          ↓ inherits
@@ -1009,7 +1009,7 @@ PHASE 2 PIPELINE (mandatory video #3+) — STRUCTURALLY EXEMPT
   │       atmospheric_motions, composition, literal_action_match    │
   │     • If <7 → flag regen ONE shot ($0.27 vs full iter)          │
   │                                                                 │
-  │  3. build_clip_atomic.py:                                       │
+  │  3. ai-video build-clip-atomic:                                       │
   │     ├ TTS narration for THIS window                             │
   │     ├ SFX events for this shot                                  │
   │     ├ Local ambient slice                                       │
@@ -1162,7 +1162,7 @@ TITLE: "AUDIO ARCHITECTURE — 3 layers per scope"
 
 #### 🆕 Excalidraw § 11.8 — AUTONOMOUS FACTORY architecture (added 2026-05-21 PM late)
 
-> **Source**: full plan in `<repo-root>/AUTONOMOUS-FACTORY-ROADMAP.md`
+> **Source**: full plan in `docs/AUTONOMOUS-FACTORY-ROADMAP.md`
 > **Status**: AWAITING video #3 validation gate. Build only IF video #3 perceptual ≥9.0.
 
 Visual elements for team Excalidraw:
@@ -1243,7 +1243,7 @@ TITLE: "AUTONOMOUS VIDEO FACTORY — 3 videos/día con manual publish anti-ban"
 
 **Engineer**:
 ```
-1. Read NIVEL 0 CLAUDE.md Hard Rules (especially #19 #20)
+1. Read NIVEL 0 docs/OPERATING-MANUAL.md Hard Rules (especially #19 #20)
 2. Read NIVEL 2 BOOTSTRAP + PIPELINE
 3. Read SPEC.yaml + handoff packages
 4. Run 8 Gates obligatorios pre-render
@@ -1293,7 +1293,7 @@ Phase 3 (DONE 2026-05-21): Calibrated Gemini v4 (mean abs Δ 0.14) + EXECUTION C
                             dimension primary 30% weight + GAP #40 codified + cost model
                             reset Gemini+EL enterprise FREE + Veo 3.1 enterprise validated
                             (4 test bench PASS incl. character speech native lip-sync).
-                            Production ready: veo3.py + audit-gemini-calibrated.py.
+                            Production ready: ai-video veo3 + ai-video audit-gemini-calibrated.
 Phase 4 (NEXT — video #3): First video on full Phase 2 + Phase 3 stack. VALIDATION GATE
                             for autonomous factory greenlight. Required outcomes:
                               - Perceptual ≥9.0
@@ -1305,7 +1305,7 @@ Phase 4 (NEXT — video #3): First video on full Phase 2 + Phase 3 stack. VALIDA
                             If NOT → iterate amendments + retest video #4 manual.
 Phase 5 (CONDITIONAL — autonomous factory): Build orchestrator + 3-agent autonomous
                             pipeline + monitoring + manual-publish queue. Goal: 3 videos/día.
-                            See AUTONOMOUS-FACTORY-ROADMAP.md for full plan + Excalidraw spec.
+                            See docs/AUTONOMOUS-FACTORY-ROADMAP.md for full plan + Excalidraw spec.
                             KEY CONSTRAINT: NEVER auto-publish (IG ban risk). User stays
                             in loop for SPEC approval + HUMAN-CHECKLIST + manual publish.
 Phase 6:        Tutorial/B2B/Documentary formats (cross-format validation).
@@ -1486,7 +1486,7 @@ Model: Claude Opus 4.x (creative reasoning + long context)
 Context fresh: NEW terminal session = independent context
 
 Bootstrap files leídos al arrancar (en orden):
-1. CLAUDE.md (project root, ALWAYS auto-loaded)
+1. docs/OPERATING-MANUAL.md (project root, ALWAYS auto-loaded)
 2. .claude/skills/creative-director/SKILL.md
 3. .claude/skills/horror-choice-format/PAUTA-MASTER.md
 4. .claude/skills/horror-choice-format/INGENIERO-PAUTA-MASTER.md
@@ -1516,7 +1516,7 @@ Model: Claude Sonnet 4.x or Opus 4.x (long-running execute + parallel tools)
 Context fresh: NEW terminal session
 
 Bootstrap files leídos al arrancar:
-1. CLAUDE.md (auto-loaded)
+1. docs/OPERATING-MANUAL.md (auto-loaded)
 2. .claude/skills/video-director/SKILL.md
 3. .claude/skills/ai-video-production/SKILL.md + BOOTSTRAP.md + PIPELINE.md
 4. .claude/skills/ai-video-production/HYPERFRAMES-GOTCHAS.md + CAPTIONS.md + SFX-PIPELINE.md
@@ -1527,22 +1527,22 @@ Bootstrap files leídos al arrancar:
 9. <project>/scripts/* (cuando ejecuta gates)
 
 Scripts Python invocados (en order durante CP1-CP5):
-CP1: scripts/image.py (Gemini Pro 3.1 anchor generation)
-CP2: scripts/tts.py (ElevenLabs) + scripts/captions.py (Whisper)
-CP3: scripts/image.py (shot generation)
-CP4: scripts/video.py (Replicate Hailuo/Kling)
-CP5 audio: scripts/sfx.py (ElevenLabs SFX) + scripts/master-audio.sh (ffmpeg loudnorm)
-CP5 composition: npx hyperframes lint + scripts/render-lock.py
+CP1: ai-video image (Gemini Pro 3.1 anchor generation)
+CP2: ai-video tts (ElevenLabs) + ai-video captions (Whisper)
+CP3: ai-video image (shot generation)
+CP4: ai-video video (Replicate Hailuo/Kling)
+CP5 audio: ai-video sfx (ElevenLabs SFX) + scripts/master-audio.sh (ffmpeg loudnorm)
+CP5 composition: npx hyperframes lint + ai-video render-lock
 CP5 gates:
-  - scripts/audit-spec-completeness.py (Gate 0)
-  - scripts/audit-narrative.py (Gate 2)
-  - scripts/audit-frames.py (Gate 4 — Gemini Vision interval 1s)
-  - scripts/audit-frames-granular.py (Gate 5 — sentinels S1-S10)
-  - scripts/audit-audio.py (Gate 6)
-  - scripts/audit-against-referent.py (canonical bands check)
-  - scripts/qa-gate.py (Gate 7 — dual gate score)
+  - ai-video audit-spec-completeness (Gate 0)
+  - ai-video audit-narrative (Gate 2)
+  - ai-video audit-frames (Gate 4 — Gemini Vision interval 1s)
+  - ai-video audit-frames-granular (Gate 5 — sentinels S1-S10)
+  - ai-video audit-audio (Gate 6)
+  - ai-video audit-against-referent (canonical bands check)
+  - ai-video qa-gate (Gate 7 — dual gate score)
 CP5 render: npx hyperframes render --output renders/draft.mp4
-Forward Phase 1: scripts/measure-canonical-* + scripts/extract-canonical-max-detail.py
+Forward Phase 1: scripts/measure-canonical-* + ai-video extract-canonical-max-detail
 
 Outputs writes:
 - <project>/assets/* (anchors + clips + tts + sfx + ambient + music)
@@ -1564,7 +1564,7 @@ Model: Claude Sonnet 4.x or Opus 4.x (independent verification)
 Context fresh: NEW terminal session — NEVER share context with arch/eng
 
 Bootstrap files leídos al arrancar (PRE-AUDIT obligatorio per AUDITOR-PROTOCOL § 1):
-1. CLAUDE.md
+1. docs/OPERATING-MANUAL.md
 2. .claude/skills/creative-director/AUDITOR-PROTOCOL.md (10 anti-patterns)
 3. .claude/skills/creative-director/master-flow-v2/GAPS-LOG.md
 4. creative-specs/<id>.yaml (THIS video SPEC completo)
@@ -1576,9 +1576,9 @@ Bootstrap files leídos al arrancar (PRE-AUDIT obligatorio per AUDITOR-PROTOCOL 
 10. <project>/renders/draft.mp4 (when render done — for frame extraction)
 
 Scripts Python invocados (auditor side):
-- scripts/audit-spec-completeness.py (re-run independent)
-- scripts/audit-frames-granular.py (sentinels S1-S10)
-- scripts/audit-against-referent.py (canonical bands re-check)
+- ai-video audit-spec-completeness (re-run independent)
+- ai-video audit-frames-granular (sentinels S1-S10)
+- ai-video audit-against-referent (canonical bands re-check)
 - ffmpeg -ss <t> -i renders/draft.mp4 -vframes 1 (frame extract for visual verify)
 - ffmpeg loudnorm (LUFS + TP verify)
 
@@ -1711,7 +1711,7 @@ narration_script + asset_list + GAPS #23-#28 fields populated."
 ### 17.3 🛠️ Engineer Gemini Pro anchor generation prompt (CP1)
 
 ```python
-# scripts/image.py invokes Gemini Pro 3.1 with this prompt structure:
+# ai-video image invokes Gemini Pro 3.1 with this prompt structure:
 
 anchor_prompt = """
 You are generating a CHARACTER REFERENCE ANCHOR for video production.

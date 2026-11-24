@@ -6,16 +6,16 @@
 
 ## ⭐ Roadmap — QA hacia referent-based (incremental shift 2026-05-15)
 
-**Current state**: Gemini holístico ≥9.7 + 4 referent-validated checks (Q17-Q20) + **Q21 referent-profile matching** (NUEVO 2026-05-15 — `audit-against-referent.py` con p25-p75 bands per metric).
+**Current state**: Gemini holístico ≥9.7 + 4 referent-validated checks (Q17-Q20) + **Q21 referent-profile matching** (NUEVO 2026-05-15 — `ai-video audit-against-referent` con p25-p75 bands per metric).
 
-**Direction**: phase out Gemini como rate-limiter primario. Migrar a `audit-against-referent.py` como vara primaria data-driven; Gemini como sanity check creativo solamente.
+**Direction**: phase out Gemini como rate-limiter primario. Migrar a `ai-video audit-against-referent` como vara primaria data-driven; Gemini como sanity check creativo solamente.
 
 **Razón**: Gemini holístico ha mostrado scores históricamente inflados:
 - pueblo-fantasma-desierto v2 (2026-05-13): Gemini 9.9 con video real 7/10 (24% cobertura narrativa + gaps de 40s + caminos rotos)
 - isla-faro v1: 9.0+ con countdown tapando imagen + texto sobre rostros
 - Pattern: Gemini puntúa "atmósfera + cinematografía" sobre incoherencia narrativa subyacente.
 
-**Vara primaria futura** (cuando audit-against-referent.py madure y se valide en 3+ proyectos): match contra F1 canonical n=10 con p25-p75 bands per métrica. Critical metrics = pace WPM / LUFS / cuts/min / narration coverage. ≥85% de estos in range = pass.
+**Vara primaria futura** (cuando ai-video audit-against-referent madure y se valide en 3+ proyectos): match contra F1 canonical n=10 con p25-p75 bands per métrica. Critical metrics = pace WPM / LUFS / cuts/min / narration coverage. ≥85% de estos in range = pass.
 
 **Vara actual (transitional, 2026-05-15)**: hard rule #1 = AMBAS gates requeridas (Gemini ≥9.7 + audit-against-referent ≥85%).
 
@@ -82,7 +82,7 @@ Dame un score 1-10 considerando las 14 dimensiones. **RECORDÁ: el score TOPE de
 ⚠️ **Por qué las dimensiones (10)-(14) son obligatorias** (acumulado 2026-05-11 + 2026-05-13):
 - (10) Gemini lee captions y oye narrador pero NO valida continuidad automáticamente. El caption "ELIGES A HUGO" pasó 5 iteraciones sin que Gemini se quejara, hasta que el humano lo cazó porque conocía el guion.
 - (11) **Gemini alucina presencia de elementos** que matchean el patrón del género. En un test real Gemini reportó "vi countdown 3-2-1" cuando los `<div class="countdown-num">` NO renderizaban (bug de timeline).
-- (12) **Caso pueblo-fantasma-desierto v2 (2026-05-13)**: Gemini dio 9.9 a un video con 24% cobertura narrativa + gap de 40s sin narración al final + 4 gaps de 5-7s entre bloques de narrador. Audio ambient tapaba los silencios narrativos. Sin esta dimensión explícita, Gemini NO lo flagea. Cross-check técnico: `scripts/audit-audio.py` parsea el HTML directamente.
+- (12) **Caso pueblo-fantasma-desierto v2 (2026-05-13)**: Gemini dio 9.9 a un video con 24% cobertura narrativa + gap de 40s sin narración al final + 4 gaps de 5-7s entre bloques de narrador. Audio ambient tapaba los silencios narrativos. Sin esta dimensión explícita, Gemini NO lo flagea. Cross-check técnico: `ai-video audit-audio` parsea el HTML directamente.
 - (13) Mismo caso: música puede estar presente pero narración ausente. Forzar inventario separado de ambos.
 - (14) **Caso isla-faro v1 y pueblo v2**: la trama no cierra pero Gemini da 9+ por atmósfera. La prueba del "viewer cuenta el video en 1 frase" expone la incoherencia.
 
@@ -144,7 +144,7 @@ Cada problema que Gemini menciona → comparar contra las reglas universales (V8
 
 ## Cuándo el QA Gemini NO es suficiente
 
-Casos donde necesitás complementar con `FEEDBACK-LOOP.md` (QA manual sin ver el video):
+Casos donde necesitás complementar con `docs/FEEDBACK-LOOP.md` (QA manual sin ver el video):
 
 - Verificar timings exactos de audio (Gemini puede confundir 24.5s con 25s)
 - Validar que un asset específico aparece o no

@@ -192,7 +192,7 @@ Decisión de promoción:
 
 ### Bug arquitectural reconocido
 
-Los lessons learned aparecen frecuentemente (5-9 per CP). Pero las **autoridades canónicas (PAUTA-MASTER, INGENIERO-PAUTA, hard rules CLAUDE.md) NO se actualizan automatically**. Hay gap de "captura → propagation" — lo escribimos en chat/handoffs pero no se propaga.
+Los lessons learned aparecen frecuentemente (5-9 per CP). Pero las **autoridades canónicas (PAUTA-MASTER, INGENIERO-PAUTA, hard rules docs/OPERATING-MANUAL.md) NO se actualizan automatically**. Hay gap de "captura → propagation" — lo escribimos en chat/handoffs pero no se propaga.
 
 ### Workflow de learning capture
 
@@ -222,7 +222,7 @@ Los lessons learned aparecen frecuentemente (5-9 per CP). Pero las **autoridades
 ### Cuando 2 autoridades chocan
 
 **Caso real matadero CP2**:
-- CLAUDE.md hard rule #10: "Atempo 2x sobre TTS lento"
+- docs/OPERATING-MANUAL.md hard rule #10: "Atempo 2x sobre TTS lento"
 - INGENIERO-PAUTA-MASTER § 1.7 measured: 2.3x para hit median 165 WPM canónico
 - Conflict: ¿2.0x o 2.3x?
 
@@ -233,7 +233,7 @@ Los lessons learned aparecen frecuentemente (5-9 per CP). Pero las **autoridades
 ```
 [Más específica/empírica] > [Más genérica/default]
 
-NIVEL 4 SPEC explicit > NIVEL 3 INGENIERO-PAUTA empirical > NIVEL 3 PAUTA-MASTER creative > NIVEL 2 universal templates > NIVEL 1 multi-agent rules > NIVEL 2 default hard rules CLAUDE.md
+NIVEL 4 SPEC explicit > NIVEL 3 INGENIERO-PAUTA empirical > NIVEL 3 PAUTA-MASTER creative > NIVEL 2 universal templates > NIVEL 1 multi-agent rules > NIVEL 2 default hard rules docs/OPERATING-MANUAL.md
 ```
 
 **Excepción**: hard rules safety/security NIVEL 1 NUNCA son overridden by domain (e.g. "no auto-publish without user approval" — eso es structural).
@@ -248,8 +248,8 @@ NIVEL 4 SPEC explicit > NIVEL 3 INGENIERO-PAUTA empirical > NIVEL 3 PAUTA-MASTER
 
 **Ejemplo matadero atempo**:
 - Auditor concur con INGENIERO-PAUTA 2.3x
-- Flag forward: "Hard rule #10 CLAUDE.md should be updated post-CP5 si 2.3x funciona en render final"
-- Pending: architect-domain edit CLAUDE.md hard rule #10 → "Atempo per INGENIERO-PAUTA-MASTER § 1.7 measured per formato"
+- Flag forward: "Hard rule #10 docs/OPERATING-MANUAL.md should be updated post-CP5 si 2.3x funciona en render final"
+- Pending: architect-domain edit docs/OPERATING-MANUAL.md hard rule #10 → "Atempo per INGENIERO-PAUTA-MASTER § 1.7 measured per formato"
 
 ---
 
@@ -357,8 +357,8 @@ Patterns que recurren entre CPs y proyectos:
 
 **Caso disparador 2026-05-18**: matadero CP2 voice ID `Tj9l48J9AJbry5yCP5eW` labeled "default_canonical" pero validated_in solo elige-companero V7 + bosque-abandonado v1. User listen test refutó canonical perception. WPM measurement in band PERO voice character (susurro grave) NO matches canonical viral narrators.
 
-**Fix** (CLAUDE.md hard rule #19 expansion 2026-05-18):
-- Cada default en library/scripts/elements.json DEBE tener field `canonical_validation_status: {validated|pending|deprecated_our_prod_only}`
+**Fix** (docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18):
+- Cada default en assets/library/scripts/elements.json DEBE tener field `canonical_validation_status: {validated|pending|deprecated_our_prod_only}`
 - Cada validated entry DEBE cite `validated_against_canonical_refs: [<ref-XX list>]` + `validated_at: <date>`
 - Auditor D28 cross-validate canonical compliance per CP audit (renombrado de D24 2026-05-18 post conflict con D24 architect "Camera per shot specified" en creative-director/SKILL.md)
 - Status `deprecated_our_prod_only` = NO use, search canonical-validated alternative
@@ -374,7 +374,7 @@ Patterns que recurren entre CPs y proyectos:
 
 **Caso disparador 2026-05-18 user feedback explícito**: "Esto de la voz nunca más puede pasar. Se debe calcular velocidad voz de todos los personajes y narrador de las pautas → buscar las voces que hacen match con eso, luego si se validan se usan esas voces. NUNCA estimar, SIEMPRE calcular."
 
-**Fix — workflow MEASURE → MATCH → VALIDATE → USE** (CLAUDE.md hard rule #19 expansion 2026-05-18):
+**Fix — workflow MEASURE → MATCH → VALIDATE → USE** (docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18):
 
 ```
 PASO 1 — MEASURE (canonical ground truth)
@@ -418,7 +418,7 @@ Para que el principle "NEVER ESTIMATE, ALWAYS MEASURE" NUNCA falle (caso dispara
 | **Per-CP audit** | 🔍 Auditor | D28 cross-validate canonical compliance (BLOCKING per AUDITOR-PROTOCOL § 3 D28). Si engineer cite default sin canonical_validation_status → 🔴 FAIL |
 | **New library entry needed** (engineer detects gap during execute) | 🛠️ Engineer | Execute MEASURE → MATCH → VALIDATE → USE workflow. Commit library entry con canonical_validation_status: validated + bands match documented. NO commit con status pending sin auditor concurrence |
 | **⭐ Recurring canonical refresh audit** (cada 5 videos producidos OR cada 60 days, lo que ocurra primero) | 🔍 Auditor (BLOCKING audit) | Run measure-canonical-* scripts vs current library entries. Flag drift (e.g. nuevos canonical refs added al catalog cambiaron bands). Emit refresh batch update list to engineer. Engineer batch update library entries |
-| **Phase 1 initial library audit** (one-time, post-CP5 matadero closure) | 🛠️ Engineer + 🔍 Auditor co-led | Audit cada library entry + script default + elements.json para canonical_validation_status field. Mark TODOS los defaults explícitamente. Engineer implements field updates, auditor verify. |
+| **Phase 1 initial library audit** (one-time, post-CP5 matadero closure) | 🛠️ Engineer + 🔍 Auditor co-led | Audit cada library entry + script default + templates/hyperframes/elements.json para canonical_validation_status field. Mark TODOS los defaults explícitamente. Engineer implements field updates, auditor verify. |
 
 **Accountability final**: 🔍 **AUDITOR** is the BLOCKING enforcement per CP. Architect owns prevention at SPEC creation. Engineer owns implementation. Es accountability shared, pero el AUDITOR es el **final gate** que bloquea producción si compliance fails.
 
@@ -511,7 +511,7 @@ Si CUALQUIERA `Actual < SPEC` o `HTML count = 0` cuando SPEC requires → engine
 
 ### 10.3 Forward — automation Phase 1
 
-`scripts/audit-spec-completeness.py` (Phase 1 priority) automates esta tabla:
+`ai-video audit-spec-completeness` (Phase 1 priority) automates esta tabla:
 - Parse SPEC.yaml asset_list + ui_active per shot
 - Diff actual filesystem + index.html grep
 - Emit table + 🔴/✅ verdict per row
@@ -617,4 +617,4 @@ Post-audit:
 ---
 
 **Última actualización**: 2026-05-19 (Phase 0 — § 10 inventory table OBLIGATORIA added post gap #13)
-**Próxima revisión**: post-CP5 matadero-banquete closure + audit-spec-completeness.py implementation
+**Próxima revisión**: post-CP5 matadero-banquete closure + ai-video audit-spec-completeness implementation

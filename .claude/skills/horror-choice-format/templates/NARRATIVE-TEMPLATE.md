@@ -66,7 +66,7 @@ Para cualquier escena que se muestra >4s en el video, generar 2–3 variantes co
 - [ ] `h6-cliff-2.png` *(--no-mono-suffix)* — cliffhanger 2
 - [ ] `h6-cliff-3.png` *(--no-mono-suffix)* — cliffhanger 3
 
-### Narración TTS (vía `scripts/tts.py`, luego atempo 2x)
+### Narración TTS (vía `ai-video tts`, luego atempo 2x)
 
 - [ ] `h1-narr-2x.mp3`
 - [ ] `h3-narr1-2x.mp3`, `h3-narr2-2x.mp3`, `h3-narr3-2x.mp3`, `h3-narr4-2x.mp3`
@@ -74,7 +74,7 @@ Para cualquier escena que se muestra >4s en el video, generar 2–3 variantes co
 - [ ] `h5-narr1-2x.mp3`, `h5-narr2-2x.mp3`
 - [ ] `h6-narr1-2x.mp3`
 
-### SFX dedicado V8-2 — vía `scripts/sfx.py` + `sfx-spec.json`
+### SFX dedicado V8-2 — vía `ai-video sfx` + `sfx-spec.json`
 
 Ver template completo en `SFX-LIST-TEMPLATE.md`. Mínimo por video:
 - [ ] ~3 SFX para H1 (howl distante, name stab, etc.)
@@ -104,7 +104,7 @@ Ver template completo en `SFX-LIST-TEMPLATE.md`. Mínimo por video:
 
 ## Prompts de imagen detallados
 
-> Todos los prompts se usan con `image.py` aplicando el horror style vía `STYLE_SUFFIX = HORROR_SUFFIX` (en tu copia) o `--style-suffix` — el template es AGNÓSTICO por default (ya NO automático; ver `PRODUCTION-PIPELINE.md` § image.py). Los marcados `--no-mono-suffix` van sin suffix (estilo cálido inline en el prompt).
+> Todos los prompts se usan con `ai-video image` aplicando el horror style vía `STYLE_SUFFIX = HORROR_SUFFIX` (en tu copia) o `--style-suffix` — el template es AGNÓSTICO por default (ya NO automático; ver `PRODUCTION-PIPELINE.md` § ai-video image). Los marcados `--no-mono-suffix` van sin suffix (estilo cálido inline en el prompt).
 
 ### h1-characters.png
 ```

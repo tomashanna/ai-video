@@ -56,7 +56,7 @@ Per `AUDITOR-PROTOCOL.md` § 3 CP3:
 |---|------|----------|
 | A1 | Multi-anchor concurrent refs capability | MODEL-BENCHMARK L1232 (Pro tier 5 personajes / 14 imagenes ref) |
 | A2 | Cost estimate vs Pro 2K pricing | $0.134/img × N + iter buffer |
-| A3 | Tooling reuse (image.py + validate-cocinera + build-contact-sheet) | Validado CP1 |
+| A3 | Tooling reuse (ai-video image + validate-cocinera + build-contact-sheet) | Validado CP1 |
 | A4 | SPEC trigger gates consistent threshold | Validation scripts thresholds match SPEC line citations |
 | A5 | NO UI/captions in CP3 base images | CP3 base / CP4 animation / CP5 composition separation |
 | A6 | Contact-sheet review format | 4×N grid suficiente for visual cross-shot review |

@@ -55,7 +55,7 @@ Pensar el anchor antes de generarlo. Preguntas críticas:
 ### Paso 2 — Generar el anchor
 
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "Medium close-up portrait of [DESCRIPTION]. Subject facing camera, neutral expression, soft frontal lighting, blurred background. Photorealistic 35mm." \
   -o assets/<personaje>-anchor.png
 ```
@@ -72,20 +72,20 @@ Si NO está bien → regenerar. **El anchor es la fuente de verdad — si está 
 Para cada escena del video con ese personaje:
 
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "[SAME CHARACTER] walking through a dark forest at night, POV slightly behind subject, mist around them. Same lighting style as reference." \
   --ref assets/<personaje>-anchor.png \
   -o assets/h3-walk-a.png
 ```
 
-El script (extendido — ver `templates/scripts/image.py`) toma el anchor como input multimodal y genera una nueva escena con el mismo personaje.
+El script (extendido — ver `ai-video image`) toma el anchor como input multimodal y genera una nueva escena con el mismo personaje.
 
 ### Paso 4 — Multi-character scenes
 
 Para escenas con 2+ personajes:
 
 ```bash
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "[CHARACTER 1] and [CHARACTER 2] sitting at a table, facing each other, dim candlelight." \
   --ref assets/character1-anchor.png \
   --ref assets/character2-anchor.png \
@@ -113,13 +113,13 @@ Pasar múltiples `--ref` para que Gemini tenga ambos personajes como contexto.
 Si tenés una serie con personajes recurrentes (ej: Berni aparece en 5 videos), el MISMO anchor sirve para los 5.
 
 ```
-library/characters/
+assets/library/characters/
   berni-anchor.png        # Mismo personaje en todos los videos donde aparece
   yonaiker-anchor.png
   hugo-anchor.png
 ```
 
-Considerar agregar una carpeta `library/characters/` para anchors de personajes recurrentes.
+Considerar agregar una carpeta `assets/library/characters/` para anchors de personajes recurrentes.
 
 ### Regla 4 — Variaciones permitidas / prohibidas
 
@@ -165,19 +165,19 @@ assets/
 
 ---
 
-## Implementación técnica: image.py extendido
+## Implementación técnica: ai-video image extendido
 
 El script soporta `--ref <path>` (uno o múltiples):
 
 ```bash
 # Sin ref (anchor o ambiente sin personajes)
-.venv/bin/python scripts/image.py -p "..." -o assets/forest.png
+uv run ai-video image -p "..." -o assets/forest.png
 
 # Con 1 ref (escena con 1 personaje)
-.venv/bin/python scripts/image.py -p "..." --ref assets/berni-anchor.png -o assets/h3.png
+uv run ai-video image -p "..." --ref assets/berni-anchor.png -o assets/h3.png
 
 # Con 2+ refs (escena con varios personajes)
-.venv/bin/python scripts/image.py -p "..." \
+uv run ai-video image -p "..." \
   --ref assets/berni-anchor.png \
   --ref assets/yonaiker-anchor.png \
   -o assets/h1-both.png
@@ -389,7 +389,7 @@ Cuando el proyecto crezca:
 
 1. **Character LoRA training** (Civitai / Replicate) — entrenar modelo específico del personaje. Más caro pero da consistencia 99%.
 2. **Character sheet pipeline** — generar primero un sheet con 4-6 ángulos canónicos, después escenas referencian al sheet.
-3. **Library de personajes recurrentes** (`library/characters/`) — anchors compartidos entre videos.
+3. **Library de personajes recurrentes** (`assets/library/characters/`) — anchors compartidos entre videos.
 
 ---
 
@@ -398,4 +398,4 @@ Cuando el proyecto crezca:
 - `IMAGE-VARIETY.md` — variantes -a/-b/-c (combinar con character consistency: variantes mismas, mismo personaje)
 - `PIPELINE.md` § 2 — generación de imágenes general
 - `BOOTSTRAP.md` — ahora incluye "anchor first" como paso explícito
-- `templates/scripts/image.py` — soporta `--ref`
+- `ai-video image` — soporta `--ref`

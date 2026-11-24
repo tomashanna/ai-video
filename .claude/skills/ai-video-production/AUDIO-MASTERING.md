@@ -97,7 +97,7 @@ INPUT="$1"
 OUTPUT="${2:-${INPUT%.mp4}-mastered.mp4}"
 
 if [ -z "$INPUT" ]; then
-  echo "Usage: master-audio.sh <input.mp4> [output.mp4]"
+  echo "Usage: scripts/master-audio.sh <input.mp4> [output.mp4]"
   exit 1
 fi
 

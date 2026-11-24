@@ -55,7 +55,7 @@ Para sub-genre más oscuro / cuevas / espacios cerrados. NO probado todavía —
 | Name labels HUGO/SANTI | Anton | 72px | 2.5px |
 | Countdown | Anton | 400px | 4px |
 | Caption Hugo whisper (italic) | Anton italic | 64px color #d8d8d8 | 1.5px |
-| Lower thirds | Variable según elemento (ver elements.json) | Variable | – |
+| Lower thirds | Variable según elemento (ver templates/hyperframes/elements.json) | Variable | – |
 
 **Drop shadow obligatorio en todos los textos**: ver receta canónica universal en `ai-video-production/ELEMENTS-LIBRARY.md` § "Receta universal — Drop shadow para texto sobre IA-generated images". 4 strokes diagonales + drop shadow + glow envelope.
 

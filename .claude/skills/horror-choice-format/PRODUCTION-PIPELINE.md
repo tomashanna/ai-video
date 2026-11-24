@@ -9,14 +9,14 @@
 ### Comando base
 ```bash
 cd "/ruta/al/proyecto"
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "Texto a narrar." \
   -v 2gPFXx8pN3Avh27Dw5Ma \
   -o assets/nombre-raw.mp3
 ```
 
 ### Voice IDs validados
-> ⛔ **El voice ID `Tj9l48J9AJbry5yCP5eW` (Video #1) está DEPRECATED.** No usarlo como default. El default canónico y el narrador V5 viven en `library/voices-catalog.json` (source of truth — Hard rule #19, `canonical_validation_status` mandatorio).
+> ⛔ **El voice ID `Tj9l48J9AJbry5yCP5eW` (Video #1) está DEPRECATED.** No usarlo como default. El default canónico y el narrador V5 viven en `assets/library/voices-catalog.json` (source of truth — Hard rule #19, `canonical_validation_status` mandatorio).
 
 | Voz | ID | Uso |
 |-----|-----|-----|
@@ -49,12 +49,12 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 assets/nombre.mp3
 ### Comando base
 ```bash
 cd "/ruta/al/proyecto"
-.venv/bin/python scripts/image.py \
+uv run ai-video image \
   -p "prompt aquí" \
   -o assets/nombre.png
 ```
 
-⚠️ El template de `image.py` es **AGNÓSTICO** (no aplica suffix por default). Para horror, aplicá el HORROR_SUFFIX de una de dos formas: pasá `--style-suffix "<horror suffix>"` en cada call, **o** seteá `STYLE_SUFFIX = HORROR_SUFFIX` en tu copia de `scripts/image.py` (la constante `HORROR_SUFFIX` ya está definida ahí). El estilo horror es:
+⚠️ El template de `ai-video image` es **AGNÓSTICO** (no aplica suffix por default). Para horror, aplicá el HORROR_SUFFIX de una de dos formas: pasá `--style-suffix "<horror suffix>"` en cada call, **o** seteá `STYLE_SUFFIX = HORROR_SUFFIX` en tu copia de `ai-video image` (la constante `HORROR_SUFFIX` ya está definida ahí). El estilo horror es:
 > "Dark cinematic horror aesthetic, desaturated color grade with warm amber and orange highlights only, liminal space mood, eerie atmospheric lighting, Midjourney v6 photorealistic style, uncanny valley, subtle film grain, low-key lighting, dead-center composition, 35mm lens, shallow depth of field. No text, no logos, no watermarks."
 
 No repitas el suffix en tu prompt si lo aplicás vía `--style-suffix`/`STYLE_SUFFIX`. Solo describí la escena.
@@ -117,14 +117,14 @@ Mismo escenario. Distinto framing.
 ### Comando
 
 ```bash
-.venv/bin/python scripts/image.py -p "<prompt variante>" -o assets/<name>-b.png
+uv run ai-video image -p "<prompt variante>" -o assets/<name>-b.png
 ```
 
 Lanzar las generaciones en paralelo en background (Gemini Nano Banana tolera 3-5 RPM concurrente):
 
 ```bash
 for variant in b c; do
-  python scripts/image.py -p "..." -o assets/h3-forest-walk-$variant.png &
+  uv run ai-video image -p "..." -o assets/h3-forest-walk-$variant.png &
 done
 wait
 ```
@@ -540,7 +540,7 @@ ffmpeg -i music.mp3 -af loudnorm=print_format=summary -f null - 2>&1 | grep "Inp
 ### Comando base
 ```bash
 cd "/ruta/al/proyecto"
-.venv/bin/python scripts/video.py \
+uv run ai-video video \
   -i assets/imagen.png \
   -p "motion prompt aquí" \
   -o assets/nombre.mp4 \
@@ -675,7 +675,7 @@ Acortar el caption anterior del Hito 5 1.5s para hacer espacio. En V7: `h5-cap-4
 #### Paso 1 — generar la narración del CTA
 
 ```bash
-.venv/bin/python scripts/tts.py \
+uv run ai-video tts \
   -t "Y tú... ¿qué habrías elegido? Comenta A o B abajo, y dinos por qué." \
   -v K3TeN3ZVK8WnOeJ0NYqZ \
   -o assets/cta-narration-raw.mp3
@@ -738,7 +738,7 @@ python3 ~/.claude/skills/video-analyzer/scripts/analyze_video.py \
 
 **Umbral de aprobación — VARA DUAL (canónica, ver `../ai-video-production/QA.md`):**
 - ⛔ El umbral ≥9.0 de V7 es **OBSOLETO**. La vara fija desde 2026-05-15 es **DUAL** y requiere AMBAS condiciones:
-  - (a) Gemini calibrado (`audit-gemini-calibrated.py`, calibrated_v4) **≥9.7**, **Y**
+  - (a) Gemini calibrado (`ai-video audit-gemini-calibrated`, calibrated_v4) **≥9.7**, **Y**
   - (b) `audit-against-referent` **≥85%** de métricas críticas en bandas p25–p75 (F1, n=10).
 - AMBAS deben pasar para APROBAR. Si Gemini ≥9.7 pero referent <85% → NO aprobado (iterar). Si referent ≥85% pero Gemini <9.7 → NO aprobado (iterar A→B→C pre-animation).
 - Cap de iteración: 3 rounds pre-animation. Tras 3 sub-9.7 → ESCALAR al usuario (no parar pre-animation esperando que la animación AI rescate el score).
@@ -836,19 +836,19 @@ Distinto del symlink global de § 11 (`assets → assets v1`, folder completo). 
 - Paquete `elevenlabs >= 2.40.0` en el venv del proyecto (incluye `client.text_to_sound_effects.convert`)
 - Carpeta `assets/sfx/` creada
 
-### Script — `scripts/sfx.py`
+### Script — `ai-video sfx`
 
-Patrón implementado en bosque-abandonado. Análogo a `scripts/tts.py`. Modo single y batch.
+Patrón implementado en bosque-abandonado. Análogo a `ai-video tts`. Modo single y batch.
 
 ```bash
 # Single
-python scripts/sfx.py -t "<prompt>" -d <segundos> -i <influence 0-1> -o assets/sfx/<name>.mp3
+uv run ai-video sfx -t "<prompt>" -d <segundos> -i <influence 0-1> -o assets/sfx/<name>.mp3
 
 # Loop perfecto
-python scripts/sfx.py -t "campfire crackling cozy" -d 8 --loop -o assets/sfx/fire-loop.mp3
+uv run ai-video sfx -t "campfire crackling cozy" -d 8 --loop -o assets/sfx/fire-loop.mp3
 
 # Batch desde spec JSON
-python scripts/sfx.py --spec sfx-spec.json
+uv run ai-video sfx --spec sfx-spec.json
 ```
 
 ### Formato `sfx-spec.json`
@@ -919,7 +919,7 @@ Un Reel de 80-90s en este formato típicamente necesita **25-30 SFX** discretos.
 
 ```bash
 # 1. Generar el seed loopable de 22s
-.venv/bin/python scripts/sfx.py \
+uv run ai-video sfx \
   -t "continuous abandoned forest night wind, dead trees creaking, cold atmospheric, no animals, no rain, perfectly looping" \
   -d 22 --loop -i 0.5 \
   -o assets/sfx/ambient-forest-wind-loop.mp3
@@ -959,13 +959,13 @@ Si un asset puntual sale notoriamente uncanny, usar Freesound como fallback (§ 
 
 El MCP oficial está disponible vía `claude mcp add ElevenLabs --scope user -- uvx elevenlabs-mcp` con la env var `ELEVENLABS_API_KEY`. Útil para generar 1 SFX en conversación sin entrar a la CLI.
 
-**Para producción batch, siempre usar `scripts/sfx.py` con `sfx-spec.json`** — es reproducible, versionable, y no depende de la disponibilidad del MCP.
+**Para producción batch, siempre usar `ai-video sfx` con `sfx-spec.json`** — es reproducible, versionable, y no depende de la disponibilidad del MCP.
 
 ### Workflow recomendado (orden)
 
 1. Drafttear `SFX-LIST.md` por escena con timestamps reales medidos del index.html (cada cue tiene un `t` específico)
 2. Convertir a `sfx-spec.json` (formato batch)
-3. `python scripts/sfx.py --spec sfx-spec.json` — genera todo en background
+3. `uv run ai-video sfx --spec sfx-spec.json` — genera todo en background
 4. Verificar duraciones con `ffprobe` (las generaciones pueden quedar 1-2% off del target)
 5. Conectar cada SFX en `index.html` con `data-track-index` 60-110
 

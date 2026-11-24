@@ -1,12 +1,12 @@
 #!/bin/bash
-# check-pacing.sh — verifica cuts/min target empírico (2-7 para horror narrativo)
+# scripts/check-pacing.sh — verifica cuts/min target empírico (2-7 para horror narrativo)
 #
 # Generado 2026-05-13 desde análisis de 7 referentes.
 # Cuts detectados con ffmpeg scene threshold 0.3 (hard cuts).
 # Long shots con internal motion (Ken Burns, parallax) NO se cuentan como cuts.
 #
 # Usage:
-#   check-pacing.sh renders/draft.mp4
+#   scripts/check-pacing.sh renders/draft.mp4
 #
 # Exit codes:
 #   0 = pass (2-7 cuts/min)
