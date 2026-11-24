@@ -399,7 +399,7 @@ Si FAIL → (a) trim narración, (b) split shot en 2 clips, (c) freeze-extend vi
 
 Antes de declarar el SPEC listo para handoff, el arquitecto DEBE **correr los 3 validators de enforcement contra su PROPIO SPEC** (no solo el self-audit D14-D27 cualitativo):
 ```bash
-cd <project>/scripts   # o .claude/skills/ai-video-production/templates/scripts
+cd <project>/scripts   # o src/ai_video
 uv run ai-video audit-spec-narrative-coherence --format <fmt> --spec <SPEC> --video-log <vlog> --skip-semantic
 uv run ai-video audit-spec-narration-fits-duration --format <fmt> --spec <SPEC>
 uv run ai-video audit-spec-lip-sync-marks --format <fmt> --spec <SPEC>

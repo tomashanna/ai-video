@@ -790,7 +790,7 @@ validated_against_canonical_refs:
   - "canonical-scenes/INDEX.md decision setup grid 3.3 (8 refs documented patterns)"
   - "ref-13-miro-bryan-electrica.md Beat 4 deep-dive timing"
   - "ref-03 explicit 'filter cinematic/gritty con grain' notation"
-  - "engineer Track B Phase 1 measurement: data/referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json (8/8 refs measured)"
+  - "engineer Track B Phase 1 measurement: data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json (8/8 refs measured)"
 validation_methodology: "qualitative pattern extraction (Phase 0) + empirical video measurement Phase 1 (ffmpeg + Whisper + librosa + frame analysis 22 decision windows across 8 refs)"
 measurement_script: "ai-video measure-canonical-decision-ui-pacing — engineer Track B Phase 1 COMPLETE 2026-05-20"
 validated_at: 2026-05-20
@@ -849,7 +849,7 @@ decision_ui_canonical_defaults_v3_2026_05_20:  # Track A v3 R1 RESOLUTION
     revisit_trigger: "Phase 1 forward — ai-video measure-canonical-decision-ui-pacing n≥5 sample increase. If empirical median significantly differs from 1.0s, escalate to user perceptual re-confirm."
 ```
 
-Empirical source: `data/referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json` (engineer Track B Phase 1 8/8 refs measured 2026-05-20).
+Empirical source: `data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json` (engineer Track B Phase 1 8/8 refs measured 2026-05-20).
 
 
 ---

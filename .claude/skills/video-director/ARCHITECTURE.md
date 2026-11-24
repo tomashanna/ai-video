@@ -66,7 +66,7 @@
 | `QA.md` | Gemini QA + interpretación feedback |
 | `NARRATIVE-LED-EDITING.md` | Sistema 7 cortes con SFX específicos |
 | `ELEMENTS-LIBRARY.md` | Sistema híbrido de componentes UI |
-| `templates/scripts/*.py` | Scripts genéricos sin STYLE_SUFFIX |
+| `src/ai_video/*.py` | Scripts genéricos sin STYLE_SUFFIX |
 
 ### 📦 `assets/library/` — assets reutilizables
 

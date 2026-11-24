@@ -233,7 +233,7 @@ El **auditor independiente** es un 3er rol del sistema, separado de arquitecto e
      speak_time = sum(s['end'] - s['start'] for s in segs)
      wpm_total = total_words / speak_time * 60
      ```
-   - M7.2 Compare `wpm_total` vs canonical bands (`data/referent-analysis/F1-INGENIERO-MEASUREMENTS.json` aggregated_F1):
+   - M7.2 Compare `wpm_total` vs canonical bands (`data/referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json` aggregated_F1):
      - p25 floor: 152.71
      - median: 164.91
      - p75: 179.84

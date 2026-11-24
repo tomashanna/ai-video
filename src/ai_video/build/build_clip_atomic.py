@@ -360,7 +360,7 @@ def resolve_narration_segments(spec: dict, shot_start: float, shot_end: float) -
 # ── VOICE-EXCLUSIVITY LAW (L1 atomic assertion, agnóstica) ───────────────────
 # LEY: en cualquier instante t, máx UNA voz hablada (narrador o personaje); buffer mínimo
 # VOICE_BUFFER_FLOOR_S entre dos voces DISTINTAS. Música/SFX/ambient conviven. Companion validators
-# a nivel SPEC/TTS: scripts/audit-spec-voice-exclusivity.py. Acá la red de seguridad de ASSEMBLY:
+# a nivel SPEC/TTS: ai-video audit-spec-voice-exclusivity. Acá la red de seguridad de ASSEMBLY:
 # si dos voces distintas colisionan dentro de un mismo clip atómico, se corre la de MENOR prioridad
 # (diálogo cede ante narrador) ≤VOICE_SHIFT_MAX_S; si no entra → ABORT (NUNCA shift silencioso >1s).
 VOICE_BUFFER_FLOOR_S = 0.30

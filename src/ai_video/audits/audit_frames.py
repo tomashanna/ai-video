@@ -23,7 +23,7 @@ Usage:
 Integration con el flow del agente productor:
   Después del render draft, ANTES de declarar stop point pre-Kling:
     subprocess.run([
-        "python", "scripts/audit-frames.py",
+        "python", "ai-video audit-frames",
         "--video", "renders/draft.mp4",
         "--interval", "0.5",
         "--max-issues", "2"

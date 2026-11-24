@@ -62,7 +62,7 @@ except ImportError:
     print("ERROR: pyyaml not installed", file=sys.stderr)
     sys.exit(2)
 
-# Permite importar lib/empirical_bands.py tanto desde templates/scripts/ (repo)
+# Permite importar lib/empirical_bands.py tanto desde src/ai_video/ (repo)
 # como desde <proyecto>/scripts/ (copia bootstrap) — mismo patrón que qa-gate.py.
 from ai_video.core import empirical_bands as eb
 

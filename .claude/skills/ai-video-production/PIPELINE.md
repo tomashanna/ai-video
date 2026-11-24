@@ -229,7 +229,7 @@ uv run ai-video render-lock acquire <project-name>
 uv run ai-video render-lock wait <project-name> --timeout 1800
 ```
 
-Detalle: `AUDIT.md` y sección 11 (multi-agent coordination) abajo. Los scripts viven en `templates/scripts/` — copiar a `scripts/` del proyecto.
+Detalle: `AUDIT.md` y sección 11 (multi-agent coordination) abajo. Los scripts viven en `src/ai_video/` — copiar a `scripts/` del proyecto.
 
 ### Comando base
 

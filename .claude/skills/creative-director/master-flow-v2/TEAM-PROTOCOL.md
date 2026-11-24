@@ -358,7 +358,7 @@ Patterns que recurren entre CPs y proyectos:
 **Caso disparador 2026-05-18**: matadero CP2 voice ID `Tj9l48J9AJbry5yCP5eW` labeled "default_canonical" pero validated_in solo elige-companero V7 + bosque-abandonado v1. User listen test refutó canonical perception. WPM measurement in band PERO voice character (susurro grave) NO matches canonical viral narrators.
 
 **Fix** (docs/OPERATING-MANUAL.md hard rule #19 expansion 2026-05-18):
-- Cada default en assets/library/scripts/elements.json DEBE tener field `canonical_validation_status: {validated|pending|deprecated_our_prod_only}`
+- Cada default en templates/hyperframes/elements.json DEBE tener field `canonical_validation_status: {validated|pending|deprecated_our_prod_only}`
 - Cada validated entry DEBE cite `validated_against_canonical_refs: [<ref-XX list>]` + `validated_at: <date>`
 - Auditor D28 cross-validate canonical compliance per CP audit (renombrado de D24 2026-05-18 post conflict con D24 architect "Camera per shot specified" en creative-director/SKILL.md)
 - Status `deprecated_our_prod_only` = NO use, search canonical-validated alternative

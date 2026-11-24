@@ -110,7 +110,7 @@
 
 ## §2 — UI SAFE ZONES (técnica choice-UI)
 
-> **Authority:** medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes (vía horror INGENIERO-PAUTA § 7). Fuente raw: `data/referent-analysis/F1-UI-SAFE-ZONES.json`.
+> **Authority:** medido 2026-05-15 vía Gemini Vision sobre 50 frames de 10 referentes (vía horror INGENIERO-PAUTA § 7). Fuente raw: `data/referent-analysis/horror-choice/F1-UI-SAFE-ZONES.json`.
 
 ### 2.1 ⚠️ REGLA OPERACIONAL #1 — un UI element por banda Y a la vez
 

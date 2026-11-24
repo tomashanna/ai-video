@@ -13,7 +13,7 @@ Catches issues that `hyperframes lint` does NOT detect:
   4. Asset orphans — files in assets/ not referenced by any HTML tag
 
 Usage:
-    python scripts/audit-narrative.py [path/to/index.html]
+    python ai-video audit-narrative [path/to/index.html]
     # Default: ./index.html
 
 Exits 0 if all checks pass, 1 if any check fails.

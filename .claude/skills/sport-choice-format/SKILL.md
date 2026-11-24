@@ -102,7 +102,7 @@ Activar cuando el usuario:
 - **Técnica choice-UI** (decision-UI editorial pacing, UI safe zones, caption chunking word-timed, lip sync rule, 0 cuts en hook) → `choice-format-core/INGENIERO-CHOICE-CORE.md`.
 - **Rotación entre videos** (no repetir pattern/dyad consecutivo) → `choice-format-core/ROTATION-RULES.md`.
 - **Técnica universal** (pace WPM, LUFS, mix, captions Whisper, HYBRID per-clip atomic, MODEL-CAPABILITIES-MATRIX, motion, mastering, 8 gates) → `ai-video-production/` (la apunta `INGENIERO-CHOICE-CORE.md`, no la duplica).
-- `templates/scripts/` (ai-video tts, ai-video image, ai-video sfx, ai-video captions, ai-video video, los 8 gates, ai-video build-clip-atomic, etc.) → se heredan de `ai-video-production/templates/`.
+- `src/ai_video/` (ai-video tts, ai-video image, ai-video sfx, ai-video captions, ai-video video, los 8 gates, ai-video build-clip-atomic, etc.) → se heredan de `ai-video-production/templates/`.
 - Transiciones → carpeta GLOBAL root `assets/transitions/` (índice `assets/transitions/catalog.json`): sport resuelve `universal/` + `sport-choice/` (esta última bootstrapped vacía 2026-06-05). Voice-effects se heredan de assets/voice-effects/` — los presets de voz de horror NO se usan; se usa narrador deportivo limpio.
 - `canonical-scenes/` → ⚠️ sport-choice aún no tiene canonical-scenes propios. Hasta entonces se consultan los de `horror-choice-format/canonical-scenes/` **solo por su valor ESTRUCTURAL** (placement del counterfactual, framing acción-condicional, dyad, escalada de 3 decisiones, outro) — son refs virales HORROR-específicos, no de sport. Se derivarán los propios empíricamente de nuestros primeros videos.
 - CREATIVE-SPEC schema (v11.1) → se hereda de `creative-director/templates/`.

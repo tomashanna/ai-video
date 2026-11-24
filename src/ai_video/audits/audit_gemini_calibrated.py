@@ -26,7 +26,7 @@ ENV:
 PROMPT TEMPLATE LOCATION:
     Looked up in this priority:
     1. $GEMINI_CALIBRATED_PROMPT_PATH env var
-    2. .claude/skills/ai-video-production/templates/calibrated-gemini-prompt-v2.txt
+    2. src/ai_video/prompts/calibrated-gemini-prompt-v4.txt
     3. /tmp/calibrated_prompt_v2.txt (test path fallback)
 
 WEIGHTED SCORE FORMULA (v4 — EXECUTION CONTINUITY as primary dimension):

@@ -160,7 +160,7 @@ NO marcar Y a algo que no se hizo. NO marcar Y por aproximación. Solo Y si est�
     ```bash
     uv run ai-video audit-against-referent --video renders/draft.mp4 --html index.html
     ```
-    Compara nuestro video vs F1 canonical n=10 (`data/referent-analysis/F1-INGENIERO-MEASUREMENTS.json`). Tolerance per métrica = **p25-p75 bands** (interquartile range).
+    Compara nuestro video vs F1 canonical n=10 (`data/referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json`). Tolerance per métrica = **p25-p75 bands** (interquartile range).
 
     **Critical metrics** (failure relevant):
     - `pace.wpm_total` (sweet spot ~153-180 wpm)

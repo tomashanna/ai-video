@@ -1253,7 +1253,7 @@ python measure_F1.py  # re-genera F1-INGENIERO-MEASUREMENTS.json
 uv run ai-video audit-against-referent --video renders/draft.mp4 --html index.html
 
 # Args opcionales:
-#   --measurements <path>  (default: data/referent-analysis/F1-INGENIERO-MEASUREMENTS.json)
+#   --measurements <path>  (default: data/referent-analysis/horror-choice/F1-INGENIERO-MEASUREMENTS.json)
 #   --tolerance p25-p75|p5-p95  (default p25-p75)
 
 # Exit codes:
@@ -1368,7 +1368,7 @@ Merge OR escalate
 canonical_validation_status: "validated_via_video_measurement"  # FLIPPED 2026-05-20
 validated_against_canonical_refs:
   - "engineer Track B Phase 1 empirical measurement 8/8 refs 2026-05-20"
-  - "Source: data/referent-analysis/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+  - "Source: data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
   - "Phase 0 qualitative: canonical-scenes/INDEX.md decision setup grid 3.3"
 validation_methodology: "Phase 1 empirical: ffmpeg + Whisper + librosa + frame analysis 22 decision windows across 8 refs"
 measurement_script: "ai-video measure-canonical-decision-ui-pacing (built + run engineer Track B Phase 1 COMPLETE)"

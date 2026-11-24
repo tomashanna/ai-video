@@ -138,8 +138,8 @@ argumentos + timeout (nunca `shell=True`), YAML con `safe_load` y límite de tam
 ## Tests, evals y calidad
 
 ```bash
-uv run pytest                        # ~490 tests; los que sintetizan media se saltean sin ffmpeg
-uv run python -m evals.run           # 21+ casos: spec, captions, safe zones, rúbrica, render
+uv run pytest                        # ~565 tests; los que sintetizan media se saltean sin ffmpeg
+uv run python -m evals.run           # 24 casos: spec, captions, safe zones, rúbrica, render
 uv run ruff check . && uv run ruff format --check .
 uv run mypy                          # estricto en la capa de infraestructura
 bash scripts/health-check.sh         # invariantes de higiene del repo

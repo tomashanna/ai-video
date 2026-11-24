@@ -161,7 +161,7 @@ Per-ref existing data: `data/referent-analysis/ref-XX/metadata.json` + `transcri
 ### 4.1 Per-ref measurements JSON
 
 ```
-data/referent-analysis/empirical-decision-ui-pacing/
+data/referent-analysis/horror-choice/empirical-decision-ui-pacing/
 ├── ref-03-measurements.json
 ├── ref-06-measurements.json
 ├── ref-08-measurements.json

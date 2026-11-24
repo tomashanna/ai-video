@@ -162,7 +162,7 @@ ITER PATTERN:
 │   • BOOTSTRAP.md (new project setup)                                │
 │   • PIPELINE.md (CP1-CP5 flow + § 13 NEW per-clip atomic Phase 2)   │
 │   • SFX-PIPELINE.md / CAPTIONS.md / AUDIO-MASTERING.md / etc.       │
-│   • templates/scripts/* (13 scripts: 10 audit + 3 Phase 2 NEW)      │
+│   • src/ai_video/* (13 scripts: 10 audit + 3 Phase 2 NEW)      │
 │     ⭐ Phase 2 NEW 2026-05-20:                                       │
 │       - ai-video build-clip-atomic (per-clip mux pipeline)                │
 │       - ai-video quality-gate-per-clip (4th role automated)               │

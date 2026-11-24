@@ -46,7 +46,7 @@ Todo proyecto de video pasa por **8 gates bloqueantes** antes del stop point pre
 6. `ai-video continuity-check` (NARRATIVE.md vs index.html — caminos narrativos rotos, hitos under-narrated, balance temporal)
 7. `ai-video qa-gate --score <X.X> --stage pre-kling --iteration <N>` (bloquea sub-9.7)
 
-Los 8 scripts (audit-spec-completeness, lint, audit-narrative, render-lock, audit-frames, audit-audio, continuity-check, qa-gate) se copian del `templates/scripts/` en el paso 2 abajo. Sin estos scripts copiados al proyecto, el flow NO puede llegar al stop point.
+Los 8 scripts (audit-spec-completeness, lint, audit-narrative, render-lock, audit-frames, audit-audio, continuity-check, qa-gate) se copian del `src/ai_video/` en el paso 2 abajo. Sin estos scripts copiados al proyecto, el flow NO puede llegar al stop point.
 
 **Learnings post-render** (reemplaza POST-MORTEM standalone, deprecated 2026-05-15): al stop point pre-animation, append 2-3 bullets al `<format>-format/video-log.md` con pattern usado, score final, qué funcionó, qué no, costo total. El video-log.md SE CONSULTA antes de cada video nuevo (rotación + cross-video lessons).
 
@@ -59,7 +59,7 @@ AI video 1/                                       ← raíz workspace
 ├── PAUTA.md, NARRATION-RULES.md, docs/FEEDBACK-LOOP.md  ← entry docs generales
 ├── .claude/skills/
 │   ├── ai-video-production/                      ← skill TOOLKIT (general)
-│   │   └── templates/scripts/{tts,image,sfx,captions}.py  ← FUENTE de scripts
+│   │   └── src/ai_video/{tts,image,sfx,captions}.py  ← FUENTE de scripts
 │   ├── horror-choice-format/                     ← skill de formato horror
 │   └── [otros formatos futuros]                  ← documental-format, etc.
 ├── elige-companero/                              ← proyecto Video #1
