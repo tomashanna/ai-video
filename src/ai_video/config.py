@@ -100,9 +100,25 @@ class Settings(BaseSettings):
         return out
 
 
+def default_env_files() -> tuple[str, ...]:
+    """``.env`` at the repo root, then ``./.env`` (later files win), so commands run from
+    ``projects/<name>/`` still pick up the repo-level configuration."""
+    files: list[str] = []
+    try:
+        from ai_video.paths import repo_root
+
+        files.append(str(repo_root() / ".env"))
+    except ConfigError:
+        pass
+    cwd_env = str(Path.cwd() / ".env")
+    if cwd_env not in files:
+        files.append(cwd_env)
+    return tuple(files)
+
+
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    return Settings(_env_file=default_env_files())  # type: ignore[call-arg]
 
 
 def reset_settings_cache() -> None:
