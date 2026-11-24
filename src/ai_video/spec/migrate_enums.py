@@ -30,12 +30,16 @@ from pathlib import Path
 # Add new renames here as the system evolves
 RENAMES = [
     # (old_string, new_string, reason)
-    ("motion_intensity_intent: kling_full",
-     "motion_intensity_intent: animation_full",
-     "G2 2026-05-16: vendor decoupling enum value"),
-    ("primeros_30s_kling_obligatorio:",
-     "primeros_30s_animation_ai_obligatorio:",
-     "G2 2026-05-16: vendor decoupling field name (CLAUDE.md hard rule #6)"),
+    (
+        "motion_intensity_intent: kling_full",
+        "motion_intensity_intent: animation_full",
+        "G2 2026-05-16: vendor decoupling enum value",
+    ),
+    (
+        "primeros_30s_kling_obligatorio:",
+        "primeros_30s_animation_ai_obligatorio:",
+        "G2 2026-05-16: vendor decoupling field name (CLAUDE.md hard rule #6)",
+    ),
 ]
 
 from ai_video.paths import specs_dir
@@ -57,11 +61,13 @@ def migrate_file(path: Path, apply: bool) -> dict:
         n = new.count(old_s)
         if n > 0:
             new = new.replace(old_s, new_s)
-            stats["changes"].append({
-                "rename": f"{old_s} → {new_s}",
-                "occurrences": n,
-                "reason": reason,
-            })
+            stats["changes"].append(
+                {
+                    "rename": f"{old_s} → {new_s}",
+                    "occurrences": n,
+                    "reason": reason,
+                }
+            )
 
     if new != original:
         stats["would_change"] = True
@@ -77,10 +83,8 @@ def migrate_file(path: Path, apply: bool) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--apply", action="store_true",
-                    help="Apply changes. Without this flag, runs dry-run.")
-    ap.add_argument("--dir", default=str(DEFAULT_DIR),
-                    help=f"Specs directory (default: {DEFAULT_DIR})")
+    ap.add_argument("--apply", action="store_true", help="Apply changes. Without this flag, runs dry-run.")
+    ap.add_argument("--dir", default=str(DEFAULT_DIR), help=f"Specs directory (default: {DEFAULT_DIR})")
     args = ap.parse_args()
 
     specs_dir = Path(args.dir)

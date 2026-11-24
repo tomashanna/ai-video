@@ -53,7 +53,9 @@ def list_presets(catalog: dict) -> None:
     for p in catalog["presets"]:
         status_icon = "✅" if p["validation_status"] == "validated" else "🟡"
         print(f"  {status_icon} {p['preset_id']:<25} {p['label']}")
-        print(f"     tool={p['tool']:<8} risk={p['intelligibility_risk']:<6} overhead={p['duration_overhead_pct']}%")
+        print(
+            f"     tool={p['tool']:<8} risk={p['intelligibility_risk']:<6} overhead={p['duration_overhead_pct']}%"
+        )
     print()
 
 
@@ -98,9 +100,13 @@ def main() -> None:
     parser.add_argument("--input", type=Path, help="Input mp3 path")
     parser.add_argument("--output", type=Path, help="Output mp3 path")
     parser.add_argument("--list", action="store_true", help="List available presets")
-    parser.add_argument("--verify", action="store_true", help="Run M7.7.5 intelligibility check post-apply (requires --text)")
+    parser.add_argument(
+        "--verify", action="store_true", help="Run M7.7.5 intelligibility check post-apply (requires --text)"
+    )
     parser.add_argument("--text", help="Expected text for --verify (Whisper Jaccard check)")
-    parser.add_argument("--threshold", type=float, default=0.85, help="Intelligibility threshold (default 0.85)")
+    parser.add_argument(
+        "--threshold", type=float, default=0.85, help="Intelligibility threshold (default 0.85)"
+    )
     args = parser.parse_args()
 
     catalog = load_catalog()
@@ -120,7 +126,9 @@ def main() -> None:
     preset = find_preset(catalog, args.preset)
     print(f"\n→ Applying preset: {preset['preset_id']} ({preset['label']})")
     print(f"  intent: {preset['intent']}")
-    print(f"  tool: {preset['tool']} | risk: {preset['intelligibility_risk']} | overhead: {preset['duration_overhead_pct']}%\n")
+    print(
+        f"  tool: {preset['tool']} | risk: {preset['intelligibility_risk']} | overhead: {preset['duration_overhead_pct']}%\n"
+    )
 
     if preset["tool"] == "sox":
         apply_sox(preset["chain"], args.input, args.output)

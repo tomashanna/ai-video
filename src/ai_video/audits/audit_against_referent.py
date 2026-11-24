@@ -137,10 +137,10 @@ def _measure_our_video(video_path, tmpdir, html_path=None):
     # Duration
     try:
         dur = subprocess.check_output(
-            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-             "-of", "csv=p=0", video_path],
-            text=True
-        , timeout=SUBPROCESS_TIMEOUT_S).strip()
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video_path],
+            text=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        ).strip()
         out["duration_s"] = float(dur)
     except Exception as e:
         print(f"ERROR: ffprobe duration failed: {e}", file=sys.stderr)
@@ -149,14 +149,25 @@ def _measure_our_video(video_path, tmpdir, html_path=None):
     # LUFS integrated
     try:
         result = subprocess.run(
-            ["ffmpeg", "-i", video_path, "-af",
-             "loudnorm=I=-14:TP=-1:LRA=11:print_format=json", "-f", "null", "-"],
-            capture_output=True, text=True
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            [
+                "ffmpeg",
+                "-i",
+                video_path,
+                "-af",
+                "loudnorm=I=-14:TP=-1:LRA=11:print_format=json",
+                "-f",
+                "null",
+                "-",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         for line in result.stderr.splitlines():
             if '"input_i"' in line:
                 # parse JSON-ish output
                 import re
+
                 m = re.search(r'"input_i"\s*:\s*"(-?[0-9.]+)"', line)
                 if m:
                     out["audio"]["lufs_integrated"] = float(m.group(1))
@@ -175,10 +186,11 @@ def _measure_our_video(video_path, tmpdir, html_path=None):
     # Cuts per minute (scene detection threshold 0.3)
     try:
         result = subprocess.run(
-            ["ffmpeg", "-i", video_path, "-filter:v",
-             "select='gt(scene,0.3)',showinfo", "-f", "null", "-"],
-            capture_output=True, text=True
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            ["ffmpeg", "-i", video_path, "-filter:v", "select='gt(scene,0.3)',showinfo", "-f", "null", "-"],
+            capture_output=True,
+            text=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         cuts = sum(1 for line in result.stderr.splitlines() if "pts_time:" in line)
         out["pacing"]["cuts_per_min"] = (cuts * 60.0) / out["duration_s"]
         out["pacing"]["cuts_total_raw"] = cuts
@@ -188,13 +200,27 @@ def _measure_our_video(video_path, tmpdir, html_path=None):
     # Whisper pace + coverage (requires whisper + audio extract)
     try:
         import whisper
+
         # Extract audio
         audio_tmp = os.path.join(tmpdir, "audio.wav")
         subprocess.run(
-            ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
-             audio_tmp, "-loglevel", "error"],
-            check=True
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                video_path,
+                "-vn",
+                "-ac",
+                "1",
+                "-ar",
+                "16000",
+                audio_tmp,
+                "-loglevel",
+                "error",
+            ],
+            check=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         model = whisper.load_model("small")
         result = model.transcribe(audio_tmp, language="es", fp16=False)
         segments = result.get("segments", [])
@@ -216,6 +242,7 @@ def _measure_our_video(video_path, tmpdir, html_path=None):
     # Music BPM (librosa optional)
     try:
         import librosa
+
         audio_wav = os.path.join(tmpdir, "audio.wav")
         if os.path.exists(audio_wav):
             y, sr = librosa.load(audio_wav, sr=None)
@@ -233,11 +260,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--video", required=True, help="Path to our video (mp4)")
     ap.add_argument("--html", required=False, help="Path to index.html (optional, future use)")
-    ap.add_argument("--measurements", required=False,
-                    default=None,
-                    help="Path to F1 measurements JSON")
-    ap.add_argument("--tolerance", choices=["p25-p75", "p5-p95"], default="p25-p75",
-                    help="Tolerance per metric (default p25-p75 interquartile range)")
+    ap.add_argument("--measurements", required=False, default=None, help="Path to F1 measurements JSON")
+    ap.add_argument(
+        "--tolerance",
+        choices=["p25-p75", "p5-p95"],
+        default="p25-p75",
+        help="Tolerance per metric (default p25-p75 interquartile range)",
+    )
     args = ap.parse_args()
 
     if not os.path.exists(args.video):

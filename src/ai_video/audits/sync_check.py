@@ -26,17 +26,28 @@ from pathlib import Path
 
 # SFX impact keywords (detect impact events from src name)
 IMPACT_KEYWORDS = [
-    "white-flash", "flash", "thud", "body-fall", "body-thud",
-    "sub-bass", "stab", "impact", "punch", "slam", "crack",
-    "glass-shatter", "scream", "scream-cut",
+    "white-flash",
+    "flash",
+    "thud",
+    "body-fall",
+    "body-thud",
+    "sub-bass",
+    "stab",
+    "impact",
+    "punch",
+    "slam",
+    "crack",
+    "glass-shatter",
+    "scream",
+    "scream-cut",
 ]
 
 # Default visual change threshold (brightness delta)
 DEFAULT_THRESHOLD = 0.05  # 5% brightness change minimum
 
 # Time offsets around impact to capture (seconds)
-PRE_OFFSET = 0.1   # frame BEFORE impact
-POST_OFFSET = 0.15 # frame AFTER impact (small lag tolerated)
+PRE_OFFSET = 0.1  # frame BEFORE impact
+POST_OFFSET = 0.15  # frame AFTER impact (small lag tolerated)
 
 
 def parse_impact_events(html_path: str) -> list:
@@ -45,10 +56,7 @@ def parse_impact_events(html_path: str) -> list:
         return []
     with open(html_path) as f:
         content = f.read()
-    pattern = re.compile(
-        r'<audio[^>]+src="([^"]+)"[^>]+data-start="([\d.]+)"',
-        re.DOTALL
-    )
+    pattern = re.compile(r'<audio[^>]+src="([^"]+)"[^>]+data-start="([\d.]+)"', re.DOTALL)
     events = []
     for m in pattern.finditer(content):
         src = m.group(1)
@@ -63,10 +71,25 @@ def extract_frame(video: str, t: float, out: str) -> bool:
     """Extract a single frame at time t."""
     try:
         result = subprocess.run(
-            ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-             "-ss", str(t), "-i", video, "-frames:v", "1",
-             "-q:v", "3", out],
-            capture_output=True, text=True, timeout=10
+            [
+                "ffmpeg",
+                "-y",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-ss",
+                str(t),
+                "-i",
+                video,
+                "-frames:v",
+                "1",
+                "-q:v",
+                "3",
+                out,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         return os.path.exists(out)
     except Exception as e:
@@ -78,11 +101,22 @@ def measure_brightness(image_path: str) -> float:
     """Measure average brightness of an image (0-255 → 0.0-1.0)."""
     try:
         result = subprocess.run(
-            ["ffmpeg", "-hide_banner", "-loglevel", "error",
-             "-i", image_path,
-             "-vf", "format=gray,signalstats",
-             "-f", "null", "-"],
-            capture_output=True, text=True, timeout=10
+            [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-i",
+                image_path,
+                "-vf",
+                "format=gray,signalstats",
+                "-f",
+                "null",
+                "-",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         # signalstats writes YAVG=<value> to stderr
         m = re.search(r"YAVG:(\d+\.?\d*)", result.stderr)
@@ -128,10 +162,13 @@ def main():
     )
     parser.add_argument("--video", required=True, help="Path to MP4 render")
     parser.add_argument("--html", required=True, help="Path to index.html")
-    parser.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD,
-                        help=f"Min brightness delta to count as visual response (default {DEFAULT_THRESHOLD})")
-    parser.add_argument("--debug-dir", default="renders/debug-sync",
-                        help="Where to save extracted frames")
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=DEFAULT_THRESHOLD,
+        help=f"Min brightness delta to count as visual response (default {DEFAULT_THRESHOLD})",
+    )
+    parser.add_argument("--debug-dir", default="renders/debug-sync", help="Where to save extracted frames")
     parser.add_argument("--output", help="Save JSON report")
     args = parser.parse_args()
 
@@ -151,7 +188,11 @@ def main():
 
     events = parse_impact_events(args.html)
     if not events:
-        print("ℹ️  No impact events detected (no SFX matching keywords: " + ", ".join(IMPACT_KEYWORDS[:5]) + "...)")
+        print(
+            "ℹ️  No impact events detected (no SFX matching keywords: "
+            + ", ".join(IMPACT_KEYWORDS[:5])
+            + "...)"
+        )
         print("   This is OK if the video has no scripted impacts. Otherwise check sfx naming.")
         return 0
 
@@ -166,9 +207,11 @@ def main():
         r = analyze_impact(args.video, event, args.threshold, args.debug_dir)
         results.append(r)
         symbol = "✓" if r["status"] == "PASS" else "✗" if r["status"] == "FAIL" else "?"
-        print(f"  {symbol} {event['time']:.2f}s {event['src']}: "
-              f"brightness {r.get('pre_brightness', '?')} → {r.get('post_brightness', '?')}, "
-              f"delta {r['delta']} (threshold {args.threshold})")
+        print(
+            f"  {symbol} {event['time']:.2f}s {event['src']}: "
+            f"brightness {r.get('pre_brightness', '?')} → {r.get('post_brightness', '?')}, "
+            f"delta {r['delta']} (threshold {args.threshold})"
+        )
         if r["status"] == "FAIL":
             fails.append(r)
 
@@ -182,7 +225,9 @@ def main():
 
     if fails:
         print()
-        print(f"❌ SYNC CHECK FAILED — {len(fails)} impact(s) have no visual response (delta < {args.threshold})")
+        print(
+            f"❌ SYNC CHECK FAILED — {len(fails)} impact(s) have no visual response (delta < {args.threshold})"
+        )
         print("   Posibles causas:")
         print("   - SFX impact sin animation reactiva (whip pan, scale pop, brightness flash)")
         print("   - Animation existe pero está fuera del rango ±0.15s del audio")

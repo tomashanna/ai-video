@@ -110,19 +110,12 @@ def cluster_into_scenes(
     return scenes
 
 
-def overlapping_segments(
-    segments: list[dict], t_start: float, t_end: float
-) -> list[dict]:
+def overlapping_segments(segments: list[dict], t_start: float, t_end: float) -> list[dict]:
     """Whisper segments that overlap [t_start, t_end]."""
-    return [
-        s for s in segments
-        if s["end"] >= t_start and s["start"] <= t_end
-    ]
+    return [s for s in segments if s["end"] >= t_start and s["start"] <= t_end]
 
 
-def ui_keyframes_in_range(
-    ui_data: dict, t_start: float, t_end: float
-) -> dict:
+def ui_keyframes_in_range(ui_data: dict, t_start: float, t_end: float) -> dict:
     """ui-elements.json keys are 'frame_XX.X' (timestamp). Return dict of matching frames."""
     if not ui_data:
         return {}
@@ -202,8 +195,7 @@ def visual_for_scene(
     if gemini_data:
         # Find frames in gemini_data within range
         frame_keys = [
-            k for k, _ in gemini_data.items()
-            if isinstance(k, str) and re.match(r"frame_([\d.]+)", k)
+            k for k, _ in gemini_data.items() if isinstance(k, str) and re.match(r"frame_([\d.]+)", k)
         ]
         in_range = []
         for k in frame_keys:
@@ -275,10 +267,7 @@ def build_scene_block(
 
     narr_segments = overlapping_segments(transcription_segments, t_start, t_end)
     if narr_segments:
-        narr_lines = [
-            f'- [{s["start"]:.1f}-{s["end"]:.1f}s]: "{s["text"].strip()}"'
-            for s in narr_segments
-        ]
+        narr_lines = [f'- [{s["start"]:.1f}-{s["end"]:.1f}s]: "{s["text"].strip()}"' for s in narr_segments]
         narration_text = "\n".join(narr_lines)
     else:
         narration_text = "[no narration in this range — silencio o pura música]"
@@ -296,9 +285,7 @@ def build_scene_block(
     else:
         ui_summary = "[NEEDS VALIDATION] (no UI keyframes sampled in this range)"
 
-    visual_desc, calls_used = visual_for_scene(
-        gemini_data, frames_dir, t_start, t_end, use_gemini
-    )
+    visual_desc, calls_used = visual_for_scene(gemini_data, frames_dir, t_start, t_end, use_gemini)
 
     # Animation tier — heuristic placeholder (frame-to-frame diff would need recompute)
     animation_tier = "[NEEDS VALIDATION] (use manual observation of source video)"
@@ -384,9 +371,15 @@ def build_canonical_scenes(
 
     for i, (t_start, t_end) in enumerate(scenes, start=1):
         block, calls = build_scene_block(
-            i, t_start, t_end,
-            transcription_segments, ui_data, gemini_data, frames_dir,
-            duration_total, use_gemini
+            i,
+            t_start,
+            t_end,
+            transcription_segments,
+            ui_data,
+            gemini_data,
+            frames_dir,
+            duration_total,
+            use_gemini,
         )
         blocks.append(block)
         total_gemini_calls += calls
@@ -447,13 +440,19 @@ def build_canonical_scenes(
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True, help="referent-analysis/<format>/ref-XX/ folder (e.g., referent-analysis/horror-choice/ref-03/ post-Sub-Fase-3A.2 TIER 2.3 namespace)")
+    ap.add_argument(
+        "--input",
+        required=True,
+        help="referent-analysis/<format>/ref-XX/ folder (e.g., referent-analysis/horror-choice/ref-03/ post-Sub-Fase-3A.2 TIER 2.3 namespace)",
+    )
     ap.add_argument("--output", required=True, help="output directory (canonical-scenes/)")
     ap.add_argument("--filename", help="output filename (default: ref-XX.md from input dir name)")
     ap.add_argument("--pattern", help="Pattern P1-P10 (per PAUTA-MASTER § 15)")
     ap.add_argument("--score", help="Score Gemini empirical (X.XX)")
     ap.add_argument("--source-video", help="Path to source MP4")
-    ap.add_argument("--use-gemini", action="store_true", help="Call Gemini Vision if gemini-frames-analysis.json missing")
+    ap.add_argument(
+        "--use-gemini", action="store_true", help="Call Gemini Vision if gemini-frames-analysis.json missing"
+    )
     args = ap.parse_args()
 
     input_dir = Path(args.input)
@@ -471,7 +470,8 @@ def main():
     print(f"  use_gemini: {args.use_gemini}")
 
     stats = build_canonical_scenes(
-        input_dir, output_path,
+        input_dir,
+        output_path,
         pattern=args.pattern,
         score=args.score,
         source_video=args.source_video,

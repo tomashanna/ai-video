@@ -31,6 +31,7 @@ el runtime solo parsea el SPEC (derive_needed_anchors) y lista archivos (list_pr
 Authority: HR#26 (test adversarial companion por script) + CLAUDE.md § Pre-render gate
 (CP1 anchors → CP4 animation $) + feedback_per_clip_atomic_assembly (FileNotFoundError mid-batch).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -91,8 +92,9 @@ def derive_needed_anchors(spec):
                 reasons[aid] = f"declared in reference_anchors.{category}"
                 appears = entry.get("appears_in_shots") or []
                 if isinstance(appears, list) and len(appears) > 1:
-                    reasons[aid] = (f"declared in reference_anchors.{category} "
-                                    f"(appears in {len(appears)} shots)")
+                    reasons[aid] = (
+                        f"declared in reference_anchors.{category} (appears in {len(appears)} shots)"
+                    )
 
     # (b) shot_list anchor_id_required (sala-limpia / champions dialect): count appearances.
     appear_counts = {}
@@ -149,11 +151,13 @@ def resolve_anchors_dir(project_dir, spec):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="delivery/genre format (capability gate)")
     parser.add_argument("--spec", required=True)
-    parser.add_argument("--project-dir", required=True,
-                        help="project root (anchors expected in <project-dir>/assets/anchors)")
+    parser.add_argument(
+        "--project-dir", required=True, help="project root (anchors expected in <project-dir>/assets/anchors)"
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -167,22 +171,33 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_ai_clips = bool(caps.get("has_ai_generated_clips", False))
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_ai_clips}\n"
-              f"branch: {'anchor_coverage_check' if has_ai_clips else 'not_applicable'}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_ai_clips}\n"
+            f"branch: {'anchor_coverage_check' if has_ai_clips else 'not_applicable'}"
+        )
         return 0
 
     if not has_ai_clips:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_ai_generated_clips=false → no i2v batch to break on a missing anchor",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": "has_ai_generated_clips=false → no i2v batch to break on a missing anchor",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     needed, reasons = derive_needed_anchors(spec)
@@ -192,7 +207,8 @@ def main():
     ok, missing = evaluate_anchor_coverage(needed, present)
 
     report = {
-        "format": args.format, "spec": str(spec_path),
+        "format": args.format,
+        "spec": str(spec_path),
         "anchors_dir": str(anchors_dir),
         "anchors_dir_exists": Path(anchors_dir).is_dir(),
         "overall_status": "pass" if ok else "fail",

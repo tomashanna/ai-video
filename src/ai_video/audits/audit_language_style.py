@@ -56,6 +56,7 @@ Authority: memorias feedback_spanish_neutral + feedback_anti_cliche_horror +
   NO medidas en F1 (reglas léxicas categóricas, no bandas numéricas) → constantes de módulo.
   HR#26 companion test: test_audit-language-style.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -77,8 +78,20 @@ ALL_CHECKS = ("voseo", "cliche", "names", "handle")
 # Canónico = Spanish neutral (tú/dices/eliges). Cada entrada se matchea con word-boundary
 # (\b...\b) case-insensitive → 'vosotros' NO matchea 'vos'; 'sos un' SÍ matchea 'sos'.
 VOSEO_LEXICON = (
-    "vos", "decís", "elegís", "tenés", "querés", "podés", "sabés",
-    "mirá", "andá", "escuchá", "agarrá", "sos", "acordate", "fijate",
+    "vos",
+    "decís",
+    "elegís",
+    "tenés",
+    "querés",
+    "podés",
+    "sabés",
+    "mirá",
+    "andá",
+    "escuchá",
+    "agarrá",
+    "sos",
+    "acordate",
+    "fijate",
 )
 
 # ── (2) Blacklist CLICHÉS horror overused ────────────────────────────────────
@@ -99,20 +112,31 @@ CLICHE_PHRASES = (
 # case-insensitive sobre el name completo (un name de UNA palabra que sea oficio falla;
 # "Bruno" con description "matarife del pueblo" pasa).
 JOB_NAME_BLACKLIST = (
-    "Proyector", "Acomodador", "Matarife", "Cocinera", "Guardavías",
-    "Vigilante", "Maquinista", "Operario", "Sereno", "Portero",
-    "Enfermera", "Doctor", "Conserje",
+    "Proyector",
+    "Acomodador",
+    "Matarife",
+    "Cocinera",
+    "Guardavías",
+    "Vigilante",
+    "Maquinista",
+    "Operario",
+    "Sereno",
+    "Portero",
+    "Enfermera",
+    "Doctor",
+    "Conserje",
 )
 
 # ── (4) Handles ──────────────────────────────────────────────────────────────
 # Authority: feedback_watermark_handle — NO medido en F1.
 CANONICAL_HANDLE = "@elige_tucompanero"
-FORBIDDEN_OWN_HANDLE = "@referent-a"   # reference-only — NUNCA handle propio
+FORBIDDEN_OWN_HANDLE = "@referent-a"  # reference-only — NUNCA handle propio
 
 
 # ═══════════════════════════════════════════════════════════════
 # LÓGICA PURA (testeable sin filesystem)
 # ═══════════════════════════════════════════════════════════════
+
 
 def _voseo_pattern(lexicon=VOSEO_LEXICON):
     # word-boundary case-insensitive; re.UNICODE para que el boundary respete acentos.
@@ -136,11 +160,17 @@ def evaluate_voseo(texts, *, lexicon=VOSEO_LEXICON):
         src = item.get("source", "?")
         hits = sorted({m.group(0).lower() for m in pat.finditer(text)})
         if hits:
-            findings.append({
-                "source": src, "status": "fail", "hits": hits,
-                "detail": (f"voseo detectado {hits} en '{src}' — el canónico es Spanish "
-                           f"neutral (tú/dices/eliges). Texto: «{text[:90]}»"),
-            })
+            findings.append(
+                {
+                    "source": src,
+                    "status": "fail",
+                    "hits": hits,
+                    "detail": (
+                        f"voseo detectado {hits} en '{src}' — el canónico es Spanish "
+                        f"neutral (tú/dices/eliges). Texto: «{text[:90]}»"
+                    ),
+                }
+            )
     return (len(findings) == 0), findings
 
 
@@ -149,16 +179,22 @@ def evaluate_cliche(texts, *, phrases=CLICHE_PHRASES):
     lowered = [p.lower() for p in phrases]
     findings = []
     for item in texts:
-        text = (item.get("text") or "")
+        text = item.get("text") or ""
         src = item.get("source", "?")
         low = text.lower()
         hits = [phrases[i] for i, p in enumerate(lowered) if p in low]
         if hits:
-            findings.append({
-                "source": src, "status": "fail", "hits": hits,
-                "detail": (f"cliché(s) overused {hits} en '{src}' — escribir original/"
-                           f"concreto/sensorial. Texto: «{text[:90]}»"),
-            })
+            findings.append(
+                {
+                    "source": src,
+                    "status": "fail",
+                    "hits": hits,
+                    "detail": (
+                        f"cliché(s) overused {hits} en '{src}' — escribir original/"
+                        f"concreto/sensorial. Texto: «{text[:90]}»"
+                    ),
+                }
+            )
     return (len(findings) == 0), findings
 
 
@@ -178,12 +214,19 @@ def evaluate_names(names, *, blacklist=JOB_NAME_BLACKLIST):
             continue
         m = pat.search(name)
         if m:
-            findings.append({
-                "source": src, "status": "fail", "name": name, "hit": m.group(0),
-                "detail": (f"character name '{name}' ({src}) ES un oficio ('{m.group(0)}') — "
-                           f"usar nombre REAL inventado (Bruno/Pablo/Hugo). El oficio va en "
-                           f"la descripción, NUNCA en el name field."),
-            })
+            findings.append(
+                {
+                    "source": src,
+                    "status": "fail",
+                    "name": name,
+                    "hit": m.group(0),
+                    "detail": (
+                        f"character name '{name}' ({src}) ES un oficio ('{m.group(0)}') — "
+                        f"usar nombre REAL inventado (Bruno/Pablo/Hugo). El oficio va en "
+                        f"la descripción, NUNCA en el name field."
+                    ),
+                }
+            )
     return (len(findings) == 0), findings
 
 
@@ -202,16 +245,26 @@ def evaluate_handle(handles, *, canonical=CANONICAL_HANDLE, forbidden=FORBIDDEN_
             continue
         norm = raw.lstrip("@").lower()
         if norm == fnorm:
-            findings.append({
-                "source": src, "status": "fail", "handle": raw,
-                "detail": (f"handle PROPIO '{raw}' en '{src}' es {forbidden} — reference-only, "
-                           f"NUNCA handle propio. Canónico = {canonical}."),
-            })
+            findings.append(
+                {
+                    "source": src,
+                    "status": "fail",
+                    "handle": raw,
+                    "detail": (
+                        f"handle PROPIO '{raw}' en '{src}' es {forbidden} — reference-only, "
+                        f"NUNCA handle propio. Canónico = {canonical}."
+                    ),
+                }
+            )
         elif norm != cnorm:
-            findings.append({
-                "source": src, "status": "fail", "handle": raw,
-                "detail": (f"handle PROPIO '{raw}' en '{src}' ≠ canónico {canonical}."),
-            })
+            findings.append(
+                {
+                    "source": src,
+                    "status": "fail",
+                    "handle": raw,
+                    "detail": (f"handle PROPIO '{raw}' en '{src}' ≠ canónico {canonical}."),
+                }
+            )
     return (len(findings) == 0), findings
 
 
@@ -223,8 +276,16 @@ def evaluate_handle(handles, *, canonical=CANONICAL_HANDLE, forbidden=FORBIDDEN_
 _CAPTION_ELEMENT_HINTS = ("caption", "warning", "narration", "subtitle")
 # Tipos que NO son caption (no chequear su .text por estilo): name labels, countdown,
 # watermark, botones, loaders. (El watermark se chequea aparte en collect_handles.)
-_NON_CAPTION_ELEMENT_HINTS = ("name_label", "countdown", "watermark", "button",
-                              "loading", "loader", "cta", "logo")
+_NON_CAPTION_ELEMENT_HINTS = (
+    "name_label",
+    "countdown",
+    "watermark",
+    "button",
+    "loading",
+    "loader",
+    "cta",
+    "logo",
+)
 
 
 def _is_caption_element(element_id: str) -> bool:
@@ -317,7 +378,7 @@ def collect_handles(spec: dict, html_text: str | None = None) -> list:
         for m in re.finditer(r'(@elige_tucompanero|@referent-a)', html_text):
             # contexto: ¿está cerca de la palabra "watermark"? Si sí, es handle propio renderizado.
             start = max(0, m.start() - 120)
-            ctx = html_text[start:m.start()].lower()
+            ctx = html_text[start : m.start()].lower()
             if "watermark" in ctx:
                 out.append({"source": "html.watermark", "handle": m.group(1)})
     return out
@@ -347,21 +408,33 @@ def run_checks(spec, html_text, checks, *, extra_cliche=()):
     for chk in checks:
         if chk == "voseo":
             ok, findings = evaluate_voseo(texts)
-            report[chk] = {"status": "pass" if ok else "fail",
-                           "inputs_checked": len(texts), "findings": findings}
+            report[chk] = {
+                "status": "pass" if ok else "fail",
+                "inputs_checked": len(texts),
+                "findings": findings,
+            }
         elif chk == "cliche":
             phrases = tuple(CLICHE_PHRASES) + tuple(extra_cliche)
             ok, findings = evaluate_cliche(texts, phrases=phrases)
-            report[chk] = {"status": "pass" if ok else "fail",
-                           "inputs_checked": len(texts), "findings": findings}
+            report[chk] = {
+                "status": "pass" if ok else "fail",
+                "inputs_checked": len(texts),
+                "findings": findings,
+            }
         elif chk == "names":
             ok, findings = evaluate_names(names)
-            report[chk] = {"status": "pass" if ok else "fail",
-                           "inputs_checked": len(names), "findings": findings}
+            report[chk] = {
+                "status": "pass" if ok else "fail",
+                "inputs_checked": len(names),
+                "findings": findings,
+            }
         elif chk == "handle":
             ok, findings = evaluate_handle(handles)
-            report[chk] = {"status": "pass" if ok else "fail",
-                           "inputs_checked": len(handles), "findings": findings}
+            report[chk] = {
+                "status": "pass" if ok else "fail",
+                "inputs_checked": len(handles),
+                "findings": findings,
+            }
         else:
             continue
         overall_ok = overall_ok and ok
@@ -370,14 +443,17 @@ def run_checks(spec, html_text, checks, *, extra_cliche=()):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="agnostic-by-design (horror-choice/sport-choice/…)")
     parser.add_argument("--spec", required=True)
     parser.add_argument("--html", default=None, help="index.html opcional (chequea watermark renderizado)")
-    parser.add_argument("--checks", default="all",
-                        help="csv de {voseo,cliche,names,handle} o 'all' (default)")
-    parser.add_argument("--extra-cliche", action="append", default=[],
-                        help="frase extra a blacklistear (extensible runtime)")
+    parser.add_argument(
+        "--checks", default="all", help="csv de {voseo,cliche,names,handle} o 'all' (default)"
+    )
+    parser.add_argument(
+        "--extra-cliche", action="append", default=[], help="frase extra a blacklistear (extensible runtime)"
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -391,8 +467,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     if args.checks.strip().lower() == "all":
@@ -405,8 +483,10 @@ def main():
             return 2
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nchecks: {checks}\n"
-              f"branch: language_style_check (universal — siempre aplica)")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nchecks: {checks}\n"
+            f"branch: language_style_check (universal — siempre aplica)"
+        )
         return 0
 
     html_text = None
@@ -419,7 +499,8 @@ def main():
 
     total_findings = sum(len(c["findings"]) for c in check_report.values())
     report = {
-        "format": args.format, "spec": str(spec_path),
+        "format": args.format,
+        "spec": str(spec_path),
         "checks_run": checks,
         "overall_status": "pass" if overall_ok else "fail",
         "overall_pass": overall_ok,

@@ -12,6 +12,7 @@ production stack). If either false → not_applicable. video_capabilities missin
 Build PRE-4.J BUILD 8 (2026-05-27) — TDD + Hard Rule #26 companion test.
 Pairs with horror-choice-format/lip-sync-workflow.md (Capa B doc).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -28,7 +29,8 @@ except ImportError:
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True)
     parser.add_argument("--spec", required=True)
     parser.add_argument("--dry-run", action="store_true")
@@ -44,23 +46,28 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     needs_check = bool(caps.get("has_tts_narration", False)) and bool(caps.get("has_layer_2_effects", False))
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\n"
-              f"has_tts_narration: {caps.get('has_tts_narration', False)}\n"
-              f"has_layer_2_effects: {caps.get('has_layer_2_effects', False)}\n"
-              f"branch: {'lip_sync_check' if needs_check else 'not_applicable'}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\n"
+            f"has_tts_narration: {caps.get('has_tts_narration', False)}\n"
+            f"has_layer_2_effects: {caps.get('has_layer_2_effects', False)}\n"
+            f"branch: {'lip_sync_check' if needs_check else 'not_applicable'}"
+        )
         return 0
 
     if not needs_check:
         report = {
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_tts_narration AND has_layer_2_effects must both be true for lip-sync check"
+            "format": args.format,
+            "overall_status": "not_applicable",
+            "detail": "has_tts_narration AND has_layer_2_effects must both be true for lip-sync check",
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
@@ -75,7 +82,12 @@ def main():
         if lsr is None:
             lsr = s.get("has_lip_sync_required")
         if lsr is None:
-            fails.append({"shot_id": sid, "reason": "lip_sync_required/has_lip_sync_required missing (D17 architect audit)"})
+            fails.append(
+                {
+                    "shot_id": sid,
+                    "reason": "lip_sync_required/has_lip_sync_required missing (D17 architect audit)",
+                }
+            )
             continue
         # consistency: dialog_text or character speaker → lip_sync flag must be true.
         # v11: dialog_text is a SIBLING of the shot; synthetic fixtures nest it under narration_in_this_shot.
@@ -91,23 +103,37 @@ def main():
         # Calca ref-10 (Rurik hazmat sin boca). Without this, V5 Axel (visor) voice-off shots false-FAIL.
         voice_off = bool(s.get("voice_off") or s.get("faceless_character"))
         if character_speaking and lsr is False and not voice_off:
-            fails.append({
-                "shot_id": sid, "lip_sync_required": False,
-                "reason": ("inconsistency: shot has character speech (dialog_text or speaker=character_*) "
-                           "but lip_sync_required=false and no voice_off/faceless_character declared "
-                           "→ Sync.so layer needed but not flagged"),
-                "speaker": speaker, "has_dialog_text": has_dialog,
-            })
+            fails.append(
+                {
+                    "shot_id": sid,
+                    "lip_sync_required": False,
+                    "reason": (
+                        "inconsistency: shot has character speech (dialog_text or speaker=character_*) "
+                        "but lip_sync_required=false and no voice_off/faceless_character declared "
+                        "→ Sync.so layer needed but not flagged"
+                    ),
+                    "speaker": speaker,
+                    "has_dialog_text": has_dialog,
+                }
+            )
         else:
-            ok.append({"shot_id": sid, "lip_sync_required": lsr,
-                       "character_speaking_detected": character_speaking,
-                       "voice_off_exception": voice_off})
+            ok.append(
+                {
+                    "shot_id": sid,
+                    "lip_sync_required": lsr,
+                    "character_speaking_detected": character_speaking,
+                    "voice_off_exception": voice_off,
+                }
+            )
 
     overall = "fail" if fails else "pass"
     report = {
-        "format": args.format, "spec": str(spec_path),
-        "overall_status": overall, "overall_pass": not fails,
-        "fail_shots": fails, "ok_shots": ok,
+        "format": args.format,
+        "spec": str(spec_path),
+        "overall_status": overall,
+        "overall_pass": not fails,
+        "fail_shots": fails,
+        "ok_shots": ok,
         "total_checked": len(fails) + len(ok),
     }
     print(json.dumps(report, indent=2, ensure_ascii=False))

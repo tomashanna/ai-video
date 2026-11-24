@@ -213,9 +213,7 @@ def assert_engineer_scope_single_cp(handoff_text: str, expected_cp: str) -> str 
         return "Handoff text empty"
 
     # Look for a scope declaration line
-    scope_match = re.search(
-        r"(?im)^\s*[-*#]*\s*(?:engineer\s+)?scope\s*[:=]\s*(.+)$", handoff_text
-    )
+    scope_match = re.search(r"(?im)^\s*[-*#]*\s*(?:engineer\s+)?scope\s*[:=]\s*(.+)$", handoff_text)
     if not scope_match:
         # No explicit scope declaration. Accept but warn (legacy handoffs).
         return None
@@ -316,17 +314,10 @@ def _yaml_str(s: str) -> str:
 
 
 def now_iso_utc() -> str:
-    return (
-        datetime.datetime.now(datetime.UTC)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+    return datetime.datetime.now(datetime.UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def append_architectural_decision(
-    decisions_path: Path, entry: OverrideEntry
-) -> None:
+def append_architectural_decision(decisions_path: Path, entry: OverrideEntry) -> None:
     """
     Append YAML entry to ARCHITECTURAL-DECISIONS.md.
 
@@ -354,8 +345,7 @@ def append_architectural_decision(
 
     # Append as a fenced YAML block at the end
     appendix = (
-        f"\n```yaml\n# Appended {entry.timestamp} by orchestrator (agent={entry.agent})\n"
-        f"{block}\n```\n"
+        f"\n```yaml\n# Appended {entry.timestamp} by orchestrator (agent={entry.agent})\n{block}\n```\n"
     )
     # Always write at the end — append-only
     with decisions_path.open("a", encoding="utf-8") as f:

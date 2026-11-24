@@ -71,31 +71,34 @@ def parse_html_elements(html_path: Path) -> dict:
 
     # Captions
     caption_pattern = re.compile(
-        r'<div id="(cap-[^"]+)".*?data-start="([^"]+)".*?data-duration="([^"]+)".*?>(.*?)</div>',
-        re.DOTALL
+        r'<div id="(cap-[^"]+)".*?data-start="([^"]+)".*?data-duration="([^"]+)".*?>(.*?)</div>', re.DOTALL
     )
     for m in caption_pattern.finditer(content):
-        elements["captions"].append({
-            "id": m.group(1),
-            "start": float(m.group(2)),
-            "duration": float(m.group(3)),
-            "end": float(m.group(2)) + float(m.group(3)),
-            "text": m.group(4).strip()[:120],
-        })
+        elements["captions"].append(
+            {
+                "id": m.group(1),
+                "start": float(m.group(2)),
+                "duration": float(m.group(3)),
+                "end": float(m.group(2)) + float(m.group(3)),
+                "text": m.group(4).strip()[:120],
+            }
+        )
 
     # Outro cards
     outro_pattern = re.compile(
         r'<div id="(outro-card[^"]*)".*?data-start="([^"]+)".*?data-duration="([^"]+)".*?>(.*?)</div>',
-        re.DOTALL
+        re.DOTALL,
     )
     for m in outro_pattern.finditer(content):
-        elements["outro_cards"].append({
-            "id": m.group(1),
-            "start": float(m.group(2)),
-            "duration": float(m.group(3)),
-            "end": float(m.group(2)) + float(m.group(3)),
-            "text": m.group(4).replace("<br>", " ").strip()[:120],
-        })
+        elements["outro_cards"].append(
+            {
+                "id": m.group(1),
+                "start": float(m.group(2)),
+                "duration": float(m.group(3)),
+                "end": float(m.group(2)) + float(m.group(3)),
+                "text": m.group(4).replace("<br>", " ").strip()[:120],
+            }
+        )
 
     # Watermark Y position
     wm_y_match = re.search(r'\.watermark\s*\{[^}]*bottom:\s*(\d+)px', content)
@@ -117,23 +120,35 @@ def parse_captions_json(path: Path) -> list:
         return []
     normalized = []
     for c in captions:
-        normalized.append({
-            "start": float(c.get("start", 0)),
-            "end": float(c.get("end", 0)),
-            "text": c.get("whisper_text", c.get("text", "")),
-            "speaker": c.get("speaker", "narrator"),
-            "y_position_pct": c.get("y_position_pct", 62),
-        })
+        normalized.append(
+            {
+                "start": float(c.get("start", 0)),
+                "end": float(c.get("end", 0)),
+                "text": c.get("whisper_text", c.get("text", "")),
+                "speaker": c.get("speaker", "narrator"),
+                "y_position_pct": c.get("y_position_pct", 62),
+            }
+        )
     return normalized
 
 
 def get_video_duration(video_path: Path) -> float:
     """Use ffprobe to get video duration."""
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(video_path)],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            str(video_path),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(result.stdout.strip())
 
 
@@ -151,9 +166,7 @@ def generate_sample_timestamps(duration: float) -> list:
     return timestamps
 
 
-def sentinel_s1_audio_visual_character_mismatch(
-    captions: list, character_visible_windows: dict
-) -> list:
+def sentinel_s1_audio_visual_character_mismatch(captions: list, character_visible_windows: dict) -> list:
     """S1. Character audio playing + character face not visible on screen.
 
     character_visible_windows: dict[character_id, list of (start, end) windows where face visible].
@@ -168,37 +181,37 @@ def sentinel_s1_audio_visual_character_mismatch(
         # Check if character_id has visible windows defined
         visible_windows = character_visible_windows.get(speaker)
         if visible_windows is None:
-            findings.append({
-                "sentinel": "S1",
-                "severity": "WARN",
-                "caption_id": f"caption@{c['start']:.1f}-{c['end']:.1f}s",
-                "speaker": speaker,
-                "issue": f"No character_visible_windows config for speaker '{speaker}' — manual verification required (or enable Gemini Vision sentinel)",
-                "text": c["text"][:60],
-            })
+            findings.append(
+                {
+                    "sentinel": "S1",
+                    "severity": "WARN",
+                    "caption_id": f"caption@{c['start']:.1f}-{c['end']:.1f}s",
+                    "speaker": speaker,
+                    "issue": f"No character_visible_windows config for speaker '{speaker}' — manual verification required (or enable Gemini Vision sentinel)",
+                    "text": c["text"][:60],
+                }
+            )
             continue
 
         # Verify character visible during full audio window
         audio_start, audio_end = c["start"], c["end"]
-        visible_during_audio = any(
-            vs <= audio_start and ve >= audio_end for vs, ve in visible_windows
-        )
+        visible_during_audio = any(vs <= audio_start and ve >= audio_end for vs, ve in visible_windows)
         if not visible_during_audio:
-            findings.append({
-                "sentinel": "S1",
-                "severity": "FAIL",
-                "caption_id": f"caption@{audio_start:.1f}-{audio_end:.1f}s",
-                "speaker": speaker,
-                "issue": f"Character '{speaker}' audio playing {audio_start:.1f}-{audio_end:.1f}s but face NOT visible during full window (anti-pattern #9 hidden form)",
-                "text": c["text"][:60],
-                "fix_hint": "Option A: cut to character face animated during audio. Option B: remove character audio at this moment.",
-            })
+            findings.append(
+                {
+                    "sentinel": "S1",
+                    "severity": "FAIL",
+                    "caption_id": f"caption@{audio_start:.1f}-{audio_end:.1f}s",
+                    "speaker": speaker,
+                    "issue": f"Character '{speaker}' audio playing {audio_start:.1f}-{audio_end:.1f}s but face NOT visible during full window (anti-pattern #9 hidden form)",
+                    "text": c["text"][:60],
+                    "fix_hint": "Option A: cut to character face animated during audio. Option B: remove character audio at this moment.",
+                }
+            )
     return findings
 
 
-def sentinel_s2_duplicate_text_window(
-    captions: list, html_elements: dict, window_s: float = 10.0
-) -> list:
+def sentinel_s2_duplicate_text_window(captions: list, html_elements: dict, window_s: float = 10.0) -> list:
     """S2. Same text content across DIFFERENT element TYPES within window.
 
     NOTE: HTML cap-N elements are renders of captions.json entries (1:1 mapping),
@@ -213,43 +226,46 @@ def sentinel_s2_duplicate_text_window(
     # Type A: HTML captions (what user actually SEES on screen, including stale elements not in JSON)
     type_a_elements = []
     for ec in html_elements.get("captions", []):
-        type_a_elements.append({
-            "id": ec["id"],
-            "type": "html_caption",
-            "text": ec["text"].lower().strip().rstrip("."),
-            "start": ec["start"],
-            "end": ec["end"],
-        })
+        type_a_elements.append(
+            {
+                "id": ec["id"],
+                "type": "html_caption",
+                "text": ec["text"].lower().strip().rstrip("."),
+                "start": ec["start"],
+                "end": ec["end"],
+            }
+        )
 
     # Type B: outro cards from HTML (separate element type)
     type_b_elements = []
     for oc in html_elements.get("outro_cards", []):
-        type_b_elements.append({
-            "id": oc["id"],
-            "type": "outro_card",
-            "text": oc["text"].lower().strip().rstrip("."),
-            "start": oc["start"],
-            "end": oc["end"],
-        })
+        type_b_elements.append(
+            {
+                "id": oc["id"],
+                "type": "outro_card",
+                "text": oc["text"].lower().strip().rstrip("."),
+                "start": oc["start"],
+                "end": oc["end"],
+            }
+        )
 
     # Check stale HTML captions (in HTML but NOT in captions.json) — warns engineer dead code
     json_text_set = {c["text"].lower().strip().rstrip(".") for c in captions}
     for el in type_a_elements:
         if el["text"] and el["text"] not in json_text_set:
             # Check if any partial match (in case JSON text is contained in HTML text or vice versa)
-            partial_match = any(
-                el["text"] in jt or jt in el["text"]
-                for jt in json_text_set if jt
-            )
+            partial_match = any(el["text"] in jt or jt in el["text"] for jt in json_text_set if jt)
             if not partial_match:
-                findings.append({
-                    "sentinel": "S2",
-                    "severity": "FAIL",
-                    "elements": [el["id"]],
-                    "types": ["html_caption_stale"],
-                    "issue": f"HTML element {el['id']} has text '{el['text'][:50]}...' but NOT present in captions.json — STALE element from previous iter",
-                    "fix_hint": f"Remove HTML element {el['id']} (line in index.html) — it renders text that's no longer in captions source of truth.",
-                })
+                findings.append(
+                    {
+                        "sentinel": "S2",
+                        "severity": "FAIL",
+                        "elements": [el["id"]],
+                        "types": ["html_caption_stale"],
+                        "issue": f"HTML element {el['id']} has text '{el['text'][:50]}...' but NOT present in captions.json — STALE element from previous iter",
+                        "fix_hint": f"Remove HTML element {el['id']} (line in index.html) — it renders text that's no longer in captions source of truth.",
+                    }
+                )
 
     # Compare type_a vs type_b (HTML cross-type duplicates)
     seen_pairs = set()
@@ -265,16 +281,20 @@ def sentinel_s2_duplicate_text_window(
             # Match: same text OR one contains the other (substring relationship)
             if a_text == b_text or a_text in b_text or b_text in a_text:
                 # Check timing: within window_s of each other
-                gap = min(abs(a["start"] - b["start"]), abs(a["end"] - b["start"]), abs(a["start"] - b["end"]))
+                gap = min(
+                    abs(a["start"] - b["start"]), abs(a["end"] - b["start"]), abs(a["start"] - b["end"])
+                )
                 if gap <= window_s:
-                    findings.append({
-                        "sentinel": "S2",
-                        "severity": "FAIL",
-                        "elements": [a["id"], b["id"]],
-                        "types": [a["type"], b["type"]],
-                        "issue": f"Same text '{a['text'][:50]}...' appears in {a['type']} ({a['start']:.1f}s) AND {b['type']} ({b['start']:.1f}s) within {window_s}s window — redundant visual",
-                        "fix_hint": "Remove one element OR change text content of one. User-perceived as duplicate even if no temporal overlap.",
-                    })
+                    findings.append(
+                        {
+                            "sentinel": "S2",
+                            "severity": "FAIL",
+                            "elements": [a["id"], b["id"]],
+                            "types": [a["type"], b["type"]],
+                            "issue": f"Same text '{a['text'][:50]}...' appears in {a['type']} ({a['start']:.1f}s) AND {b['type']} ({b['start']:.1f}s) within {window_s}s window — redundant visual",
+                            "fix_hint": "Remove one element OR change text content of one. User-perceived as duplicate even if no temporal overlap.",
+                        }
+                    )
                     seen_pairs.add(pair_key)
 
     # Also check outro_card vs outro_card (multiple outro cards with same text)
@@ -287,14 +307,16 @@ def sentinel_s2_duplicate_text_window(
             a_text = re.sub(r'\s+', ' ', a["text"])
             b_text = re.sub(r'\s+', ' ', b["text"])
             if a_text == b_text or a_text in b_text or b_text in a_text:
-                findings.append({
-                    "sentinel": "S2",
-                    "severity": "FAIL",
-                    "elements": [a["id"], b["id"]],
-                    "types": [a["type"], b["type"]],
-                    "issue": f"Multiple outro cards with same text '{a['text'][:50]}...'",
-                    "fix_hint": "Keep only one outro card.",
-                })
+                findings.append(
+                    {
+                        "sentinel": "S2",
+                        "severity": "FAIL",
+                        "elements": [a["id"], b["id"]],
+                        "types": [a["type"], b["type"]],
+                        "issue": f"Multiple outro cards with same text '{a['text'][:50]}...'",
+                        "fix_hint": "Keep only one outro card.",
+                    }
+                )
 
     return findings
 
@@ -305,20 +327,22 @@ def sentinel_s4_caption_y_position_canonical(captions: list) -> list:
     for c in captions:
         y = c.get("y_position_pct", 62)
         if y < 55 or y > 70:
-            findings.append({
-                "sentinel": "S4",
-                "severity": "WARN",
-                "caption_id": f"caption@{c['start']:.1f}s",
-                "y_position": y,
-                "issue": f"Caption Y position {y}% outside canonical band [55-70%]",
-                "fix_hint": "Adjust caption Y to 62% (canonical) unless justified for design reason.",
-            })
+            findings.append(
+                {
+                    "sentinel": "S4",
+                    "severity": "WARN",
+                    "caption_id": f"caption@{c['start']:.1f}s",
+                    "y_position": y,
+                    "issue": f"Caption Y position {y}% outside canonical band [55-70%]",
+                    "fix_hint": "Adjust caption Y to 62% (canonical) unless justified for design reason.",
+                }
+            )
     return findings
 
 
-def sentinel_s8_static_background_per_shot(video_path: Path, shot_windows: list = None,
-                                            ssim_threshold: float = 0.99,
-                                            min_consecutive_frames: int = 4) -> list:
+def sentinel_s8_static_background_per_shot(
+    video_path: Path, shot_windows: list = None, ssim_threshold: float = 0.99, min_consecutive_frames: int = 4
+) -> list:
     """S8. Background ambient creature/object animated per shot (GAP #23).
 
     Method: SSIM consecutive frames at 0.5s intervals within shot windows. If >0.99
@@ -333,12 +357,14 @@ def sentinel_s8_static_background_per_shot(video_path: Path, shot_windows: list 
         import cv2
         from skimage.metrics import structural_similarity as ssim
     except ImportError as e:
-        return [{
-            "sentinel": "S8",
-            "severity": "WARN",
-            "issue": f"S8 deps missing: {e}. Install opencv-python-headless + scikit-image.",
-            "fix_hint": "pip install opencv-python-headless scikit-image",
-        }]
+        return [
+            {
+                "sentinel": "S8",
+                "severity": "WARN",
+                "issue": f"S8 deps missing: {e}. Install opencv-python-headless + scikit-image.",
+                "fix_hint": "pip install opencv-python-headless scikit-image",
+            }
+        ]
 
     duration = get_video_duration(video_path)
     if not shot_windows:
@@ -381,16 +407,18 @@ def sentinel_s8_static_background_per_shot(video_path: Path, shot_windows: list 
                 cur_run = 0
         if longest_run >= min_consecutive_frames:
             mean_ssim = sum(ssims_window) / len(ssims_window) if ssims_window else 0
-            findings.append({
-                "sentinel": "S8",
-                "severity": "WARN",
-                "window": f"{start_s:.1f}-{end_s:.1f}s",
-                "mean_ssim": round(mean_ssim, 4),
-                "longest_static_run_frames": longest_run,
-                "static_duration_s": round(longest_run * 0.5, 1),
-                "issue": f"Static background detected {start_s:.1f}-{end_s:.1f}s (SSIM≥{ssim_threshold} for {longest_run*0.5:.1f}s consecutive). GAP #23 anti-canonical.",
-                "fix_hint": "Add ambient motion (smoke, creature, glow flicker) OR shorter shot duration. Canonical refs have continuous micro-motion.",
-            })
+            findings.append(
+                {
+                    "sentinel": "S8",
+                    "severity": "WARN",
+                    "window": f"{start_s:.1f}-{end_s:.1f}s",
+                    "mean_ssim": round(mean_ssim, 4),
+                    "longest_static_run_frames": longest_run,
+                    "static_duration_s": round(longest_run * 0.5, 1),
+                    "issue": f"Static background detected {start_s:.1f}-{end_s:.1f}s (SSIM≥{ssim_threshold} for {longest_run * 0.5:.1f}s consecutive). GAP #23 anti-canonical.",
+                    "fix_hint": "Add ambient motion (smoke, creature, glow flicker) OR shorter shot duration. Canonical refs have continuous micro-motion.",
+                }
+            )
     cap.release()
     return findings
 
@@ -406,21 +434,23 @@ def sentinel_s9_character_lip_sync_compliance(captions: list, html_path: Path) -
         if c.get("speaker") in ("narrator", "off_screen", "", None):
             continue
         # Character speech → flag for lip-sync verification
-        findings.append({
-            "sentinel": "S9",
-            "severity": "WARN",
-            "caption_id": f"caption@{c['start']:.1f}s",
-            "speaker": c["speaker"],
-            "issue": f"Character '{c['speaker']}' speech requires lip-sync verification (Gemini Vision Tier 2 forward)",
-            "fix_hint": "Verify Hailuo clip output + Hedra/Sync.so retarget if needed. GAP #24.",
-            "text": c["text"][:60],
-        })
+        findings.append(
+            {
+                "sentinel": "S9",
+                "severity": "WARN",
+                "caption_id": f"caption@{c['start']:.1f}s",
+                "speaker": c["speaker"],
+                "issue": f"Character '{c['speaker']}' speech requires lip-sync verification (Gemini Vision Tier 2 forward)",
+                "fix_hint": "Verify Hailuo clip output + Hedra/Sync.so retarget if needed. GAP #24.",
+                "text": c["text"][:60],
+            }
+        )
     return findings
 
 
-def sentinel_s10_pov_traversal_continuity(video_path: Path, shot_clip_timings: list = None,
-                                           ssim_threshold: float = 0.98,
-                                           min_consecutive: int = 3) -> list:
+def sentinel_s10_pov_traversal_continuity(
+    video_path: Path, shot_clip_timings: list = None, ssim_threshold: float = 0.98, min_consecutive: int = 3
+) -> list:
     """S10. POV traversal across consecutive shots (GAP #25).
 
     Method: extract frame at start of each shot, compute SSIM between consecutive
@@ -446,7 +476,9 @@ def sentinel_s10_pov_traversal_continuity(video_path: Path, shot_clip_timings: l
         if cuts_path.exists():
             cuts = [float(line.strip()) for line in cuts_path.read_text().splitlines() if line.strip()]
             cuts = sorted(set([0.0] + cuts + [duration]))
-            shot_clip_timings = [(cuts[i], cuts[i+1]) for i in range(len(cuts)-1) if cuts[i+1] - cuts[i] > 0.5]
+            shot_clip_timings = [
+                (cuts[i], cuts[i + 1]) for i in range(len(cuts) - 1) if cuts[i + 1] - cuts[i] > 0.5
+            ]
         else:
             shot_clip_timings = [(t, min(t + 4.0, duration)) for t in range(0, int(duration), 4)]
 
@@ -471,7 +503,7 @@ def sentinel_s10_pov_traversal_continuity(video_path: Path, shot_clip_timings: l
     consec_high_ssim_runs = []
     cur_run = []
     for i in range(1, len(shot_start_frames)):
-        t_prev, fr_prev = shot_start_frames[i-1]
+        t_prev, fr_prev = shot_start_frames[i - 1]
         t_cur, fr_cur = shot_start_frames[i]
         try:
             s = ssim(fr_prev, fr_cur)
@@ -491,15 +523,17 @@ def sentinel_s10_pov_traversal_continuity(video_path: Path, shot_clip_timings: l
         end_t = run[-1][1]
         mean_ssim = sum(x[2] for x in run) / len(run)
         n_shots = len(run) + 1
-        findings.append({
-            "sentinel": "S10",
-            "severity": "WARN",
-            "window": f"{start_t:.1f}-{end_t:.1f}s",
-            "consecutive_shots_static": n_shots,
-            "mean_ssim": round(mean_ssim, 4),
-            "issue": f"POV traversal stalled {start_t:.1f}-{end_t:.1f}s — {n_shots} consecutive shots with SSIM ≥{ssim_threshold} (mean {mean_ssim:.3f}). Viewer perceives no camera movement / teleport feel.",
-            "fix_hint": "Add POV traversal cuts: dolly forward, hand reveal, environment shift between consecutive shots. GAP #25 canonical horror-choice POV continuity.",
-        })
+        findings.append(
+            {
+                "sentinel": "S10",
+                "severity": "WARN",
+                "window": f"{start_t:.1f}-{end_t:.1f}s",
+                "consecutive_shots_static": n_shots,
+                "mean_ssim": round(mean_ssim, 4),
+                "issue": f"POV traversal stalled {start_t:.1f}-{end_t:.1f}s — {n_shots} consecutive shots with SSIM ≥{ssim_threshold} (mean {mean_ssim:.3f}). Viewer perceives no camera movement / teleport feel.",
+                "fix_hint": "Add POV traversal cuts: dolly forward, hand reveal, environment shift between consecutive shots. GAP #25 canonical horror-choice POV continuity.",
+            }
+        )
     return findings
 
 
@@ -518,7 +552,7 @@ def sentinel_s6_countdown_digit_transition_timing(html_path: Path) -> list:
     # Pattern: tl.call(() => { ...digit... }, [], TIMESTAMP);
     digit_call_pattern = re.compile(
         r'tl\.call\(\s*\(\s*\)\s*=>\s*\{[^}]*?(?:getElementById\("([^"]+-digit)"\)|"([^"]+-digit)")[^}]*?textContent\s*=\s*"([0-9])"[^}]*?\}\s*\,\s*\[\s*\]\s*,\s*([0-9.]+)\s*\)',
-        re.DOTALL
+        re.DOTALL,
     )
 
     # Group timestamps by digit_id
@@ -537,16 +571,18 @@ def sentinel_s6_countdown_digit_transition_timing(html_path: Path) -> list:
         # Expected staggered: each transition timestamp at least 0.5s after previous
         timestamps = [t for _, t in transitions_sorted]
         for i in range(1, len(timestamps)):
-            gap = timestamps[i] - timestamps[i-1]
+            gap = timestamps[i] - timestamps[i - 1]
             if gap < 0.5:
-                findings.append({
-                    "sentinel": "S6",
-                    "severity": "FAIL",
-                    "element": digit_id,
-                    "issue": f"Countdown digit '{digit_id}' transitions firing at near-identical timestamps (gap={gap:.2f}s < 0.5s) — digits jump instantly instead of staggered per canonical 1s per digit",
-                    "transitions": [(d, t) for d, t in transitions_sorted],
-                    "fix_hint": "Stagger GSAP tl.call() timestamps +1s per digit. Better: replace HTML+GSAP countdown with pre-rendered AVU clip (eliminates timing-bug class entirely per PAUTA § 19 AVU principle).",
-                })
+                findings.append(
+                    {
+                        "sentinel": "S6",
+                        "severity": "FAIL",
+                        "element": digit_id,
+                        "issue": f"Countdown digit '{digit_id}' transitions firing at near-identical timestamps (gap={gap:.2f}s < 0.5s) — digits jump instantly instead of staggered per canonical 1s per digit",
+                        "transitions": [(d, t) for d, t in transitions_sorted],
+                        "fix_hint": "Stagger GSAP tl.call() timestamps +1s per digit. Better: replace HTML+GSAP countdown with pre-rendered AVU clip (eliminates timing-bug class entirely per PAUTA § 19 AVU principle).",
+                    }
+                )
                 break  # one finding per digit_id is enough
 
     return findings
@@ -560,14 +596,16 @@ def sentinel_s5_watermark_safe_zone(html_elements: dict) -> list:
         return findings
     bottom_px = wm["bottom_px"]
     if bottom_px < 150:
-        findings.append({
-            "sentinel": "S5",
-            "severity": "WARN",
-            "element": "watermark",
-            "bottom_px": bottom_px,
-            "issue": f"Watermark bottom: {bottom_px}px < 150px safe zone — risk Instagram UI overlap",
-            "fix_hint": "Raise watermark bottom CSS to ≥150px to avoid IG bottom UI bar overlap.",
-        })
+        findings.append(
+            {
+                "sentinel": "S5",
+                "severity": "WARN",
+                "element": "watermark",
+                "bottom_px": bottom_px,
+                "issue": f"Watermark bottom: {bottom_px}px < 150px safe zone — risk Instagram UI overlap",
+                "fix_hint": "Raise watermark bottom CSS to ≥150px to avoid IG bottom UI bar overlap.",
+            }
+        )
     return findings
 
 
@@ -576,10 +614,16 @@ def main():
     p.add_argument("--video", required=True, help="Path to rendered video mp4")
     p.add_argument("--captions", required=True, help="Path to captions.json")
     p.add_argument("--html", required=True, help="Path to index.html")
-    p.add_argument("--character-visible-config", default=None,
-                   help="Optional JSON file with {character_id: [[start, end], ...]} visible windows")
-    p.add_argument("--enable-gemini", action="store_true",
-                   help="Enable Gemini Vision sentinel for S1 character-visible detection")
+    p.add_argument(
+        "--character-visible-config",
+        default=None,
+        help="Optional JSON file with {character_id: [[start, end], ...]} visible windows",
+    )
+    p.add_argument(
+        "--enable-gemini",
+        action="store_true",
+        help="Enable Gemini Vision sentinel for S1 character-visible detection",
+    )
     p.add_argument("--output-json", default=None, help="Save findings to JSON file")
     args = p.parse_args()
 
@@ -620,14 +664,18 @@ def main():
     print(f"Video duration: {duration:.2f}s")
     print(f"Sample timestamps generated: {len(timestamps)} (0.5s first 30s + 1s rest)")
     print(f"Captions parsed: {len(captions)}")
-    print(f"HTML elements parsed: {len(html_elements['captions'])} captions + {len(html_elements['outro_cards'])} outro cards")
+    print(
+        f"HTML elements parsed: {len(html_elements['captions'])} captions + {len(html_elements['outro_cards'])} outro cards"
+    )
     print()
 
     severity_counts = defaultdict(int)
     for f in all_findings:
         severity_counts[f["severity"]] += 1
 
-    print(f"Findings: {len(all_findings)} total | FAIL={severity_counts['FAIL']} | WARN={severity_counts['WARN']}")
+    print(
+        f"Findings: {len(all_findings)} total | FAIL={severity_counts['FAIL']} | WARN={severity_counts['WARN']}"
+    )
     print()
 
     if not all_findings:
@@ -651,7 +699,9 @@ def main():
         print(f"Findings saved to {args.output_json}")
 
     if severity_counts["FAIL"] > 0:
-        print(f"\n🔴 VERDICT: {severity_counts['FAIL']} FAIL findings — engineer/auditor must address before ship")
+        print(
+            f"\n🔴 VERDICT: {severity_counts['FAIL']} FAIL findings — engineer/auditor must address before ship"
+        )
         sys.exit(1)
     else:
         print(f"\n🟡 VERDICT: {severity_counts['WARN']} WARN findings only — review but ship-acceptable")

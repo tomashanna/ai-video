@@ -4,6 +4,7 @@ Validates SPEC per-shot lip_sync_required declarations (D17 architect compliance
 5 tests: CLI + Bug #9 + clean PASS + shot missing field FAIL + inconsistency (character speech but
 lip_sync_required false) FAIL.
 """
+
 import shutil
 import subprocess
 import sys
@@ -19,13 +20,19 @@ def _run(args):
 
 
 def _write_spec(path, *, shot_yaml=None, omit_caps=False):
-    caps = "" if omit_caps else (
-        "video_capabilities:\n"
-        '  has_tts_narration: true\n'
-        '  has_layer_2_effects: true\n'
-        '  format_type: "interactive_choice"\n'
+    caps = (
+        ""
+        if omit_caps
+        else (
+            "video_capabilities:\n"
+            '  has_tts_narration: true\n'
+            '  has_layer_2_effects: true\n'
+            '  format_type: "interactive_choice"\n'
+        )
     )
-    body = shot_yaml or """shot_list:
+    body = (
+        shot_yaml
+        or """shot_list:
   - shot_id: shot_01
     lip_sync_required: false
     narration_in_this_shot:
@@ -37,6 +44,7 @@ def _write_spec(path, *, shot_yaml=None, omit_caps=False):
       speaker: character_a
       dialog_text: "Te estaba esperando"
 """
+    )
     Path(path).write_text(f'schema_version: "v11.1"\n{caps}{body}', encoding="utf-8")
 
 
@@ -139,6 +147,7 @@ class TestV11RealSchemaRegression(unittest.TestCase):
     """pattern_class 4/5: parse REAL v11 schema — sibling has_lip_sync_required + sibling dialog_text
     (NOT dict narration_in_this_shot.speaker/.dialog_text + lip_sync_required). Regression for the
     AttributeError crash on the first real v11 SPEC."""
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         self.spec = Path(self.tmp) / "spec.yaml"

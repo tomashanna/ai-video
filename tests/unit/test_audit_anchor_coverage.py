@@ -8,6 +8,7 @@ naming the prop, AND clean cases (all present / single-shot-undeclared) PASS wit
 Unit tests hit the PURE function evaluate_anchor_coverage + derive_needed_anchors directly;
 CLI tests run the script by subprocess with tempfile SPEC fixtures + touched anchor files.
 """
+
 import importlib.util
 import json
 import shutil
@@ -42,10 +43,14 @@ def _project_with_anchors(tmp, anchor_files):
 
 
 def _write_spec(path, body, *, has_ai_clips=True, omit_caps=False):
-    caps = "" if omit_caps else (
-        "video_capabilities:\n"
-        f"  has_ai_generated_clips: {str(has_ai_clips).lower()}\n"
-        '  format_type: "interactive_choice"\n'
+    caps = (
+        ""
+        if omit_caps
+        else (
+            "video_capabilities:\n"
+            f"  has_ai_generated_clips: {str(has_ai_clips).lower()}\n"
+            '  format_type: "interactive_choice"\n'
+        )
     )
     Path(path).write_text(f'schema_version: "v11.1"\n{caps}{body}', encoding="utf-8")
 
@@ -94,8 +99,7 @@ class TestAdversarialCore(unittest.TestCase):
         # BAD case: olla_caldo_anchor needed (declared + 2 shots) but NO file → FAIL naming it.
         _write_spec(self.spec, _SPEC_PROP_IN_2_SHOTS)
         proj = _project_with_anchors(self.tmp, [])  # anchors dir exists but EMPTY
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--project-dir", str(proj)])
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--project-dir", str(proj)])
         self.assertEqual(r.returncode, 1, f"missing required anchor must FAIL.\nstdout {r.stdout}")
         self.assertIn("olla_caldo_anchor", r.stdout)
         rep = json.loads(r.stdout)
@@ -106,8 +110,7 @@ class TestAdversarialCore(unittest.TestCase):
         # GOOD case: char_a_v1 + char_b_v1 both needed (≥2 shots) and both present → PASS.
         _write_spec(self.spec, _SPEC_CHAR_IN_2_SHOTS)
         proj = _project_with_anchors(self.tmp, ["char_a_v1", "char_b_v1"])
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--project-dir", str(proj)])
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--project-dir", str(proj)])
         self.assertEqual(r.returncode, 0, f"all anchors present must PASS.\nstdout {r.stdout}")
         rep = json.loads(r.stdout)
         self.assertEqual(rep["overall_status"], "pass")
@@ -118,9 +121,10 @@ class TestAdversarialCore(unittest.TestCase):
         # char_a_v1 (2 shots) IS needed and IS present → overall PASS, no false alarm on cameo.
         _write_spec(self.spec, _SPEC_PROP_IN_1_SHOT_UNDECLARED)
         proj = _project_with_anchors(self.tmp, ["char_a_v1"])  # cameo NOT generated
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--project-dir", str(proj)])
-        self.assertEqual(r.returncode, 0, f"single-shot undeclared prop must NOT be required.\nstdout {r.stdout}")
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--project-dir", str(proj)])
+        self.assertEqual(
+            r.returncode, 0, f"single-shot undeclared prop must NOT be required.\nstdout {r.stdout}"
+        )
         rep = json.loads(r.stdout)
         self.assertEqual(rep["overall_status"], "pass")
         self.assertNotIn("cameo_prop_v1", rep["needed"])
@@ -135,13 +139,15 @@ class TestPureFunction(unittest.TestCase):
 
     def test_missing_is_named(self):
         ok, missing = self.mod.evaluate_anchor_coverage(
-            needed=["olla_caldo_anchor", "char_a_v1"], present=["char_a_v1"])
+            needed=["olla_caldo_anchor", "char_a_v1"], present=["char_a_v1"]
+        )
         self.assertFalse(ok)
         self.assertEqual(missing, ["olla_caldo_anchor"])
 
     def test_all_present_ok(self):
         ok, missing = self.mod.evaluate_anchor_coverage(
-            needed=["char_a_v1", "char_b_v1"], present=["char_a_v1", "char_b_v1", "extra_v1"])
+            needed=["char_a_v1", "char_b_v1"], present=["char_a_v1", "char_b_v1", "extra_v1"]
+        )
         self.assertTrue(ok)
         self.assertEqual(missing, [])
 
@@ -152,7 +158,8 @@ class TestPureFunction(unittest.TestCase):
 
     def test_multiple_missing_sorted(self):
         ok, missing = self.mod.evaluate_anchor_coverage(
-            needed=["zeta_v1", "alpha_v1", "mid_v1"], present=["mid_v1"])
+            needed=["zeta_v1", "alpha_v1", "mid_v1"], present=["mid_v1"]
+        )
         self.assertFalse(ok)
         self.assertEqual(missing, ["alpha_v1", "zeta_v1"])  # sorted, deterministic
 
@@ -170,17 +177,22 @@ class TestDeriveNeeded(unittest.TestCase):
         self.assertIn("reference_anchors", reasons["olla_caldo_anchor"])
 
     def test_anchor_in_2_shots_needed_single_shot_not(self):
-        spec = {"shot_list": [
-            {"shot_id": "s1", "anchor_id_required": {"char_a": "char_a_v1", "p": "cameo_v1"}},
-            {"shot_id": "s2", "anchor_id_required": {"char_a": "char_a_v1"}},
-        ]}
+        spec = {
+            "shot_list": [
+                {"shot_id": "s1", "anchor_id_required": {"char_a": "char_a_v1", "p": "cameo_v1"}},
+                {"shot_id": "s2", "anchor_id_required": {"char_a": "char_a_v1"}},
+            ]
+        }
         needed, _ = self.mod.derive_needed_anchors(spec)
-        self.assertIn("char_a_v1", needed)        # 2 shots → needed
-        self.assertNotIn("cameo_v1", needed)      # 1 shot, undeclared → not needed
+        self.assertIn("char_a_v1", needed)  # 2 shots → needed
+        self.assertNotIn("cameo_v1", needed)  # 1 shot, undeclared → not needed
 
     def test_declared_setting_with_appears_in_shots_count_in_reason(self):
-        spec = {"reference_anchors": {"settings": [
-            {"id": "matadero_interior_anchor", "appears_in_shots": ["s2", "s3", "s4"]}]}}
+        spec = {
+            "reference_anchors": {
+                "settings": [{"id": "matadero_interior_anchor", "appears_in_shots": ["s2", "s3", "s4"]}]
+            }
+        }
         needed, reasons = self.mod.derive_needed_anchors(spec)
         self.assertIn("matadero_interior_anchor", needed)
         self.assertIn("3 shots", reasons["matadero_interior_anchor"])
@@ -229,8 +241,16 @@ class TestCLIGates(unittest.TestCase):
         self.assertIn("char_a_v1", [m["anchor_id"] for m in rep["missing"]])
 
     def test_spec_not_found_cant_measure(self):
-        r = _run(["--format", "horror-choice", "--spec", str(Path(self.tmp) / "nope.yaml"),
-                  "--project-dir", self.tmp])
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(Path(self.tmp) / "nope.yaml"),
+                "--project-dir",
+                self.tmp,
+            ]
+        )
         self.assertEqual(r.returncode, 2)
 
 
@@ -239,5 +259,7 @@ if __name__ == "__main__":
     if not result.wasSuccessful():
         print("FAILED")
         sys.exit(1)
-    print("OK: audit-anchor-coverage — adversarial bug caught (missing required anchor → FAIL), "
-          "clean cases PASS (all present + single-shot-undeclared), pure fn + dialects + CLI gates verified")
+    print(
+        "OK: audit-anchor-coverage — adversarial bug caught (missing required anchor → FAIL), "
+        "clean cases PASS (all present + single-shot-undeclared), pure fn + dialects + CLI gates verified"
+    )

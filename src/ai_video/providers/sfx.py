@@ -91,7 +91,11 @@ def generate_one(client: Any, job: SFXJob, *, model_id: str | None = None) -> in
 
 
 def run_jobs(
-    jobs: list[SFXJob], *, client: Any = None, guard: budget.BudgetGuard | None = None, model_id: str | None = None
+    jobs: list[SFXJob],
+    *,
+    client: Any = None,
+    guard: budget.BudgetGuard | None = None,
+    model_id: str | None = None,
 ) -> tuple[int, int]:
     """Run jobs sequentially. Returns (ok, failed). Stops early if the budget is exhausted."""
     settings = get_settings()

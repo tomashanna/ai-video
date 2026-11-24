@@ -31,6 +31,7 @@ Usage:
                           [--spec ../creative-specs/x.yaml] [--json out.json] [--bed-pad 2.0]
 Exit 0 = all primary events PASS; exit 1 = one or more FAIL; exit 2 = no event source found.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -44,10 +45,17 @@ from pathlib import Path
 SUBPROCESS_TIMEOUT_S = 1800
 
 BED_PAD = 2.0
-FLOOR_DB = {"event": 2.0, "scream": 2.0, "transition": 2.0, "diegetic": 2.0,
-            "ui": 2.0, "flash": 2.0, "texture": 1.0}
+FLOOR_DB = {
+    "event": 2.0,
+    "scream": 2.0,
+    "transition": 2.0,
+    "diegetic": 2.0,
+    "ui": 2.0,
+    "flash": 2.0,
+    "texture": 1.0,
+}
 REINFORCE_CLS = {"texture", "ui"}
-EFFECTIVE_DUR_CAP = 1.2   # measure at most the first 1.2s of an event (the transient is what's heard)
+EFFECTIVE_DUR_CAP = 1.2  # measure at most the first 1.2s of an event (the transient is what's heard)
 
 
 def run(cmd):
@@ -67,8 +75,23 @@ def rms_dbfs(video, t0, t1):
     t0 = max(0.0, t0)
     if t1 <= t0:
         return None
-    r = run(["ffmpeg", "-hide_banner", "-ss", f"{t0:.3f}", "-t", f"{(t1 - t0):.3f}",
-             "-i", str(video), "-af", "astats=metadata=1:reset=0", "-f", "null", "-"])
+    r = run(
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-ss",
+            f"{t0:.3f}",
+            "-t",
+            f"{(t1 - t0):.3f}",
+            "-i",
+            str(video),
+            "-af",
+            "astats=metadata=1:reset=0",
+            "-f",
+            "null",
+            "-",
+        ]
+    )
     vals = []
     for line in r.stderr.splitlines():
         if "RMS level dB:" in line:
@@ -103,8 +126,15 @@ def load_events_from_json(path, vdur):
         t0 = float(e.get("t0_s", e.get("t0", 0.0)))
         cls = e.get("class", e.get("cls", "texture"))
         dur = min(EFFECTIVE_DUR_CAP, max(0.25, float(e.get("src_dur_s", e.get("src_dur", 0.6)))))
-        events.append({"shot": e.get("shot", "-"), "sfx_id": e.get("sfx_id", "sfx"),
-                       "cls": cls, "t0": round(t0, 3), "t1": round(min(vdur, t0 + dur), 3)})
+        events.append(
+            {
+                "shot": e.get("shot", "-"),
+                "sfx_id": e.get("sfx_id", "sfx"),
+                "cls": cls,
+                "t0": round(t0, 3),
+                "t1": round(min(vdur, t0 + dur), 3),
+            }
+        )
     return events
 
 
@@ -116,6 +146,7 @@ def load_events_from_phase1(proj, spec_path, vdur):
     shots = [r["shot_id"] for r in results]
     if spec_path:
         import yaml
+
         spec = yaml.safe_load(Path(spec_path).read_text())
         shots = [s.get("shot_id") or s.get("id") for s in spec["shot_list"]]
     starts = shot_starts(proj, shots)
@@ -128,8 +159,15 @@ def load_events_from_phase1(proj, spec_path, vdur):
         for ev in r.get("sfx_events", []):
             t0 = base + ev["onset_s"]
             dur = min(EFFECTIVE_DUR_CAP, max(0.25, ev.get("src_dur", 0.6)))
-            events.append({"shot": sid, "sfx_id": ev["sfx_id"], "cls": ev.get("cls", "texture"),
-                           "t0": round(t0, 3), "t1": round(min(vdur, t0 + dur), 3)})
+            events.append(
+                {
+                    "shot": sid,
+                    "sfx_id": ev["sfx_id"],
+                    "cls": ev.get("cls", "texture"),
+                    "t0": round(t0, 3),
+                    "t1": round(min(vdur, t0 + dur), 3),
+                }
+            )
     return events
 
 
@@ -155,8 +193,11 @@ def main():
     else:
         events = load_events_from_phase1(proj, args.spec, vdur)
     if events is None:
-        print("FAIL: no event source — pass --events-json or run a phase1 that writes "
-              "assets/clips-atomic/_phase1_progress.json with sfx_events.", file=sys.stderr)
+        print(
+            "FAIL: no event source — pass --events-json or run a phase1 that writes "
+            "assets/clips-atomic/_phase1_progress.json with sfx_events.",
+            file=sys.stderr,
+        )
         sys.exit(2)
     if not events:
         print("AUDIBILITY GATE: PASS (no SFX events to audit)")
@@ -183,8 +224,11 @@ def main():
         for a, b in cand_ts:
             if a < 0 or b > vdur:
                 continue
-            contaminated = any(not (b <= s or a >= t) for (s, t) in spans
-                               if not (abs(s - e["t0"]) < 1e-6 and abs(t - e["t1"]) < 1e-6))
+            contaminated = any(
+                not (b <= s or a >= t)
+                for (s, t) in spans
+                if not (abs(s - e["t0"]) < 1e-6 and abs(t - e["t1"]) < 1e-6)
+            )
             if contaminated:
                 continue
             v = rms_dbfs(video, a, b)
@@ -204,19 +248,29 @@ def main():
         delta = (ev_rms - bed_rms) if (ev_rms is not None and bed_rms is not None) else None
         floor = FLOOR_DB.get(e["cls"], 2.0) if e["primary"] else 0.0
         ok = delta is not None and delta >= floor - 1e-6
-        rows.append({**e, "ev_rms": round(ev_rms, 2) if ev_rms is not None else None,
-                     "bed_rms": round(bed_rms, 2) if bed_rms is not None else None,
-                     "delta_db": round(delta, 2) if delta is not None else None,
-                     "floor": floor, "pass": ok})
+        rows.append(
+            {
+                **e,
+                "ev_rms": round(ev_rms, 2) if ev_rms is not None else None,
+                "bed_rms": round(bed_rms, 2) if bed_rms is not None else None,
+                "delta_db": round(delta, 2) if delta is not None else None,
+                "floor": floor,
+                "pass": ok,
+            }
+        )
         if not ok:
             fails.append(rows[-1])
 
     print(f"\nSFX AUDIBILITY AUDIT — {video.name}  ({len(events)} events, video {vdur:.1f}s)")
-    print(f"{'shot':9s} {'sfx_id':26s} {'cls':10s} {'P':1s} {'t0':>7s} {'ev_dB':>7s} {'bed_dB':>7s} {'Δ':>6s} {'flr':>4s}  res")
+    print(
+        f"{'shot':9s} {'sfx_id':26s} {'cls':10s} {'P':1s} {'t0':>7s} {'ev_dB':>7s} {'bed_dB':>7s} {'Δ':>6s} {'flr':>4s}  res"
+    )
     for r in sorted(rows, key=lambda x: x["t0"]):
-        print(f"{r['shot']!s:9s} {str(r['sfx_id'])[:26]:26s} {r['cls']:10s} {'P' if r['primary'] else 'r'} "
-              f"{r['t0']:7.2f} {r['ev_rms']!s:>7s} {r['bed_rms']!s:>7s} {r['delta_db']!s:>6s} "
-              f"{r['floor']:4.1f}  {'PASS' if r['pass'] else 'FAIL'}")
+        print(
+            f"{r['shot']!s:9s} {str(r['sfx_id'])[:26]:26s} {r['cls']:10s} {'P' if r['primary'] else 'r'} "
+            f"{r['t0']:7.2f} {r['ev_rms']!s:>7s} {r['bed_rms']!s:>7s} {r['delta_db']!s:>6s} "
+            f"{r['floor']:4.1f}  {'PASS' if r['pass'] else 'FAIL'}"
+        )
     nprim = sum(1 for r in rows if r["primary"])
     nprim_pass = sum(1 for r in rows if r["primary"] and r["pass"])
     print(f"\nprimary events: {nprim_pass}/{nprim} clear class floor.")

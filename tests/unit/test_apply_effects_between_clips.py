@@ -26,6 +26,7 @@ per recipe (NO pre-rendered effect mp4s).
 
 Authority: Paso 4.4 build + PRE-4.B coverage + PRE-4.E xfade-post-concat + Pattern 7 capability matrix.
 """
+
 import json
 import os
 import shutil
@@ -51,19 +52,34 @@ def _run(args, env_overrides=None):
     env = os.environ.copy()
     if env_overrides:
         env.update(env_overrides)
-    return subprocess.run([sys.executable, str(SCRIPT)] + args,
-                          capture_output=True, text=True, env=env)
+    return subprocess.run([sys.executable, str(SCRIPT)] + args, capture_output=True, text=True, env=env)
 
 
 def _make_clip(path, duration=FIXTURE_DUR, fps=FIXTURE_FPS, color="red"):
     """Synthetic atomic clip: solid color video + sine audio, 1080x1920 (project target)."""
     cmd = [
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"color=c={color}:s=1080x1920:d={duration}:r={fps}",
-        "-f", "lavfi", "-i", f"sine=frequency=440:duration={duration}:sample_rate={FIXTURE_SR}",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-ar", str(FIXTURE_SR),
-        "-t", str(duration),
+        "ffmpeg",
+        "-y",
+        "-loglevel",
+        "error",
+        "-f",
+        "lavfi",
+        "-i",
+        f"color=c={color}:s=1080x1920:d={duration}:r={fps}",
+        "-f",
+        "lavfi",
+        "-i",
+        f"sine=frequency=440:duration={duration}:sample_rate={FIXTURE_SR}",
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-ar",
+        str(FIXTURE_SR),
+        "-t",
+        str(duration),
         str(path),
     ]
     subprocess.run(cmd, check=True, capture_output=True)
@@ -72,18 +88,37 @@ def _make_clip(path, duration=FIXTURE_DUR, fps=FIXTURE_FPS, color="red"):
 def _make_sting(path, duration=0.4):
     """Synthetic audio sting (short sine burst)."""
     cmd = [
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"sine=frequency=880:duration={duration}:sample_rate={FIXTURE_SR}",
-        "-c:a", "libmp3lame", "-t", str(duration), str(path),
+        "ffmpeg",
+        "-y",
+        "-loglevel",
+        "error",
+        "-f",
+        "lavfi",
+        "-i",
+        f"sine=frequency=880:duration={duration}:sample_rate={FIXTURE_SR}",
+        "-c:a",
+        "libmp3lame",
+        "-t",
+        str(duration),
+        str(path),
     ]
     subprocess.run(cmd, check=True, capture_output=True)
 
 
 def _duration(path):
     r = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True,
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            str(path),
+        ],
+        capture_output=True,
+        text=True,
     )
     return float(r.stdout.strip())
 
@@ -91,8 +126,24 @@ def _duration(path):
 def _avg_rgb_at(path, t):
     """Extract frame at time t, scale to 1x1, return (R,G,B) average pixel via rawvideo."""
     r = subprocess.run(
-        ["ffmpeg", "-v", "error", "-ss", str(t), "-i", str(path),
-         "-vframes", "1", "-vf", "scale=1:1", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+        [
+            "ffmpeg",
+            "-v",
+            "error",
+            "-ss",
+            str(t),
+            "-i",
+            str(path),
+            "-vframes",
+            "1",
+            "-vf",
+            "scale=1:1",
+            "-f",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-",
+        ],
         capture_output=True,
     )
     data = r.stdout
@@ -101,8 +152,9 @@ def _avg_rgb_at(path, t):
     return (data[0], data[1], data[2])
 
 
-def _make_recipe(effects_dir, rid, duration_s, xfade_transition,
-                 sting_path=None, sting_volume=None, xfade_fidelity=None):
+def _make_recipe(
+    effects_dir, rid, duration_s, xfade_transition, sting_path=None, sting_volume=None, xfade_fidelity=None
+):
     """Write a synthetic recipe JSON mirroring effects-library schema (+ explicit xfade_transition)."""
     recipe = {
         "id": rid,
@@ -117,8 +169,14 @@ def _make_recipe(effects_dir, rid, duration_s, xfade_transition,
     (Path(effects_dir) / f"{rid}.json").write_text(json.dumps(recipe), encoding="utf-8")
 
 
-def _write_spec(path, shots_with_trans, has_layer_2=True, has_captions=True,
-                fmt="interactive_choice", omit_capabilities=False):
+def _write_spec(
+    path,
+    shots_with_trans,
+    has_layer_2=True,
+    has_captions=True,
+    fmt="interactive_choice",
+    omit_capabilities=False,
+):
     """Write minimal SPEC yaml. shots_with_trans = list of (shot_id, transition_out_or_None)."""
     shot_lines = []
     for sid, tout in shots_with_trans:
@@ -126,7 +184,10 @@ def _write_spec(path, shots_with_trans, has_layer_2=True, has_captions=True,
         if tout:
             shot_lines.append(f"    transition_out: {tout}")
     shots_block = "\n".join(shot_lines)
-    caps_block = "" if omit_capabilities else f"""video_capabilities:
+    caps_block = (
+        ""
+        if omit_capabilities
+        else f"""video_capabilities:
   source_clips_origin: "ai_generated"
   has_ai_generated_clips: true
   has_tts_narration: true
@@ -137,6 +198,7 @@ def _write_spec(path, shots_with_trans, has_layer_2=True, has_captions=True,
   has_layer_4_ui: true
   format_type: "{fmt}"
 """
+    )
     content = f"""schema_version: "v11.1"
 {caps_block}shot_list:
 {shots_block}
@@ -160,27 +222,56 @@ class TestEffectsCLI(unittest.TestCase):
     def test_invocation_without_format_exits_nonzero_with_clear_error(self):
         _write_spec(self.spec, [("shot_01", "xfade-fade-05"), ("shot_02", None)])
         result = _run(["--spec", str(self.spec), "--effects-dir", str(self.fx), "--dry-run"])
-        self.assertNotEqual(result.returncode, 0,
-                            f"Expected non-zero without --format. stderr: {result.stderr}")
+        self.assertNotEqual(
+            result.returncode, 0, f"Expected non-zero without --format. stderr: {result.stderr}"
+        )
         self.assertIn("format", result.stderr.lower())
 
     def test_invocation_with_horror_choice_succeeds_dry_run(self):
         _write_spec(self.spec, [("shot_01", "xfade-fade-05"), ("shot_02", None)])
-        result = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                       "--effects-dir", str(self.fx), "--dry-run"])
-        self.assertEqual(result.returncode, 0,
-                         f"Expected exit 0. stdout: {result.stdout}\nstderr: {result.stderr}")
-        self.assertIn("effects", result.stdout.lower(),
-                      "horror-choice w/ has_layer_2_effects=true should resolve effects branch")
+        result = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--effects-dir",
+                str(self.fx),
+                "--dry-run",
+            ]
+        )
+        self.assertEqual(
+            result.returncode, 0, f"Expected exit 0. stdout: {result.stdout}\nstderr: {result.stderr}"
+        )
+        self.assertIn(
+            "effects",
+            result.stdout.lower(),
+            "horror-choice w/ has_layer_2_effects=true should resolve effects branch",
+        )
 
     def test_invocation_with_arbitrary_format_succeeds_proves_agnostic(self):
         _write_spec(self.spec, [("shot_01", "xfade-fade-05"), ("shot_02", None)], fmt="tutorial")
-        result = _run(["--format", "tutorial-test-stub", "--spec", str(self.spec),
-                       "--effects-dir", str(self.fx), "--dry-run"])
-        self.assertEqual(result.returncode, 0,
-                         f"Expected exit 0 arbitrary format. stdout: {result.stdout}\nstderr: {result.stderr}")
-        self.assertIn("tutorial-test-stub", result.stdout,
-                      "Arbitrary format must appear in resolved output (agnostic proof)")
+        result = _run(
+            [
+                "--format",
+                "tutorial-test-stub",
+                "--spec",
+                str(self.spec),
+                "--effects-dir",
+                str(self.fx),
+                "--dry-run",
+            ]
+        )
+        self.assertEqual(
+            result.returncode,
+            0,
+            f"Expected exit 0 arbitrary format. stdout: {result.stdout}\nstderr: {result.stderr}",
+        )
+        self.assertIn(
+            "tutorial-test-stub",
+            result.stdout,
+            "Arbitrary format must appear in resolved output (agnostic proof)",
+        )
 
 
 class TestPassthroughBranch(unittest.TestCase):
@@ -198,15 +289,31 @@ class TestPassthroughBranch(unittest.TestCase):
 
     def test_invocation_with_layer_2_disabled_passes_through_concat(self):
         _write_spec(self.spec, [("shot_01", None), ("shot_02", None)], has_layer_2=False)
-        result = _run(["--format", "compilation-no-fx", "--spec", str(self.spec),
-                       "--input", str(self.inp), "--output", str(self.out)])
-        self.assertEqual(result.returncode, 0,
-                         f"Expected exit 0 passthrough. stdout: {result.stdout}\nstderr: {result.stderr}")
+        result = _run(
+            [
+                "--format",
+                "compilation-no-fx",
+                "--spec",
+                str(self.spec),
+                "--input",
+                str(self.inp),
+                "--output",
+                str(self.out),
+            ]
+        )
+        self.assertEqual(
+            result.returncode,
+            0,
+            f"Expected exit 0 passthrough. stdout: {result.stdout}\nstderr: {result.stderr}",
+        )
         self.assertTrue(self.out.exists(), "Passthrough must produce output file")
-        self.assertAlmostEqual(_duration(self.out), _duration(self.inp), delta=0.15,
-                               msg="Passthrough output duration must equal input (copy, no effects)")
-        self.assertIn("passthrough", result.stdout.lower(),
-                      "Output must report passthrough branch taken")
+        self.assertAlmostEqual(
+            _duration(self.out),
+            _duration(self.inp),
+            delta=0.15,
+            msg="Passthrough output duration must equal input (copy, no effects)",
+        )
+        self.assertIn("passthrough", result.stdout.lower(), "Output must report passthrough branch taken")
 
 
 class TestEffectsProperties(unittest.TestCase):
@@ -233,25 +340,36 @@ class TestEffectsProperties(unittest.TestCase):
             _make_sting(s)
         # 4 recipes (4 unique transition ids → variety)
         _make_recipe(cls.fx, "xfade-fade-05", 0.5, "fade")
-        _make_recipe(cls.fx, "flash-impact", 0.3, "fadewhite",
-                     sting_path=cls.flash_sting, sting_volume=0.45)
-        _make_recipe(cls.fx, "glitch", 0.3, "dissolve",
-                     sting_path=cls.glitch_sting, sting_volume=0.40)
-        _make_recipe(cls.fx, "hardcut-whoosh", 0.0, "hardcut",
-                     sting_path=cls.whoosh, sting_volume=0.55)
+        _make_recipe(cls.fx, "flash-impact", 0.3, "fadewhite", sting_path=cls.flash_sting, sting_volume=0.45)
+        _make_recipe(cls.fx, "glitch", 0.3, "dissolve", sting_path=cls.glitch_sting, sting_volume=0.40)
+        _make_recipe(cls.fx, "hardcut-whoosh", 0.0, "hardcut", sting_path=cls.whoosh, sting_volume=0.55)
         # SPEC: shot_01→fade, shot_02→flash, shot_03→glitch, shot_04→hardcut, shot_05 last
         cls.spec = Path(cls.tmp) / "spec.yaml"
-        _write_spec(cls.spec, [
-            ("shot_01", "xfade-fade-05"),
-            ("shot_02", "flash-impact"),
-            ("shot_03", "glitch"),
-            ("shot_04", "hardcut-whoosh"),
-            ("shot_05", None),
-        ])
+        _write_spec(
+            cls.spec,
+            [
+                ("shot_01", "xfade-fade-05"),
+                ("shot_02", "flash-impact"),
+                ("shot_03", "glitch"),
+                ("shot_04", "hardcut-whoosh"),
+                ("shot_05", None),
+            ],
+        )
         cls.output = cls.out_dir / "clips_with_effects.mp4"
-        cls.result = _run(["--format", "horror-choice", "--spec", str(cls.spec),
-                           "--clips-dir", str(cls.clips_dir), "--output", str(cls.output),
-                           "--effects-dir", str(cls.fx)])
+        cls.result = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(cls.spec),
+                "--clips-dir",
+                str(cls.clips_dir),
+                "--output",
+                str(cls.output),
+                "--effects-dir",
+                str(cls.fx),
+            ]
+        )
         cls.manifest_path = cls.output.parent / "clips_with_effects_manifest.json"
         cls.manifest = None
         if cls.manifest_path.exists():
@@ -262,8 +380,11 @@ class TestEffectsProperties(unittest.TestCase):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
     def test_effects_run_succeeds_and_output_exists(self):
-        self.assertEqual(self.result.returncode, 0,
-                         f"Effects run must exit 0. stdout: {self.result.stdout}\nstderr: {self.result.stderr}")
+        self.assertEqual(
+            self.result.returncode,
+            0,
+            f"Effects run must exit 0. stdout: {self.result.stdout}\nstderr: {self.result.stderr}",
+        )
         self.assertTrue(self.output.exists(), f"Output mp4 must exist: {self.output}")
         self.assertIsNotNone(self.manifest, "Manifest JSON must be written")
 
@@ -273,9 +394,11 @@ class TestEffectsProperties(unittest.TestCase):
         trans = self.manifest["transitions"]
         self.assertEqual(len(trans), 4, "Must have 4 boundaries for 5 shots")
         pairs = [(t["from_shot"], t["to_shot"]) for t in trans]
-        self.assertEqual(pairs, [("shot_01", "shot_02"), ("shot_02", "shot_03"),
-                                 ("shot_03", "shot_04"), ("shot_04", "shot_05")],
-                         "Boundaries must follow SPEC shot_list order")
+        self.assertEqual(
+            pairs,
+            [("shot_01", "shot_02"), ("shot_02", "shot_03"), ("shot_03", "shot_04"), ("shot_04", "shot_05")],
+            "Boundaries must follow SPEC shot_list order",
+        )
 
     def test_xfade_duration_matches_recipe(self):
         """Property #10: each boundary duration_s == recipe duration_s."""
@@ -290,8 +413,7 @@ class TestEffectsProperties(unittest.TestCase):
         """Property #11 (F1 PARTIAL): ≥3 unique transition types across boundaries."""
         self.assertIsNotNone(self.manifest)
         unique = {t["transition_id"] for t in self.manifest["transitions"]}
-        self.assertGreaterEqual(len(unique), 3,
-                                f"Need ≥3 unique transition types, got {unique}")
+        self.assertGreaterEqual(len(unique), 3, f"Need ≥3 unique transition types, got {unique}")
 
     def test_audio_sting_volume_within_recipe_band(self):
         """Property #14 (F1 PARTIAL): applied sting volume within recipe band ±3dB."""
@@ -302,9 +424,11 @@ class TestEffectsProperties(unittest.TestCase):
         for t in stung:
             expected = recipe_vols[t["transition_id"]]
             lo, hi = expected * (10 ** (-3 / 20)), expected * (10 ** (3 / 20))
-            self.assertTrue(lo <= t["sting_volume"] <= hi,
-                            f"{t['transition_id']} sting volume {t['sting_volume']} "
-                            f"outside ±3dB band [{lo:.3f},{hi:.3f}] of recipe {expected}")
+            self.assertTrue(
+                lo <= t["sting_volume"] <= hi,
+                f"{t['transition_id']} sting volume {t['sting_volume']} "
+                f"outside ±3dB band [{lo:.3f},{hi:.3f}] of recipe {expected}",
+            )
 
     def test_pre_post_visual_continuity_frame_diff_within_canonical(self):
         """Property #13 (F1 PARTIAL avg 37, p75 42): xfade boundary blends (continuity),
@@ -354,16 +478,31 @@ class TestAdapterIntegration(unittest.TestCase):
             '  - from_shot_id: shot_01\n'
             '    to_shot_id: shot_02\n'
             '    transition_type: cross_fade_0.5s\n',
-            encoding="utf-8")
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--clips-dir", str(self.clips_dir), "--output", str(self.output),
-                  "--effects-dir", str(self.fx)])
+            encoding="utf-8",
+        )
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--clips-dir",
+                str(self.clips_dir),
+                "--output",
+                str(self.output),
+                "--effects-dir",
+                str(self.fx),
+            ]
+        )
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
         self.assertTrue(self.manifest_path.exists(), "Manifest must be written")
         m = json.loads(self.manifest_path.read_text())
         self.assertEqual(len(m["transitions"]), 1, "Legacy array → 1 boundary")
-        self.assertEqual(m["transitions"][0]["transition_id"], "cross-fade-0.5s",
-                         "Adapter must map legacy transition_type to canonical recipe id")
+        self.assertEqual(
+            m["transitions"][0]["transition_id"],
+            "cross-fade-0.5s",
+            "Adapter must map legacy transition_type to canonical recipe id",
+        )
 
     def test_approximate_recipe_emits_warning(self):
         """approximate-fidelity recipe used in real run emits WARNING (Option D)."""
@@ -377,20 +516,46 @@ class TestAdapterIntegration(unittest.TestCase):
             '  - shot_id: shot_01\n'
             '    transition_out: black-screen-0.3s\n'
             '  - shot_id: shot_02\n',
-            encoding="utf-8")
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--clips-dir", str(self.clips_dir), "--output", str(self.output),
-                  "--effects-dir", str(self.fx)])
+            encoding="utf-8",
+        )
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--clips-dir",
+                str(self.clips_dir),
+                "--output",
+                str(self.output),
+                "--effects-dir",
+                str(self.fx),
+            ]
+        )
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
-        self.assertIn("approximate", r.stderr.lower(),
-                      "approximate-fidelity recipe must emit WARNING to stderr in real run")
+        self.assertIn(
+            "approximate",
+            r.stderr.lower(),
+            "approximate-fidelity recipe must emit WARNING to stderr in real run",
+        )
 
 
 def _dimensions(path):
     r = subprocess.run(
-        ["ffprobe", "-v", "error", "-select_streams", "v:0",
-         "-show_entries", "stream=width,height", "-of", "csv=s=x:p=0", str(path)],
-        capture_output=True, text=True,
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=width,height",
+            "-of",
+            "csv=s=x:p=0",
+            str(path),
+        ],
+        capture_output=True,
+        text=True,
     )
     w, h = r.stdout.strip().split("x")
     return int(w), int(h)
@@ -433,33 +598,62 @@ class TestEditorialOutputResolution(unittest.TestCase):
             '  - shot_id: shot_01\n'
             '    transition_out: xfade-fade-05\n'
             '  - shot_id: shot_02\n',
-            encoding="utf-8")
-        return _run(["--format", "editorial", "--spec", str(self.spec),
-                     "--clips-dir", str(self.clips_dir), "--output", str(self.output),
-                     "--effects-dir", str(self.fx)])
+            encoding="utf-8",
+        )
+        return _run(
+            [
+                "--format",
+                "editorial",
+                "--spec",
+                str(self.spec),
+                "--clips-dir",
+                str(self.clips_dir),
+                "--output",
+                str(self.output),
+                "--effects-dir",
+                str(self.fx),
+            ]
+        )
 
     def test_editorial_1920x1080_output_is_horizontal(self):
         r = self._run_with_resolution('  output_resolution: "1920x1080"\n')
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
         self.assertTrue(self.output.exists())
-        self.assertEqual(_dimensions(self.output), (1920, 1080),
-                         "output_resolution: 1920x1080 must produce horizontal render (C1)")
+        self.assertEqual(
+            _dimensions(self.output),
+            (1920, 1080),
+            "output_resolution: 1920x1080 must produce horizontal render (C1)",
+        )
 
     def test_absent_output_resolution_defaults_vertical_retrocompat(self):
         """Retrocompat: no output_resolution flag → 1080x1920 (pre-C1 hardcode preserved)."""
         r = self._run_with_resolution("")
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
-        self.assertEqual(_dimensions(self.output), (1080, 1920),
-                         "Absent output_resolution must default to 1080x1920 (retrocompat)")
+        self.assertEqual(
+            _dimensions(self.output),
+            (1080, 1920),
+            "Absent output_resolution must default to 1080x1920 (retrocompat)",
+        )
 
     def test_target_fps_capability_honored(self):
-        r = self._run_with_resolution('  output_resolution: "1920x1080"\n',
-                                      '  target_fps: 25\n')
+        r = self._run_with_resolution('  output_resolution: "1920x1080"\n', '  target_fps: 25\n')
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
         rate = subprocess.run(
-            ["ffprobe", "-v", "error", "-select_streams", "v:0",
-             "-show_entries", "stream=r_frame_rate", "-of", "default=noprint_wrappers=1:nokey=1",
-             str(self.output)], capture_output=True, text=True).stdout.strip()
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=r_frame_rate",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                str(self.output),
+            ],
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
         self.assertEqual(rate, "25/1", f"target_fps: 25 must yield 25fps output, got {rate}")
 
 

@@ -22,6 +22,7 @@ Authority: CLAUDE.md Hard Rule #19 + #26. Bug class: SCHEMA EVOLUTION crash.
 V4 ground truth: cerro-aislado-v4/CP5-handoff.md L33 (script was patched in-place;
 backport pending). NO modificar V4 archive (D38).
 """
+
 import subprocess
 import sys
 import tempfile
@@ -52,25 +53,33 @@ class TestAuditSpecCompletenessBackport(unittest.TestCase):
     def test_v4_spec_v11_5_no_crash_post_backport(self):
         """Template (post-backport) must NOT crash on V4 SPEC v11.5 dict-form ui_active.
         Pre-backport reproduces: AttributeError at L79. Post-backport: completes."""
-        result = _run(TEMPLATE_SCRIPT, [
-            "--spec", str(V4_SPEC),
-            "--project-dir", str(V4_PROJECT_DIR),
-            "--cp", "5",
-            "--html", "index.html",
-        ])
+        result = _run(
+            TEMPLATE_SCRIPT,
+            [
+                "--spec",
+                str(V4_SPEC),
+                "--project-dir",
+                str(V4_PROJECT_DIR),
+                "--cp",
+                "5",
+                "--html",
+                "index.html",
+            ],
+        )
         self.assertNotIn(
-            "AttributeError", result.stderr,
-            f"Pre-backport bug: AttributeError on dict-form. stderr: {result.stderr}"
+            "AttributeError",
+            result.stderr,
+            f"Pre-backport bug: AttributeError on dict-form. stderr: {result.stderr}",
         )
         self.assertIn(
-            "VERDICT:", result.stdout,
-            f"Script must complete + emit VERDICT line. stdout: {result.stdout}"
+            "VERDICT:", result.stdout, f"Script must complete + emit VERDICT line. stdout: {result.stdout}"
         )
         # V4 SHIPPED — all assets present → must PASS inventory
         self.assertEqual(
-            result.returncode, 0,
+            result.returncode,
+            0,
             f"V4 SHIPPED all assets present → expected exit 0. Got {result.returncode}.\n"
-            f"stdout: {result.stdout}"
+            f"stdout: {result.stdout}",
         )
         self.assertIn("INVENTORY COMPLETE", result.stdout)
 
@@ -78,22 +87,40 @@ class TestAuditSpecCompletenessBackport(unittest.TestCase):
     def test_regression_equivalence_inplace_vs_template_post_backport(self):
         """Post-backport: in-place vs template MUST produce identical output on V4 input.
         This is the canonical regression check — patch equivalence verification."""
-        inplace_result = _run(INPLACE_SCRIPT, [
-            "--spec", str(V4_SPEC), "--project-dir", str(V4_PROJECT_DIR),
-            "--cp", "5", "--html", "index.html",
-        ])
-        template_result = _run(TEMPLATE_SCRIPT, [
-            "--spec", str(V4_SPEC), "--project-dir", str(V4_PROJECT_DIR),
-            "--cp", "5", "--html", "index.html",
-        ])
-        self.assertEqual(
-            inplace_result.returncode, template_result.returncode,
-            f"Exit codes drift: in-place={inplace_result.returncode} "
-            f"vs template={template_result.returncode}"
+        inplace_result = _run(
+            INPLACE_SCRIPT,
+            [
+                "--spec",
+                str(V4_SPEC),
+                "--project-dir",
+                str(V4_PROJECT_DIR),
+                "--cp",
+                "5",
+                "--html",
+                "index.html",
+            ],
+        )
+        template_result = _run(
+            TEMPLATE_SCRIPT,
+            [
+                "--spec",
+                str(V4_SPEC),
+                "--project-dir",
+                str(V4_PROJECT_DIR),
+                "--cp",
+                "5",
+                "--html",
+                "index.html",
+            ],
         )
         self.assertEqual(
-            inplace_result.stdout, template_result.stdout,
-            "stdout drift — regression detected post-backport"
+            inplace_result.returncode,
+            template_result.returncode,
+            f"Exit codes drift: in-place={inplace_result.returncode} "
+            f"vs template={template_result.returncode}",
+        )
+        self.assertEqual(
+            inplace_result.stdout, template_result.stdout, "stdout drift — regression detected post-backport"
         )
 
     # ---------- Mock tests (synthetic SPECs) ----------
@@ -122,14 +149,23 @@ shot_list:
                 encoding="utf-8",
             )
 
-            result = _run(TEMPLATE_SCRIPT, [
-                "--spec", str(spec_file), "--project-dir", str(tmp_path),
-                "--cp", "5", "--html", "index.html",
-            ])
+            result = _run(
+                TEMPLATE_SCRIPT,
+                [
+                    "--spec",
+                    str(spec_file),
+                    "--project-dir",
+                    str(tmp_path),
+                    "--cp",
+                    "5",
+                    "--html",
+                    "index.html",
+                ],
+            )
             self.assertEqual(
-                result.returncode, 0,
-                f"String-form complete should PASS. stdout: {result.stdout}\n"
-                f"stderr: {result.stderr}"
+                result.returncode,
+                0,
+                f"String-form complete should PASS. stdout: {result.stdout}\nstderr: {result.stderr}",
             )
             self.assertIn("INVENTORY COMPLETE", result.stdout)
 
@@ -160,17 +196,22 @@ shot_list:
                 encoding="utf-8",
             )
 
-            result = _run(TEMPLATE_SCRIPT, [
-                "--spec", str(spec_file), "--project-dir", str(tmp_path),
-                "--cp", "5", "--html", "index.html",
-            ])
-            self.assertNotIn(
-                "AttributeError", result.stderr,
-                f"Pre-backport crash. stderr: {result.stderr}"
+            result = _run(
+                TEMPLATE_SCRIPT,
+                [
+                    "--spec",
+                    str(spec_file),
+                    "--project-dir",
+                    str(tmp_path),
+                    "--cp",
+                    "5",
+                    "--html",
+                    "index.html",
+                ],
             )
+            self.assertNotIn("AttributeError", result.stderr, f"Pre-backport crash. stderr: {result.stderr}")
             self.assertEqual(
-                result.returncode, 0,
-                f"Dict-form complete should PASS post-backport. stdout: {result.stdout}"
+                result.returncode, 0, f"Dict-form complete should PASS post-backport. stdout: {result.stdout}"
             )
             self.assertIn("INVENTORY COMPLETE", result.stdout)
 
@@ -199,28 +240,44 @@ shot_list: []
             (tmp_path / "assets" / "sfx").mkdir(parents=True)
             (tmp_path / "index.html").write_text("", encoding="utf-8")
 
-            result = _run(TEMPLATE_SCRIPT, [
-                "--spec", str(spec_file), "--project-dir", str(tmp_path),
-                "--cp", "5", "--html", "index.html",
-            ])
+            result = _run(
+                TEMPLATE_SCRIPT,
+                [
+                    "--spec",
+                    str(spec_file),
+                    "--project-dir",
+                    str(tmp_path),
+                    "--cp",
+                    "5",
+                    "--html",
+                    "index.html",
+                ],
+            )
             self.assertEqual(
-                result.returncode, 1,
-                f"Missing assets → expected exit 1 FAIL. Got {result.returncode}"
+                result.returncode, 1, f"Missing assets → expected exit 1 FAIL. Got {result.returncode}"
             )
             self.assertIn("INVENTORY INCOMPLETE", result.stdout)
 
     def test_mock_spec_path_invalid_exit_2(self):
         """Missing SPEC file → exit 2 (script error handling clear)."""
         with tempfile.TemporaryDirectory() as tmp:
-            result = _run(TEMPLATE_SCRIPT, [
-                "--spec", "/tmp/__nonexistent_spec_test_12345.yaml",
-                "--project-dir", tmp,
-                "--cp", "5", "--html", "index.html",
-            ])
+            result = _run(
+                TEMPLATE_SCRIPT,
+                [
+                    "--spec",
+                    "/tmp/__nonexistent_spec_test_12345.yaml",
+                    "--project-dir",
+                    tmp,
+                    "--cp",
+                    "5",
+                    "--html",
+                    "index.html",
+                ],
+            )
             self.assertEqual(
-                result.returncode, 2,
-                f"Invalid SPEC path → expected exit 2. Got {result.returncode}.\n"
-                f"stderr: {result.stderr}"
+                result.returncode,
+                2,
+                f"Invalid SPEC path → expected exit 2. Got {result.returncode}.\nstderr: {result.stderr}",
             )
             self.assertIn("not found", result.stderr.lower())
 

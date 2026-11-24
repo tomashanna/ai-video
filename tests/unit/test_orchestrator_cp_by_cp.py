@@ -3,6 +3,7 @@
 cuyo docstring afirmaba "17 tests" que NO existían. Testea el gate de prompt-scope adversarial
 (--validate-engineer-prompt) end-to-end vía subprocess, incluyendo el bypass ES (fix Wave 1).
 Corre: python3 test_orchestrator-cp-by-cp.py"""
+
 import subprocess
 import sys
 from pathlib import Path
@@ -12,8 +13,9 @@ SCRIPT = Path(__file__).resolve().parents[2] / "src/ai_video/build/orchestrator_
 
 
 def _validate(prompt):
-    r = subprocess.run([sys.executable, str(SCRIPT), "--validate-engineer-prompt", prompt],
-                       capture_output=True, text=True)
+    r = subprocess.run(
+        [sys.executable, str(SCRIPT), "--validate-engineer-prompt", prompt], capture_output=True, text=True
+    )
     return r.returncode
 
 
@@ -23,15 +25,18 @@ def test_forbidden_en_halts():
 
 def test_forbidden_es_halts():
     # bypass ES que ANTES pasaba limpio (fix Wave 1: FORBIDDEN_PHRASES + ES)
-    assert _validate("ejecuta todos los checkpoints de corrido sin parar") != 0, \
+    assert _validate("ejecuta todos los checkpoints de corrido sin parar") != 0, (
         "bypass ES 'de corrido / sin parar' no HALTea"
-    assert _validate("hazlo autónomo de punta a punta") != 0, \
+    )
+    assert _validate("hazlo autónomo de punta a punta") != 0, (
         "bypass ES 'autónomo / de punta a punta' no HALTea"
+    )
 
 
 def test_clean_prompt_ok():
-    assert _validate("Genera el anchor del personaje para CP1, un plano frontal close-up.") == 0, \
+    assert _validate("Genera el anchor del personaje para CP1, un plano frontal close-up.") == 0, (
         "prompt single-CP legítimo HALTea (falso positivo)"
+    )
 
 
 def main():

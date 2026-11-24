@@ -46,6 +46,7 @@ Build 2026-06-01 — TDD + Hard Rule #26 companion test (test_audit-spec-structu
   2026-06-01 (rev): generalized from horror-only to the CHOICE FAMILY (horror-choice + sport-choice).
 Authority: choice-format-core/CHOICE-MECHANIC.md § 2 (§§ 2.1/2.2/2.3/2.4) — agnostic invariant.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -184,10 +185,13 @@ def check_invariant(spec, shots, fmt):
     role_label = "/".join(roles)
     cid, cname = _favorable_appearance_id(spec, fmt)
     if not cid:
-        return gate("invariant_bueno_aparente_absent_from_played_path", "not_applicable",
-                    f"no character with the apariencia-favorable role ({role_label}) declared — "
-                    f"cannot evaluate § 2 invariant (declare one per CHOICE-MECHANIC § 2.1, or this is "
-                    f"not a {fmt} dyad SPEC)")
+        return gate(
+            "invariant_bueno_aparente_absent_from_played_path",
+            "not_applicable",
+            f"no character with the apariencia-favorable role ({role_label}) declared — "
+            f"cannot evaluate § 2 invariant (declare one per CHOICE-MECHANIC § 2.1, or this is "
+            f"not a {fmt} dyad SPEC)",
+        )
     violations = []
     for s in shots:
         sid = _section_id(s)
@@ -197,16 +201,21 @@ def check_invariant(spec, shots, fmt):
             violations.append(f"{s.get('shot_id', '?')}(section={sid})")
     if violations:
         return gate(
-            "invariant_bueno_aparente_absent_from_played_path", "fail",
+            "invariant_bueno_aparente_absent_from_played_path",
+            "fail",
             f"opción apariencia-favorable ({role_label}) '{cname}' ({cid}) presente en el played "
             f"path (who_is_there/anchor) de shots de decisión/consecuencia: {violations}. "
             f"Viola invariante CHOICE-MECHANIC § 2.2 (la opción favorable-aparente SOLO puede estar "
             f"en hook / counterfactual / cliffhanger — NUNCA decidiendo con el viewer en el recorrido "
             f"jugado). En sport: el rival/foil + su kit son obstáculo, pero la ESTRELLA foil NO está "
-            f"en el played path con el viewer. 🔴 RETORNA al arquitecto (HR#27).")
-    return gate("invariant_bueno_aparente_absent_from_played_path", "pass",
-                f"opción apariencia-favorable ({role_label}) '{cname}' ({cid}) ausente del played "
-                f"path — solo en hook/counterfactual/cliffhanger ✓ (CHOICE-MECHANIC § 2.2)")
+            f"en el played path con el viewer. 🔴 RETORNA al arquitecto (HR#27).",
+        )
+    return gate(
+        "invariant_bueno_aparente_absent_from_played_path",
+        "pass",
+        f"opción apariencia-favorable ({role_label}) '{cname}' ({cid}) ausente del played "
+        f"path — solo en hook/counterfactual/cliffhanger ✓ (CHOICE-MECHANIC § 2.2)",
+    )
 
 
 def check_bueno_only_in_allowed(spec, shots, fmt):
@@ -215,20 +224,30 @@ def check_bueno_only_in_allowed(spec, shots, fmt):
     role_label = "/".join(_favorable_appearance_roles_for(fmt))
     cid, cname = _favorable_appearance_id(spec, fmt)
     if not cid:
-        return gate("invariant_bueno_aparente_present_in_allowed", "not_applicable",
-                    f"no apariencia-favorable character ({role_label}) declared")
+        return gate(
+            "invariant_bueno_aparente_present_in_allowed",
+            "not_applicable",
+            f"no apariencia-favorable character ({role_label}) declared",
+        )
     allowed_hits = [
-        s.get("shot_id", "?") for s in shots
+        s.get("shot_id", "?")
+        for s in shots
         if _has_prefix(_section_id(s), ALLOWED_FOR_BUENO_PREFIXES) and _shot_references_char(s, cid)
     ]
     if allowed_hits:
-        return gate("invariant_bueno_aparente_present_in_allowed", "pass",
-                    f"apariencia-favorable ({role_label}) '{cname}' presente en "
-                    f"hook/counterfactual/cliffhanger: {allowed_hits} ✓")
-    return gate("invariant_bueno_aparente_present_in_allowed", "flag",
-                f"apariencia-favorable ({role_label}) '{cname}' ({cid}) declarado pero NO aparece en "
-                f"ningún shot de hook/counterfactual/cliffhanger. El dyad necesita presentarlo (hook) "
-                f"+ su recorrido (counterfactual). Verificá la presentación (CHOICE-MECHANIC § 2.1/2.2).")
+        return gate(
+            "invariant_bueno_aparente_present_in_allowed",
+            "pass",
+            f"apariencia-favorable ({role_label}) '{cname}' presente en "
+            f"hook/counterfactual/cliffhanger: {allowed_hits} ✓",
+        )
+    return gate(
+        "invariant_bueno_aparente_present_in_allowed",
+        "flag",
+        f"apariencia-favorable ({role_label}) '{cname}' ({cid}) declarado pero NO aparece en "
+        f"ningún shot de hook/counterfactual/cliffhanger. El dyad necesita presentarlo (hook) "
+        f"+ su recorrido (counterfactual). Verificá la presentación (CHOICE-MECHANIC § 2.1/2.2).",
+    )
 
 
 def check_structure(shots):
@@ -251,7 +270,7 @@ def check_structure(shots):
         if "countdown" in avu:
             has_countdown = True
             break
-        for ui in (s.get("ui_active") or []):
+        for ui in s.get("ui_active") or []:
             if isinstance(ui, dict) and "countdown" in str(ui.get("element_id") or "").lower():
                 has_countdown = True
                 break
@@ -269,8 +288,13 @@ def check_structure(shots):
         missing.append("cliffhanger")
 
     # Decisions: 2-3, each with a consequence_A shot AND a consequence_B shot.
-    decision_idx = sorted({_decision_index(sid) for sid in section_ids
-                           if _has_prefix(sid, ("decision",)) and _decision_index(sid) is not None})
+    decision_idx = sorted(
+        {
+            _decision_index(sid)
+            for sid in section_ids
+            if _has_prefix(sid, ("decision",)) and _decision_index(sid) is not None
+        }
+    )
     n_decisions = len(decision_idx)
     if n_decisions < 2:
         missing.append(f"played-path decisions (found {n_decisions}, canonical 2-3)")
@@ -281,61 +305,87 @@ def check_structure(shots):
     # Group consequence shots by decision index; detect A/B per group.
     branch_gaps = []
     for di in decision_idx:
-        cons = [s for s in shots
-                if _has_prefix(_section_id(s), ("consequence",)) and _decision_index(_section_id(s)) == di]
+        cons = [
+            s
+            for s in shots
+            if _has_prefix(_section_id(s), ("consequence",)) and _decision_index(_section_id(s)) == di
+        ]
         branches = {_consequence_branch(s) for s in cons}
-        narr_conditionals = [s for s in cons if re.search(r"\bsi\b", str(s.get("narration_in_this_shot") or ""),
-                                                           re.IGNORECASE)]
+        narr_conditionals = [
+            s for s in cons if re.search(r"\bsi\b", str(s.get("narration_in_this_shot") or ""), re.IGNORECASE)
+        ]
         # Robust 2-branch detection: explicit/sid branches A&B present, OR ≥2 distinct
         # "Si [acción]" consequence narrations under this decision (one per branch).
         has_ab = ("A" in branches and "B" in branches) or (len(narr_conditionals) >= 2)
         if not has_ab:
-            branch_gaps.append(f"D{di} (consequence shots={[s.get('shot_id','?') for s in cons]}, "
-                               f"branches detected={sorted(b for b in branches if b)})")
+            branch_gaps.append(
+                f"D{di} (consequence shots={[s.get('shot_id', '?') for s in cons]}, "
+                f"branches detected={sorted(b for b in branches if b)})"
+            )
     if branch_gaps:
         missing.append(f"each decision needs a consequence_A AND consequence_B: gaps in {branch_gaps}")
 
     if missing:
-        return gate("structure_skeleton", "flag",
-                    f"CHOICE-MECHANIC § 2.1 skeleton incomplete: {missing}. "
-                    f"Canonical = hook+countdown → played path (2-3 decisions, each ✗ dead-end / ✓ avanza) "
-                    f"→ counterfactual → cliffhanger.")
-    return gate("structure_skeleton", "pass",
-                f"skeleton complete: hook+countdown + {n_decisions} decisions (each ✗ & ✓) + "
-                f"counterfactual + cliffhanger ✓ (CHOICE-MECHANIC § 2.1)")
+        return gate(
+            "structure_skeleton",
+            "flag",
+            f"CHOICE-MECHANIC § 2.1 skeleton incomplete: {missing}. "
+            f"Canonical = hook+countdown → played path (2-3 decisions, each ✗ dead-end / ✓ avanza) "
+            f"→ counterfactual → cliffhanger.",
+        )
+    return gate(
+        "structure_skeleton",
+        "pass",
+        f"skeleton complete: hook+countdown + {n_decisions} decisions (each ✗ & ✓) + "
+        f"counterfactual + cliffhanger ✓ (CHOICE-MECHANIC § 2.1)",
+    )
 
 
 def check_sequential_paths(shots):
     """§ 3 — counterfactual is NOT interleaved inside the played path. It must sit before the FIRST
     played-path section (opening variant) or after the LAST one (final/default). 🔴 fail if interleaved."""
-    counterfactual_positions = [i for i, s in enumerate(shots)
-                                if _has_prefix(_section_id(s), ("counterfactual",))]
+    counterfactual_positions = [
+        i for i, s in enumerate(shots) if _has_prefix(_section_id(s), ("counterfactual",))
+    ]
     if not counterfactual_positions:
-        return gate("sequential_paths", "not_applicable",
-                    "no counterfactual section to position-check (structure gate flags its absence)")
-    played_positions = [i for i, s in enumerate(shots)
-                        if _has_prefix(_section_id(s), PLAYED_PATH_PREFIXES)]
+        return gate(
+            "sequential_paths",
+            "not_applicable",
+            "no counterfactual section to position-check (structure gate flags its absence)",
+        )
+    played_positions = [i for i, s in enumerate(shots) if _has_prefix(_section_id(s), PLAYED_PATH_PREFIXES)]
     if not played_positions:
         return gate("sequential_paths", "not_applicable", "no played-path sections to compare against")
     first_played, last_played = min(played_positions), max(played_positions)
-    interleaved = [shots[i].get("shot_id", "?") for i in counterfactual_positions
-                   if first_played < i < last_played]
+    interleaved = [
+        shots[i].get("shot_id", "?") for i in counterfactual_positions if first_played < i < last_played
+    ]
     if interleaved:
-        return gate("sequential_paths", "fail",
-                    f"counterfactual shots {interleaved} están INTERCALADOS dentro del played path "
-                    f"(played-path span shots index {first_played}..{last_played}). Viola "
-                    f"CHOICE-MECHANIC § 2.3 (los dos recorridos son SECUENCIALES, jamás simultáneos: "
-                    f"el counterfactual va al INICIO o al FINAL, no en el medio).")
-    placement = "opening" if max(counterfactual_positions) < first_played else (
-        "final" if min(counterfactual_positions) > last_played else "split")
-    return gate("sequential_paths", "pass",
-                f"counterfactual {placement} of the played path — secuencial, no intercalado ✓ "
-                f"(CHOICE-MECHANIC § 2.3)")
+        return gate(
+            "sequential_paths",
+            "fail",
+            f"counterfactual shots {interleaved} están INTERCALADOS dentro del played path "
+            f"(played-path span shots index {first_played}..{last_played}). Viola "
+            f"CHOICE-MECHANIC § 2.3 (los dos recorridos son SECUENCIALES, jamás simultáneos: "
+            f"el counterfactual va al INICIO o al FINAL, no en el medio).",
+        )
+    placement = (
+        "opening"
+        if max(counterfactual_positions) < first_played
+        else ("final" if min(counterfactual_positions) > last_played else "split")
+    )
+    return gate(
+        "sequential_paths",
+        "pass",
+        f"counterfactual {placement} of the played path — secuencial, no intercalado ✓ "
+        f"(CHOICE-MECHANIC § 2.3)",
+    )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True)
     parser.add_argument("--spec", required=True)
     parser.add_argument("--dry-run", action="store_true")
@@ -349,8 +399,10 @@ def main():
     spec = load_spec(spec_path)
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     # Capability gate: this validator covers the CHOICE FAMILY (CHOICE-MECHANIC § 2 is the agnostic
@@ -364,9 +416,12 @@ def main():
 
     if fmt not in CHOICE_FAMILY:
         report = {
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": (f"CHOICE-MECHANIC § 2 covers the choice family {list(CHOICE_FAMILY)}. "
-                       f"format='{args.format}' ∉ family → structural canonical checks skipped.")
+            "format": args.format,
+            "overall_status": "not_applicable",
+            "detail": (
+                f"CHOICE-MECHANIC § 2 covers the choice family {list(CHOICE_FAMILY)}. "
+                f"format='{args.format}' ∉ family → structural canonical checks skipped."
+            ),
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         print("not_applicable")
@@ -374,16 +429,19 @@ def main():
 
     shots = spec.get("shot_list") or []
     if not shots:
-        report = {"format": args.format, "overall_status": "fail",
-                  "detail": "shot_list empty/absent — cannot audit structure."}
+        report = {
+            "format": args.format,
+            "overall_status": "fail",
+            "detail": "shot_list empty/absent — cannot audit structure.",
+        }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 1
 
     gates = [
-        check_invariant(spec, shots, fmt),            # § 2 — the key check (FAIL)
+        check_invariant(spec, shots, fmt),  # § 2 — the key check (FAIL)
         check_bueno_only_in_allowed(spec, shots, fmt),  # § 2 companion (FLAG)
-        check_structure(shots),                  # § 1 — skeleton (FLAG)
-        check_sequential_paths(shots),           # § 3 — sequencing (FAIL)
+        check_structure(shots),  # § 1 — skeleton (FLAG)
+        check_sequential_paths(shots),  # § 3 — sequencing (FAIL)
     ]
 
     fails = [g for g in gates if g["status"] == "fail"]

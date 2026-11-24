@@ -23,6 +23,7 @@ Authority: CLAUDE.md Hard Rules table (lines vary, currently ~L171-L194 +
 footnote at L196). Sub-Fase 3A 2026-05-23 codified this helper as Sprint M
 defense in depth per Hard Rule #26 (tests adversariales obligatorios).
 """
+
 from __future__ import annotations
 
 import re
@@ -31,9 +32,7 @@ from pathlib import Path
 # Matches a Hard Rules table row:
 #   | <rule_id>( <emojis>)? | <text> | <authority_pointer> |
 # Emoji column accepts ⛔ or ⛔⛔ (Unicode U+26D4). Other spaces tolerated.
-_RULE_ROW_RE = re.compile(
-    r"^\|\s*(\d+)\s*(⛔+)?\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$"
-)
+_RULE_ROW_RE = re.compile(r"^\|\s*(\d+)\s*(⛔+)?\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$")
 
 _SEVERITY_BY_EMOJI_COUNT = {
     0: "standard",
@@ -96,17 +95,18 @@ def parse_hard_rules(claude_md_path: Path | str) -> list[dict]:
         emoji_count = emoji_block.count("⛔") if emoji_block else 0
         severity = _SEVERITY_BY_EMOJI_COUNT.get(emoji_count, "critical")
 
-        rules.append({
-            "rule_id": rule_id,
-            "text": text.strip(),
-            "severity": severity,
-            "authority_pointer": authority.strip(),
-        })
+        rules.append(
+            {
+                "rule_id": rule_id,
+                "text": text.strip(),
+                "severity": severity,
+                "authority_pointer": authority.strip(),
+            }
+        )
 
     if not rules:
         raise ValueError(
-            f"No Hard Rules parsed from {path}. Parser regex may be stale "
-            f"or section heading changed."
+            f"No Hard Rules parsed from {path}. Parser regex may be stale or section heading changed."
         )
 
     return rules
@@ -169,8 +169,7 @@ if __name__ == "__main__":
         "total_rules": len(parsed),
         "rule_ids": [r["rule_id"] for r in parsed],
         "severity_distribution": {
-            s: sum(1 for r in parsed if r["severity"] == s)
-            for s in ("critical", "blocker", "standard")
+            s: sum(1 for r in parsed if r["severity"] == s) for s in ("critical", "blocker", "standard")
         },
         "rule_22_present": any(r["rule_id"] == 22 for r in parsed),
         "calibrated_threshold": get_quality_threshold_calibrated(parsed),

@@ -18,6 +18,7 @@ cached, ~30-60s first download).
 
 NO heavy py deps in tests (no numpy/whisper). Synthetic SPEC + synthetic video-log MD parsed by script.
 """
+
 import json
 import shutil
 import subprocess
@@ -66,20 +67,32 @@ def _run(args):
     return subprocess.run([sys.executable, str(SCRIPT)] + args, capture_output=True, text=True)
 
 
-def _build_spec(path, *, location="torre control aeropuerto abandonado nocturno",
-                signature_staging="controlador encapuchado en torre de control con radares parpadeantes",
-                cliffhanger="P3", hook_beats=("name_label", "setting", "narrator_framing", "push_in", "countdown"),
-                dilema_pct=18, counterfactual="twin_end", shot_list_yaml=CLEAN_SHOT_LIST_YAML,
-                format_type="interactive_choice", omit_caps=False,
-                extra_narration_for_anticliche=None):
+def _build_spec(
+    path,
+    *,
+    location="torre control aeropuerto abandonado nocturno",
+    signature_staging="controlador encapuchado en torre de control con radares parpadeantes",
+    cliffhanger="P3",
+    hook_beats=("name_label", "setting", "narrator_framing", "push_in", "countdown"),
+    dilema_pct=18,
+    counterfactual="twin_end",
+    shot_list_yaml=CLEAN_SHOT_LIST_YAML,
+    format_type="interactive_choice",
+    omit_caps=False,
+    extra_narration_for_anticliche=None,
+):
     """Write a synthetic SPEC with controllable fields."""
-    caps = "" if omit_caps else (
-        "video_capabilities:\n"
-        f'  format_type: "{format_type}"\n'
-        "  has_layer_2_effects: true\n"
-        "  has_layer_3_music: true\n"
-        "  has_layer_4_ui: true\n"
-        '  audio_mix_target: "lufs_-14"\n'
+    caps = (
+        ""
+        if omit_caps
+        else (
+            "video_capabilities:\n"
+            f'  format_type: "{format_type}"\n'
+            "  has_layer_2_effects: true\n"
+            "  has_layer_3_music: true\n"
+            "  has_layer_4_ui: true\n"
+            '  audio_mix_target: "lufs_-14"\n'
+        )
     )
     hook_yaml = "\n".join(f"    - {b}" for b in hook_beats)
     extra = f"extra_text: \"{extra_narration_for_anticliche}\"\n" if extra_narration_for_anticliche else ""
@@ -104,8 +117,10 @@ def _build_videolog(path, rows):
     table = "| # | Proyecto | location | signature_staging | Confidence |\n"
     table += "|---|---|---|---|---|\n"
     for r in rows:
-        table += (f"| {r['num']} | {r['project']} | {r['location']} | "
-                  f"{r['signature_staging']} | {r.get('confidence', 'HIGH')} |\n")
+        table += (
+            f"| {r['num']} | {r['project']} | {r['location']} | "
+            f"{r['signature_staging']} | {r.get('confidence', 'HIGH')} |\n"
+        )
     # Tabla maestra with cliffhanger pattern column (for rotation check)
     table += "\n## Tabla maestra (for rotation)\n\n"
     table += "| # | Proyecto | Pattern |\n|---|---|---|\n"
@@ -119,12 +134,20 @@ def _build_anticliche(path, phrases):
 
 
 PRIOR_ROWS = [
-    {"num": 7, "project": "matadero-banquete v1", "pattern": "P6",
-     "location": "matadero refrigerado -30°C turno noche 2-6 AM",
-     "signature_staging": "matarife casco-cuchillo en patio matadero con cocinera entre carcasas hanging"},
-    {"num": 6, "project": "isla-faro v1", "pattern": "P6",
-     "location": "isla con faro abandonado",
-     "signature_staging": "aislamiento en isla con faro como punto de elección entre dos figuras"},
+    {
+        "num": 7,
+        "project": "matadero-banquete v1",
+        "pattern": "P6",
+        "location": "matadero refrigerado -30°C turno noche 2-6 AM",
+        "signature_staging": "matarife casco-cuchillo en patio matadero con cocinera entre carcasas hanging",
+    },
+    {
+        "num": 6,
+        "project": "isla-faro v1",
+        "pattern": "P6",
+        "location": "isla con faro abandonado",
+        "signature_staging": "aislamiento en isla con faro como punto de elección entre dos figuras",
+    },
 ]
 
 
@@ -146,16 +169,15 @@ class TestCLI(unittest.TestCase):
 
     def test_arbitrary_format_not_applicable(self):
         _build_spec(self.spec, format_type="tutorial")
-        r = _run(["--format", "tutorial-stub", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog)])
+        r = _run(["--format", "tutorial-stub", "--spec", str(self.spec), "--video-log", str(self.vlog)])
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
-        self.assertIn("not_applicable", r.stdout.lower(),
-                      "Non-interactive-choice format must report not_applicable")
+        self.assertIn(
+            "not_applicable", r.stdout.lower(), "Non-interactive-choice format must report not_applicable"
+        )
 
     def test_bug9_video_capabilities_missing(self):
         _build_spec(self.spec, omit_caps=True)
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog)])
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--video-log", str(self.vlog)])
         self.assertEqual(r.returncode, 2, f"Expected Bug #9 exit 2. stderr: {r.stderr}")
 
 
@@ -171,8 +193,17 @@ class TestStructure(unittest.TestCase):
 
     def _run_clean(self, **overrides):
         _build_spec(self.spec, **overrides)
-        return _run(["--format", "horror-choice", "--spec", str(self.spec),
-                     "--video-log", str(self.vlog), "--skip-semantic"])
+        return _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--skip-semantic",
+            ]
+        )
 
     def test_clean_spec_passes_structure(self):
         r = self._run_clean()
@@ -189,7 +220,7 @@ class TestStructure(unittest.TestCase):
         # Principle enforced (branch must be marked) but specific phrasing NOT forced (pattern_class 3/5).
         bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
             'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
-            'narrator_text: "La luz se apaga y la torre tiembla"'  # no detectable marker
+            'narrator_text: "La luz se apaga y la torre tiembla"',  # no detectable marker
         )
         r = self._run_clean(shot_list_yaml=bad_shot_list)
         self.assertEqual(r.returncode, 0, f"missing marker must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
@@ -201,7 +232,7 @@ class TestStructure(unittest.TestCase):
         # This is the exact form the deprecated "Si elegiste X" rule wrongly REQUIRED.
         bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
             'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
-            'narrator_text: "Si elegiste A, la luz se apaga y la torre tiembla"'
+            'narrator_text: "Si elegiste A, la luz se apaga y la torre tiembla"',
         )
         r = self._run_clean(shot_list_yaml=bad_shot_list)
         self.assertNotEqual(r.returncode, 0)
@@ -211,10 +242,10 @@ class TestStructure(unittest.TestCase):
         # @referent-b variant "Si decides..." / "Si escogiste..." (2/8 primary source) → PASS
         variant = CLEAN_SHOT_LIST_YAML.replace(
             'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
-            'narrator_text: "Si decides comer la fruta, la mesa entera se desploma sobre ti"'
+            'narrator_text: "Si decides comer la fruta, la mesa entera se desploma sobre ti"',
         ).replace(
             'narrator_text: "Si esperas, Bruno saca el medidor y la pantalla parpadea en rojo"',
-            'narrator_text: "Si escogiste no tocarla, Teresa guarda el plato y se aleja"'
+            'narrator_text: "Si escogiste no tocarla, Teresa guarda el plato y se aleja"',
         )
         r = self._run_clean(shot_list_yaml=variant)
         self.assertEqual(r.returncode, 0, f"choice-reference variant must pass.\nstdout {r.stdout}")
@@ -237,12 +268,15 @@ class TestStructure(unittest.TestCase):
     def test_wpm_out_of_band_flags(self):
         # WPM is the STYLE band (advisory) → out-of-band FLAGs (exit 0), not FAIL. The blocking
         # PHYSICS gate (WPM>280) lives in audit-spec-narration-fits-duration.py. 20w/1.0s=1200 WPM.
-        bad_shot_list = CLEAN_SHOT_LIST_YAML + """  - shot_id: shot_99
+        bad_shot_list = (
+            CLEAN_SHOT_LIST_YAML
+            + """  - shot_id: shot_99
     beat_role: setup
     duration_intent_s: 1.0
     narration_in_this_shot:
       narrator_text: "uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciseis diecisiete dieciocho diecinueve veinte"
 """
+        )
         r = self._run_clean(shot_list_yaml=bad_shot_list)
         self.assertEqual(r.returncode, 0, f"WPM style band must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
         self.assertIn("flag", r.stdout.lower())
@@ -261,45 +295,92 @@ class TestCrossVideoUniqueness(unittest.TestCase):
 
     def test_location_exact_match_fails(self):
         _build_spec(self.spec, location="matadero refrigerado -30°C turno noche 2-6 AM")  # exact match #7
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog), "--skip-semantic"])
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--skip-semantic",
+            ]
+        )
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("location", r.stdout.lower() + r.stderr.lower())
 
     def test_signature_staging_semantic_block(self):
         # V5 signature = EXACT same as prior #7 → similarity ~1.0 ≥ block threshold
-        _build_spec(self.spec,
-                    location="laboratorio aislado submarino nocturno",  # unique location
-                    signature_staging="matarife casco-cuchillo en patio matadero con cocinera entre carcasas hanging")
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog), "--block-threshold", "0.85",
-                  "--flag-threshold", "0.75"])
+        _build_spec(
+            self.spec,
+            location="laboratorio aislado submarino nocturno",  # unique location
+            signature_staging="matarife casco-cuchillo en patio matadero con cocinera entre carcasas hanging",
+        )
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--block-threshold",
+                "0.85",
+                "--flag-threshold",
+                "0.75",
+            ]
+        )
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("signature", r.stdout.lower() + r.stderr.lower())
 
     def test_signature_staging_semantic_flag(self):
         # Configure thresholds so that a moderately-similar text lands in [flag, block) band
         # → emits warning but exit 0 (FLAG, not FAIL)
-        _build_spec(self.spec,
-                    location="laboratorio aislado submarino nocturno",
-                    signature_staging="cocinera oculta entre las carcasas colgantes del matadero refrigerado")
+        _build_spec(
+            self.spec,
+            location="laboratorio aislado submarino nocturno",
+            signature_staging="cocinera oculta entre las carcasas colgantes del matadero refrigerado",
+        )
         # use very loose flag (0.30) and very high block (0.999) → similar-but-not-identical lands FLAG
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog), "--block-threshold", "0.999",
-                  "--flag-threshold", "0.30"])
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--block-threshold",
+                "0.999",
+                "--flag-threshold",
+                "0.30",
+            ]
+        )
         # FLAG = exit 0 with warning in stdout
-        self.assertEqual(r.returncode, 0,
-                         f"FLAG band should exit 0 with warning. stdout {r.stdout}\nstderr {r.stderr}")
-        self.assertIn("flag", r.stdout.lower(),
-                      "FLAG verdict must appear in stdout")
+        self.assertEqual(
+            r.returncode, 0, f"FLAG band should exit 0 with warning. stdout {r.stdout}\nstderr {r.stderr}"
+        )
+        self.assertIn("flag", r.stdout.lower(), "FLAG verdict must appear in stdout")
 
     def test_pattern_rotation_repeat_last_fails(self):
         # Most recent prior is #7 P6 → V5 with P6 should fail rotation
-        _build_spec(self.spec, cliffhanger="P6",
-                    location="catedral inundada amanecer brumoso",  # unique
-                    signature_staging="dos sacerdotes esperando en catedral inundada con velas flotando")
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog), "--skip-semantic"])
+        _build_spec(
+            self.spec,
+            cliffhanger="P6",
+            location="catedral inundada amanecer brumoso",  # unique
+            signature_staging="dos sacerdotes esperando en catedral inundada con velas flotando",
+        )
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--skip-semantic",
+            ]
+        )
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("rotation", r.stdout.lower() + r.stderr.lower())
 
@@ -311,12 +392,15 @@ class TestAntiCliche(unittest.TestCase):
         self.vlog = Path(self.tmp) / "vlog.md"
         self.anticliche = Path(self.tmp) / "anticliche.txt"
         _build_videolog(self.vlog, PRIOR_ROWS)
-        _build_anticliche(self.anticliche, [
-            "te conviertes en cena",
-            "cena que nunca acaba",
-            "bucle eterno",
-            "nunca encuentras la salida",
-        ])
+        _build_anticliche(
+            self.anticliche,
+            [
+                "te conviertes en cena",
+                "cena que nunca acaba",
+                "bucle eterno",
+                "nunca encuentras la salida",
+            ],
+        )
 
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
@@ -325,12 +409,22 @@ class TestAntiCliche(unittest.TestCase):
         # Inject forbidden phrase into a shot narration
         bad_shot_list = CLEAN_SHOT_LIST_YAML.replace(
             'narrator_text: "Si enciendes la linterna, Bruno te arrastra al pozo y caes"',
-            'narrator_text: "Si enciendes la linterna, te conviertes en cena de la torre"'
+            'narrator_text: "Si enciendes la linterna, te conviertes en cena de la torre"',
         )
         _build_spec(self.spec, shot_list_yaml=bad_shot_list)
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--video-log", str(self.vlog), "--anti-cliche-file", str(self.anticliche),
-                  "--skip-semantic"])
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--video-log",
+                str(self.vlog),
+                "--anti-cliche-file",
+                str(self.anticliche),
+                "--skip-semantic",
+            ]
+        )
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("cliché", r.stdout.lower() + r.stderr.lower() + "cliche")
 

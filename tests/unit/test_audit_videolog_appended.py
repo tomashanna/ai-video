@@ -11,6 +11,7 @@ rotation), parsing del .md (split_log_entries/parse_master_table_patterns) y exi
 
 Carga el módulo con guion en el nombre vía importlib. Corre: python3 test_audit-videolog-appended.py
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -30,6 +31,7 @@ _spec.loader.exec_module(mod)
 
 
 # ── Fixtures: video-log.md sintéticos ────────────────────────────────────────────────────────
+
 
 def _log_entry_complete(num=2, project="lago-helado", pattern="P9", prev_pattern="P1"):
     """Tabla maestra con 2 filas (rotación VÁLIDA por default: prev_pattern ≠ pattern) +
@@ -108,10 +110,13 @@ def _write(text):
 # PURE — funciones de decisión
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 class TestPureHelpers(unittest.TestCase):
     def test_project_matches_tolerante(self):
         self.assertTrue(mod.project_matches("| 7 | `matadero-banquete` v1 SHIP |", "matadero-banquete"))
-        self.assertTrue(mod.project_matches("### #8 — sala_limpia_bioseguridad (V5)", "sala-limpia-bioseguridad"))
+        self.assertTrue(
+            mod.project_matches("### #8 — sala_limpia_bioseguridad (V5)", "sala-limpia-bioseguridad")
+        )
         self.assertFalse(mod.project_matches("| 1 | `otro-proyecto` |", "lago-helado"))
 
     def test_extract_pattern_tokens(self):
@@ -146,8 +151,8 @@ class TestEvaluateEntry(unittest.TestCase):
         self.assertFalse(r["overall_pass"])
         by = {c["check"]: c["status"] for c in r["checks"]}
         self.assertEqual(by["a_entry_exists"], "pass")
-        self.assertEqual(by["b_mentions_pattern"], "pass")     # menciona P9
-        self.assertEqual(by["c_min_bullets"], "fail")          # 0 bullets
+        self.assertEqual(by["b_mentions_pattern"], "pass")  # menciona P9
+        self.assertEqual(by["c_min_bullets"], "fail")  # 0 bullets
 
     def test_un_solo_bullet_FALLA(self):
         text = "### lago-helado P9\n- único bullet"
@@ -176,17 +181,19 @@ class TestEvaluateEntry(unittest.TestCase):
 
     def test_min_bullets_override(self):
         text = "### lago-helado P9\n- uno\n- dos"
-        self.assertTrue(mod.evaluate_videolog_entry(text, "lago-helado", min_bullets=2,
-                                                    entry_found=True)["overall_pass"])
-        self.assertFalse(mod.evaluate_videolog_entry(text, "lago-helado", min_bullets=3,
-                                                     entry_found=True)["overall_pass"])
+        self.assertTrue(
+            mod.evaluate_videolog_entry(text, "lago-helado", min_bullets=2, entry_found=True)["overall_pass"]
+        )
+        self.assertFalse(
+            mod.evaluate_videolog_entry(text, "lago-helado", min_bullets=3, entry_found=True)["overall_pass"]
+        )
 
 
 class TestRotation(unittest.TestCase):
     """evaluate_rotation — HR#14 (entry más reciente ≠ anterior)."""
 
     def test_FIXTURE_D_mismo_pattern_FALLA(self):
-        r = mod.evaluate_rotation(["P1", "P6", "P6"])   # últimas dos = P6
+        r = mod.evaluate_rotation(["P1", "P6", "P6"])  # últimas dos = P6
         self.assertFalse(r["overall_pass"])
         self.assertEqual(r["status"], "fail")
         self.assertEqual((r["prev"], r["last"]), ("P6", "P6"))
@@ -214,7 +221,7 @@ class TestMarkdownParsing(unittest.TestCase):
         md = _log_entry_complete(project="lago-helado", pattern="P9", prev_pattern="P1")
         found, text = mod.gather_project_text(md, "lago-helado")
         self.assertTrue(found)
-        self.assertIn("P9", text)               # de la fila de tabla
+        self.assertIn("P9", text)  # de la fila de tabla
         self.assertGreaterEqual(mod.count_bullets(text), 2)  # de la sección ###
 
     def test_gather_no_match(self):
@@ -225,7 +232,7 @@ class TestMarkdownParsing(unittest.TestCase):
     def test_parse_master_table_orden_cronologico(self):
         md = _log_two_consecutive_same_pattern()
         rows = mod.parse_master_table_patterns(md)
-        self.assertEqual([n for n, _ in rows], [1, 2])       # ordenado por #
+        self.assertEqual([n for n, _ in rows], [1, 2])  # ordenado por #
         self.assertEqual([p for _, p in rows], ["P6", "P6"])
 
 
@@ -239,8 +246,7 @@ class TestEndToEndExitCodes(unittest.TestCase):
         return path
 
     def _run(self, *args):
-        return subprocess.run([sys.executable, str(_SCRIPT), *args],
-                              capture_output=True, text=True)
+        return subprocess.run([sys.executable, str(_SCRIPT), *args], capture_output=True, text=True)
 
     SPEC_OK = "project:\n  format: horror-choice\nvideo_capabilities:\n  has_ai_generated_clips: true\n"
     SPEC_NO_CAPS = "project:\n  format: horror-choice\n"
@@ -248,56 +254,84 @@ class TestEndToEndExitCodes(unittest.TestCase):
     def test_FIXTURE_C_completa_exit_0(self):
         spec = self._spec(self.SPEC_OK)
         log = _write(_log_entry_complete(project="lago-helado"))
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log)
-        os.unlink(spec); os.unlink(log)
+        r = self._run(
+            "--format", "horror-choice", "--spec", spec, "--project-id", "lago-helado", "--video-log", log
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
     def test_FIXTURE_A_no_entry_exit_1(self):
         spec = self._spec(self.SPEC_OK)
         log = _write(_log_no_entry())
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log)
-        os.unlink(spec); os.unlink(log)
+        r = self._run(
+            "--format", "horror-choice", "--spec", spec, "--project-id", "lago-helado", "--video-log", log
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
 
     def test_FIXTURE_B_sin_bullets_exit_1(self):
         spec = self._spec(self.SPEC_OK)
         log = _write(_log_entry_no_bullets(project="lago-helado"))
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log)
-        os.unlink(spec); os.unlink(log)
+        r = self._run(
+            "--format", "horror-choice", "--spec", spec, "--project-id", "lago-helado", "--video-log", log
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
 
     def test_FIXTURE_D_rotacion_repetida_exit_1(self):
         spec = self._spec(self.SPEC_OK)
         log = _write(_log_two_consecutive_same_pattern(project="lago-helado"))
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log, "--check-rotation")
-        os.unlink(spec); os.unlink(log)
+        r = self._run(
+            "--format",
+            "horror-choice",
+            "--spec",
+            spec,
+            "--project-id",
+            "lago-helado",
+            "--video-log",
+            log,
+            "--check-rotation",
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
 
     def test_spec_sin_video_capabilities_exit_2(self):
         spec = self._spec(self.SPEC_NO_CAPS)
         log = _write(_log_entry_complete(project="lago-helado"))
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log)
-        os.unlink(spec); os.unlink(log)
+        r = self._run(
+            "--format", "horror-choice", "--spec", spec, "--project-id", "lago-helado", "--video-log", log
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
 
     def test_fuera_familia_sin_capability_not_applicable_exit_0(self):
         spec = self._spec(self.SPEC_OK)
-        log = _write(_log_no_entry())   # ni existe la entry, pero no aplica → exit 0
-        r = self._run("--format", "editorial", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", log)
-        os.unlink(spec); os.unlink(log)
+        log = _write(_log_no_entry())  # ni existe la entry, pero no aplica → exit 0
+        r = self._run(
+            "--format", "editorial", "--spec", spec, "--project-id", "lago-helado", "--video-log", log
+        )
+        os.unlink(spec)
+        os.unlink(log)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertIn("not_applicable", r.stdout)
 
     def test_log_inexistente_exit_2(self):
         spec = self._spec(self.SPEC_OK)
-        r = self._run("--format", "horror-choice", "--spec", spec,
-                      "--project-id", "lago-helado", "--video-log", "/nope/missing-log.md")
+        r = self._run(
+            "--format",
+            "horror-choice",
+            "--spec",
+            spec,
+            "--project-id",
+            "lago-helado",
+            "--video-log",
+            "/nope/missing-log.md",
+        )
         os.unlink(spec)
         self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
 

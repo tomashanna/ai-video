@@ -7,6 +7,7 @@ descripción válido; handle reference en comentario válido; --checks selectivo
 
 Corre: python3 test_audit-language-style.py
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -17,7 +18,10 @@ from pathlib import Path
 
 # import por path (nombre con guiones → no importable normal)
 _HERE = Path(__file__).resolve().parent
-_spec = importlib.util.spec_from_file_location("audit_language_style", Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_language_style.py")
+_spec = importlib.util.spec_from_file_location(
+    "audit_language_style",
+    Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_language_style.py",
+)
 mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(mod)
 
@@ -215,6 +219,7 @@ class TestWrapperEndToEnd(unittest.TestCase):
         f.close()
         self.addCleanup(os.unlink, f.name)
         import yaml
+
         with open(f.name) as fh:
             return yaml.safe_load(fh)
 
@@ -259,8 +264,10 @@ shot_list:
         texts = mod.collect_texts(spec)
         srcs = [t["source"] for t in texts]
         self.assertTrue(any("warning_caption_x" in s for s in srcs))
-        self.assertFalse(any("name_label" in s for s in srcs),
-                         "name_label NO debe entrar a los textos chequeados por estilo")
+        self.assertFalse(
+            any("name_label" in s for s in srcs),
+            "name_label NO debe entrar a los textos chequeados por estilo",
+        )
 
     def test_html_watermark_extraction(self):
         spec = self._write("video_capabilities: {has_ai_generated_clips: true}\n")

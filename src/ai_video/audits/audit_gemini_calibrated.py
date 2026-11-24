@@ -55,6 +55,7 @@ VALIDATION:
 NEVER hardcoded canonical data here — always read from the prompt template
 that gets versioned + iterated externally.
 """
+
 import argparse
 import json
 import os
@@ -168,8 +169,9 @@ def analyze(video_path: Path, prompt: str) -> str:
         return None if uploaded.state.name == "PROCESSING" else uploaded
 
     if uploaded.state.name == "PROCESSING":
-        uploaded = poll_until(_ready, timeout_s=get_settings().poll_timeout_s, interval_s=3,
-                              describe="Gemini file processing")
+        uploaded = poll_until(
+            _ready, timeout_s=get_settings().poll_timeout_s, interval_s=3, describe="Gemini file processing"
+        )
 
     if uploaded.state.name == "FAILED":
         raise RuntimeError(f"File processing failed: {uploaded.state}")

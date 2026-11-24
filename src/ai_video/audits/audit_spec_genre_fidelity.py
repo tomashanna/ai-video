@@ -34,6 +34,7 @@ no-op for horror (NON-DESTRUCTIVE — horror's own validators are untouched).
 
 Build 2026-06-01 — TDD + Hard Rule #26 companion test (test_audit-spec-genre-fidelity.py).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -64,40 +65,106 @@ HORROR_VOICE_IDS = {"Tj9l48J9AJbry5yCP5eW"}
 LEXICON = [
     # G5 — death / physical harm to the protagonist (consequence of error must be
     # sporting humiliation, NOT physical damage — PAUTA §0 BAN + §6).
-    ("G5", "death / physical harm", [
-        r"\bmuerte\b", r"\bmueres\b", r"\bmorir\b", r"\bmuere\b", r"\bcad[áa]ver\b",
-        r"\bsangre\b", r"\bsangr\w*", r"\bmutila\w*", r"\bdescuartiz\w*", r"\bagoniz\w*",
-        r"\bdeath\b", r"\bblood\b", r"\bcorpse\b", r"\bgore\b",
-    ]),
+    (
+        "G5",
+        "death / physical harm",
+        [
+            r"\bmuerte\b",
+            r"\bmueres\b",
+            r"\bmorir\b",
+            r"\bmuere\b",
+            r"\bcad[áa]ver\b",
+            r"\bsangre\b",
+            r"\bsangr\w*",
+            r"\bmutila\w*",
+            r"\bdescuartiz\w*",
+            r"\bagoniz\w*",
+            r"\bdeath\b",
+            r"\bblood\b",
+            r"\bcorpse\b",
+            r"\bgore\b",
+        ],
+    ),
     # G5 — monsters / supernatural.
-    ("G5", "monster / supernatural", [
-        r"\bmonstruo\w*", r"\bcriatura\w*", r"\bdemonio\w*", r"\bente\b", r"\bfantasma\w*",
-        r"\bespectro\w*", r"\bposesi[óo]n\b", r"\bpos[ée]\w*", r"\bsacrificio\b", r"\britual\b",
-        r"\bmonster\b", r"\bcreature\b", r"\bdemon\b", r"\bghost\b",
-    ]),
+    (
+        "G5",
+        "monster / supernatural",
+        [
+            r"\bmonstruo\w*",
+            r"\bcriatura\w*",
+            r"\bdemonio\w*",
+            r"\bente\b",
+            r"\bfantasma\w*",
+            r"\bespectro\w*",
+            r"\bposesi[óo]n\b",
+            r"\bpos[ée]\w*",
+            r"\bsacrificio\b",
+            r"\britual\b",
+            r"\bmonster\b",
+            r"\bcreature\b",
+            r"\bdemon\b",
+            r"\bghost\b",
+        ],
+    ),
     # G5 — body-horror / uncanny.
-    ("G5", "body-horror / uncanny", [
-        r"\bbody[\s-]?horror\b", r"\bdeforme\w*", r"\bgrotesc\w*", r"\bperturbador\w*",
-        r"\buncanny\b", r"\bantinatural\w*",
-    ]),
+    (
+        "G5",
+        "body-horror / uncanny",
+        [
+            r"\bbody[\s-]?horror\b",
+            r"\bdeforme\w*",
+            r"\bgrotesc\w*",
+            r"\bperturbador\w*",
+            r"\buncanny\b",
+            r"\bantinatural\w*",
+        ],
+    ),
     # G5 — terror atmosphere (NOTE: "terror"/"horror"/"jumpscare" but NOT "tensión").
-    ("G5", "terror atmosphere", [
-        r"\bterror\b", r"\bhorror\b", r"\bpesadilla\w*", r"\bpavor\b", r"\bjumpscare\b",
-        r"\bnightmare\b", r"\bdread\b",
-    ]),
+    (
+        "G5",
+        "terror atmosphere",
+        [
+            r"\bterror\b",
+            r"\bhorror\b",
+            r"\bpesadilla\w*",
+            r"\bpavor\b",
+            r"\bjumpscare\b",
+            r"\bnightmare\b",
+            r"\bdread\b",
+        ],
+    ),
     # G4 — horror audio in MUSIC layer prompts (dark ambient / horror drone).
     # "drone" alone is NOT leak (sport uses "drone subharmónico de tensión deportiva");
     # the leak is the HORROR qualifier next to it, or dark-ambient/eerie.
-    ("G4", "horror music (dark ambient / horror drone / eerie pad)", [
-        r"\bdark\s+ambient\b", r"\bhorror\s+drone\b", r"\bdrone\s+(?:of\s+)?(?:terror|horror)\b",
-        r"\beerie\b", r"\bdread\s+ambience\b", r"\bdrone\s+uncanny\b", r"\buncanny\s+drone\b",
-    ]),
+    (
+        "G4",
+        "horror music (dark ambient / horror drone / eerie pad)",
+        [
+            r"\bdark\s+ambient\b",
+            r"\bhorror\s+drone\b",
+            r"\bdrone\s+(?:of\s+)?(?:terror|horror)\b",
+            r"\beerie\b",
+            r"\bdread\s+ambience\b",
+            r"\bdrone\s+uncanny\b",
+            r"\buncanny\s+drone\b",
+        ],
+    ),
     # G2 — horror SFX palette (screams / whispers / jumpscare sub-bass / death-scream).
-    ("G2", "horror SFX (scream / whisper / jumpscare sub-bass)", [
-        r"\bscream\w*", r"\bdeath[\s-]?scream\b", r"\bwhisper\w*", r"\bsusurro\w*",
-        r"\bsusurr\w*", r"\bgrito\s+de\s+(?:terror|horror|pavor)\b", r"\bjumpscare\b",
-        r"\bsub[\s-]?bass\s+(?:jumpscare|horror|dread)\b", r"\bheartbeat\s+(?:dread|horror|pavor)\b",
-    ]),
+    (
+        "G2",
+        "horror SFX (scream / whisper / jumpscare sub-bass)",
+        [
+            r"\bscream\w*",
+            r"\bdeath[\s-]?scream\b",
+            r"\bwhisper\w*",
+            r"\bsusurro\w*",
+            r"\bsusurr\w*",
+            r"\bgrito\s+de\s+(?:terror|horror|pavor)\b",
+            r"\bjumpscare\b",
+            r"\bsub[\s-]?bass\s+(?:jumpscare|horror|dread)\b",
+            r"\bheartbeat\s+(?:dread|horror|pavor)\b",
+        ],
+    ),
 ]
 
 
@@ -119,7 +186,7 @@ _NEGATORS = (re.compile(_norm(r"(?:\bno\b|\bsin\b|\bwithout\b|\bavoid\b|\bnot\b)
 
 def _is_negated(norm_text: str, match_start: int) -> bool:
     """True if the term at `match_start` is immediately preceded by a negator (no/sin/without)."""
-    preceding = norm_text[max(0, match_start - 15): match_start]
+    preceding = norm_text[max(0, match_start - 15) : match_start]
     return any(neg.search(preceding) for neg in _NEGATORS)
 
 
@@ -150,11 +217,17 @@ def _scan_text(text, *, field, shot_id=None):
                 if _is_negated(norm, m.start()):
                     continue
                 # locate the matched substring in the ORIGINAL for a readable snippet
-                snippet = text[max(0, m.start() - 25): m.end() + 25].replace("\n", " ").strip()
-                hits.append({
-                    "item": code, "category": label, "field": field,
-                    "shot_id": shot_id, "term": m.group(0), "snippet": snippet,
-                })
+                snippet = text[max(0, m.start() - 25) : m.end() + 25].replace("\n", " ").strip()
+                hits.append(
+                    {
+                        "item": code,
+                        "category": label,
+                        "field": field,
+                        "shot_id": shot_id,
+                        "term": m.group(0),
+                        "snippet": snippet,
+                    }
+                )
                 flagged = True
                 break  # one hit per group/field is enough to flag
             if flagged:
@@ -164,11 +237,14 @@ def _scan_text(text, *, field, shot_id=None):
 
 def _iter_narration(spec):
     """Yield (field_label, text, shot_id) for every narration string in the SPEC."""
-    for seg in (spec.get("narration_script") or []):
+    for seg in spec.get("narration_script") or []:
         if isinstance(seg, dict):
-            yield ("narration_script.text_canonical", seg.get("text_canonical") or seg.get("text") or "",
-                   seg.get("shot_id_anchor"))
-    for s in (spec.get("shot_list") or []):
+            yield (
+                "narration_script.text_canonical",
+                seg.get("text_canonical") or seg.get("text") or "",
+                seg.get("shot_id_anchor"),
+            )
+    for s in spec.get("shot_list") or []:
         if not isinstance(s, dict):
             continue
         sid = s.get("shot_id")
@@ -185,12 +261,18 @@ def _iter_narration(spec):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="format id (sport-choice → scan; others → not_applicable)")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="format id (sport-choice → scan; others → not_applicable)"
+    )
     parser.add_argument("--spec", required=True)
-    parser.add_argument("--max-hits", type=int, default=0,
-                        help="if >0, truncate the reported hit list (the verdict is unaffected)")
+    parser.add_argument(
+        "--max-hits",
+        type=int,
+        default=0,
+        help="if >0, truncate the reported hit list (the verdict is unaffected)",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -206,23 +288,28 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\n"
-              f"is_sport_family: {is_sport}\n"
-              f"branch: {'genre_fidelity_scan' if is_sport else 'not_applicable'}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\n"
+            f"is_sport_family: {is_sport}\n"
+            f"branch: {'genre_fidelity_scan' if is_sport else 'not_applicable'}"
+        )
         return 0
 
     # Agnostic-by-design + NON-DESTRUCTIVE: only sport-family formats are scanned.
     # horror-choice (and anything else) → no-op so this gate never touches horror.
     if not is_sport:
         report = {
-            "format": args.format, "overall_status": "not_applicable",
+            "format": args.format,
+            "overall_status": "not_applicable",
             "detail": "genre-fidelity (no-horror) scan applies to sport-family formats only; "
-                      "other formats are a no-op (NON-DESTRUCTIVE — horror validators untouched)",
+            "other formats are a no-op (NON-DESTRUCTIVE — horror validators untouched)",
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
@@ -234,7 +321,7 @@ def main():
         hits.extend(_scan_text(text, field=field, shot_id=sid))
 
     # --- G5: visual_intent + description per shot ---
-    for s in (spec.get("shot_list") or []):
+    for s in spec.get("shot_list") or []:
         if not isinstance(s, dict):
             continue
         sid = s.get("shot_id")
@@ -244,44 +331,72 @@ def main():
     # --- G6: LUT names (section level + shot level) ---
     def _check_lut(lut, *, field, sid=None):
         if isinstance(lut, str) and "horror" in lut.lower():
-            hits.append({"item": "G6", "category": "horror LUT", "field": field,
-                         "shot_id": sid, "term": lut, "snippet": lut})
-    for sec in (spec.get("narrative_sections") or []):
+            hits.append(
+                {
+                    "item": "G6",
+                    "category": "horror LUT",
+                    "field": field,
+                    "shot_id": sid,
+                    "term": lut,
+                    "snippet": lut,
+                }
+            )
+
+    for sec in spec.get("narrative_sections") or []:
         if isinstance(sec, dict):
-            _check_lut(sec.get("visual_style_lut"),
-                       field=f"narrative_sections[{sec.get('section_id')}].visual_style_lut")
-    for s in (spec.get("shot_list") or []):
+            _check_lut(
+                sec.get("visual_style_lut"),
+                field=f"narrative_sections[{sec.get('section_id')}].visual_style_lut",
+            )
+    for s in spec.get("shot_list") or []:
         if isinstance(s, dict):
             _check_lut(s.get("visual_style_lut"), field="shot.visual_style_lut", sid=s.get("shot_id"))
 
     # --- G4: music layer ElevenLabs prompts ---
-    for layer in (spec.get("music_continuous_layers") or []):
+    for layer in spec.get("music_continuous_layers") or []:
         if isinstance(layer, dict):
-            hits.extend(_scan_text(
-                layer.get("eleven_labs_prompt") or layer.get("elevenlabs_prompt"),
-                field=f"music_continuous_layers[{layer.get('layer_id')}].eleven_labs_prompt"))
+            hits.extend(
+                _scan_text(
+                    layer.get("eleven_labs_prompt") or layer.get("elevenlabs_prompt"),
+                    field=f"music_continuous_layers[{layer.get('layer_id')}].eleven_labs_prompt",
+                )
+            )
 
     # --- G2: SFX prompts (asset_list.sfx_prompts_to_generate) ---
     al = spec.get("asset_list") or {}
     if isinstance(al, dict):
-        for sfx in (al.get("sfx_prompts_to_generate") or []):
+        for sfx in al.get("sfx_prompts_to_generate") or []:
             if isinstance(sfx, dict):
-                hits.extend(_scan_text(sfx.get("prompt"),
-                                       field=f"asset_list.sfx[{sfx.get('sfx_id')}].prompt"))
+                hits.extend(
+                    _scan_text(sfx.get("prompt"), field=f"asset_list.sfx[{sfx.get('sfx_id')}].prompt")
+                )
 
     # --- G3: horror narrator voice_id ---
     voice_hits = []
     nv = spec.get("narrator_voice")
     if isinstance(nv, str) and nv in HORROR_VOICE_IDS:
-        voice_hits.append({"item": "G3", "category": "horror narrator voice_id",
-                           "field": "narrator_voice", "shot_id": None,
-                           "term": nv, "snippet": "horror grave/whisper narrator (deprecated 2026-05-18)"})
-    for seg in (spec.get("narration_script") or []):
+        voice_hits.append(
+            {
+                "item": "G3",
+                "category": "horror narrator voice_id",
+                "field": "narrator_voice",
+                "shot_id": None,
+                "term": nv,
+                "snippet": "horror grave/whisper narrator (deprecated 2026-05-18)",
+            }
+        )
+    for seg in spec.get("narration_script") or []:
         if isinstance(seg, dict) and seg.get("voice_id") in HORROR_VOICE_IDS:
-            voice_hits.append({"item": "G3", "category": "horror narrator voice_id",
-                               "field": f"narration_script[{seg.get('segment_id')}].voice_id",
-                               "shot_id": seg.get("shot_id_anchor"),
-                               "term": seg.get("voice_id"), "snippet": "horror grave narrator voice_id"})
+            voice_hits.append(
+                {
+                    "item": "G3",
+                    "category": "horror narrator voice_id",
+                    "field": f"narration_script[{seg.get('segment_id')}].voice_id",
+                    "shot_id": seg.get("shot_id_anchor"),
+                    "term": seg.get("voice_id"),
+                    "snippet": "horror grave narrator voice_id",
+                }
+            )
     hits.extend(voice_hits)
 
     # de-dup identical (item, field, term) tuples
@@ -298,10 +413,16 @@ def main():
     overall = "fail" if hits else "pass"
     shown = hits if args.max_hits <= 0 else hits[: args.max_hits]
     report = {
-        "format": args.format, "spec": str(spec_path),
-        "overall_status": overall, "overall_pass": not hits,
+        "format": args.format,
+        "spec": str(spec_path),
+        "overall_status": overall,
+        "overall_pass": not hits,
         "checklist_items_scanned": ["G2", "G3", "G4", "G5", "G6"],
-        "checklist_items_not_scanned_human_visual": ["G1 (CSS preset)", "G7 (estadio geography)", "G8 (layer inheritance)"],
+        "checklist_items_not_scanned_human_visual": [
+            "G1 (CSS preset)",
+            "G7 (estadio geography)",
+            "G8 (layer inheritance)",
+        ],
         "items_flagged": items_flagged,
         "leak_count": len(hits),
         "leaks": shown,

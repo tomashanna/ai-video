@@ -77,9 +77,9 @@ except ImportError:
 # Canonical mix levels (Hard Rule #9 + INGENIERO-PAUTA-MASTER § 9)
 # ----------------------------------------------------------------------------
 MIX_NARRATION_DEFAULT = 1.0
-MIX_SFX_EVENT_DEFAULT = 0.28          # within 0.20-0.35 band
-MIX_FLASH_IMPACT_DEFAULT = 0.60       # within 0.55-0.65 band
-MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14 # within 0.10-0.18 band
+MIX_SFX_EVENT_DEFAULT = 0.28  # within 0.20-0.35 band
+MIX_FLASH_IMPACT_DEFAULT = 0.60  # within 0.55-0.65 band
+MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14  # within 0.10-0.18 band
 
 # ── SFX AUDIBILITY: per-CLASS absolute-dBFS normalization (replaces flat raw-multiplier) ──────
 # A flat relative multiplier (vol × source) assumes every SFX source sits at a UNIFORM loudness.
@@ -90,20 +90,20 @@ MIX_AMBIENT_CONTINUOUS_DEFAULT = 0.14 # within 0.10-0.18 band
 # meaningless multiplier on wildly-varying sources. Companion gate: audit-sfx-audibility.py (delta
 # vs local bed). Per-event override = a 0..1 WITHIN-CLASS fraction (1.0 = full class target).
 SFX_TARGET_DBFS = {
-    "event":      -19.0,   # protagonist diegetic events (impacts, splashes, gates, electricity)
-    "diegetic":   -20.0,   # scene-world sound clearly meant to be heard (radio, birds, wind, kettle)
-    "texture":    -23.0,   # recurring ambience (drips, footsteps, buzz) — present under events/voice
-    "scream":     -16.0,   # death screams dominate their beat
-    "transition": -16.0,   # whoosh / flash / glitch stings at cut boundaries
-    "ui":         -17.0,   # countdown tick / loading / heartbeat
-    "flash":      -16.0,   # white-flash impact stings (HR#9 0.55-0.65 band, absolute-anchored)
+    "event": -19.0,  # protagonist diegetic events (impacts, splashes, gates, electricity)
+    "diegetic": -20.0,  # scene-world sound clearly meant to be heard (radio, birds, wind, kettle)
+    "texture": -23.0,  # recurring ambience (drips, footsteps, buzz) — present under events/voice
+    "scream": -16.0,  # death screams dominate their beat
+    "transition": -16.0,  # whoosh / flash / glitch stings at cut boundaries
+    "ui": -17.0,  # countdown tick / loading / heartbeat
+    "flash": -16.0,  # white-flash impact stings (HR#9 0.55-0.65 band, absolute-anchored)
 }
-SFX_GAIN_CLAMP_DB = 26.0   # never push a source by more than ±26 dB (above this = surfacing floor noise)
+SFX_GAIN_CLAMP_DB = 26.0  # never push a source by more than ±26 dB (above this = surfacing floor noise)
 # Duck applied to clip-scoped SFX DURING a character-dialog window so voices stay clearly on top.
 # -12 dB (×0.25) vs the narrator's lighter -6 dB sidechain duck: a character line shares the clip's
 # Layer-1 bus with diegetic SFX (no sidechain key), so it needs the deeper build-time duck for
 # intelligibility (V7: electricity events inside Dario's line → Whisper returned garbage at -6 dB).
-SFX_DUCK_UNDER_DIALOG = 0.25   # ≈ -12 dB
+SFX_DUCK_UNDER_DIALOG = 0.25  # ≈ -12 dB
 SFX_DUCK_UNDER_NARRATOR = 0.50  # ≈ -6 dB (lighter — narrator also has the L3 sidechain duck)
 
 # LUFS target (Instagram Reels standard)
@@ -113,13 +113,13 @@ LUFS_TOLERANCE = 1.5  # ±1.5 dB acceptable per-clip (final master tightens to �
 _SFX_MEAN_CACHE: dict = {}
 
 
-
 def _rel(p: Path, base: Path) -> Path:
     """Path relative to ``base`` for display; absolute if outside (never raises)."""
     try:
         return p.relative_to(base)
     except ValueError:
         return p
+
 
 def _measure_mean_dbfs(path: Path) -> float:
     """Measure (cached) the mean volume (dBFS) of an audio source via ffmpeg volumedetect."""
@@ -128,8 +128,10 @@ def _measure_mean_dbfs(path: Path) -> float:
         return _SFX_MEAN_CACHE[key]
     r = subprocess.run(
         ["ffmpeg", "-hide_banner", "-i", str(path), "-af", "volumedetect", "-f", "null", "-"],
-        capture_output=True, text=True,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     mean = None
     for line in r.stderr.splitlines():
         if "mean_volume:" in line:
@@ -164,10 +166,10 @@ CAPTION_Y_PERCENT = 0.62
 # sits at Y52 + NAME tag, so narrator + dialog (or 2 chars) NEVER collide at the same Y when their
 # time windows overlap. De-conflict (deconflict_cue_ys) ENFORCES the A3 "no same-Y overlap" invariant
 # in the burn (cross-layer narrator + dialog included) instead of only flagging it in a sidecar.
-CAPTION_Y_NARRATOR = 0.62      # narration / warning
-CAPTION_Y_DIALOG = 0.52        # character dialog (name class) — distinct band + NAME tag
-CAPTION_Y_STEP = 0.08          # de-conflict offset step (≥6% min separation = ≥1 line height)
-CAPTION_Y_MIN = 0.30           # don't push a caption above the lower-third / into the name-label band
+CAPTION_Y_NARRATOR = 0.62  # narration / warning
+CAPTION_Y_DIALOG = 0.52  # character dialog (name class) — distinct band + NAME tag
+CAPTION_Y_STEP = 0.08  # de-conflict offset step (≥6% min separation = ≥1 line height)
+CAPTION_Y_MIN = 0.30  # don't push a caption above the lower-third / into the name-label band
 # Font size scaling: 80px base for short captions, 68px when word count > 8
 CAPTION_FONT_SIZE_SHORT = 80
 CAPTION_FONT_SIZE_LONG = 68
@@ -232,9 +234,13 @@ def ffprobe_duration(path: Path) -> float:
     if not path.exists():
         raise FileNotFoundError(f"ffprobe target missing: {path}")
     cmd = [
-        "ffprobe", "-v", "error",
-        "-show_entries", "format=duration",
-        "-of", "csv=p=0",
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "csv=p=0",
         str(path),
     ]
     result = run(cmd, capture=True)
@@ -244,9 +250,15 @@ def ffprobe_duration(path: Path) -> float:
 def ffprobe_lufs(path: Path) -> float | None:
     """Measure integrated LUFS of audio in media file. Returns None if cannot measure."""
     cmd = [
-        "ffmpeg", "-hide_banner", "-i", str(path),
-        "-af", "loudnorm=I=-14:TP=-1:LRA=11:print_format=json",
-        "-f", "null", "-",
+        "ffmpeg",
+        "-hide_banner",
+        "-i",
+        str(path),
+        "-af",
+        "loudnorm=I=-14:TP=-1:LRA=11:print_format=json",
+        "-f",
+        "null",
+        "-",
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
@@ -264,9 +276,15 @@ def ffprobe_lufs(path: Path) -> float | None:
 def ffprobe_peak_db(path: Path) -> float | None:
     """Measure peak dBFS of audio in media. Returns None if cannot measure."""
     cmd = [
-        "ffmpeg", "-hide_banner", "-i", str(path),
-        "-af", "volumedetect",
-        "-f", "null", "-",
+        "ffmpeg",
+        "-hide_banner",
+        "-i",
+        str(path),
+        "-af",
+        "volumedetect",
+        "-f",
+        "null",
+        "-",
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
@@ -325,15 +343,17 @@ def resolve_narration_segments(spec: dict, shot_start: float, shot_end: float) -
         # overlap test
         if seg_end <= shot_start or seg_start >= shot_end:
             continue
-        out.append({
-            "id": seg.get("id"),
-            "speaker": seg.get("speaker", "narrator"),
-            "text": seg.get("text_canonical", ""),
-            "global_start_s": seg_start,
-            "global_end_s": seg_end,
-            "local_start_s": max(0.0, seg_start - shot_start),
-            "local_end_s": min(shot_end - shot_start, seg_end - shot_start),
-        })
+        out.append(
+            {
+                "id": seg.get("id"),
+                "speaker": seg.get("speaker", "narrator"),
+                "text": seg.get("text_canonical", ""),
+                "global_start_s": seg_start,
+                "global_end_s": seg_end,
+                "local_start_s": max(0.0, seg_start - shot_start),
+                "local_end_s": min(shot_end - shot_start, seg_end - shot_start),
+            }
+        )
     return out
 
 
@@ -381,26 +401,35 @@ def assert_voice_exclusivity_in_clip(audio_sources: list[dict], clip_dur: float)
                 a, b = voices[i], voices[j]
                 lo, hi = (a, b) if a["offset_s"] <= b["offset_s"] else (b, a)
                 same = _is_narrator(a.get("speaker")) == _is_narrator(b.get("speaker"))
-                collide = (hi["offset_s"] < end(lo) - 1e-6) if same else \
-                          (hi["offset_s"] < end(lo) + VOICE_BUFFER_FLOOR_S - 1e-6)
+                collide = (
+                    (hi["offset_s"] < end(lo) - 1e-6)
+                    if same
+                    else (hi["offset_s"] < end(lo) + VOICE_BUFFER_FLOOR_S - 1e-6)
+                )
                 if not collide:
                     continue
                 if same:
                     raise SystemExit(
                         f"VOICE-EXCLUSIVITY ABORT: same-speaker overlap {a['label']} vs {b['label']} "
-                        f"— assembly bug, cannot resolve by ±{VOICE_SHIFT_MAX_S}s shift.")
+                        f"— assembly bug, cannot resolve by ±{VOICE_SHIFT_MAX_S}s shift."
+                    )
                 mover = a if prio(a) >= prio(b) else b
                 anchor = b if mover is a else a
                 after = end(anchor) + VOICE_BUFFER_FLOOR_S
                 before = anchor["offset_s"] - VOICE_BUFFER_FLOOR_S - mover.get("dur_s", 0.0)
-                cands = [c for c in (after, before)
-                         if abs(c - mover["offset_s"]) <= VOICE_SHIFT_MAX_S + 1e-6
-                         and c >= -1e-6 and c + mover.get("dur_s", 0.0) <= clip_dur + 1e-6]
+                cands = [
+                    c
+                    for c in (after, before)
+                    if abs(c - mover["offset_s"]) <= VOICE_SHIFT_MAX_S + 1e-6
+                    and c >= -1e-6
+                    and c + mover.get("dur_s", 0.0) <= clip_dur + 1e-6
+                ]
                 if not cands:
                     raise SystemExit(
                         f"VOICE-EXCLUSIVITY ABORT: cannot deconflict {mover['label']} vs "
                         f"{anchor['label']} within ±{VOICE_SHIFT_MAX_S}s inside the clip "
-                        f"[0,{clip_dur:.2f}s]. Needs an architect/SPEC decision (NOT a silent >1s shift).")
+                        f"[0,{clip_dur:.2f}s]. Needs an architect/SPEC decision (NOT a silent >1s shift)."
+                    )
                 mover["offset_s"] = round(min(cands, key=lambda c: abs(c - mover["offset_s"])), 3)
                 changed = True
                 break
@@ -515,9 +544,7 @@ def build_audio_mix_filter(
         in_label = f"{idx + 1}:a"  # input #(idx+1) since input 0 is video
         out_label = f"a{idx}"
         # adelay applies offset, volume scales amplitude, asetpts maintains timing
-        filter_parts.append(
-            f"[{in_label}]adelay={offset_ms}|{offset_ms},volume={vol}[{out_label}]"
-        )
+        filter_parts.append(f"[{in_label}]adelay={offset_ms}|{offset_ms},volume={vol}[{out_label}]")
         mix_labels.append(f"[{out_label}]")
 
     # amix N inputs, normalize=0 keeps absolute volumes. duration=longest + apad=whole_dur PADS
@@ -538,9 +565,7 @@ def build_audio_mix_filter(
         )
     # light fade-out to avoid end clicks
     fade_start = max(0.0, total_duration_s - 0.05)
-    filter_parts.append(
-        f"[apadded]afade=t=out:st={fade_start:.3f}:d=0.05[aout]"
-    )
+    filter_parts.append(f"[apadded]afade=t=out:st={fade_start:.3f}:d=0.05[aout]")
 
     return input_args, ";".join(filter_parts)
 
@@ -560,12 +585,29 @@ def compose_atomic_audio_video(
     if not audio_sources:
         # Silent track
         cmd = [
-            "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
-            "-i", str(visual_path),
-            "-f", "lavfi", "-t", f"{shot_duration_s}",
-            "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
-            "-map", "0:v", "-map", "1:a",
-            "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "warning",
+            "-i",
+            str(visual_path),
+            "-f",
+            "lavfi",
+            "-t",
+            f"{shot_duration_s}",
+            "-i",
+            "anullsrc=channel_layout=stereo:sample_rate=48000",
+            "-map",
+            "0:v",
+            "-map",
+            "1:a",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
             "-shortest",
             str(output_path),
         ]
@@ -575,14 +617,28 @@ def compose_atomic_audio_video(
     input_args, filter_complex = build_audio_mix_filter(audio_sources, shot_duration_s)
 
     cmd = [
-        "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
-        "-i", str(visual_path),
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "warning",
+        "-i",
+        str(visual_path),
         *input_args,
-        "-filter_complex", filter_complex,
-        "-map", "0:v", "-map", "[aout]",
-        "-c:v", "copy",
-        "-c:a", "aac", "-b:a", "192k",
-        "-ar", "48000",
+        "-filter_complex",
+        filter_complex,
+        "-map",
+        "0:v",
+        "-map",
+        "[aout]",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
+        "-ar",
+        "48000",
         str(output_path),
     ]
     run(cmd)
@@ -614,13 +670,31 @@ def overlay_avu(
     )
 
     cmd = [
-        "ffmpeg", "-y", "-hide_banner", "-loglevel", "warning",
-        "-i", str(base_clip),
-        "-i", str(avu_path),
-        "-filter_complex", fc,
-        "-map", "[vout]", "-map", "[aout]",
-        "-c:v", "libx264", "-preset", "fast", "-crf", "18",
-        "-c:a", "aac", "-b:a", "192k",
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "warning",
+        "-i",
+        str(base_clip),
+        "-i",
+        str(avu_path),
+        "-filter_complex",
+        fc,
+        "-map",
+        "[vout]",
+        "-map",
+        "[aout]",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "fast",
+        "-crf",
+        "18",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
         str(output_path),
     ]
     run(cmd)
@@ -644,15 +718,17 @@ def build_caption_sidecar(
     """
     captions = []
     for seg in narration_segments:
-        captions.append({
-            "id": seg["id"],
-            "speaker": seg["speaker"],
-            "text": seg["text"],
-            "local_start_s": round(seg["local_start_s"], 3),
-            "local_end_s": round(seg["local_end_s"], 3),
-            "global_start_s": round(seg["global_start_s"], 3),
-            "global_end_s": round(seg["global_end_s"], 3),
-        })
+        captions.append(
+            {
+                "id": seg["id"],
+                "speaker": seg["speaker"],
+                "text": seg["text"],
+                "local_start_s": round(seg["local_start_s"], 3),
+                "local_end_s": round(seg["local_end_s"], 3),
+                "global_start_s": round(seg["global_start_s"], 3),
+                "global_end_s": round(seg["global_end_s"], 3),
+            }
+        )
     return {
         "shot_id": shot_id,
         "duration_s": round(shot_end_s - shot_start_s, 3),
@@ -722,7 +798,7 @@ def _escape_drawtext(text: str) -> str:
         return ""
     out = text
     out = out.replace("\\", "\\\\")  # literal backslash
-    out = out.replace("'", r"\'")      # single quote
+    out = out.replace("'", r"\'")  # single quote
     out = out.replace(":", r"\:")
     out = out.replace("%", r"\%")
     # Normalize whitespace and strip
@@ -756,11 +832,13 @@ def _whisper_transcribe(audio_path: Path, language: str = "es", model_name: str 
             tok = (w.get("word") or "").strip()
             if not tok:
                 continue
-            words.append({
-                "word": tok,
-                "start": float(w.get("start", 0)),
-                "end": float(w.get("end", 0)),
-            })
+            words.append(
+                {
+                    "word": tok,
+                    "start": float(w.get("start", 0)),
+                    "end": float(w.get("end", 0)),
+                }
+            )
 
     return {"text": text, "segments": segments, "words": words}
 
@@ -819,8 +897,14 @@ def retime_canonical(canonical_text: str, whisper_words: list[dict]) -> list[dic
     span_start = float(whisper_words[0]["start"])
     span_end = float(whisper_words[-1]["end"])
     if nc == nw:
-        return [{"word": cwords[i], "start": float(whisper_words[i]["start"]),
-                 "end": float(whisper_words[i]["end"])} for i in range(nc)]
+        return [
+            {
+                "word": cwords[i],
+                "start": float(whisper_words[i]["start"]),
+                "end": float(whisper_words[i]["end"]),
+            }
+            for i in range(nc)
+        ]
     out = []
     for k in range(nc):
         i0 = min(nw - 1, int((k / nc) * nw))
@@ -839,7 +923,9 @@ def retime_canonical(canonical_text: str, whisper_words: list[dict]) -> list[dic
 
 
 def _chunk_text_over_word_timestamps(
-    spec_text: str, words: list[dict], speaker: str | None,
+    spec_text: str,
+    words: list[dict],
+    speaker: str | None,
     max_words: int = CAPTION_MAX_WORDS_PER_CUE,
 ) -> list[dict]:
     """Distribuye el wording del SPEC sobre los word-timestamps de Whisper como cues
@@ -856,7 +942,7 @@ def _chunk_text_over_word_timestamps(
     retimed = retime_canonical(spec_text, words)  # canonical tokens on Whisper timing (1:1 or proportional)
     cues: list[dict] = []
     for i in range(0, len(retimed), max_words):
-        group = retimed[i:i + max_words]
+        group = retimed[i : i + max_words]
         start_s = float(group[0]["start"])
         end_s = float(group[-1]["end"])
         if cues and start_s < cues[-1]["end_s"]:
@@ -864,15 +950,23 @@ def _chunk_text_over_word_timestamps(
         if end_s <= start_s:
             end_s = start_s + 0.4
         text = " ".join(w["word"] for w in group)
-        cues.append({
-            "start_s": start_s, "end_s": end_s, "text": text,
-            "class": _classify_caption(speaker, text), "speaker": speaker,
-        })
+        cues.append(
+            {
+                "start_s": start_s,
+                "end_s": end_s,
+                "text": text,
+                "class": _classify_caption(speaker, text),
+                "speaker": speaker,
+            }
+        )
     return cues
 
 
 def _chunk_text_over_span(
-    spec_text: str, start_s: float, end_s: float, speaker: str | None,
+    spec_text: str,
+    start_s: float,
+    end_s: float,
+    speaker: str | None,
     max_words: int = CAPTION_MAX_WORDS_PER_CUE,
 ) -> list[dict]:
     """Sin word-timestamps: distribuye el wording del SPEC uniformemente sobre [start_s, end_s]
@@ -884,13 +978,17 @@ def _chunk_text_over_span(
     n_chunks = (len(spec_words) + max_words - 1) // max_words
     cues: list[dict] = []
     for c in range(n_chunks):
-        chunk = spec_words[c * max_words:(c + 1) * max_words]
+        chunk = spec_words[c * max_words : (c + 1) * max_words]
         text = " ".join(chunk)
-        cues.append({
-            "start_s": start_s + total * (c / n_chunks),
-            "end_s": start_s + total * ((c + 1) / n_chunks),
-            "text": text, "class": _classify_caption(speaker, text), "speaker": speaker,
-        })
+        cues.append(
+            {
+                "start_s": start_s + total * (c / n_chunks),
+                "end_s": start_s + total * ((c + 1) / n_chunks),
+                "text": text,
+                "class": _classify_caption(speaker, text),
+                "speaker": speaker,
+            }
+        )
     return cues
 
 
@@ -933,27 +1031,31 @@ def _build_caption_cues_from_whisper(
         if len(seg_words) > 8:
             # Chunk into groups of ~6 words
             for i in range(0, len(seg_words), 6):
-                chunk = seg_words[i:i + 6]
+                chunk = seg_words[i : i + 6]
                 if not chunk:
                     continue
                 chunk_text = " ".join((w.get("word") or "").strip() for w in chunk).strip()
                 if not chunk_text:
                     continue
-                cues.append({
-                    "start_s": float(chunk[0].get("start", 0)),
-                    "end_s": float(chunk[-1].get("end", 0)),
-                    "text": chunk_text,
-                    "class": _classify_caption(speaker, chunk_text),
-                    "speaker": speaker,
-                })
+                cues.append(
+                    {
+                        "start_s": float(chunk[0].get("start", 0)),
+                        "end_s": float(chunk[-1].get("end", 0)),
+                        "text": chunk_text,
+                        "class": _classify_caption(speaker, chunk_text),
+                        "speaker": speaker,
+                    }
+                )
         else:
-            cues.append({
-                "start_s": float(seg.get("start", 0)),
-                "end_s": float(seg.get("end", 0)),
-                "text": seg_text,
-                "class": _classify_caption(speaker, seg_text),
-                "speaker": speaker,
-            })
+            cues.append(
+                {
+                    "start_s": float(seg.get("start", 0)),
+                    "end_s": float(seg.get("end", 0)),
+                    "text": seg_text,
+                    "class": _classify_caption(speaker, seg_text),
+                    "speaker": speaker,
+                }
+            )
     return cues
 
 
@@ -970,16 +1072,17 @@ def deconflict_cue_ys(cues: list[dict]) -> list[dict]:
     for c in cues:
         c.setdefault("y_pct", _base_y_for_class(c.get("class", "narration")))
     # narration/warning sort before dialog at the same start so the narrator keeps the canonical band
-    ordered = sorted(cues, key=lambda c: (float(c["start_s"]),
-                                          0 if c.get("class") != "name" else 1))
+    ordered = sorted(cues, key=lambda c: (float(c["start_s"]), 0 if c.get("class") != "name" else 1))
     for i, c in enumerate(ordered):
         moved = True
         while moved:
             moved = False
             for j in range(i):
                 p = ordered[j]
-                overlaps = float(c["start_s"]) < float(p["end_s"]) - 0.05 and \
-                    float(c["end_s"]) > float(p["start_s"]) + 0.05
+                overlaps = (
+                    float(c["start_s"]) < float(p["end_s"]) - 0.05
+                    and float(c["end_s"]) > float(p["start_s"]) + 0.05
+                )
                 same_band = abs(c["y_pct"] - p["y_pct"]) < (CAPTION_Y_STEP - 0.001)
                 if overlaps and same_band:
                     new_y = round(c["y_pct"] - CAPTION_Y_STEP, 4)
@@ -1030,7 +1133,9 @@ def _drawtext_filters_for_cue(
     if klass == "name" and spk and not text.upper().startswith(spk.upper() + ":"):
         text = f"{spk.upper()}: {text}"
     words_count = len(text.split())
-    fontsize = CAPTION_FONT_SIZE_LONG if words_count > CAPTION_LONG_WORD_THRESHOLD else CAPTION_FONT_SIZE_SHORT
+    fontsize = (
+        CAPTION_FONT_SIZE_LONG if words_count > CAPTION_LONG_WORD_THRESHOLD else CAPTION_FONT_SIZE_SHORT
+    )
 
     if klass == "name":
         color = CAPTION_COLOR_NAME
@@ -1058,7 +1163,7 @@ def _drawtext_filters_for_cue(
     n = len(lines)
     block_height = n * line_height
     # Top of block:
-    top_offset = - block_height / 2
+    top_offset = -block_height / 2
 
     # per-cue Y band (CAPTION-OVERLAP fix). Falls back to canonical Y62 if not de-conflicted.
     cue_y = cue.get("y_pct", CAPTION_Y_PERCENT)
@@ -1137,14 +1242,22 @@ def bake_captions_per_clip(
     # Detect whether clip has an audio stream
     probe_audio = subprocess.run(
         [
-            "ffprobe", "-v", "error",
-            "-select_streams", "a",
-            "-show_entries", "stream=codec_type",
-            "-of", "csv=p=0",
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "a",
+            "-show_entries",
+            "stream=codec_type",
+            "-of",
+            "csv=p=0",
             str(clip_path),
         ],
-        capture_output=True, text=True, check=False,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     has_audio_stream = bool(probe_audio.stdout.strip())
 
     # Extract audio for Whisper. If no audio stream, we still produce a passthrough.
@@ -1156,13 +1269,25 @@ def bake_captions_per_clip(
             try:
                 subprocess.run(
                     [
-                        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                        "-i", str(clip_path),
-                        "-vn", "-acodec", "libmp3lame", "-q:a", "2",
+                        "ffmpeg",
+                        "-y",
+                        "-hide_banner",
+                        "-loglevel",
+                        "error",
+                        "-i",
+                        str(clip_path),
+                        "-vn",
+                        "-acodec",
+                        "libmp3lame",
+                        "-q:a",
+                        "2",
                         str(audio_path),
                     ],
-                    check=True, capture_output=True, text=True,
-                 timeout=SUBPROCESS_TIMEOUT_S)
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=SUBPROCESS_TIMEOUT_S,
+                )
             except subprocess.CalledProcessError as e:
                 result["error"] = f"ffmpeg audio extract failed: {e.stderr}"
                 return result
@@ -1193,14 +1318,24 @@ def bake_captions_per_clip(
                 # Stream-copy to preserve quality + bit-exactness
                 subprocess.run(
                     [
-                        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                        "-i", str(clip_path),
-                        "-c", "copy",
-                        "-map", "0",
+                        "ffmpeg",
+                        "-y",
+                        "-hide_banner",
+                        "-loglevel",
+                        "error",
+                        "-i",
+                        str(clip_path),
+                        "-c",
+                        "copy",
+                        "-map",
+                        "0",
                         str(output_path),
                     ],
-                    check=True, capture_output=True, text=True,
-                 timeout=SUBPROCESS_TIMEOUT_S)
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=SUBPROCESS_TIMEOUT_S,
+                )
                 result["success"] = True
                 return result
             except subprocess.CalledProcessError as e:
@@ -1215,9 +1350,7 @@ def bake_captions_per_clip(
 
         # SPEC text override resolution
         spec_text = (
-            spec_shot.get("text_canonical")
-            or spec_shot.get("narration_canonical")
-            or spec_shot.get("text")
+            spec_shot.get("text_canonical") or spec_shot.get("narration_canonical") or spec_shot.get("text")
         )
         if isinstance(spec_text, dict):
             spec_text = spec_text.get("text") or None
@@ -1238,9 +1371,7 @@ def bake_captions_per_clip(
                     spec_text = None
         result["sidecar_rejected"] = sidecar_rejected
         result["spec_text_override_input"] = (
-            spec_shot.get("text_canonical")
-            or spec_shot.get("narration_canonical")
-            or spec_shot.get("text")
+            spec_shot.get("text_canonical") or spec_shot.get("narration_canonical") or spec_shot.get("text")
         )
 
         cues = _build_caption_cues_from_whisper(whisper_res, spec_text, speaker)
@@ -1252,11 +1383,25 @@ def bake_captions_per_clip(
             result["no_speech_detected"] = True
             try:
                 subprocess.run(
-                    ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                     "-i", str(clip_path), "-c", "copy", "-map", "0",
-                     str(output_path)],
-                    check=True, capture_output=True, text=True,
-                 timeout=SUBPROCESS_TIMEOUT_S)
+                    [
+                        "ffmpeg",
+                        "-y",
+                        "-hide_banner",
+                        "-loglevel",
+                        "error",
+                        "-i",
+                        str(clip_path),
+                        "-c",
+                        "copy",
+                        "-map",
+                        "0",
+                        str(output_path),
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=SUBPROCESS_TIMEOUT_S,
+                )
                 result["success"] = True
                 return result
             except Exception as e:
@@ -1265,10 +1410,23 @@ def bake_captions_per_clip(
 
         # Probe video dimensions
         probe_dims = subprocess.run(
-            ["ffprobe", "-v", "error", "-select_streams", "v",
-             "-show_entries", "stream=height,width", "-of", "csv=p=0", str(clip_path)],
-            capture_output=True, text=True, check=False,
-         timeout=SUBPROCESS_TIMEOUT_S)
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v",
+                "-show_entries",
+                "stream=height,width",
+                "-of",
+                "csv=p=0",
+                str(clip_path),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         video_height, video_width = 1920, 1080
         try:
             tok = probe_dims.stdout.strip().splitlines()[0].split(",")
@@ -1279,7 +1437,9 @@ def bake_captions_per_clip(
             pass
 
         # Resolve fonts
-        font_narration = style_overrides.get("font_narration") or _resolve_font(DEFAULT_NARRATION_FONT_CANDIDATES)
+        font_narration = style_overrides.get("font_narration") or _resolve_font(
+            DEFAULT_NARRATION_FONT_CANDIDATES
+        )
         font_mono = style_overrides.get("font_mono") or _resolve_font(DEFAULT_MONO_FONT_CANDIDATES)
 
         # CAPTION-OVERLAP fix: assign per-class Y bands + de-conflict same-Y temporal collisions
@@ -1296,15 +1456,29 @@ def bake_captions_per_clip(
 
         # Re-encode video w/ drawtext, copy audio
         cmd = [
-            "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-            "-i", str(clip_path),
-            "-vf", vf,
-            "-c:v", "libx264",
-            "-preset", "medium",
-            "-crf", "18",
-            "-pix_fmt", "yuv420p",
-            "-c:a", "copy",
-            "-map", "0:v:0", "-map", "0:a:0",
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            str(clip_path),
+            "-vf",
+            vf,
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-crf",
+            "18",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "copy",
+            "-map",
+            "0:v:0",
+            "-map",
+            "0:a:0",
             str(output_path),
         ]
         try:
@@ -1363,17 +1537,21 @@ def build_clip_atomic(
                 seg_dur = ffprobe_duration(tts_path)
             except Exception:
                 seg_dur = seg["local_end_s"] - seg["local_start_s"]
-            audio_sources.append({
-                "path": tts_path,
-                "offset_s": seg["local_start_s"],
-                "volume": MIX_NARRATION_DEFAULT,
-                "label": f"tts_{seg['id']}",
-                "is_voice": True,
-                "speaker": seg.get("speaker", "narrator"),
-                "dur_s": seg_dur,
-            })
+            audio_sources.append(
+                {
+                    "path": tts_path,
+                    "offset_s": seg["local_start_s"],
+                    "volume": MIX_NARRATION_DEFAULT,
+                    "label": f"tts_{seg['id']}",
+                    "is_voice": True,
+                    "speaker": seg.get("speaker", "narrator"),
+                    "dur_s": seg_dur,
+                }
+            )
             if not quiet:
-                print(f"  TTS:        +{seg['local_start_s']:.2f}s  {seg['id']}.mp3 @ {MIX_NARRATION_DEFAULT}")
+                print(
+                    f"  TTS:        +{seg['local_start_s']:.2f}s  {seg['id']}.mp3 @ {MIX_NARRATION_DEFAULT}"
+                )
         else:
             if not quiet:
                 print(f"  TTS MISSING: {seg['id']}.mp3 — skipping")
@@ -1387,12 +1565,15 @@ def build_clip_atomic(
     #   A clip-scoped SFX inside a voice window is ducked so the voice stays on top:
     #     -12 dB during a CHARACTER-DIALOG window (shares the L1 bus, no sidechain key),
     #     -6 dB during NARRATION (lighter — narrator also gets the L3 sidechain duck downstream).
-    has_dialog = any((s.get("speaker") or "narrator").lower() not in
-                     {"narrator", "narrador", "voz", "voz en off"} for s in narration_segments)
-    has_narration = any((s.get("speaker") or "narrator").lower() in
-                        {"narrator", "narrador", "voz", "voz en off"} for s in narration_segments)
-    voice_duck = (SFX_DUCK_UNDER_DIALOG if has_dialog
-                  else SFX_DUCK_UNDER_NARRATOR if has_narration else 1.0)
+    has_dialog = any(
+        (s.get("speaker") or "narrator").lower() not in {"narrator", "narrador", "voz", "voz en off"}
+        for s in narration_segments
+    )
+    has_narration = any(
+        (s.get("speaker") or "narrator").lower() in {"narrator", "narrador", "voz", "voz en off"}
+        for s in narration_segments
+    )
+    voice_duck = SFX_DUCK_UNDER_DIALOG if has_dialog else SFX_DUCK_UNDER_NARRATOR if has_narration else 1.0
     shot_sfx = resolve_sfx_events(sfx_events, shot_start, shot_end)
     for ev in shot_sfx:
         sfx_path_str = ev["path"]
@@ -1404,16 +1585,20 @@ def build_clip_atomic(
                 vol = sfx_norm_gain(sfx_asset, sfx_class, rel_scale=rel) * voice_duck
             else:
                 vol = float(ev.get("volume", MIX_SFX_EVENT_DEFAULT)) * voice_duck
-            audio_sources.append({
-                "path": sfx_asset,
-                "offset_s": ev["local_start_s"],
-                "volume": vol,
-                "label": f"sfx_{Path(sfx_path_str).stem}",
-            })
+            audio_sources.append(
+                {
+                    "path": sfx_asset,
+                    "offset_s": ev["local_start_s"],
+                    "volume": vol,
+                    "label": f"sfx_{Path(sfx_path_str).stem}",
+                }
+            )
             if not quiet:
-                print(f"  SFX:        +{ev['local_start_s']:.2f}s  {Path(sfx_path_str).name} "
-                      f"@ {vol:.3f}{f' [class={sfx_class}]' if sfx_class else ''}"
-                      f"{f' duck×{voice_duck}' if voice_duck != 1.0 else ''}")
+                print(
+                    f"  SFX:        +{ev['local_start_s']:.2f}s  {Path(sfx_path_str).name} "
+                    f"@ {vol:.3f}{f' [class={sfx_class}]' if sfx_class else ''}"
+                    f"{f' duck×{voice_duck}' if voice_duck != 1.0 else ''}"
+                )
         else:
             if not quiet:
                 print(f"  SFX MISSING: {sfx_path_str} — skipping")
@@ -1432,9 +1617,13 @@ def build_clip_atomic(
     if avu_type:
         avu_asset = find_avu_asset(base_root, avu_type)
         if not avu_asset:
-            print(f"  WARN: AVU type '{avu_type}' not found in avu-library — skipping overlay", file=sys.stderr)
+            print(
+                f"  WARN: AVU type '{avu_type}' not found in avu-library — skipping overlay", file=sys.stderr
+            )
         else:
-            inject_at = avu_inject_s if avu_inject_s is not None else max(0.0, shot_dur - ffprobe_duration(avu_asset))
+            inject_at = (
+                avu_inject_s if avu_inject_s is not None else max(0.0, shot_dur - ffprobe_duration(avu_asset))
+            )
             tmp_path = output_dir / f"{shot_id}_atomic_pre_avu.mp4"
             atomic_path.rename(tmp_path)
             overlay_avu(tmp_path, avu_asset, inject_at, atomic_path)
@@ -1468,7 +1657,9 @@ def build_clip_atomic(
 
     if not quiet:
         status_glyph = "✓" if manifest["audit_status"] == "PASS" else "⚠"
-        print(f"  {status_glyph} Atomic:   {_rel(atomic_path, base_root)}  ({actual_dur:.2f}s, LUFS={manifest['audio']['lufs_integrated']})")
+        print(
+            f"  {status_glyph} Atomic:   {_rel(atomic_path, base_root)}  ({actual_dur:.2f}s, LUFS={manifest['audio']['lufs_integrated']})"
+        )
 
     return manifest
 
@@ -1484,6 +1675,7 @@ def load_sfx_events_from_pythonfile(py_path: Path) -> list[dict]:
     if not py_path.exists():
         return []
     import importlib.util
+
     spec = importlib.util.spec_from_file_location("sfx_events_module", py_path)
     if not spec or not spec.loader:
         return []
@@ -1629,20 +1821,25 @@ def _run_bake_captions_cli(args) -> int:
     # Side-output JSON report alongside the mp4
     report_path = output_path.with_suffix(output_path.suffix + ".bake-report.json")
     with open(report_path, "w") as f:
-        json.dump({
-            "input_clip": str(input_clip),
-            "output_path": str(output_path),
-            "shot_id": spec_shot.get("id"),
-            "spec_text_override": spec_shot.get("text_canonical"),
-            "whisper_text": res["whisper_text"],
-            "no_speech_detected": res["no_speech_detected"],
-            "spec_text_used": res["spec_text_used"],
-            "sidecar_rejected": res.get("sidecar_rejected", False),
-            "captions_burned": res["captions_burned"],
-            "cues": res["cues"],
-            "error": res["error"],
-            "success": res["success"],
-        }, f, indent=2, ensure_ascii=False)
+        json.dump(
+            {
+                "input_clip": str(input_clip),
+                "output_path": str(output_path),
+                "shot_id": spec_shot.get("id"),
+                "spec_text_override": spec_shot.get("text_canonical"),
+                "whisper_text": res["whisper_text"],
+                "no_speech_detected": res["no_speech_detected"],
+                "spec_text_used": res["spec_text_used"],
+                "sidecar_rejected": res.get("sidecar_rejected", False),
+                "captions_burned": res["captions_burned"],
+                "cues": res["cues"],
+                "error": res["error"],
+                "success": res["success"],
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
     if not args.quiet:
         print(f"  Report:             {report_path}")
 
@@ -1658,47 +1855,88 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
-    parser.add_argument("--spec", type=Path, default=None,
-                        help="Path to creative-specs/<id>.yaml (required for atomic-build mode; "
-                             "optional for --bake-captions when --input-clip is given).")
-    parser.add_argument("--shot-id", type=str,
-                        help="Single shot to build (e.g. shot_01_hook). Mutually exclusive with --batch.")
-    parser.add_argument("--batch", action="store_true",
-                        help="Build all shots in SPEC.")
-    parser.add_argument("--output-dir", type=Path, required=True,
-                        help="Output directory for atomic clips (e.g. assets/clips-atomic/)")
-    parser.add_argument("--project-root", type=Path, default=None,
-                        help="Project root (defaults to parent of output-dir).")
-    parser.add_argument("--base-root", type=Path, default=None,
-                        help="Base repo root (used to resolve library/ + base-relative paths).")
-    parser.add_argument("--sfx-events", type=Path, default=None,
-                        help="SFX events source: .py file (extract SFX_EVENTS list) OR .json file. "
-                             "If omitted, will try <project_root>/scripts/cp5-audio-master.py.")
-    parser.add_argument("--avu", type=str, default=None,
-                        choices=["countdown", "decision-freeze", "hook-transition", "outro-card", "outro"],
-                        help="Optional AVU overlay type (single-shot mode only).")
-    parser.add_argument("--avu-inject-s", type=float, default=None,
-                        help="Override AVU inject offset (local time). Defaults to end-aligned.")
-    parser.add_argument("--quiet", action="store_true",
-                        help="Suppress per-shot progress output.")
-    parser.add_argument("--bake-captions", action="store_true",
-                        help="Mode: bake captions per clip from Whisper-derived timing + SPEC text override. "
-                             "Takes --shot-id (or --input-clip standalone) and writes burned mp4 to --output. "
-                             "When set, the atomic build pipeline is bypassed.")
-    parser.add_argument("--input-clip", type=Path, default=None,
-                        help="Input mp4 for --bake-captions standalone mode (no SPEC lookup). "
-                             "If omitted, the script resolves the clip via SPEC + --shot-id.")
-    parser.add_argument("--output", type=Path, default=None,
-                        help="Output mp4 path for --bake-captions mode. Defaults to "
-                             "<output-dir>/<shot_id>_captions_burned.mp4.")
-    parser.add_argument("--sidecar", type=Path, default=None,
-                        help="Optional sidecar JSON (used ONLY for explicit text_canonical override "
-                             "in standalone --bake-captions runs). Note: per adversarial spec, sidecar "
-                             "is IGNORED if SPEC also provides text_canonical for this shot.")
-    parser.add_argument("--bake-language", type=str, default="es",
-                        help="Whisper language code (default: es).")
-    parser.add_argument("--bake-model", type=str, default="base",
-                        help="Whisper model name (default: base).")
+    parser.add_argument(
+        "--spec",
+        type=Path,
+        default=None,
+        help="Path to creative-specs/<id>.yaml (required for atomic-build mode; "
+        "optional for --bake-captions when --input-clip is given).",
+    )
+    parser.add_argument(
+        "--shot-id",
+        type=str,
+        help="Single shot to build (e.g. shot_01_hook). Mutually exclusive with --batch.",
+    )
+    parser.add_argument("--batch", action="store_true", help="Build all shots in SPEC.")
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Output directory for atomic clips (e.g. assets/clips-atomic/)",
+    )
+    parser.add_argument(
+        "--project-root", type=Path, default=None, help="Project root (defaults to parent of output-dir)."
+    )
+    parser.add_argument(
+        "--base-root",
+        type=Path,
+        default=None,
+        help="Base repo root (used to resolve library/ + base-relative paths).",
+    )
+    parser.add_argument(
+        "--sfx-events",
+        type=Path,
+        default=None,
+        help="SFX events source: .py file (extract SFX_EVENTS list) OR .json file. "
+        "If omitted, will try <project_root>/scripts/cp5-audio-master.py.",
+    )
+    parser.add_argument(
+        "--avu",
+        type=str,
+        default=None,
+        choices=["countdown", "decision-freeze", "hook-transition", "outro-card", "outro"],
+        help="Optional AVU overlay type (single-shot mode only).",
+    )
+    parser.add_argument(
+        "--avu-inject-s",
+        type=float,
+        default=None,
+        help="Override AVU inject offset (local time). Defaults to end-aligned.",
+    )
+    parser.add_argument("--quiet", action="store_true", help="Suppress per-shot progress output.")
+    parser.add_argument(
+        "--bake-captions",
+        action="store_true",
+        help="Mode: bake captions per clip from Whisper-derived timing + SPEC text override. "
+        "Takes --shot-id (or --input-clip standalone) and writes burned mp4 to --output. "
+        "When set, the atomic build pipeline is bypassed.",
+    )
+    parser.add_argument(
+        "--input-clip",
+        type=Path,
+        default=None,
+        help="Input mp4 for --bake-captions standalone mode (no SPEC lookup). "
+        "If omitted, the script resolves the clip via SPEC + --shot-id.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Output mp4 path for --bake-captions mode. Defaults to "
+        "<output-dir>/<shot_id>_captions_burned.mp4.",
+    )
+    parser.add_argument(
+        "--sidecar",
+        type=Path,
+        default=None,
+        help="Optional sidecar JSON (used ONLY for explicit text_canonical override "
+        "in standalone --bake-captions runs). Note: per adversarial spec, sidecar "
+        "is IGNORED if SPEC also provides text_canonical for this shot.",
+    )
+    parser.add_argument(
+        "--bake-language", type=str, default="es", help="Whisper language code (default: es)."
+    )
+    parser.add_argument("--bake-model", type=str, default="base", help="Whisper model name (default: base).")
     args = parser.parse_args()
 
     # Caption-bake mode short-circuit
@@ -1790,15 +2028,20 @@ def main():
     # Batch summary manifest
     batch_path = output_dir / "_batch_manifest.json"
     with open(batch_path, "w") as f:
-        json.dump({
-            "spec": str(args.spec),
-            "total_shots": len(shots),
-            "built": len(summaries),
-            "passed": sum(1 for s in summaries if s["audit_status"] == "PASS"),
-            "review": sum(1 for s in summaries if s["audit_status"] != "PASS"),
-            "failed": failed,
-            "shots": summaries,
-        }, f, indent=2, ensure_ascii=False)
+        json.dump(
+            {
+                "spec": str(args.spec),
+                "total_shots": len(shots),
+                "built": len(summaries),
+                "passed": sum(1 for s in summaries if s["audit_status"] == "PASS"),
+                "review": sum(1 for s in summaries if s["audit_status"] != "PASS"),
+                "failed": failed,
+                "shots": summaries,
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
 
     print("\n══════════════════════════════════════════════════════════════")
     print(f"  Batch summary: {len(summaries)}/{len(shots)} built")

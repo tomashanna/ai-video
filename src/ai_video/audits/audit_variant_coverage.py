@@ -35,6 +35,7 @@ cuenta variantes en disco.
 Exit: 0 PASS / not_applicable · 1 FAIL · 2 can't-measure (Bug #9 / SPEC ausente).
 Authority: HARD-RULES.md HR#5 + ai-video-production/IMAGE-VARIETY.md. HR#26 companion test.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -49,8 +50,8 @@ except ImportError:
     print("ERROR: pyyaml not installed", file=sys.stderr)
     sys.exit(2)
 
-ONSCREEN_THRESHOLD_S = 4.0   # HR#5 / IMAGE-VARIETY.md: >4s on-screen → ≥2 variantes
-MIN_VARIANTS = 2             # variantes de TIPO de plano distinto
+ONSCREEN_THRESHOLD_S = 4.0  # HR#5 / IMAGE-VARIETY.md: >4s on-screen → ≥2 variantes
+MIN_VARIANTS = 2  # variantes de TIPO de plano distinto
 
 
 def evaluate_variant_coverage(shots, *, threshold_s=ONSCREEN_THRESHOLD_S, min_variants=MIN_VARIANTS):
@@ -74,27 +75,44 @@ def evaluate_variant_coverage(shots, *, threshold_s=ONSCREEN_THRESHOLD_S, min_va
         except (TypeError, ValueError):
             n = 0
         if onscreen <= threshold_s:
-            reasons.append({
-                "shot_id": sid, "onscreen_s": round(onscreen, 2), "n_variants": n,
-                "status": "ok", "rule_applies": False,
-                "detail": f"on-screen {onscreen:.1f}s ≤ {threshold_s}s → variantes no requeridas",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "onscreen_s": round(onscreen, 2),
+                    "n_variants": n,
+                    "status": "ok",
+                    "rule_applies": False,
+                    "detail": f"on-screen {onscreen:.1f}s ≤ {threshold_s}s → variantes no requeridas",
+                }
+            )
             continue
         if n < min_variants:
             ok = False
-            reasons.append({
-                "shot_id": sid, "onscreen_s": round(onscreen, 2), "n_variants": n,
-                "status": "fail", "rule_applies": True,
-                "detail": (f"shot '{sid}' on-screen {onscreen:.1f}s > {threshold_s}s con SOLO {n} "
-                           f"variante(s) — HR#5 exige ≥{min_variants} TIPOS de plano distintos "
-                           f"(riesgo PowerPoint-narrado: 1 PNG reusado en escena larga)"),
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "onscreen_s": round(onscreen, 2),
+                    "n_variants": n,
+                    "status": "fail",
+                    "rule_applies": True,
+                    "detail": (
+                        f"shot '{sid}' on-screen {onscreen:.1f}s > {threshold_s}s con SOLO {n} "
+                        f"variante(s) — HR#5 exige ≥{min_variants} TIPOS de plano distintos "
+                        f"(riesgo PowerPoint-narrado: 1 PNG reusado en escena larga)"
+                    ),
+                }
+            )
         else:
-            reasons.append({
-                "shot_id": sid, "onscreen_s": round(onscreen, 2), "n_variants": n,
-                "status": "ok", "rule_applies": True,
-                "detail": f"on-screen {onscreen:.1f}s > {threshold_s}s con {n} variantes ✓",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "onscreen_s": round(onscreen, 2),
+                    "n_variants": n,
+                    "status": "ok",
+                    "rule_applies": True,
+                    "detail": f"on-screen {onscreen:.1f}s > {threshold_s}s con {n} variantes ✓",
+                }
+            )
     return ok, reasons
 
 
@@ -146,11 +164,15 @@ def count_variants(shot, assets_dir):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True)
     parser.add_argument("--spec", required=True)
-    parser.add_argument("--assets-dir", default=None,
-                        help="dir con clips/imágenes (-a/-b/-c). Default: <spec_dir>/../<project>/assets/clips si existe.")
+    parser.add_argument(
+        "--assets-dir",
+        default=None,
+        help="dir con clips/imágenes (-a/-b/-c). Default: <spec_dir>/../<project>/assets/clips si existe.",
+    )
     parser.add_argument("--threshold-s", type=float, default=ONSCREEN_THRESHOLD_S)
     parser.add_argument("--min-variants", type=int, default=MIN_VARIANTS)
     parser.add_argument("--dry-run", action="store_true")
@@ -166,22 +188,33 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_clips = bool(caps.get("has_ai_generated_clips", False))
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_clips}\n"
-              f"branch: {'variant_coverage_check' if has_clips else 'not_applicable'}\n"
-              f"threshold_s: {args.threshold_s}, min_variants: {args.min_variants}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_clips}\n"
+            f"branch: {'variant_coverage_check' if has_clips else 'not_applicable'}\n"
+            f"threshold_s: {args.threshold_s}, min_variants: {args.min_variants}"
+        )
         return 0
 
     if not has_clips:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_ai_generated_clips=false → variant coverage check skipped (no AI clips to vary)",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": "has_ai_generated_clips=false → variant coverage check skipped (no AI clips to vary)",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     assets_dir = args.assets_dir
@@ -196,21 +229,27 @@ def main():
     for s in shot_list:
         if not isinstance(s, dict):
             continue
-        shots.append({
-            "shot_id": s.get("shot_id", "?"),
-            "onscreen_s": shot_onscreen_seconds(s),
-            "n_variants": count_variants(s, assets_dir),
-        })
+        shots.append(
+            {
+                "shot_id": s.get("shot_id", "?"),
+                "onscreen_s": shot_onscreen_seconds(s),
+                "n_variants": count_variants(s, assets_dir),
+            }
+        )
 
     ok, reasons = evaluate_variant_coverage(
-        shots, threshold_s=args.threshold_s, min_variants=args.min_variants)
+        shots, threshold_s=args.threshold_s, min_variants=args.min_variants
+    )
 
     fails = [r for r in reasons if r["status"] == "fail"]
     report = {
-        "format": args.format, "spec": str(spec_path),
+        "format": args.format,
+        "spec": str(spec_path),
         "assets_dir": assets_dir,
-        "threshold_s": args.threshold_s, "min_variants": args.min_variants,
-        "overall_status": "pass" if ok else "fail", "overall_pass": ok,
+        "threshold_s": args.threshold_s,
+        "min_variants": args.min_variants,
+        "overall_status": "pass" if ok else "fail",
+        "overall_pass": ok,
         "shots_checked": len(shots),
         "rule_applied_to": sum(1 for r in reasons if r["rule_applies"]),
         "fail_shots": fails,

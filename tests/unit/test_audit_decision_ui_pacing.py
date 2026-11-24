@@ -15,6 +15,7 @@ gate) + casos sanos + report-only:
 
 Carga el módulo con guion en el nombre vía importlib. Corre: python3 test_audit-decision-ui-pacing.py
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -27,15 +28,19 @@ from pathlib import Path
 
 _HERE = Path(__file__).parent
 _spec = importlib.util.spec_from_file_location(
-    "audit_decision_ui_pacing", Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_decision_ui_pacing.py")
+    "audit_decision_ui_pacing",
+    Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_decision_ui_pacing.py",
+)
 mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(mod)
 
 
 # ── Bandas sintéticas ───────────────────────────────────────────────────────────────────────
 
-def _bands(*, cd_n=8, cd_p25=0.85, cd_p75=1.05, pb_n=14, pb_p25=0.33, pb_p75=2.1,
-           dq_n=23, dq_p25=140.0, dq_p75=160.0):
+
+def _bands(
+    *, cd_n=8, cd_p25=0.85, cd_p75=1.05, pb_n=14, pb_p25=0.33, pb_p75=2.1, dq_n=23, dq_p25=140.0, dq_p75=160.0
+):
     """aggregate dict sintético. cd_n controla si countdown_digit es banda fuerte (≥4) o débil."""
     return {
         "schema_version": "v1",
@@ -52,8 +57,17 @@ def _bands(*, cd_n=8, cd_p25=0.85, cd_p75=1.05, pb_n=14, pb_p25=0.33, pb_p75=2.1
     }
 
 
-def _decision_shot(shot_id="shot_06", *, cd_dur=1.0, pause_beat=0.9, clock_consistent=True,
-                   wpm_role="decision_question", wpm=150.0, freeze=True, loading_s=3.5):
+def _decision_shot(
+    shot_id="shot_06",
+    *,
+    cd_dur=1.0,
+    pause_beat=0.9,
+    clock_consistent=True,
+    wpm_role="decision_question",
+    wpm=150.0,
+    freeze=True,
+    loading_s=3.5,
+):
     """Estructura pura tal como la arma extract_decision_shots()."""
     return {
         "shot_id": shot_id,
@@ -154,30 +168,49 @@ class TestFreezeAndLoadingReportOnly(unittest.TestCase):
 
 # ── Extracción desde SPEC dict ────────────────────────────────────────────────────────────────
 
-def _spec_dict(*, countdown_span=(1.0, 4.0), countdown_text="3-2-1", dur=4.8,
-               narration="El riel se ve firme. Ahora decides: pisas el riel o el cemento.",
-               narration_end_abs=30.3):
+
+def _spec_dict(
+    *,
+    countdown_span=(1.0, 4.0),
+    countdown_text="3-2-1",
+    dur=4.8,
+    narration="El riel se ve firme. Ahora decides: pisas el riel o el cemento.",
+    narration_end_abs=30.3,
+):
     """SPEC mínimo con 1 decision shot (shot_06) + su narración en narration_script."""
     return {
         "video_capabilities": {"format_type": "interactive_choice", "has_layer_4_ui": True},
         "shot_list": [
-            {"shot_id": "shot_06", "section_id": "decision_1", "duration_intent_s": dur,
-             "pov_traversal": "static_with_micro_bob",
-             "visual_style_lut": "amber_emergency_tunnel_v1_freeze_filter",
-             "avu_overlay_clip": "decision-freeze-with-tick-3-2-1.mp4",
-             "narration_in_this_shot": narration,
-             "ui_active": [
-                 {"element_id": "countdown_d1",
-                  "timestamp_visible_s": list(countdown_span), "text": countdown_text,
-                  "font": "film_leader_academy"},
-                 {"element_id": "loading_bar_d1",
-                  "timestamp_visible_s": [1.0, 4.5], "font": "loading_canonical"},
-             ]},
+            {
+                "shot_id": "shot_06",
+                "section_id": "decision_1",
+                "duration_intent_s": dur,
+                "pov_traversal": "static_with_micro_bob",
+                "visual_style_lut": "amber_emergency_tunnel_v1_freeze_filter",
+                "avu_overlay_clip": "decision-freeze-with-tick-3-2-1.mp4",
+                "narration_in_this_shot": narration,
+                "ui_active": [
+                    {
+                        "element_id": "countdown_d1",
+                        "timestamp_visible_s": list(countdown_span),
+                        "text": countdown_text,
+                        "font": "film_leader_academy",
+                    },
+                    {
+                        "element_id": "loading_bar_d1",
+                        "timestamp_visible_s": [1.0, 4.5],
+                        "font": "loading_canonical",
+                    },
+                ],
+            },
         ],
         "narration_script": [
-            {"segment_id": "narrator_d1_question", "speaker": "narrator",
-             "shot_id_anchor": "shot_06",
-             "timestamp_intent_s": [25.5, narration_end_abs]},
+            {
+                "segment_id": "narrator_d1_question",
+                "speaker": "narrator",
+                "shot_id_anchor": "shot_06",
+                "timestamp_intent_s": [25.5, narration_end_abs],
+            },
         ],
     }
 
@@ -213,8 +246,14 @@ class TestCLI(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             sp = Path(d) / "spec.yaml"
             sp.write_text(_yaml_dump(spec_obj))
-            args = [sys.executable, str(Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_decision_ui_pacing.py"),
-                    "--format", "horror-choice", "--spec", str(sp)]
+            args = [
+                sys.executable,
+                str(Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_decision_ui_pacing.py"),
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(sp),
+            ]
             if bands_obj is not None:
                 bp = Path(d) / "bands.json"
                 bp.write_text(json.dumps(bands_obj))
@@ -229,8 +268,7 @@ class TestCLI(unittest.TestCase):
         self.assertIn("Bug #9", r.stderr)
 
     def test_not_applicable_sin_ui(self):
-        spec = {"video_capabilities": {"format_type": "tutorial", "has_layer_4_ui": False},
-                "shot_list": []}
+        spec = {"video_capabilities": {"format_type": "tutorial", "has_layer_4_ui": False}, "shot_list": []}
         r = self._run(spec, bands_obj=_bands())
         self.assertEqual(r.returncode, 0)
         self.assertIn("not_applicable", r.stdout)
@@ -257,16 +295,29 @@ class TestCLI(unittest.TestCase):
             sp = Path(d) / "spec.yaml"
             sp.write_text(_yaml_dump(_spec_dict()))
             r = subprocess.run(
-                [sys.executable, str(Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_decision_ui_pacing.py"),
-                 "--format", "horror-choice", "--spec", str(sp),
-                 "--bands-json", str(Path(d) / "nope.json")],
-                capture_output=True, text=True)
+                [
+                    sys.executable,
+                    str(
+                        Path(__file__).resolve().parents[2]
+                        / "src/ai_video/audits/audit_decision_ui_pacing.py"
+                    ),
+                    "--format",
+                    "horror-choice",
+                    "--spec",
+                    str(sp),
+                    "--bands-json",
+                    str(Path(d) / "nope.json"),
+                ],
+                capture_output=True,
+                text=True,
+            )
             self.assertEqual(r.returncode, 2)
 
 
 def _yaml_dump(obj):
     try:
         import yaml
+
         return yaml.safe_dump(obj)
     except ImportError:  # pragma: no cover
         return json.dumps(obj)  # yaml.safe_load lee JSON

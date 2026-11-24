@@ -140,10 +140,20 @@ TUTEO_MARKERS = [
 def run_ffprobe_duration(path: Path) -> float:
     """Return media file duration in seconds via ffprobe."""
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            str(path),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     try:
         return float(result.stdout.strip())
     except ValueError:
@@ -154,16 +164,17 @@ def run_ffprobe_streams(path: Path) -> dict:
     """Return parsed ffprobe streams JSON."""
     result = subprocess.run(
         ["ffprobe", "-v", "error", "-show_streams", "-of", "json", str(path)],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
         return {"streams": []}
 
 
-def add_finding(findings: list, check: str, severity: str, issue: str,
-                fix_hint: str = "", **extra) -> None:
+def add_finding(findings: list, check: str, severity: str, issue: str, fix_hint: str = "", **extra) -> None:
     """Append a structured finding."""
     f = {
         "check": check,
@@ -201,7 +212,9 @@ def find_shot_in_spec(spec: dict, shot_id: str) -> dict:
     prefix_match = None
     for shot in shots:
         sid = shot.get("id", "")
-        if sid.startswith(shot_id) or shot_id.startswith(sid.split("_")[0] + "_" + sid.split("_")[1] if "_" in sid else sid):
+        if sid.startswith(shot_id) or shot_id.startswith(
+            sid.split("_")[0] + "_" + sid.split("_")[1] if "_" in sid else sid
+        ):
             prefix_match = shot
             break
     if prefix_match:
@@ -285,17 +298,29 @@ def extract_three_frames(clip_path: Path, tmpdir: Path) -> list:
 
     timestamps = [
         ("start", 0.2),
-        ("mid",   duration / 2.0),
-        ("end",   max(0.2, duration - 0.2)),
+        ("mid", duration / 2.0),
+        ("end", max(0.2, duration - 0.2)),
     ]
     extracted = []
     for label, t in timestamps:
         out = tmpdir / f"frame_{label}_{t:06.2f}.png"
         subprocess.run(
-            ["ffmpeg", "-y", "-ss", f"{t:.2f}", "-i", str(clip_path),
-             "-frames:v", "1", "-q:v", "2", str(out)],
-            capture_output=True
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            [
+                "ffmpeg",
+                "-y",
+                "-ss",
+                f"{t:.2f}",
+                "-i",
+                str(clip_path),
+                "-frames:v",
+                "1",
+                "-q:v",
+                "2",
+                str(out),
+            ],
+            capture_output=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if out.exists() and out.stat().st_size > 1000:
             extracted.append((label, t, out))
     return extracted
@@ -309,13 +334,15 @@ def gemini_vision_audit_frame(frame_path: Path, prompt: str, client) -> dict:
     try:
         response = client.models.generate_content(
             model="gemini-3.1-flash-lite",
-            contents=[{
-                "role": "user",
-                "parts": [
-                    {"text": prompt},
-                    {"inline_data": {"mime_type": "image/png", "data": image_bytes}}
-                ]
-            }]
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [
+                        {"text": prompt},
+                        {"inline_data": {"mime_type": "image/png", "data": image_bytes}},
+                    ],
+                }
+            ],
         )
     except Exception as e:
         return {"_error": str(e)}
@@ -330,32 +357,45 @@ def gemini_vision_audit_frame(frame_path: Path, prompt: str, client) -> dict:
         return {"_error": "json_parse_failed", "_raw": text[:200]}
 
 
-def check_visual_canonical(clip_path: Path, shot: dict, shot_id: str,
-                           findings: list, enable_gemini: bool = False) -> dict:
+def check_visual_canonical(
+    clip_path: Path, shot: dict, shot_id: str, findings: list, enable_gemini: bool = False
+) -> dict:
     """Check 1: Visual canonical compliance via Gemini Vision (3 frames)."""
     results = {"enabled": enable_gemini, "frames_audited": 0, "raw": []}
 
     if not enable_gemini:
-        add_finding(findings, "visual_canonical", "INFO",
-                    "Gemini Vision not enabled (--enable-gemini) — visual canonical check skipped",
-                    fix_hint="Re-run with --enable-gemini for full canonical compliance verification (~$0.10/clip)")
+        add_finding(
+            findings,
+            "visual_canonical",
+            "INFO",
+            "Gemini Vision not enabled (--enable-gemini) — visual canonical check skipped",
+            fix_hint="Re-run with --enable-gemini for full canonical compliance verification (~$0.10/clip)",
+        )
         return results
 
     try:
         import google.genai as genai  # noqa: F401  (availability check)
     except ImportError:
-        add_finding(findings, "visual_canonical", "WARN",
-                    "google-genai not installed — visual canonical check skipped",
-                    fix_hint="uv sync --extra providers")
+        add_finding(
+            findings,
+            "visual_canonical",
+            "WARN",
+            "google-genai not installed — visual canonical check skipped",
+            fix_hint="uv sync --extra providers",
+        )
         return results
 
     from ai_video.config import get_settings
     from ai_video.providers.clients import gemini_client
 
     if get_settings().gemini_api_key is None:
-        add_finding(findings, "visual_canonical", "WARN",
-                    "GEMINI_API_KEY not set — visual canonical check skipped",
-                    fix_hint="Set GEMINI_API_KEY in .env (see .env.example)")
+        add_finding(
+            findings,
+            "visual_canonical",
+            "WARN",
+            "GEMINI_API_KEY not set — visual canonical check skipped",
+            fix_hint="Set GEMINI_API_KEY in .env (see .env.example)",
+        )
         return results
 
     client = gemini_client()
@@ -364,9 +404,11 @@ def check_visual_canonical(clip_path: Path, shot: dict, shot_id: str,
     sc = shot.get("scene_context", {}) or {}
     who_is_there = sc.get("who_is_there", []) or []
     who_does_what = sc.get("who_does_what", {}) or {}
-    who_does_what_str = "\n".join(
-        f"  - {k}: {v}" for k, v in who_does_what.items()
-    ) if isinstance(who_does_what, dict) else str(who_does_what)
+    who_does_what_str = (
+        "\n".join(f"  - {k}: {v}" for k, v in who_does_what.items())
+        if isinstance(who_does_what, dict)
+        else str(who_does_what)
+    )
     atmospheric_count = shot.get("atmospheric_motions_count", "unknown")
     atmospheric_list = shot.get("atmospheric_motions_list", []) or []
     atmospheric_list_str = "\n".join(f"  - {m}" for m in atmospheric_list) or "  (none declared)"
@@ -386,8 +428,12 @@ def check_visual_canonical(clip_path: Path, shot: dict, shot_id: str,
         tmpdir = Path(td)
         frames = extract_three_frames(clip_path, tmpdir)
         if not frames:
-            add_finding(findings, "visual_canonical", "FAIL",
-                        f"Could not extract frames from {clip_path.name} (clip ≤0.5s or ffmpeg failed)")
+            add_finding(
+                findings,
+                "visual_canonical",
+                "FAIL",
+                f"Could not extract frames from {clip_path.name} (clip ≤0.5s or ffmpeg failed)",
+            )
             return results
 
         for label, t, frame_path in frames:
@@ -396,39 +442,68 @@ def check_visual_canonical(clip_path: Path, shot: dict, shot_id: str,
             results["raw"].append({"label": label, "t": t, "audit": audit})
 
             if audit.get("_error"):
-                add_finding(findings, "visual_canonical", "WARN",
-                            f"Gemini Vision error at t={t:.2f}s ({label}): {audit['_error']}")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "WARN",
+                    f"Gemini Vision error at t={t:.2f}s ({label}): {audit['_error']}",
+                )
                 continue
 
             if not audit.get("characters_match_spec", True):
                 visible = audit.get("characters_visible", [])
-                add_finding(findings, "visual_canonical", "FAIL",
-                            f"Characters mismatch at t={t:.2f}s ({label}): SPEC expects {who_is_there}, visible {visible}",
-                            fix_hint="Regenerate clip with corrected character prompt OR verify anchor was used.")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "FAIL",
+                    f"Characters mismatch at t={t:.2f}s ({label}): SPEC expects {who_is_there}, visible {visible}",
+                    fix_hint="Regenerate clip with corrected character prompt OR verify anchor was used.",
+                )
             if not audit.get("atmospheric_meets_threshold_3", True):
                 est = audit.get("atmospheric_motions_visible_estimate", 0)
-                add_finding(findings, "visual_canonical", "WARN",
-                            f"Atmospheric motions estimate {est} <3 at t={t:.2f}s ({label}); SPEC declares {atmospheric_count}",
-                            fix_hint="Add ambient micro-motion (smoke, dust, flicker, creature) at this beat.")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "WARN",
+                    f"Atmospheric motions estimate {est} <3 at t={t:.2f}s ({label}); SPEC declares {atmospheric_count}",
+                    fix_hint="Add ambient micro-motion (smoke, dust, flicker, creature) at this beat.",
+                )
             drift = audit.get("character_drift_vs_anchor", "none")
             if drift == "major":
-                add_finding(findings, "visual_canonical", "FAIL",
-                            f"Character drift MAJOR vs anchor at t={t:.2f}s ({label})",
-                            fix_hint="Re-anchor with character reference image; regenerate animation clip.")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "FAIL",
+                    f"Character drift MAJOR vs anchor at t={t:.2f}s ({label})",
+                    fix_hint="Re-anchor with character reference image; regenerate animation clip.",
+                )
             elif drift == "minor":
-                add_finding(findings, "visual_canonical", "WARN",
-                            f"Character drift MINOR vs anchor at t={t:.2f}s ({label})")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "WARN",
+                    f"Character drift MINOR vs anchor at t={t:.2f}s ({label})",
+                )
             if audit.get("composition_broken", False):
-                add_finding(findings, "visual_canonical", "FAIL",
-                            f"Composition broken at t={t:.2f}s ({label})",
-                            fix_hint="Regenerate with explicit camera framing in prompt.")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "FAIL",
+                    f"Composition broken at t={t:.2f}s ({label})",
+                    fix_hint="Regenerate with explicit camera framing in prompt.",
+                )
             if audit.get("ui_overlaps_face", False):
-                add_finding(findings, "visual_canonical", "FAIL",
-                            f"UI overlaps character face at t={t:.2f}s ({label})",
-                            fix_hint="Reposition UI to safe zone (caption Y 62%, name_label Y 11.5%).")
+                add_finding(
+                    findings,
+                    "visual_canonical",
+                    "FAIL",
+                    f"UI overlaps character face at t={t:.2f}s ({label})",
+                    fix_hint="Reposition UI to safe zone (caption Y 62%, name_label Y 11.5%).",
+                )
             for issue in audit.get("issues", []) or []:
-                add_finding(findings, "visual_canonical", "WARN",
-                            f"Gemini Vision @ t={t:.2f}s ({label}): {issue}")
+                add_finding(
+                    findings, "visual_canonical", "WARN", f"Gemini Vision @ t={t:.2f}s ({label}): {issue}"
+                )
 
     return results
 
@@ -447,22 +522,26 @@ def load_captions(captions_path: Path) -> list:
     return []
 
 
-def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
-                          clip_duration: float, findings: list) -> dict:
+def check_captions_schema(
+    captions_path: Path, shot: dict, spec: dict, clip_duration: float, findings: list
+) -> dict:
     """Check 2: validate caption sidecar schema + voseo/tuteo + overlaps + chunk durations."""
     results = {"captions_count": 0, "register_expected": None}
 
     if not captions_path.exists():
-        add_finding(findings, "caption_schema", "FAIL",
-                    f"Captions sidecar not found: {captions_path}",
-                    fix_hint="Run build_clip_atomic.py to produce sidecar captions JSON.")
+        add_finding(
+            findings,
+            "caption_schema",
+            "FAIL",
+            f"Captions sidecar not found: {captions_path}",
+            fix_hint="Run build_clip_atomic.py to produce sidecar captions JSON.",
+        )
         return results
 
     try:
         captions = load_captions(captions_path)
     except (json.JSONDecodeError, OSError) as e:
-        add_finding(findings, "caption_schema", "FAIL",
-                    f"Captions sidecar unreadable: {e}")
+        add_finding(findings, "caption_schema", "FAIL", f"Captions sidecar unreadable: {e}")
         return results
 
     results["captions_count"] = len(captions)
@@ -471,12 +550,17 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
         # Acceptable if shot is silent_by_design or AVU bundled audio
         narration = shot.get("narration_in_this_shot", {}) or {}
         if narration.get("silence_by_design") is True:
-            add_finding(findings, "caption_schema", "INFO",
-                        "Captions empty but shot.silence_by_design=true — OK")
+            add_finding(
+                findings, "caption_schema", "INFO", "Captions empty but shot.silence_by_design=true — OK"
+            )
         else:
-            add_finding(findings, "caption_schema", "WARN",
-                        "Captions sidecar empty; shot does not declare silence_by_design",
-                        fix_hint="Verify SPEC narration_in_this_shot; add captions if narration present.")
+            add_finding(
+                findings,
+                "caption_schema",
+                "WARN",
+                "Captions sidecar empty; shot does not declare silence_by_design",
+                fix_hint="Verify SPEC narration_in_this_shot; add captions if narration present.",
+            )
         return results
 
     # --- Schema: required fields ---
@@ -485,13 +569,16 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
         for required in ["start_abs_s", "end_abs_s"]:
             v = c.get(required)
             if v is None:
-                add_finding(findings, "caption_schema", "FAIL",
-                            f"Caption {cap_id} missing or None field '{required}'",
-                            fix_hint="Re-run Whisper alignment; ensure all chunks have absolute timestamps.")
+                add_finding(
+                    findings,
+                    "caption_schema",
+                    "FAIL",
+                    f"Caption {cap_id} missing or None field '{required}'",
+                    fix_hint="Re-run Whisper alignment; ensure all chunks have absolute timestamps.",
+                )
         # Field text presence
         if not (c.get("whisper_text") or c.get("text")):
-            add_finding(findings, "caption_schema", "FAIL",
-                        f"Caption {cap_id} has no whisper_text/text")
+            add_finding(findings, "caption_schema", "FAIL", f"Caption {cap_id} has no whisper_text/text")
 
     # --- Chunk duration ≥1.5s (canonical) ---
     for c in captions:
@@ -505,14 +592,18 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
         except (TypeError, ValueError):
             continue
         if dur < MIN_CAPTION_CHUNK_S:
-            add_finding(findings, "caption_schema", "WARN",
-                        f"Caption {cap_id} chunk {dur:.2f}s < {MIN_CAPTION_CHUNK_S}s canonical min",
-                        fix_hint="Merge short adjacent chunks; canonical readability requires ≥1.5s.")
+            add_finding(
+                findings,
+                "caption_schema",
+                "WARN",
+                f"Caption {cap_id} chunk {dur:.2f}s < {MIN_CAPTION_CHUNK_S}s canonical min",
+                fix_hint="Merge short adjacent chunks; canonical readability requires ≥1.5s.",
+            )
 
     # --- Overlap detection same-Y position ---
     sorted_caps = sorted(
         [c for c in captions if c.get("start_abs_s") is not None and c.get("end_abs_s") is not None],
-        key=lambda c: float(c["start_abs_s"])
+        key=lambda c: float(c["start_abs_s"]),
     )
     for i in range(len(sorted_caps) - 1):
         a = sorted_caps[i]
@@ -526,10 +617,14 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
             a_y = a.get("y_position_pct", 62)
             b_y = b.get("y_position_pct", 62)
             if abs(float(a_y) - float(b_y)) < 2.0:
-                add_finding(findings, "caption_schema", "FAIL",
-                            f"Captions {a.get('id')} and {b.get('id')} overlap at Y≈{a_y}% "
-                            f"({a_end:.2f}s vs {b_start:.2f}s)",
-                            fix_hint="Stagger end/start timestamps OR move one caption to different Y.")
+                add_finding(
+                    findings,
+                    "caption_schema",
+                    "FAIL",
+                    f"Captions {a.get('id')} and {b.get('id')} overlap at Y≈{a_y}% "
+                    f"({a_end:.2f}s vs {b_start:.2f}s)",
+                    fix_hint="Stagger end/start timestamps OR move one caption to different Y.",
+                )
 
     # --- Voseo / tuteo consistency vs SPEC register ---
     register_expected = detect_register(spec, shot)
@@ -544,10 +639,14 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
                 continue
             for pattern in wrong_markers:
                 if re.search(pattern, text, re.IGNORECASE):
-                    add_finding(findings, "caption_schema", "FAIL",
-                                f"Caption {c.get('id')} contains {violator_label} marker "
-                                f"(SPEC declares {register_expected}): \"{text[:80]}\"",
-                                fix_hint=f"Rewrite to {register_expected} form; regenerate TTS + Whisper align.")
+                    add_finding(
+                        findings,
+                        "caption_schema",
+                        "FAIL",
+                        f"Caption {c.get('id')} contains {violator_label} marker "
+                        f"(SPEC declares {register_expected}): \"{text[:80]}\"",
+                        fix_hint=f"Rewrite to {register_expected} form; regenerate TTS + Whisper align.",
+                    )
                     break
     else:
         # Just check internal consistency: don't mix voseo + tuteo within same shot
@@ -562,9 +661,13 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
             if any(re.search(p, text, re.IGNORECASE) for p in TUTEO_MARKERS):
                 has_tuteo = True
         if has_voseo and has_tuteo:
-            add_finding(findings, "caption_schema", "WARN",
-                        "Captions mix voseo + tuteo within same clip (SPEC has no declared register)",
-                        fix_hint="Decide voseo or tuteo at SPEC level; rewrite + regen TTS.")
+            add_finding(
+                findings,
+                "caption_schema",
+                "WARN",
+                "Captions mix voseo + tuteo within same clip (SPEC has no declared register)",
+                fix_hint="Decide voseo or tuteo at SPEC level; rewrite + regen TTS.",
+            )
 
     # --- Y position canonical band ---
     for c in captions:
@@ -580,9 +683,13 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
         if cls == "name_label" or "name" in cls:
             continue
         if yv < CANONICAL_CAPTION_Y_LOW or yv > CANONICAL_CAPTION_Y_HIGH:
-            add_finding(findings, "caption_schema", "WARN",
-                        f"Caption {c.get('id')} Y={yv}% outside canonical band [{CANONICAL_CAPTION_Y_LOW}-{CANONICAL_CAPTION_Y_HIGH}]",
-                        fix_hint="Set Y=62 (canonical) unless name_label (11.5).")
+            add_finding(
+                findings,
+                "caption_schema",
+                "WARN",
+                f"Caption {c.get('id')} Y={yv}% outside canonical band [{CANONICAL_CAPTION_Y_LOW}-{CANONICAL_CAPTION_Y_HIGH}]",
+                fix_hint="Set Y=62 (canonical) unless name_label (11.5).",
+            )
 
     return results
 
@@ -593,11 +700,22 @@ def check_captions_schema(captions_path: Path, shot: dict, spec: dict,
 def measure_lufs(clip_path: Path) -> dict:
     """Run ffmpeg loudnorm pass-1 and parse LUFS + true_peak."""
     result = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-nostats", "-i", str(clip_path),
-         "-af", f"loudnorm=I={TARGET_LUFS}:TP={TRUE_PEAK_MAX}:LRA=11:print_format=json",
-         "-f", "null", "-"],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-nostats",
+            "-i",
+            str(clip_path),
+            "-af",
+            f"loudnorm=I={TARGET_LUFS}:TP={TRUE_PEAK_MAX}:LRA=11:print_format=json",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     output = result.stderr
     try:
         start = output.rindex("{")
@@ -615,10 +733,22 @@ def measure_lufs(clip_path: Path) -> dict:
 def measure_volumedetect(clip_path: Path) -> dict:
     """Run ffmpeg volumedetect, return mean_volume + max_volume."""
     result = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-nostats", "-i", str(clip_path),
-         "-af", "volumedetect", "-f", "null", "-"],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-nostats",
+            "-i",
+            str(clip_path),
+            "-af",
+            "volumedetect",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     output = result.stderr
     mean_match = re.search(r"mean_volume:\s*(-?[\d.]+)\s*dB", output)
     max_match = re.search(r"max_volume:\s*(-?[\d.]+)\s*dB", output)
@@ -636,9 +766,13 @@ def check_audio_waveform(clip_path: Path, has_speech: bool, findings: list) -> d
     results = {"has_audio_stream": has_audio_stream}
 
     if not has_audio_stream:
-        add_finding(findings, "audio_waveform", "WARN",
-                    "Clip has no audio stream",
-                    fix_hint="If silent_by_design, OK. Otherwise add narration/SFX track before assembly.")
+        add_finding(
+            findings,
+            "audio_waveform",
+            "WARN",
+            "Clip has no audio stream",
+            fix_hint="If silent_by_design, OK. Otherwise add narration/SFX track before assembly.",
+        )
         return results
 
     lufs_data = measure_lufs(clip_path)
@@ -648,16 +782,22 @@ def check_audio_waveform(clip_path: Path, has_speech: bool, findings: list) -> d
     # LUFS check
     lufs_i = lufs_data.get("input_i")
     if lufs_i is None:
-        add_finding(findings, "audio_waveform", "WARN",
-                    "Could not measure LUFS (ffmpeg loudnorm did not return JSON)")
+        add_finding(
+            findings, "audio_waveform", "WARN", "Could not measure LUFS (ffmpeg loudnorm did not return JSON)"
+        )
     else:
         delta = abs(lufs_i - TARGET_LUFS)
         if delta > LUFS_TOLERANCE:
             sev = "FAIL" if delta > 2.0 else "WARN"
-            add_finding(findings, "audio_waveform", sev,
-                        f"LUFS {lufs_i:.2f} dB outside canonical {TARGET_LUFS} ±{LUFS_TOLERANCE} dB (delta {delta:.2f})",
-                        fix_hint=f"Apply master-audio.sh OR ffmpeg loudnorm pass-2 to bring to {TARGET_LUFS} LUFS.",
-                        lufs_measured=round(lufs_i, 2), lufs_target=TARGET_LUFS)
+            add_finding(
+                findings,
+                "audio_waveform",
+                sev,
+                f"LUFS {lufs_i:.2f} dB outside canonical {TARGET_LUFS} ±{LUFS_TOLERANCE} dB (delta {delta:.2f})",
+                fix_hint=f"Apply master-audio.sh OR ffmpeg loudnorm pass-2 to bring to {TARGET_LUFS} LUFS.",
+                lufs_measured=round(lufs_i, 2),
+                lufs_target=TARGET_LUFS,
+            )
         else:
             results["lufs_pass"] = True
 
@@ -665,32 +805,48 @@ def check_audio_waveform(clip_path: Path, has_speech: bool, findings: list) -> d
     tp = lufs_data.get("input_tp")
     if tp is not None and tp > TRUE_PEAK_MAX:
         sev = "FAIL" if tp > 0.0 else "WARN"
-        add_finding(findings, "audio_waveform", sev,
-                    f"True peak {tp:.2f} dBFS > {TRUE_PEAK_MAX} dBFS canonical max",
-                    fix_hint="Apply limiter (ffmpeg alimiter=level_in=1:level_out=1:limit=0.89) or master-audio.sh.",
-                    true_peak=round(tp, 2))
+        add_finding(
+            findings,
+            "audio_waveform",
+            sev,
+            f"True peak {tp:.2f} dBFS > {TRUE_PEAK_MAX} dBFS canonical max",
+            fix_hint="Apply limiter (ffmpeg alimiter=level_in=1:level_out=1:limit=0.89) or master-audio.sh.",
+            true_peak=round(tp, 2),
+        )
 
     # Clipping events (max_volume ≥ 0)
     max_vol = vol_data.get("max_volume")
     if max_vol is not None and max_vol >= 0.0:
-        add_finding(findings, "audio_waveform", "FAIL",
-                    f"Clipping detected: max_volume {max_vol:.2f} dBFS ≥ 0 dBFS",
-                    fix_hint="Reduce input gain or apply limiter before mastering.",
-                    max_volume=round(max_vol, 2))
+        add_finding(
+            findings,
+            "audio_waveform",
+            "FAIL",
+            f"Clipping detected: max_volume {max_vol:.2f} dBFS ≥ 0 dBFS",
+            fix_hint="Reduce input gain or apply limiter before mastering.",
+            max_volume=round(max_vol, 2),
+        )
 
     # Audibility on speech segments
     mean_vol = vol_data.get("mean_volume")
     if has_speech and mean_vol is not None:
         if mean_vol < SPEECH_MEAN_VOL_MIN:
-            add_finding(findings, "audio_waveform", "WARN",
-                        f"Speech mean_volume {mean_vol:.2f} dBFS < {SPEECH_MEAN_VOL_MIN} dBFS — too quiet, likely inaudible",
-                        fix_hint="Boost narration track gain OR reduce ducking aggressiveness.",
-                        mean_volume=round(mean_vol, 2))
+            add_finding(
+                findings,
+                "audio_waveform",
+                "WARN",
+                f"Speech mean_volume {mean_vol:.2f} dBFS < {SPEECH_MEAN_VOL_MIN} dBFS — too quiet, likely inaudible",
+                fix_hint="Boost narration track gain OR reduce ducking aggressiveness.",
+                mean_volume=round(mean_vol, 2),
+            )
         elif mean_vol > SPEECH_MEAN_VOL_MAX:
-            add_finding(findings, "audio_waveform", "WARN",
-                        f"Speech mean_volume {mean_vol:.2f} dBFS > {SPEECH_MEAN_VOL_MAX} dBFS — too hot, likely distorted",
-                        fix_hint="Reduce narration gain OR apply pre-master compression.",
-                        mean_volume=round(mean_vol, 2))
+            add_finding(
+                findings,
+                "audio_waveform",
+                "WARN",
+                f"Speech mean_volume {mean_vol:.2f} dBFS > {SPEECH_MEAN_VOL_MAX} dBFS — too hot, likely distorted",
+                fix_hint="Reduce narration gain OR apply pre-master compression.",
+                mean_volume=round(mean_vol, 2),
+            )
 
     return results
 
@@ -700,8 +856,10 @@ def check_audio_waveform(clip_path: Path, has_speech: bool, findings: list) -> d
 # ============================================================
 def text_similarity(a: str, b: str) -> float:
     """Simple word-set Jaccard similarity (normalized lowercased)."""
+
     def tokenize(s: str) -> set:
         return set(re.findall(r"[a-záéíóúüñ]+", s.lower()))
+
     ta = tokenize(a)
     tb = tokenize(b)
     if not ta and not tb:
@@ -711,8 +869,14 @@ def text_similarity(a: str, b: str) -> float:
     return len(ta & tb) / len(ta | tb)
 
 
-def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count: int,
-               enable_whisper: bool, findings: list) -> dict:
+def check_sync(
+    clip_path: Path,
+    captions_path: Path,
+    shot: dict,
+    captions_count: int,
+    enable_whisper: bool,
+    findings: list,
+) -> dict:
     """Check 4: sync verify (durations, optional re-Whisper)."""
     results = {"whisper_enabled": enable_whisper}
 
@@ -729,24 +893,36 @@ def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count:
             audio_duration = video_duration
         results["audio_duration"] = round(audio_duration, 3)
         if abs(audio_duration - video_duration) > AUDIO_VIDEO_DURATION_TOLERANCE_S:
-            add_finding(findings, "sync", "WARN",
-                        f"Audio duration {audio_duration:.3f}s != video duration {video_duration:.3f}s "
-                        f"(delta {abs(audio_duration - video_duration):.3f}s > {AUDIO_VIDEO_DURATION_TOLERANCE_S}s)",
-                        fix_hint="Re-mux audio+video; check for offset drift in build_clip_atomic.")
+            add_finding(
+                findings,
+                "sync",
+                "WARN",
+                f"Audio duration {audio_duration:.3f}s != video duration {video_duration:.3f}s "
+                f"(delta {abs(audio_duration - video_duration):.3f}s > {AUDIO_VIDEO_DURATION_TOLERANCE_S}s)",
+                fix_hint="Re-mux audio+video; check for offset drift in build_clip_atomic.",
+            )
 
     # SFX expected timestamps (if SPEC declares audio_visual_atomic_units with type=sync_contract)
     avu_list = shot.get("audio_visual_atomic_units", []) or []
     sync_contracts = [a for a in avu_list if a.get("type") == "sync_contract"]
     if sync_contracts:
         # Cannot verify ffmpeg-level without re-extracting all events; flag as INFO
-        add_finding(findings, "sync", "INFO",
-                    f"{len(sync_contracts)} sync_contract AVU(s) declared in SPEC — verify in render-level audit (audit-frames-granular S3)")
+        add_finding(
+            findings,
+            "sync",
+            "INFO",
+            f"{len(sync_contracts)} sync_contract AVU(s) declared in SPEC — verify in render-level audit (audit-frames-granular S3)",
+        )
 
     # Re-Whisper (optional, expensive)
     if not enable_whisper:
-        add_finding(findings, "sync", "INFO",
-                    "Re-Whisper sync verify skipped (--enable-whisper) — text similarity TTS↔caption not measured",
-                    fix_hint="Re-run with --enable-whisper for full TTS↔caption text-similarity verification")
+        add_finding(
+            findings,
+            "sync",
+            "INFO",
+            "Re-Whisper sync verify skipped (--enable-whisper) — text similarity TTS↔caption not measured",
+            fix_hint="Re-run with --enable-whisper for full TTS↔caption text-similarity verification",
+        )
         return results
 
     if captions_count == 0:
@@ -755,19 +931,23 @@ def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count:
     try:
         import whisper
     except ImportError:
-        add_finding(findings, "sync", "WARN",
-                    "openai-whisper not installed — re-Whisper skipped",
-                    fix_hint="pip install openai-whisper")
+        add_finding(
+            findings,
+            "sync",
+            "WARN",
+            "openai-whisper not installed — re-Whisper skipped",
+            fix_hint="pip install openai-whisper",
+        )
         return results
 
     # Extract audio to temp wav
     with tempfile.TemporaryDirectory() as td:
         tmp_wav = Path(td) / "audio.wav"
         subprocess.run(
-            ["ffmpeg", "-y", "-i", str(clip_path), "-vn",
-             "-ac", "1", "-ar", "16000", str(tmp_wav)],
-            capture_output=True
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            ["ffmpeg", "-y", "-i", str(clip_path), "-vn", "-ac", "1", "-ar", "16000", str(tmp_wav)],
+            capture_output=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if not tmp_wav.exists() or tmp_wav.stat().st_size < 1000:
             add_finding(findings, "sync", "WARN", "Could not extract audio for re-Whisper")
             return results
@@ -792,11 +972,15 @@ def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count:
 
     if sim < WHISPER_TEXT_SIM_MIN:
         sev = "FAIL" if sim < 0.3 else "WARN"
-        add_finding(findings, "sync", sev,
-                    f"TTS↔caption text similarity {sim:.2f} < {WHISPER_TEXT_SIM_MIN} (re-Whisper)",
-                    fix_hint="Re-generate TTS OR re-align captions; check for missing/extra phrases.",
-                    caption_text=caption_text_concat[:200],
-                    whisper_text=whisper_text[:200])
+        add_finding(
+            findings,
+            "sync",
+            sev,
+            f"TTS↔caption text similarity {sim:.2f} < {WHISPER_TEXT_SIM_MIN} (re-Whisper)",
+            fix_hint="Re-generate TTS OR re-align captions; check for missing/extra phrases.",
+            caption_text=caption_text_concat[:200],
+            whisper_text=whisper_text[:200],
+        )
 
     return results
 
@@ -804,9 +988,14 @@ def check_sync(clip_path: Path, captions_path: Path, shot: dict, captions_count:
 # ============================================================
 # CHECK 5: GAPS SENTINELS (per-clip subset)
 # ============================================================
-def check_gaps_sentinels(clip_path: Path, captions_path: Path, shot: dict,
-                          captions_count: int, findings: list,
-                          clip_start_abs_s: float = 0.0) -> dict:
+def check_gaps_sentinels(
+    clip_path: Path,
+    captions_path: Path,
+    shot: dict,
+    captions_count: int,
+    findings: list,
+    clip_start_abs_s: float = 0.0,
+) -> dict:
     """Check 5: per-clip GAPS sentinels (subset of audit-frames-granular)."""
     results = {}
 
@@ -822,10 +1011,14 @@ def check_gaps_sentinels(clip_path: Path, captions_path: Path, shot: dict,
         if spk in ("", "narrator", "off_screen", "off-screen"):
             continue
         if who_is_there and spk not in who_is_there:
-            add_finding(findings, "sentinel_s1", "FAIL",
-                        f"Caption {c.get('id')} speaker='{spk}' but scene_context.who_is_there={list(who_is_there)} "
-                        f"(audio-visual character mismatch, anti-pattern #9)",
-                        fix_hint="Either add character to scene_context OR change caption speaker OR change shot composition to show character.")
+            add_finding(
+                findings,
+                "sentinel_s1",
+                "FAIL",
+                f"Caption {c.get('id')} speaker='{spk}' but scene_context.who_is_there={list(who_is_there)} "
+                f"(audio-visual character mismatch, anti-pattern #9)",
+                fix_hint="Either add character to scene_context OR change caption speaker OR change shot composition to show character.",
+            )
 
     # --- S2: duplicate text within clip window ---
     texts_seen = {}
@@ -834,14 +1027,21 @@ def check_gaps_sentinels(clip_path: Path, captions_path: Path, shot: dict,
         if not txt:
             continue
         if txt in texts_seen:
-            add_finding(findings, "sentinel_s2", "WARN",
-                        f"Duplicate caption text within clip: '{txt[:60]}' appears in {texts_seen[txt]} and {c.get('id')}")
+            add_finding(
+                findings,
+                "sentinel_s2",
+                "WARN",
+                f"Duplicate caption text within clip: '{txt[:60]}' appears in {texts_seen[txt]} and {c.get('id')}",
+            )
         else:
             texts_seen[txt] = c.get("id", "?")
 
     # --- S6: countdown digit transition (if AVU clip) ---
     is_avu = any(
-        (a.get("type") == "pre_rendered_avu" and "countdown" in (a.get("id", "") + a.get("asset_path", "")).lower())
+        (
+            a.get("type") == "pre_rendered_avu"
+            and "countdown" in (a.get("id", "") + a.get("asset_path", "")).lower()
+        )
         for a in (shot.get("audio_visual_atomic_units", []) or [])
     )
     if not is_avu:
@@ -858,12 +1058,20 @@ def check_gaps_sentinels(clip_path: Path, captions_path: Path, shot: dict,
             vol = measure_volumedetect(clip_path)
             mv = vol.get("max_volume")
             if mv is not None and mv < -10.0:
-                add_finding(findings, "sentinel_s6", "WARN",
-                            f"AVU countdown clip max_volume {mv:.2f} dBFS unexpectedly quiet — tick energy may be missing",
-                            fix_hint="Verify bundled audio in AVU asset; re-mux with ticks at digit-change moments.")
+                add_finding(
+                    findings,
+                    "sentinel_s6",
+                    "WARN",
+                    f"AVU countdown clip max_volume {mv:.2f} dBFS unexpectedly quiet — tick energy may be missing",
+                    fix_hint="Verify bundled audio in AVU asset; re-mux with ticks at digit-change moments.",
+                )
         else:
-            add_finding(findings, "sentinel_s6", "WARN",
-                        f"AVU countdown clip duration {duration:.2f}s < 2.5s (expected ~3s for film leader countdown)")
+            add_finding(
+                findings,
+                "sentinel_s6",
+                "WARN",
+                f"AVU countdown clip duration {duration:.2f}s < 2.5s (expected ~3s for film leader countdown)",
+            )
 
     # --- S8: background motion (atmospheric_motions visible) ---
     # Done via Gemini in check_visual_canonical — this sentinel just verifies SPEC declared count ≥3
@@ -873,15 +1081,23 @@ def check_gaps_sentinels(clip_path: Path, captions_path: Path, shot: dict,
         try:
             sc_int = int(spec_count)
             if sc_int < MIN_ATMOSPHERIC_MOTIONS:
-                add_finding(findings, "sentinel_s8", "WARN",
-                            f"SPEC declares atmospheric_motions_count={sc_int} < {MIN_ATMOSPHERIC_MOTIONS} canonical min",
-                            fix_hint="Add atmospheric micro-motions to SPEC + re-generate clip prompt.")
+                add_finding(
+                    findings,
+                    "sentinel_s8",
+                    "WARN",
+                    f"SPEC declares atmospheric_motions_count={sc_int} < {MIN_ATMOSPHERIC_MOTIONS} canonical min",
+                    fix_hint="Add atmospheric micro-motions to SPEC + re-generate clip prompt.",
+                )
         except (TypeError, ValueError):
             pass
     if not spec_list and not is_avu:
-        add_finding(findings, "sentinel_s8", "WARN",
-                    "SPEC has empty atmospheric_motions_list (and clip is not AVU)",
-                    fix_hint="Add atmospheric_motions_list with ≥3 entries (smoke/dust/flicker/creature/etc).")
+        add_finding(
+            findings,
+            "sentinel_s8",
+            "WARN",
+            "SPEC has empty atmospheric_motions_list (and clip is not AVU)",
+            fix_hint="Add atmospheric_motions_list with ≥3 entries (smoke/dust/flicker/creature/etc).",
+        )
 
     return results
 
@@ -906,9 +1122,15 @@ def compute_verdict(findings: list) -> tuple:
     return ("🟡", "NB", 1)
 
 
-def write_audit_md(out_path: Path, clip_path: Path, shot_id: str,
-                   findings: list, results_by_check: dict,
-                   verdict_emoji: str, verdict_label: str) -> None:
+def write_audit_md(
+    out_path: Path,
+    clip_path: Path,
+    shot_id: str,
+    findings: list,
+    results_by_check: dict,
+    verdict_emoji: str,
+    verdict_label: str,
+) -> None:
     """Write human-readable audit report."""
     fails = [f for f in findings if f.get("severity") == "FAIL"]
     warns = [f for f in findings if f.get("severity") == "WARN"]
@@ -948,14 +1170,16 @@ def write_audit_md(out_path: Path, clip_path: Path, shot_id: str,
                     lines.append(f"  - _Fix_: {f['fix_hint']}")
             lines.append("")
 
-    lines.extend([
-        "## Check results summary",
-        "",
-        "```json",
-        json.dumps(results_by_check, indent=2, default=str),
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Check results summary",
+            "",
+            "```json",
+            json.dumps(results_by_check, indent=2, default=str),
+            "```",
+            "",
+        ]
+    )
 
     out_path.write_text("\n".join(lines))
 
@@ -971,15 +1195,28 @@ def main():
     parser.add_argument("--clip", required=True, help="Path to shot_NN_atomic.mp4")
     parser.add_argument("--captions", required=True, help="Path to shot_NN_captions.json sidecar")
     parser.add_argument("--spec", required=True, help="Path to creative-specs/<id>.yaml")
-    parser.add_argument("--shot-id", required=True, help="Shot id (e.g. shot_07 or shot_07_d1_setup_question)")
-    parser.add_argument("--enable-gemini", action="store_true",
-                        help="Enable Gemini Vision visual canonical check (~$0.10/clip)")
-    parser.add_argument("--enable-whisper", action="store_true",
-                        help="Enable re-Whisper TTS↔caption sync verify (slow, CPU-heavy)")
-    parser.add_argument("--clip-start-abs-s", type=float, default=0.0,
-                        help="Absolute timestamp where this clip starts in master timeline (default 0)")
-    parser.add_argument("--output-dir", default=None,
-                        help="Output dir for audit.json + audit.md (default: same as clip)")
+    parser.add_argument(
+        "--shot-id", required=True, help="Shot id (e.g. shot_07 or shot_07_d1_setup_question)"
+    )
+    parser.add_argument(
+        "--enable-gemini",
+        action="store_true",
+        help="Enable Gemini Vision visual canonical check (~$0.10/clip)",
+    )
+    parser.add_argument(
+        "--enable-whisper",
+        action="store_true",
+        help="Enable re-Whisper TTS↔caption sync verify (slow, CPU-heavy)",
+    )
+    parser.add_argument(
+        "--clip-start-abs-s",
+        type=float,
+        default=0.0,
+        help="Absolute timestamp where this clip starts in master timeline (default 0)",
+    )
+    parser.add_argument(
+        "--output-dir", default=None, help="Output dir for audit.json + audit.md (default: same as clip)"
+    )
     args = parser.parse_args()
 
     clip_path = Path(args.clip)
@@ -1003,8 +1240,10 @@ def main():
     spec = load_spec(spec_path)
     shot = find_shot_in_spec(spec, args.shot_id)
     if not shot:
-        print(f"WARN: shot_id '{args.shot_id}' not found in SPEC. Running checks with empty shot context.",
-              file=sys.stderr)
+        print(
+            f"WARN: shot_id '{args.shot_id}' not found in SPEC. Running checks with empty shot context.",
+            file=sys.stderr,
+        )
 
     # --- Determine has_speech from SPEC ---
     narration = shot.get("narration_in_this_shot", {}) or {}
@@ -1021,10 +1260,10 @@ def main():
     findings: list = []
     results_by_check: dict = {}
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Quality Gate per-Clip — {args.shot_id}")
     print(f"Clip: {clip_path.name}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     print("Check 1/5: visual canonical compliance (Gemini Vision)...")
     results_by_check["visual_canonical"] = check_visual_canonical(
@@ -1040,20 +1279,16 @@ def main():
     captions_count = results_by_check["caption_schema"].get("captions_count", 0)
 
     print("Check 3/5: audio waveform analysis (LUFS / true_peak / clipping)...")
-    results_by_check["audio_waveform"] = check_audio_waveform(
-        clip_path, has_speech, findings
-    )
+    results_by_check["audio_waveform"] = check_audio_waveform(clip_path, has_speech, findings)
 
     print("Check 4/5: sync verify (duration / re-Whisper)...")
     results_by_check["sync"] = check_sync(
-        clip_path, captions_path, shot, captions_count,
-        enable_whisper=args.enable_whisper, findings=findings
+        clip_path, captions_path, shot, captions_count, enable_whisper=args.enable_whisper, findings=findings
     )
 
     print("Check 5/5: GAPS sentinels (S1/S2/S6/S8)...")
     results_by_check["sentinels"] = check_gaps_sentinels(
-        clip_path, captions_path, shot, captions_count, findings,
-        clip_start_abs_s=args.clip_start_abs_s
+        clip_path, captions_path, shot, captions_count, findings, clip_start_abs_s=args.clip_start_abs_s
     )
 
     # --- Compute verdict ---
@@ -1063,10 +1298,10 @@ def main():
     warns = [f for f in findings if f.get("severity") == "WARN"]
     infos = [f for f in findings if f.get("severity") == "INFO"]
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Findings: {len(fails)} FAIL · {len(warns)} WARN · {len(infos)} INFO")
     print(f"Verdict:  {verdict_emoji} {verdict_label}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     for f in findings:
         if f.get("severity") == "FAIL":
@@ -1100,8 +1335,9 @@ def main():
     }
     with open(audit_json_path, "w") as f:
         json.dump(audit_payload, f, indent=2, default=str)
-    write_audit_md(audit_md_path, clip_path, args.shot_id, findings, results_by_check,
-                   verdict_emoji, verdict_label)
+    write_audit_md(
+        audit_md_path, clip_path, args.shot_id, findings, results_by_check, verdict_emoji, verdict_label
+    )
 
     print(f"\nAudit JSON: {audit_json_path}")
     print(f"Audit MD:   {audit_md_path}")

@@ -42,9 +42,7 @@ class Settings(BaseSettings):
     # --- Provider credentials (standard vendor variable names) ---------------
     gemini_api_key: SecretStr | None = Field(default=None, validation_alias="GEMINI_API_KEY")
     elevenlabs_api_key: SecretStr | None = Field(default=None, validation_alias="ELEVENLABS_API_KEY")
-    replicate_api_token: SecretStr | None = Field(
-        default=None, validation_alias="REPLICATE_API_TOKEN"
-    )
+    replicate_api_token: SecretStr | None = Field(default=None, validation_alias="REPLICATE_API_TOKEN")
 
     # --- Cost guard -----------------------------------------------------------
     budget_usd: float = Field(

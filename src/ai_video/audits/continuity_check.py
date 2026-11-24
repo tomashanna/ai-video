@@ -28,7 +28,7 @@ import sys
 
 # Umbrales
 MAX_NARRATIVE_GAP_SECONDS = 2.0  # gaps >2s entre frases de narrador = bandera roja
-MIN_HITO_DURATION_PCT = 0.05      # cada hito debería ocupar ≥5% del video (~4.5s en 90s)
+MIN_HITO_DURATION_PCT = 0.05  # cada hito debería ocupar ≥5% del video (~4.5s en 90s)
 TARGET_NARRATION_COVERAGE = 0.40  # narración ≥40% del video
 
 
@@ -42,7 +42,7 @@ def parse_html_audio_tracks(html_path: str) -> dict:
 
     audio_pattern = re.compile(
         r'<audio\s+id="([^"]+)"[^>]*?data-start="([\d.]+)"[^>]*?data-duration="([\d.]+)"[^>]*?data-track-index="(\d+)"',
-        re.DOTALL
+        re.DOTALL,
     )
 
     narration = []
@@ -54,8 +54,13 @@ def parse_html_audio_tracks(html_path: str) -> dict:
         start = float(match.group(2))
         duration = float(match.group(3))
         track_idx = int(match.group(4))
-        entry = {"id": track_id, "start": start, "duration": duration,
-                 "end": start + duration, "track": track_idx}
+        entry = {
+            "id": track_id,
+            "start": start,
+            "duration": duration,
+            "end": start + duration,
+            "track": track_idx,
+        }
 
         if 40 <= track_idx <= 49:
             narration.append(entry)
@@ -80,10 +85,7 @@ def parse_narrative_md(narrative_path: str) -> dict:
         content = f.read()
 
     # Heurística: extraer hitos H1-H6 con duración estimada por contenido
-    hito_pattern = re.compile(
-        r"#{1,4}\s*(?:Hito\s+|H)(\d+)[\s\.\:—-]*([^\n]*)",
-        re.IGNORECASE
-    )
+    hito_pattern = re.compile(r"#{1,4}\s*(?:Hito\s+|H)(\d+)[\s\.\:—-]*([^\n]*)", re.IGNORECASE)
 
     hitos = []
     sections = []
@@ -98,12 +100,14 @@ def parse_narrative_md(narrative_path: str) -> dict:
             # Asignar contenido al hito anterior
             sections[-1]["content"] = content[last_pos:position]
 
-        sections.append({
-            "hito": hito_num,
-            "title": title,
-            "content": "",
-            "position": position,
-        })
+        sections.append(
+            {
+                "hito": hito_num,
+                "title": title,
+                "content": "",
+                "position": position,
+            }
+        )
         last_pos = position
 
     if sections:
@@ -112,8 +116,7 @@ def parse_narrative_md(narrative_path: str) -> dict:
     # Por cada hito, contar palabras de narrador (heurística: líneas con "Narrador" o citadas)
     for s in sections:
         narrator_lines = re.findall(
-            r"(?:Narrador|narrador|narr|h\d+-narr)\S*[\s:]+[\"'].*?[\"']",
-            s["content"], re.IGNORECASE
+            r"(?:Narrador|narrador|narr|h\d+-narr)\S*[\s:]+[\"'].*?[\"']", s["content"], re.IGNORECASE
         )
         # Backup: líneas entre comillas (probable narración)
         if not narrator_lines:
@@ -139,12 +142,14 @@ def check_continuity(narration_tracks: list, max_gap: float = MAX_NARRATIVE_GAP_
     for i in range(len(sorted_tracks) - 1):
         gap = sorted_tracks[i + 1]["start"] - sorted_tracks[i]["end"]
         if gap > max_gap:
-            issues.append((
-                "NARRATIVE_GAP",
-                f"{gap:.2f}s gap entre '{sorted_tracks[i]['id']}' "
-                f"(end {sorted_tracks[i]['end']:.2f}s) y '{sorted_tracks[i + 1]['id']}' "
-                f"(start {sorted_tracks[i + 1]['start']:.2f}s)"
-            ))
+            issues.append(
+                (
+                    "NARRATIVE_GAP",
+                    f"{gap:.2f}s gap entre '{sorted_tracks[i]['id']}' "
+                    f"(end {sorted_tracks[i]['end']:.2f}s) y '{sorted_tracks[i + 1]['id']}' "
+                    f"(start {sorted_tracks[i + 1]['start']:.2f}s)",
+                )
+            )
 
     return issues
 
@@ -172,11 +177,13 @@ def check_hito_distribution(hitos: list, narration_tracks: list, video_duration:
         expected_seconds = s.get("expected_narration_seconds", 0)
 
         if expected_seconds > 2.0 and actual_seconds < expected_seconds * 0.5:
-            issues.append((
-                "HITO_UNDER_NARRATED",
-                f"H{s['hito']} ({s['title'][:40]}): expected ~{expected_seconds:.1f}s "
-                f"de narración, actual {actual_seconds:.1f}s ({(actual_seconds/expected_seconds)*100:.0f}%)"
-            ))
+            issues.append(
+                (
+                    "HITO_UNDER_NARRATED",
+                    f"H{s['hito']} ({s['title'][:40]}): expected ~{expected_seconds:.1f}s "
+                    f"de narración, actual {actual_seconds:.1f}s ({(actual_seconds / expected_seconds) * 100:.0f}%)",
+                )
+            )
 
     return issues
 
@@ -192,12 +199,14 @@ def check_total_narration_coverage(narration_tracks: list, video_duration: float
     coverage = total_narration / video_duration
 
     if coverage < TARGET_NARRATION_COVERAGE:
-        issues.append((
-            "LOW_NARRATION_COVERAGE",
-            f"Narración cubre {coverage*100:.1f}% del video "
-            f"(target ≥{TARGET_NARRATION_COVERAGE*100:.0f}%). "
-            f"Total narración: {total_narration:.1f}s de {video_duration:.1f}s"
-        ))
+        issues.append(
+            (
+                "LOW_NARRATION_COVERAGE",
+                f"Narración cubre {coverage * 100:.1f}% del video "
+                f"(target ≥{TARGET_NARRATION_COVERAGE * 100:.0f}%). "
+                f"Total narración: {total_narration:.1f}s de {video_duration:.1f}s",
+            )
+        )
 
     return issues
 
@@ -232,16 +241,21 @@ def analyze(narrative_path: str, html_path: str, video_duration: float = 90.0) -
             report["issues"].append(f"{severity}: {msg}")
         else:
             # Gaps >5s are issues, smaller are warnings
-            if "5." in msg or "6." in msg or "7." in msg or "8." in msg or "9." in msg or float(msg.split("s gap")[0]) > 3.0:
+            if (
+                "5." in msg
+                or "6." in msg
+                or "7." in msg
+                or "8." in msg
+                or "9." in msg
+                or float(msg.split("s gap")[0]) > 3.0
+            ):
                 report["issues"].append(f"{severity}: {msg}")
             else:
                 report["warnings"].append(f"{severity}: {msg}")
 
     # Check 3: Hito distribution
     hito_issues = check_hito_distribution(
-        narrative.get("hitos", []),
-        tracks.get("narration", []),
-        video_duration
+        narrative.get("hitos", []), tracks.get("narration", []), video_duration
     )
     for severity, msg in hito_issues:
         report["warnings"].append(f"{severity}: {msg}")
@@ -255,10 +269,10 @@ def main():
     )
     parser.add_argument("--narrative", required=True, help="Path to NARRATIVE.md")
     parser.add_argument("--html", required=True, help="Path to index.html")
-    parser.add_argument("--video-duration", type=float, default=90.0,
-                        help="Video total duration in seconds (default 90)")
-    parser.add_argument("--max-issues", type=int, default=2,
-                        help="Fail if more than N issues (default 2)")
+    parser.add_argument(
+        "--video-duration", type=float, default=90.0, help="Video total duration in seconds (default 90)"
+    )
+    parser.add_argument("--max-issues", type=int, default=2, help="Fail if more than N issues (default 2)")
     parser.add_argument("--output", help="Optional: save report as JSON")
 
     args = parser.parse_args()

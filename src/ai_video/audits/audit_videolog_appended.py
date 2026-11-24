@@ -57,6 +57,7 @@ Exit: 0 PASS·not_applicable / 1 FAIL / 2 can't-measure (Bug #9 / SPEC|log ausen
 Authority: CLAUDE.md HR#14 + § Pre-render gate Q15 + <format>-format/video-log.md (schema
 "Cómo agregar entrada" + "Learnings"). HR#26 companion test: test_audit-videolog-appended.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -74,7 +75,7 @@ except ImportError:
 # ── Constantes con autoridad ────────────────────────────────────────────────────────────────
 # NO medidas en F1 (reglas estructurales del log, no bandas empíricas del render) →
 # constantes de módulo. Authority: CLAUDE.md § Pre-render gate Q15 + HR#14.
-MIN_LEARNINGS_BULLETS = 2   # Q15: "append learnings (2-3 bullets)". Override via --min-bullets.
+MIN_LEARNINGS_BULLETS = 2  # Q15: "append learnings (2-3 bullets)". Override via --min-bullets.
 
 # Familia choice (mantienen video-log.md — capability-gate del Q15).
 CHOICE_FAMILY = ("horror-choice", "sport-choice")
@@ -102,6 +103,7 @@ def slug_normalize(s: str) -> str:
 # ════════════════════════════════════════════════════════════════════════════════════════════
 # LÓGICA PURA — testeables sin filesystem
 # ════════════════════════════════════════════════════════════════════════════════════════════
+
 
 def project_matches(entry_text: str, project_id: str) -> bool:
     """¿La entry (texto) menciona el project-id? Substring slug-normalizado, case-insensitive.
@@ -134,8 +136,9 @@ def mentions_score(text: str) -> bool:
     return bool(SCORE_RE.search(text or ""))
 
 
-def evaluate_videolog_entry(entry_text, project_id, *, require_scores=False,
-                            min_bullets=MIN_LEARNINGS_BULLETS, entry_found=True):
+def evaluate_videolog_entry(
+    entry_text, project_id, *, require_scores=False, min_bullets=MIN_LEARNINGS_BULLETS, entry_found=True
+):
     """PURO. Evalúa el bloque de texto asociado al project-id contra (a)-(d).
 
     entry_text   = texto agregado de la(s) sección(es)/fila(s) que matchean el project-id
@@ -147,54 +150,78 @@ def evaluate_videolog_entry(entry_text, project_id, *, require_scores=False,
     # (a) existencia — la determina el runtime (gather_project_text); entry_text es el
     # texto agregado de los bloques que matchearon. Confiamos en entry_found.
     exists = bool(entry_found)
-    checks.append({
-        "check": "a_entry_exists", "status": "pass" if exists else "fail",
-        "detail": (f"entry para project-id '{project_id}' hallada en el video-log ✓" if exists
-                   else f"NO existe entry para project-id '{project_id}' en el video-log "
-                        f"(Q15 — learnings NUNCA appended)"),
-    })
+    checks.append(
+        {
+            "check": "a_entry_exists",
+            "status": "pass" if exists else "fail",
+            "detail": (
+                f"entry para project-id '{project_id}' hallada en el video-log ✓"
+                if exists
+                else f"NO existe entry para project-id '{project_id}' en el video-log "
+                f"(Q15 — learnings NUNCA appended)"
+            ),
+        }
+    )
     if not exists:
         # Sin entry, (b)/(c)/(d) no se pueden evaluar — reportamos pero el overall ya falla.
-        for name, det in (("b_mentions_pattern", "sin entry"),
-                          ("c_min_bullets", "sin entry"),
-                          ("d_mentions_score", "sin entry")):
+        for name, det in (
+            ("b_mentions_pattern", "sin entry"),
+            ("c_min_bullets", "sin entry"),
+            ("d_mentions_score", "sin entry"),
+        ):
             checks.append({"check": name, "status": "fail", "detail": f"no evaluable: {det}"})
-        return {"overall_pass": False, "checks": checks,
-                "pattern_tokens": [], "bullet_count": 0}
+        return {"overall_pass": False, "checks": checks, "pattern_tokens": [], "bullet_count": 0}
 
     # (b) menciona pattern
     patterns = extract_pattern_tokens(entry_text)
     has_pattern = bool(patterns) or "pattern" in (entry_text or "").lower()
-    checks.append({
-        "check": "b_mentions_pattern", "status": "pass" if has_pattern else "fail",
-        "detail": (f"entry menciona pattern: {patterns or _PATTERN_TOKEN} ✓" if has_pattern
-                   else "entry NO menciona el pattern usado (Pn o 'pattern') — rotación HR#14 "
-                        "no se puede trackear sin pattern declarado"),
-    })
+    checks.append(
+        {
+            "check": "b_mentions_pattern",
+            "status": "pass" if has_pattern else "fail",
+            "detail": (
+                f"entry menciona pattern: {patterns or _PATTERN_TOKEN} ✓"
+                if has_pattern
+                else "entry NO menciona el pattern usado (Pn o 'pattern') — rotación HR#14 "
+                "no se puede trackear sin pattern declarado"
+            ),
+        }
+    )
 
     # (c) ≥ min_bullets learnings
     n_bullets = count_bullets(entry_text)
     enough = n_bullets >= min_bullets
-    checks.append({
-        "check": "c_min_bullets", "status": "pass" if enough else "fail",
-        "detail": (f"{n_bullets} bullet(s) de learnings ≥ {min_bullets} ✓" if enough
-                   else f"solo {n_bullets} bullet(s) de learnings < {min_bullets} exigidos "
-                        f"(Q15: 'append learnings 2-3 bullets')"),
-        "bullet_count": n_bullets,
-    })
+    checks.append(
+        {
+            "check": "c_min_bullets",
+            "status": "pass" if enough else "fail",
+            "detail": (
+                f"{n_bullets} bullet(s) de learnings ≥ {min_bullets} ✓"
+                if enough
+                else f"solo {n_bullets} bullet(s) de learnings < {min_bullets} exigidos "
+                f"(Q15: 'append learnings 2-3 bullets')"
+            ),
+            "bullet_count": n_bullets,
+        }
+    )
 
     # (d) score [opcional]
     if require_scores:
         has_score = mentions_score(entry_text)
-        checks.append({
-            "check": "d_mentions_score", "status": "pass" if has_score else "fail",
-            "detail": ("entry menciona un score (X.X/10 / Gemini 9.x) ✓" if has_score
-                       else "entry NO menciona score y --require-scores está activo"),
-        })
+        checks.append(
+            {
+                "check": "d_mentions_score",
+                "status": "pass" if has_score else "fail",
+                "detail": (
+                    "entry menciona un score (X.X/10 / Gemini 9.x) ✓"
+                    if has_score
+                    else "entry NO menciona score y --require-scores está activo"
+                ),
+            }
+        )
 
     overall = all(c["status"] == "pass" for c in checks)
-    return {"overall_pass": overall, "checks": checks,
-            "pattern_tokens": patterns, "bullet_count": n_bullets}
+    return {"overall_pass": overall, "checks": checks, "pattern_tokens": patterns, "bullet_count": n_bullets}
 
 
 def evaluate_rotation(recent_patterns):
@@ -206,23 +233,33 @@ def evaluate_rotation(recent_patterns):
     par consecutivo que comparar)."""
     pats = [p for p in recent_patterns if p]
     if len(pats) < 2:
-        return {"overall_pass": True, "status": "not_applicable",
-                "detail": f"solo {len(pats)} entry con pattern → no hay par consecutivo (HR#14 N/A)",
-                "last": pats[-1] if pats else None, "prev": None}
+        return {
+            "overall_pass": True,
+            "status": "not_applicable",
+            "detail": f"solo {len(pats)} entry con pattern → no hay par consecutivo (HR#14 N/A)",
+            "last": pats[-1] if pats else None,
+            "prev": None,
+        }
     last, prev = pats[-1], pats[-2]
     ok = last != prev
     return {
-        "overall_pass": ok, "status": "pass" if ok else "fail",
-        "last": last, "prev": prev,
-        "detail": (f"rotación OK: última entry '{last}' ≠ anterior '{prev}' ✓" if ok
-                   else f"VIOLA HR#14: última entry '{last}' == anterior '{prev}' "
-                        f"(mismo pattern 2 videos consecutivos = feed predecible)"),
+        "overall_pass": ok,
+        "status": "pass" if ok else "fail",
+        "last": last,
+        "prev": prev,
+        "detail": (
+            f"rotación OK: última entry '{last}' ≠ anterior '{prev}' ✓"
+            if ok
+            else f"VIOLA HR#14: última entry '{last}' == anterior '{prev}' "
+            f"(mismo pattern 2 videos consecutivos = feed predecible)"
+        ),
     }
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════
 # EXTRACCIÓN — runtime (lee el .md y arma las estructuras puras)
 # ════════════════════════════════════════════════════════════════════════════════════════════
+
 
 def split_log_entries(md_text: str):
     """Parte el video-log.md en bloques candidatos a 'entry' por heading (##/###/####).
@@ -234,9 +271,12 @@ def split_log_entries(md_text: str):
     blocks = []
     lines = md_text.splitlines()
     # Headings → bloques.
-    heading_idx = [(i, len(m.group(1)))
-                   for i, line in enumerate(lines)
-                   for m in [re.match(r"^(#{2,4})\s+(.*)$", line)] if m]
+    heading_idx = [
+        (i, len(m.group(1)))
+        for i, line in enumerate(lines)
+        for m in [re.match(r"^(#{2,4})\s+(.*)$", line)]
+        if m
+    ]
     for k, (start, _level) in enumerate(heading_idx):
         end = heading_idx[k + 1][0] if k + 1 < len(heading_idx) else len(lines)
         block = "\n".join(lines[start:end])
@@ -306,23 +346,45 @@ def resolve_videolog_path(fmt: str, explicit: str | None) -> Path | None:
 # RUNTIME
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="formato (agnostic-by-design — gatea Q15 por familia choice + deriva el log)")
-    parser.add_argument("--spec", required=True,
-                        help="CREATIVE-SPEC.yaml del proyecto (carrier de video_capabilities — Bug #9)")
-    parser.add_argument("--project-id", required=True,
-                        help="slug del proyecto a buscar en el video-log (ej. matadero-banquete)")
-    parser.add_argument("--video-log", default=None,
-                        help="path al video-log.md (default: <skills>/<format>-format/video-log.md)")
-    parser.add_argument("--require-scores", action="store_true",
-                        help="exige que la entry mencione un score (check d)")
-    parser.add_argument("--check-rotation", action="store_true",
-                        help="HR#14: pattern de la entry más reciente ≠ anterior (tabla maestra)")
-    parser.add_argument("--min-bullets", type=int, default=MIN_LEARNINGS_BULLETS,
-                        help=f"override del mínimo de bullets de learnings (default {MIN_LEARNINGS_BULLETS})")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format",
+        required=True,
+        help="formato (agnostic-by-design — gatea Q15 por familia choice + deriva el log)",
+    )
+    parser.add_argument(
+        "--spec",
+        required=True,
+        help="CREATIVE-SPEC.yaml del proyecto (carrier de video_capabilities — Bug #9)",
+    )
+    parser.add_argument(
+        "--project-id",
+        required=True,
+        help="slug del proyecto a buscar en el video-log (ej. matadero-banquete)",
+    )
+    parser.add_argument(
+        "--video-log",
+        default=None,
+        help="path al video-log.md (default: <skills>/<format>-format/video-log.md)",
+    )
+    parser.add_argument(
+        "--require-scores", action="store_true", help="exige que la entry mencione un score (check d)"
+    )
+    parser.add_argument(
+        "--check-rotation",
+        action="store_true",
+        help="HR#14: pattern de la entry más reciente ≠ anterior (tabla maestra)",
+    )
+    parser.add_argument(
+        "--min-bullets",
+        type=int,
+        default=MIN_LEARNINGS_BULLETS,
+        help=f"override del mínimo de bullets de learnings (default {MIN_LEARNINGS_BULLETS})",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -336,8 +398,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     # Capability: maintains_video_log declarada O familia choice (las que mantienen log).
@@ -348,20 +412,31 @@ def main():
     log_path = resolve_videolog_path(args.format, args.video_log)
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nproject_id: {args.project_id}\n"
-              f"video_log: {log_path}\nmaintains_video_log: {maintains_log} | in_family: {in_family}\n"
-              f"branch: {'videolog_check' if applies else 'not_applicable'}\n"
-              f"require_scores: {args.require_scores} | check_rotation: {args.check_rotation} | "
-              f"min_bullets: {args.min_bullets}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nproject_id: {args.project_id}\n"
+            f"video_log: {log_path}\nmaintains_video_log: {maintains_log} | in_family: {in_family}\n"
+            f"branch: {'videolog_check' if applies else 'not_applicable'}\n"
+            f"require_scores: {args.require_scores} | check_rotation: {args.check_rotation} | "
+            f"min_bullets: {args.min_bullets}"
+        )
         return 0
 
     if not applies:
-        print(json.dumps({
-            "format": args.format, "project_id": args.project_id,
-            "overall_status": "not_applicable",
-            "detail": ("formato fuera de la familia choice Y maintains_video_log no declarado → "
-                       "no mantiene video-log.md (Q15 no aplica)"),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "project_id": args.project_id,
+                    "overall_status": "not_applicable",
+                    "detail": (
+                        "formato fuera de la familia choice Y maintains_video_log no declarado → "
+                        "no mantiene video-log.md (Q15 no aplica)"
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     if log_path is None or not log_path.exists():
@@ -372,8 +447,12 @@ def main():
     found, entry_text = gather_project_text(md_text, args.project_id)
 
     entry_result = evaluate_videolog_entry(
-        entry_text, args.project_id, require_scores=args.require_scores,
-        min_bullets=args.min_bullets, entry_found=found)
+        entry_text,
+        args.project_id,
+        require_scores=args.require_scores,
+        min_bullets=args.min_bullets,
+        entry_found=found,
+    )
 
     checks = list(entry_result["checks"])
     overall = entry_result["overall_pass"]
@@ -387,9 +466,12 @@ def main():
             overall = False
 
     report = {
-        "format": args.format, "spec": str(spec_path),
-        "video_log": str(log_path), "project_id": args.project_id,
-        "min_bullets": args.min_bullets, "require_scores": args.require_scores,
+        "format": args.format,
+        "spec": str(spec_path),
+        "video_log": str(log_path),
+        "project_id": args.project_id,
+        "min_bullets": args.min_bullets,
+        "require_scores": args.require_scores,
         "overall_status": "pass" if overall else "fail",
         "overall_pass": overall,
         "entry_found": found,

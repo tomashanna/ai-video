@@ -38,6 +38,7 @@ Output: <output> (default assets/concat/clips_with_effects.mp4) + sidecar manife
 Build Paso 4.4 (2026-05-26). PRE-4.J/PRE-4.K integration (2026-05-27): multi-catalog --effects-dir,
 Option D fidelity warnings, spec_transitions_adapter. Hard Rule #26 companion test.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -103,8 +104,10 @@ def determine_branch(caps):
 def ffprobe_duration(path):
     r = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
-        capture_output=True, text=True,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(r.stdout.strip())
 
 
@@ -149,8 +152,7 @@ def resolve_sting(recipe_dir, sting_path):
     return p if p.exists() else None
 
 
-def build_filtergraph(clips, durs, boundary_recipes,
-                      target_w=1080, target_h=1920, target_fps=30):
+def build_filtergraph(clips, durs, boundary_recipes, target_w=1080, target_h=1920, target_fps=30):
     """xfade/concat chain filtergraph (V4 empirical cp5-layer2-concat pattern).
 
     target_w/target_h/target_fps default to horror-choice canonical (1080x1920 / 30) so
@@ -159,8 +161,10 @@ def build_filtergraph(clips, durs, boundary_recipes,
     video_capabilities.output_resolution. Capability-aware (Pattern 7)."""
     fc = []
     for idx in range(len(clips)):
-        fc.append(f"[{idx}:v]fps={target_fps},scale={target_w}:{target_h},setsar=1,format=yuv420p,"
-                  f"settb=AVTB,setpts=PTS-STARTPTS[v{idx}n]")
+        fc.append(
+            f"[{idx}:v]fps={target_fps},scale={target_w}:{target_h},setsar=1,format=yuv420p,"
+            f"settb=AVTB,setpts=PTS-STARTPTS[v{idx}n]"
+        )
         fc.append(f"[{idx}:a]aresample=async=1:first_pts=0,asettb=AVTB,asetpts=PTS-STARTPTS[a{idx}n]")
 
     last_v, last_a = "v0n", "a0n"
@@ -187,12 +191,14 @@ def build_filtergraph(clips, durs, boundary_recipes,
             cum += durs[i] - d
             applied = xname
 
-        boundaries.append({
-            "cut_time": round(max(0.0, cut_time), 3),
-            "applied": applied,
-            "duration_s": round(d, 3),
-            "recipe": recipe,
-        })
+        boundaries.append(
+            {
+                "cut_time": round(max(0.0, cut_time), 3),
+                "applied": applied,
+                "duration_s": round(d, 3),
+                "recipe": recipe,
+            }
+        )
         last_v, last_a = vlab, alab
 
     return fc, last_v, last_a, boundaries, cum
@@ -203,10 +209,26 @@ def run_chain(clips, fc, last_v, last_a, tmp_out, target_fps=30):
     for c in clips:
         cmd += ["-i", str(c)]
     cmd += [
-        "-filter_complex", ";".join(fc),
-        "-map", f"[{last_v}]", "-map", f"[{last_a}]",
-        "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k", "-r", str(target_fps),
+        "-filter_complex",
+        ";".join(fc),
+        "-map",
+        f"[{last_v}]",
+        "-map",
+        f"[{last_a}]",
+        "-c:v",
+        "libx264",
+        "-crf",
+        "18",
+        "-preset",
+        "medium",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
+        "-r",
+        str(target_fps),
         str(tmp_out),
     ]
     return subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
@@ -229,9 +251,18 @@ def overlay_stings(tmp_in, output, sting_jobs):
         mix_labels.append(f"[s{k}]")
     fc.append(f"{''.join(mix_labels)}amix=inputs={len(mix_labels)}:duration=first:normalize=0[aout]")
     cmd += [
-        "-filter_complex", ";".join(fc),
-        "-map", "0:v", "-map", "[aout]",
-        "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+        "-filter_complex",
+        ";".join(fc),
+        "-map",
+        "0:v",
+        "-map",
+        "[aout]",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
         str(output),
     ]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
@@ -245,17 +276,19 @@ def write_manifest(output, branch, fmt, clips, shots, boundaries, expected_dur, 
         rec = b["recipe"]
         prev_id = shots[i - 1]["shot_id"] if isinstance(shots[i - 1], dict) else str(shots[i - 1])
         cur_id = shots[i]["shot_id"] if isinstance(shots[i], dict) else str(shots[i])
-        transitions.append({
-            "from_shot": prev_id,
-            "to_shot": cur_id,
-            "transition_id": rec["id"] if rec else None,
-            "xfade_transition": b["applied"],
-            "xfade_fidelity": (rec.get("xfade_fidelity") if rec else None),
-            "duration_s": b["duration_s"],
-            "cut_time_s": b["cut_time"],
-            "sting_path": (rec.get("audio_sting_path") if rec else None),
-            "sting_volume": (rec.get("audio_sting_volume") if rec else None),
-        })
+        transitions.append(
+            {
+                "from_shot": prev_id,
+                "to_shot": cur_id,
+                "transition_id": rec["id"] if rec else None,
+                "xfade_transition": b["applied"],
+                "xfade_fidelity": (rec.get("xfade_fidelity") if rec else None),
+                "duration_s": b["duration_s"],
+                "cut_time_s": b["cut_time"],
+                "sting_path": (rec.get("audio_sting_path") if rec else None),
+                "sting_volume": (rec.get("audio_sting_volume") if rec else None),
+            }
+        )
     unique = sorted({t["transition_id"] for t in transitions if t["transition_id"]})
     manifest = {
         "stage": "layer2_effects",
@@ -264,9 +297,9 @@ def write_manifest(output, branch, fmt, clips, shots, boundaries, expected_dur, 
         "clips_count": len(clips),
         "boundaries_count": len(boundaries),
         "unique_transition_types": unique,
-        "approximate_fidelity_used": sorted({
-            t["transition_id"] for t in transitions if t.get("xfade_fidelity") == "approximate"
-        }),
+        "approximate_fidelity_used": sorted(
+            {t["transition_id"] for t in transitions if t.get("xfade_fidelity") == "approximate"}
+        ),
         "expected_duration_s": round(expected_dur, 3) if expected_dur is not None else None,
         "actual_duration_s": round(actual_dur, 3) if actual_dur is not None else None,
         "output": str(output),
@@ -279,18 +312,28 @@ def write_manifest(output, branch, fmt, clips, shots, boundaries, expected_dur, 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="Format name (e.g., horror-choice). REQUIRED — no silent assumption."
+    )
     parser.add_argument("--spec", required=True, help="Path to SPEC.yaml (video_capabilities mandatory)")
-    parser.add_argument("--input", default=None,
-                        help="4.2 concat output for passthrough (default: assets/concat/clips_concat_only.mp4)")
+    parser.add_argument(
+        "--input",
+        default=None,
+        help="4.2 concat output for passthrough (default: assets/concat/clips_concat_only.mp4)",
+    )
     parser.add_argument("--clips-dir", default=None, help="Atomic clips dir (default: assets/clips-atomic)")
-    parser.add_argument("--output", default=None,
-                        help="Output mp4 (default: assets/concat/clips_with_effects.mp4)")
-    parser.add_argument("--effects-dir", nargs="+", default=None,
-                        help="One or more transition catalog dirs (Capa A primitives + format Capa B). "
-                             "Searched in order. REQUIRED in effects branch (no silent format default).")
+    parser.add_argument(
+        "--output", default=None, help="Output mp4 (default: assets/concat/clips_with_effects.mp4)"
+    )
+    parser.add_argument(
+        "--effects-dir",
+        nargs="+",
+        default=None,
+        help="One or more transition catalog dirs (Capa A primitives + format Capa B). "
+        "Searched in order. REQUIRED in effects branch (no silent format default).",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Print resolved paths + branch, exit 0")
     args = parser.parse_args()
 
@@ -300,7 +343,7 @@ def main():
         return 2
 
     paths = resolve_paths(args.input, args.clips_dir, args.output)
-    spec = normalize_transitions(load_spec(spec_path))   # PRE-4.J adapter: legacy transitions[] → per-shot
+    spec = normalize_transitions(load_spec(spec_path))  # PRE-4.J adapter: legacy transitions[] → per-shot
     caps = spec.get("video_capabilities")
     shots = spec.get("shot_list", []) or []
 
@@ -334,21 +377,26 @@ def main():
         if not inp.exists():
             print(f"ERROR: passthrough input not found: {inp}", file=sys.stderr)
             return 1
-        r = subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                            "-i", str(inp), "-c", "copy", str(output)], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+        r = subprocess.run(
+            ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(inp), "-c", "copy", str(output)],
+            capture_output=True,
+            text=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if r.returncode != 0:
             print(f"ERROR: passthrough copy failed: {r.stderr[:300]}", file=sys.stderr)
             return 1
-        write_manifest(output, "passthrough", args.format, [inp], shots, [], None,
-                       ffprobe_duration(output))
+        write_manifest(output, "passthrough", args.format, [inp], shots, [], None, ffprobe_duration(output))
         print(f"✅ passthrough (has_layer_2_effects=false): {inp} → {output}")
         return 0
 
     # ── EFFECTS branch ────────────────────────────────────────────────────
     if effects_dirs is None:
-        print("ERROR: --effects-dir REQUIRED in effects branch (one or more catalog dirs: "
-              "Capa A primitives + format Capa B). No silent format default (agnostic-by-design).",
-              file=sys.stderr)
+        print(
+            "ERROR: --effects-dir REQUIRED in effects branch (one or more catalog dirs: "
+            "Capa A primitives + format Capa B). No silent format default (agnostic-by-design).",
+            file=sys.stderr,
+        )
         return 2
 
     clips, missing = [], []
@@ -367,13 +415,17 @@ def main():
     for rid in boundary_recipe_ids:
         rec = load_recipe(effects_dirs, rid) if rid else None
         if rid and rec is None:
-            print(f"⚠️ recipe '{rid}' not found in {[str(d) for d in effects_dirs]} — hard-cut fallback",
-                  file=sys.stderr)
+            print(
+                f"⚠️ recipe '{rid}' not found in {[str(d) for d in effects_dirs]} — hard-cut fallback",
+                file=sys.stderr,
+            )
         if rec and rec.get("xfade_fidelity") == "approximate":
             note = (rec.get("native_mechanism_note") or "")[:90]
-            print(f"⚠️ WARNING: recipe '{rec['id']}' xfade_fidelity=approximate — chained-xfade is LOSSY "
-                  f"({note}). Production use flagged; full fidelity = Option B hybrid dispatch (GAPS-LOG).",
-                  file=sys.stderr)
+            print(
+                f"⚠️ WARNING: recipe '{rec['id']}' xfade_fidelity=approximate — chained-xfade is LOSSY "
+                f"({note}). Production use flagged; full fidelity = Option B hybrid dispatch (GAPS-LOG).",
+                file=sys.stderr,
+            )
         boundary_recipes.append(rec)
 
     durs = [ffprobe_duration(c) for c in clips]
@@ -387,7 +439,8 @@ def main():
         target_w, target_h = 1080, 1920
     target_fps = int((caps or {}).get("target_fps", 30))
     fc, last_v, last_a, boundaries, expected_dur = build_filtergraph(
-        clips, durs, boundary_recipes, target_w, target_h, target_fps)
+        clips, durs, boundary_recipes, target_w, target_h, target_fps
+    )
 
     tmp_out = output.parent / f"{output.stem}.nosting.mp4"
     r = run_chain(clips, fc, last_v, last_a, tmp_out, target_fps)
@@ -403,18 +456,24 @@ def main():
             if spath:
                 sting_jobs.append((spath, rec["audio_sting_volume"], b["cut_time"]))
             else:
-                print(f"⚠️ sting not found for {rec['id']}: {rec['audio_sting_path']} "
-                      f"(recorded in manifest, not overlaid)", file=sys.stderr)
+                print(
+                    f"⚠️ sting not found for {rec['id']}: {rec['audio_sting_path']} "
+                    f"(recorded in manifest, not overlaid)",
+                    file=sys.stderr,
+                )
     r2 = overlay_stings(tmp_out, output, sting_jobs)
     if r2.returncode != 0:
         print(f"ERROR: sting overlay failed: {r2.stderr[-500:]}", file=sys.stderr)
         return 1
 
     actual_dur = ffprobe_duration(output)
-    manifest = write_manifest(output, "effects", args.format, clips, shots, boundaries,
-                              expected_dur, actual_dur)
-    print(f"✅ effects applied: {len(clips)} clips, {manifest['boundaries_count']} boundaries, "
-          f"{len(manifest['unique_transition_types'])} unique types → {output}")
+    manifest = write_manifest(
+        output, "effects", args.format, clips, shots, boundaries, expected_dur, actual_dur
+    )
+    print(
+        f"✅ effects applied: {len(clips)} clips, {manifest['boundaries_count']} boundaries, "
+        f"{len(manifest['unique_transition_types'])} unique types → {output}"
+    )
     return 0
 
 

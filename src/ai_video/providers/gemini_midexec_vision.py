@@ -87,16 +87,33 @@ SCORE_FAIL_THRESHOLD = 7  # score <7 in any dimension → 🔴 flag regen
 
 # Voseo argentine words to flag in TTS transcripts (per feedback_spanish_neutral)
 VOSEO_PATTERNS = [
-    r"\bvos\b", r"\bdecís\b", r"\belegís\b", r"\bsalís\b", r"\besperás\b",
-    r"\bseguís\b", r"\btrabajás\b", r"\bpasás\b", r"\bllegás\b", r"\bpodés\b",
-    r"\bvení\b", r"\bmirá\b", r"\bsentís\b", r"\bcomés\b", r"\bsos\b",
-    r"\btenés\b", r"\bquerés\b", r"\bsabés\b", r"\bdecí\b", r"\bdecidí\b",
+    r"\bvos\b",
+    r"\bdecís\b",
+    r"\belegís\b",
+    r"\bsalís\b",
+    r"\besperás\b",
+    r"\bseguís\b",
+    r"\btrabajás\b",
+    r"\bpasás\b",
+    r"\bllegás\b",
+    r"\bpodés\b",
+    r"\bvení\b",
+    r"\bmirá\b",
+    r"\bsentís\b",
+    r"\bcomés\b",
+    r"\bsos\b",
+    r"\btenés\b",
+    r"\bquerés\b",
+    r"\bsabés\b",
+    r"\bdecí\b",
+    r"\bdecidí\b",
 ]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SHARED HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def load_spec(spec_path: str) -> dict:
     with open(spec_path) as f:
@@ -139,17 +156,19 @@ def find_narration_segment(spec: dict, segment_id: str) -> dict | None:
             return {
                 "id": segment_id,
                 "text_canonical": shot.get("narration_in_this_shot", {}).get("narrator_text", "")
-                                  or shot.get("text_canonical", ""),
+                or shot.get("text_canonical", ""),
             }
     return None
 
 
 def ffprobe_duration(media_path: str) -> float:
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "csv=p=0", media_path],
-        capture_output=True, text=True, check=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", media_path],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(result.stdout.strip())
 
 
@@ -163,18 +182,16 @@ def extract_n_frames(video_path: str, n: int, output_dir: str) -> list[tuple[flo
         timestamps = [duration / 2]
     else:
         # Slight inset to avoid edge ffmpeg failures
-        timestamps = [
-            max(0.05, duration * (i / (n - 1)) - (0.05 if i == n - 1 else 0))
-            for i in range(n)
-        ]
+        timestamps = [max(0.05, duration * (i / (n - 1)) - (0.05 if i == n - 1 else 0)) for i in range(n)]
     out = []
     for t in timestamps:
         fp = os.path.join(output_dir, f"frame_{t:06.2f}.png")
         subprocess.run(
-            ["ffmpeg", "-y", "-ss", str(t), "-i", video_path,
-             "-frames:v", "1", "-q:v", "2", fp],
-            capture_output=True, check=False
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            ["ffmpeg", "-y", "-ss", str(t), "-i", video_path, "-frames:v", "1", "-q:v", "2", fp],
+            capture_output=True,
+            check=False,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if os.path.exists(fp) and os.path.getsize(fp) > 1000:
             out.append((t, fp))
     return out
@@ -185,13 +202,12 @@ def gemini_query_image(client, prompt: str, image_path: str) -> str:
         image_bytes = f.read()
     response = client.models.generate_content(
         model=GEMINI_MODEL,
-        contents=[{
-            "role": "user",
-            "parts": [
-                {"text": prompt},
-                {"inline_data": {"mime_type": "image/png", "data": image_bytes}}
-            ]
-        }]
+        contents=[
+            {
+                "role": "user",
+                "parts": [{"text": prompt}, {"inline_data": {"mime_type": "image/png", "data": image_bytes}}],
+            }
+        ],
     )
     return response.text.strip()
 
@@ -202,10 +218,7 @@ def gemini_query_images(client, prompt: str, image_paths: list[str]) -> str:
     for ip in image_paths:
         with open(ip, "rb") as f:
             parts.append({"inline_data": {"mime_type": "image/png", "data": f.read()}})
-    response = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=[{"role": "user", "parts": parts}]
-    )
+    response = client.models.generate_content(model=GEMINI_MODEL, contents=[{"role": "user", "parts": parts}])
     return response.text.strip()
 
 
@@ -290,8 +303,12 @@ def hook_hailuo_post(args) -> dict:
     if not shot:
         return {"status": "error", "error": f"shot_id '{args.shot_id}' not found in SPEC"}
 
-    visual_intent = shot.get("visual_action_match", {}).get("visual_intent", "") or shot.get("description", "")
-    characters = ", ".join(shot.get("characters_visible", []) or shot.get("scene_context", {}).get("who_is_there", []))
+    visual_intent = shot.get("visual_action_match", {}).get("visual_intent", "") or shot.get(
+        "description", ""
+    )
+    characters = ", ".join(
+        shot.get("characters_visible", []) or shot.get("scene_context", {}).get("who_is_there", [])
+    )
     atm_list = shot.get("atmospheric_motions_list", [])
     atm_str = "; ".join(atm_list) if atm_list else "(none specified)"
     wdw = shot.get("scene_context", {}).get("who_does_what", {})
@@ -331,7 +348,8 @@ def hook_hailuo_post(args) -> dict:
         "raw_response": response,
         "recommendation": (
             f"REGEN this clip — min dimension score {minscore} (<{SCORE_FAIL_THRESHOLD})"
-            if flagged else "PASS — clip matches SPEC"
+            if flagged
+            else "PASS — clip matches SPEC"
         ),
     }
 
@@ -339,6 +357,7 @@ def hook_hailuo_post(args) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # HOOK 2 — TTS POST (CP2 per segment)
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def whisper_transcribe(audio_path: str) -> str:
     """Local Whisper transcribe → text. Returns empty string on failure."""
@@ -349,9 +368,21 @@ def whisper_transcribe(audio_path: str) -> str:
         try:
             with tempfile.TemporaryDirectory() as tmp:
                 subprocess.run(
-                    ["whisper", audio_path, "--model", "base", "--language", "Spanish",
-                     "--output_format", "txt", "--output_dir", tmp],
-                    capture_output=True, check=True, timeout=180
+                    [
+                        "whisper",
+                        audio_path,
+                        "--model",
+                        "base",
+                        "--language",
+                        "Spanish",
+                        "--output_format",
+                        "txt",
+                        "--output_dir",
+                        tmp,
+                    ],
+                    capture_output=True,
+                    check=True,
+                    timeout=180,
                 )
                 txt_path = Path(tmp) / (Path(audio_path).stem + ".txt")
                 if txt_path.exists():
@@ -373,8 +404,11 @@ def ffmpeg_mean_volume(audio_path: str) -> float | None:
     try:
         result = subprocess.run(
             ["ffmpeg", "-i", audio_path, "-af", "volumedetect", "-f", "null", "-"],
-            capture_output=True, text=True, check=False
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         # Output in stderr
         m = re.search(r"mean_volume:\s*(-?\d+\.?\d*)\s*dB", result.stderr)
         if m:
@@ -467,7 +501,8 @@ def hook_tts_post(args) -> dict:
         "flagged_regen": flagged,
         "recommendation": (
             f"REGEN TTS — {len(issues)} issue(s): {'; '.join(issues)}"
-            if flagged else "PASS — TTS matches SPEC, audible, neutral Spanish"
+            if flagged
+            else "PASS — TTS matches SPEC, audible, neutral Spanish"
         ),
     }
 
@@ -513,8 +548,12 @@ def hook_atomic_post(args) -> dict:
     if not shot:
         return {"status": "error", "error": f"shot_id '{args.shot_id}' not found in SPEC"}
 
-    visual_intent = shot.get("visual_action_match", {}).get("visual_intent", "") or shot.get("description", "")
-    narrator_text = shot.get("narration_in_this_shot", {}).get("narrator_text", "") or shot.get("text_canonical", "")
+    visual_intent = shot.get("visual_action_match", {}).get("visual_intent", "") or shot.get(
+        "description", ""
+    )
+    narrator_text = shot.get("narration_in_this_shot", {}).get("narrator_text", "") or shot.get(
+        "text_canonical", ""
+    )
     ui_active = ", ".join(shot.get("ui_active", []) or [])
 
     if get_settings().gemini_api_key is None:
@@ -550,7 +589,8 @@ def hook_atomic_post(args) -> dict:
         "raw_response": response,
         "recommendation": (
             f"REGEN atomic clip — min dimension score {minscore} (<{SCORE_FAIL_THRESHOLD})"
-            if flagged else "PASS — atomic clip caption+sync OK"
+            if flagged
+            else "PASS — atomic clip caption+sync OK"
         ),
     }
 
@@ -608,10 +648,11 @@ def hook_transition_post(args) -> dict:
         for i, t in enumerate(timestamps):
             fp = os.path.join(tmpdir, f"trans_{i}_{t:06.2f}.png")
             subprocess.run(
-                ["ffmpeg", "-y", "-ss", str(t), "-i", args.concat,
-                 "-frames:v", "1", "-q:v", "2", fp],
-                capture_output=True, check=False
-            , timeout=SUBPROCESS_TIMEOUT_S)
+                ["ffmpeg", "-y", "-ss", str(t), "-i", args.concat, "-frames:v", "1", "-q:v", "2", fp],
+                capture_output=True,
+                check=False,
+                timeout=SUBPROCESS_TIMEOUT_S,
+            )
             if os.path.exists(fp) and os.path.getsize(fp) > 1000:
                 frames.append((t, fp))
 
@@ -641,7 +682,8 @@ def hook_transition_post(args) -> dict:
         "raw_response": response,
         "recommendation": (
             f"REWORK transition — min dimension score {minscore} (<{SCORE_FAIL_THRESHOLD})"
-            if flagged else "PASS — transition flows naturally"
+            if flagged
+            else "PASS — transition flows naturally"
         ),
     }
 
@@ -649,6 +691,7 @@ def hook_transition_post(args) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def print_report(report: dict) -> None:
     """Human-readable summary of a hook report."""
@@ -695,9 +738,10 @@ def main() -> int:
         epilog=__doc__,
     )
     parser.add_argument(
-        "--hook", required=True,
+        "--hook",
+        required=True,
         choices=["hailuo_post", "tts_post", "atomic_post", "transition_post"],
-        help="Which mid-exec hook to run."
+        help="Which mid-exec hook to run.",
     )
     # Hook 1 + 3 args
     parser.add_argument("--clip", help="Path to .mp4 (hailuo_post / atomic_post)")

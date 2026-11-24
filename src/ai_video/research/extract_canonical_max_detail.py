@@ -32,6 +32,7 @@ Format-aware defaults:
 
 Refactored Sub-Fase 3A.2 TIER 2.1 (2026-05-25): hardcoded paths → CLI flags per Capa A agnostic principle.
 """
+
 import argparse
 import json
 import re
@@ -54,7 +55,9 @@ SOURCES_DIR = None
 CANONICAL_SCENES_DIR = None
 
 
-def resolve_format_paths(format_name, sources_override=None, canonical_scenes_override=None, ref_dir_override=None):
+def resolve_format_paths(
+    format_name, sources_override=None, canonical_scenes_override=None, ref_dir_override=None
+):
     """Resolve format-aware default paths or honor explicit overrides.
 
     horror-choice: namespaced post-TIER 2.3 (2026-05-25) — ref-XX moved to referent-analysis/horror-choice/
@@ -74,9 +77,12 @@ def resolve_format_paths(format_name, sources_override=None, canonical_scenes_ov
         }
     return {
         "sources_dir": Path(sources_override) if sources_override else defaults["sources_dir"],
-        "canonical_scenes_dir": Path(canonical_scenes_override) if canonical_scenes_override else defaults["canonical_scenes_dir"],
+        "canonical_scenes_dir": Path(canonical_scenes_override)
+        if canonical_scenes_override
+        else defaults["canonical_scenes_dir"],
         "ref_dir": Path(ref_dir_override) if ref_dir_override else defaults["ref_dir"],
     }
+
 
 REF_TO_SOURCE = {
     "ref-03": "ScreenRecording_05-13-2026 00-01-36_1.MP4",
@@ -90,7 +96,10 @@ REF_TO_SOURCE = {
 }
 
 HOOK_SUB_BEAT_PATTERNS = {
-    "framing_question": [r"\b(?:escoge|elige|escogiste|decid[íi]).*(?:compañer|noche|salir)", r"\bpara salir\b"],
+    "framing_question": [
+        r"\b(?:escoge|elige|escogiste|decid[íi]).*(?:compañer|noche|salir)",
+        r"\bpara salir\b",
+    ],
     "character_intro": [r"\b(?:o|y)\s+(?:\w+\s*)?(?:[A-Z][a-z]+|el matarife|la cocinera)\b"],
     "setup_threat": [r"\b(?:nunca|para siempre|loop|eterno|sin terminar|cena|infinito|silencio)\b"],
     "character_threat": [r"\b(?:no me|no te|prepárate|cuidado)\b"],
@@ -114,8 +123,11 @@ CLIFFHANGER_PATTERNS = [
 def get_video_duration(mp4_path):
     r = subprocess.run(
         ["ffprobe", "-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4_path)],
-        capture_output=True, text=True, check=True,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(r.stdout.strip())
 
 
@@ -129,28 +141,52 @@ def extract_dense_frames(mp4_path, out_dir, dense_until_s=30.0):
 
     # Pass 1: dense (every 0.5s) first 30s
     pass1 = out_dir / "_pass1.txt"
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-i", str(mp4_path),
-        "-t", str(min(dense_until_s, duration)),
-        "-vf", "fps=2,scale=540:960",  # 2 fps = every 0.5s
-        "-q:v", "3",
-        "-pix_fmt", "yuvj420p",
-        str(out_dir / "frame_dense_%04d.jpg"),
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-i",
+            str(mp4_path),
+            "-t",
+            str(min(dense_until_s, duration)),
+            "-vf",
+            "fps=2,scale=540:960",  # 2 fps = every 0.5s
+            "-q:v",
+            "3",
+            "-pix_fmt",
+            "yuvj420p",
+            str(out_dir / "frame_dense_%04d.jpg"),
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     n_dense = len(list(out_dir.glob("frame_dense_*.jpg")))
 
     # Pass 2: sparse (every 1s) from 30s onwards
     if duration > dense_until_s:
-        subprocess.run([
-            "ffmpeg", "-y", "-loglevel", "error",
-            "-ss", str(dense_until_s),
-            "-i", str(mp4_path),
-            "-vf", "fps=1,scale=540:960",  # 1 fps = every 1s
-            "-q:v", "3",
-            "-pix_fmt", "yuvj420p",
-            str(out_dir / "frame_sparse_%04d.jpg"),
-        ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-loglevel",
+                "error",
+                "-ss",
+                str(dense_until_s),
+                "-i",
+                str(mp4_path),
+                "-vf",
+                "fps=1,scale=540:960",  # 1 fps = every 1s
+                "-q:v",
+                "3",
+                "-pix_fmt",
+                "yuvj420p",
+                str(out_dir / "frame_sparse_%04d.jpg"),
+            ],
+            check=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
     n_sparse = len(list(out_dir.glob("frame_sparse_*.jpg")))
 
     return {
@@ -208,13 +244,15 @@ def find_decision_windows(segments):
         text_lower = seg["text"].lower().strip()
         for pat in DECISION_PATTERNS:
             if re.search(pat, text_lower):
-                windows.append({
-                    "segment_idx": i,
-                    "segment_text": seg["text"].strip(),
-                    "narration_start_s": seg["start"],
-                    "narration_end_s": seg["end"],
-                    "estimated_decision_window_end_s": min(seg["end"] + 5.0, segments[-1]["end"]),
-                })
+                windows.append(
+                    {
+                        "segment_idx": i,
+                        "segment_text": seg["text"].strip(),
+                        "narration_start_s": seg["start"],
+                        "narration_end_s": seg["end"],
+                        "estimated_decision_window_end_s": min(seg["end"] + 5.0, segments[-1]["end"]),
+                    }
+                )
                 break
     return windows
 
@@ -229,13 +267,15 @@ def find_hook_sub_beats(segments, hook_end_s=15.0):
         for beat_name, patterns in HOOK_SUB_BEAT_PATTERNS.items():
             for pat in patterns:
                 if re.search(pat, text_lower):
-                    sub_beats.append({
-                        "segment_idx": i,
-                        "start_s": seg["start"],
-                        "end_s": seg["end"],
-                        "beat_type": beat_name,
-                        "text": seg["text"].strip(),
-                    })
+                    sub_beats.append(
+                        {
+                            "segment_idx": i,
+                            "start_s": seg["start"],
+                            "end_s": seg["end"],
+                            "beat_type": beat_name,
+                            "text": seg["text"].strip(),
+                        }
+                    )
                     break
     return sub_beats
 
@@ -249,12 +289,14 @@ def find_cliffhanger_segments(segments, cliffhanger_start_pct=0.85):
         text_lower = seg["text"].lower().strip()
         for pat in CLIFFHANGER_PATTERNS:
             if re.search(pat, text_lower):
-                cliff.append({
-                    "segment_idx": i,
-                    "start_s": seg["start"],
-                    "end_s": seg["end"],
-                    "text": seg["text"].strip(),
-                })
+                cliff.append(
+                    {
+                        "segment_idx": i,
+                        "start_s": seg["start"],
+                        "end_s": seg["end"],
+                        "text": seg["text"].strip(),
+                    }
+                )
                 break
     return cliff
 
@@ -279,16 +321,18 @@ def compile_events(ref_id, transcription_path, scene_cuts_path):
     role_counter = Counter()
     for i, seg in enumerate(segments):
         role = classify_segment_role(seg["text"], i, len(segments))
-        role_assigned.append({
-            "segment_idx": i,
-            "start_s": seg["start"],
-            "end_s": seg["end"],
-            "duration_s": seg["end"] - seg["start"],
-            "text": seg["text"].strip(),
-            "role": role,
-            "words": len(seg["text"].split()),
-            "wpm": round(len(seg["text"].split()) / max(seg["end"] - seg["start"], 0.1) * 60.0, 1),
-        })
+        role_assigned.append(
+            {
+                "segment_idx": i,
+                "start_s": seg["start"],
+                "end_s": seg["end"],
+                "duration_s": seg["end"] - seg["start"],
+                "text": seg["text"].strip(),
+                "role": role,
+                "words": len(seg["text"].split()),
+                "wpm": round(len(seg["text"].split()) / max(seg["end"] - seg["start"], 0.1) * 60.0, 1),
+            }
+        )
         role_counter[role] += 1
 
     return {
@@ -296,7 +340,9 @@ def compile_events(ref_id, transcription_path, scene_cuts_path):
         "n_segments": len(segments),
         "total_duration_s": segments[-1]["end"] if segments else 0,
         "n_scene_cuts": len(scene_cuts),
-        "scene_cut_density_per_min": round(len(scene_cuts) / max(segments[-1]["end"], 1) * 60, 2) if segments else 0,
+        "scene_cut_density_per_min": round(len(scene_cuts) / max(segments[-1]["end"], 1) * 60, 2)
+        if segments
+        else 0,
         "hook_sub_beats": find_hook_sub_beats(segments),
         "decision_windows": find_decision_windows(segments),
         "cliffhanger_segments": find_cliffhanger_segments(segments),
@@ -319,14 +365,18 @@ def aggregate_patterns(per_ref_events):
             continue
         # Hook sub-beat sequence
         beats = [b["beat_type"] for b in ref_events["hook_sub_beats"]]
-        hook_beat_order.append({
-            "ref_id": ref_events["ref_id"],
-            "beat_order": beats,
-        })
-        decision_windows_per_ref.append({
-            "ref_id": ref_events["ref_id"],
-            "n_decisions": len(ref_events["decision_windows"]),
-        })
+        hook_beat_order.append(
+            {
+                "ref_id": ref_events["ref_id"],
+                "beat_order": beats,
+            }
+        )
+        decision_windows_per_ref.append(
+            {
+                "ref_id": ref_events["ref_id"],
+                "n_decisions": len(ref_events["decision_windows"]),
+            }
+        )
         for cs in ref_events["cliffhanger_segments"]:
             cliffhanger_count["has_cliffhanger"] += 1
             break
@@ -349,7 +399,9 @@ def aggregate_patterns(per_ref_events):
         "decision_windows_per_ref": decision_windows_per_ref,
         "n_refs_with_cliffhanger": cliffhanger_count["has_cliffhanger"],
         "scene_cut_density_per_min": {
-            "median": round(sorted(scene_cut_densities)[len(scene_cut_densities)//2], 2) if scene_cut_densities else 0,
+            "median": round(sorted(scene_cut_densities)[len(scene_cut_densities) // 2], 2)
+            if scene_cut_densities
+            else 0,
             "min": round(min(scene_cut_densities), 2) if scene_cut_densities else 0,
             "max": round(max(scene_cut_densities), 2) if scene_cut_densities else 0,
         },
@@ -358,17 +410,25 @@ def aggregate_patterns(per_ref_events):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
-    parser.add_argument("--sources-dir", default=None,
-                        help="Override sources MP4 dir (default: format-aware)")
-    parser.add_argument("--canonical-scenes-dir", default=None,
-                        help="Override canonical-scenes output dir (default: format-aware)")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="Format name (e.g., horror-choice). REQUIRED — no silent assumption."
+    )
+    parser.add_argument(
+        "--sources-dir", default=None, help="Override sources MP4 dir (default: format-aware)"
+    )
+    parser.add_argument(
+        "--canonical-scenes-dir",
+        default=None,
+        help="Override canonical-scenes output dir (default: format-aware)",
+    )
     parser.add_argument("--refs", nargs="+", help="Specific refs (default: all 8)")
-    parser.add_argument("--skip-frames", action="store_true", help="Skip dense frame extraction (use existing)")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Print resolved paths + exit 0 (testability)")
+    parser.add_argument(
+        "--skip-frames", action="store_true", help="Skip dense frame extraction (use existing)"
+    )
+    parser.add_argument("--dry-run", action="store_true", help="Print resolved paths + exit 0 (testability)")
     args = parser.parse_args()
 
     global SOURCES_DIR, CANONICAL_SCENES_DIR, REF_DIR
@@ -408,7 +468,9 @@ def main():
             print(f"  Extracting dense frames → {frames_dir}")
             try:
                 frame_info = extract_dense_frames(source_mp4, frames_dir)
-                print(f"    ✓ {frame_info['total_frames']} frames ({frame_info['dense_frames']} dense @ 0.5s + {frame_info['sparse_frames']} sparse @ 1s)")
+                print(
+                    f"    ✓ {frame_info['total_frames']} frames ({frame_info['dense_frames']} dense @ 0.5s + {frame_info['sparse_frames']} sparse @ 1s)"
+                )
             except subprocess.CalledProcessError as e:
                 print(f"    ❌ ffmpeg failed: {e}")
                 frame_info = {"error": "extraction_failed"}
@@ -427,7 +489,9 @@ def main():
         events_path = CANONICAL_SCENES_DIR / f"{ref_id}-frame-by-frame-events.json"
         events_path.write_text(json.dumps(events, indent=2, ensure_ascii=False))
         print(f"    ✓ events saved: {events_path}")
-        print(f"    hook sub-beats: {len(events['hook_sub_beats'])} | decisions: {len(events['decision_windows'])} | cliffhanger segs: {len(events['cliffhanger_segments'])}")
+        print(
+            f"    hook sub-beats: {len(events['hook_sub_beats'])} | decisions: {len(events['decision_windows'])} | cliffhanger segs: {len(events['cliffhanger_segments'])}"
+        )
         print(f"    role distribution: {events['role_distribution']}")
         per_ref_events.append(events)
 

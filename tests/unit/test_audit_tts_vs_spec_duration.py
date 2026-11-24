@@ -6,6 +6,7 @@ Catches TTS overshoots that would cause sync drift or shot overlap downstream.
 7 tests: CLI/capability/Bug9 + clean match + overshoot FAIL + TTS missing FAIL + no-narration skip.
 Synthetic mp3s via ffmpeg lavfi (sine tones at controlled durations).
 """
+
 import shutil
 import subprocess
 import sys
@@ -26,20 +27,40 @@ def _run(args):
 
 
 def _make_mp3(path, duration_s, freq=220):
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"sine=frequency={freq}:duration={duration_s}:sample_rate={SR}",
-        "-c:a", "libmp3lame", "-t", str(duration_s), str(path),
-    ], check=True, capture_output=True)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-f",
+            "lavfi",
+            "-i",
+            f"sine=frequency={freq}:duration={duration_s}:sample_rate={SR}",
+            "-c:a",
+            "libmp3lame",
+            "-t",
+            str(duration_s),
+            str(path),
+        ],
+        check=True,
+        capture_output=True,
+    )
 
 
 def _write_spec(path, *, has_tts=True, shot_yaml=None, omit_caps=False):
-    caps = "" if omit_caps else (
-        "video_capabilities:\n"
-        f'  has_tts_narration: {str(has_tts).lower()}\n'
-        '  format_type: "interactive_choice"\n'
+    caps = (
+        ""
+        if omit_caps
+        else (
+            "video_capabilities:\n"
+            f'  has_tts_narration: {str(has_tts).lower()}\n'
+            '  format_type: "interactive_choice"\n'
+        )
     )
-    body = shot_yaml or """shot_list:
+    body = (
+        shot_yaml
+        or """shot_list:
   - shot_id: shot_01
     duration_intent_s: 3.0
     narration_in_this_shot:
@@ -49,6 +70,7 @@ def _write_spec(path, *, has_tts=True, shot_yaml=None, omit_caps=False):
     narration_in_this_shot:
       narrator_text: "Dos segundos"
 """
+    )
     Path(path).write_text(f'schema_version: "v11.1"\n{caps}{body}', encoding="utf-8")
 
 
@@ -84,8 +106,7 @@ class TestL2(unittest.TestCase):
         _write_spec(self.spec)
         _make_mp3(self.tts / "shot_01_narrator.mp3", 3.0)
         _make_mp3(self.tts / "shot_02_narrator.mp3", 2.0)
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--tts-dir", str(self.tts)])
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--tts-dir", str(self.tts)])
         self.assertEqual(r.returncode, 0, f"stdout {r.stdout}\nstderr {r.stderr}")
         self.assertIn("\"pass\"", r.stdout)
 
@@ -94,8 +115,18 @@ class TestL2(unittest.TestCase):
         _write_spec(self.spec)
         _make_mp3(self.tts / "shot_01_narrator.mp3", 6.0)  # 6s vs intent 3s → overshoot 3s
         _make_mp3(self.tts / "shot_02_narrator.mp3", 2.0)
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--tts-dir", str(self.tts), "--tolerance-s", "0.5"])
+        r = _run(
+            [
+                "--format",
+                "horror-choice",
+                "--spec",
+                str(self.spec),
+                "--tts-dir",
+                str(self.tts),
+                "--tolerance-s",
+                "0.5",
+            ]
+        )
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("shot_01", r.stdout)
 
@@ -103,8 +134,7 @@ class TestL2(unittest.TestCase):
         _write_spec(self.spec)
         _make_mp3(self.tts / "shot_01_narrator.mp3", 3.0)
         # shot_02 narrator missing → FAIL
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--tts-dir", str(self.tts)])
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--tts-dir", str(self.tts)])
         self.assertNotEqual(r.returncode, 0)
         self.assertIn("shot_02", r.stdout)
         self.assertIn("missing", r.stdout.lower())
@@ -120,10 +150,10 @@ class TestL2(unittest.TestCase):
 """
         _write_spec(self.spec, shot_yaml=shot)
         _make_mp3(self.tts / "shot_narrator_narrator.mp3", 2.0)
-        r = _run(["--format", "horror-choice", "--spec", str(self.spec),
-                  "--tts-dir", str(self.tts)])
-        self.assertEqual(r.returncode, 0,
-                         f"shot_visual_only must be skipped (no narration expected)\nstdout {r.stdout}")
+        r = _run(["--format", "horror-choice", "--spec", str(self.spec), "--tts-dir", str(self.tts)])
+        self.assertEqual(
+            r.returncode, 0, f"shot_visual_only must be skipped (no narration expected)\nstdout {r.stdout}"
+        )
         self.assertIn("\"pass\"", r.stdout)
 
 

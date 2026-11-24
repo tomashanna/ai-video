@@ -61,6 +61,7 @@ Authority: referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregat
   pre-render-gate Q22 + choice-format-core/INGENIERO-CHOICE-CORE § 2 (decision-UI pacing) +
   CLAUDE.md HR#19 (NEVER ESTIMATE, ALWAYS MEASURE). HR#26 companion: test_audit-decision-ui-pacing.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -82,7 +83,9 @@ MIN_VALUES_FOR_BAND = 4
 
 # Path canónico del aggregate JSON medido (n=8 refs). Override: --bands-json.
 # Authority: measure-canonical-decision-ui-pacing.py OUT_DIR (horror-choice namespaced).
-DEFAULT_BANDS_RELPATH = "data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+DEFAULT_BANDS_RELPATH = (
+    "data/referent-analysis/horror-choice/empirical-decision-ui-pacing/aggregate-canonical-bands.json"
+)
 
 # Capability-gate: capas que activan el check.
 UI_FORMAT_TYPES = ("interactive_choice", "reel")
@@ -107,10 +110,21 @@ FREEZE_TOKENS = ("static", "static_with_micro_bob", "freeze", "frozen", "near_fr
 # el resto se clasifica para reporte pero no gatea.
 ROLE_PATTERNS = {
     "hook_framing": [r"\b(?:escoge|elige|decid[íi]).*\bcompañer", r"\b(matarife|cocinera|ó o)\b"],
-    "setup_establishing": [r"\bplanta el", r"\b(turno|cámara|gancho|despiese)", r"\bsi (?:elegiste|escogiste)\b"],
+    "setup_establishing": [
+        r"\bplanta el",
+        r"\b(turno|cámara|gancho|despiese)",
+        r"\bsi (?:elegiste|escogiste)\b",
+    ],
     "decision_setup": [r"\b(empieza a|empieza|aparece|se voltea|se acerca|empezás)\b"],
-    "decision_question": [r"\bdecid[íi]s?\b", r"\bahora decides?\b", r"\b(?:miras|mirás|salís|seguís|te incomoda|prefieres|atrapas|esperas|corres|quedas)\b\?"],
-    "consequence_narration": [r"\bsi (?:miras|mirás|seguís|salís|esper|te quieres|sabes|te incomoda|pisas|corres|atrapas)", r"\b(?:envía|enoja|sonríe|deja de|empieza a|abre la)\b"],
+    "decision_question": [
+        r"\bdecid[íi]s?\b",
+        r"\bahora decides?\b",
+        r"\b(?:miras|mirás|salís|seguís|te incomoda|prefieres|atrapas|esperas|corres|quedas)\b\?",
+    ],
+    "consequence_narration": [
+        r"\bsi (?:miras|mirás|seguís|salís|esper|te quieres|sabes|te incomoda|pisas|corres|atrapas)",
+        r"\b(?:envía|enoja|sonríe|deja de|empieza a|abre la)\b",
+    ],
     "cliffhanger": [r"\b(?:nunca|sirena|seis|saliste|vive tu|aprendiste|loop|eterno|para siempre|baila)\b"],
     "climax_staccato": [r"^\s*(?:la (?:olla|sirena)|cena|nunca|fin|ya)\b"],
 }
@@ -120,9 +134,18 @@ GATING_WPM_ROLES = ("decision_question", "decision_setup")
 
 # Parámetros del aggregate JSON que requieren el RENDER (no medibles del SPEC) → forward.
 RENDER_ONLY_PARAMS = (
-    ("ambient_duck_db_during_countdown", "RMS de audio del render (librosa) — el SPEC no declara dB de ducking medido"),
-    ("freeze_frame", "SSIM frame-a-frame del render — el SPEC solo DECLARA freeze (pov_traversal/LUT), no lo mide"),
-    ("loading_bar_fill_duration_s", "fill width frame-a-frame del render — NO está en el aggregate JSON (Phase 2) y el SPEC solo declara el span de visibilidad"),
+    (
+        "ambient_duck_db_during_countdown",
+        "RMS de audio del render (librosa) — el SPEC no declara dB de ducking medido",
+    ),
+    (
+        "freeze_frame",
+        "SSIM frame-a-frame del render — el SPEC solo DECLARA freeze (pov_traversal/LUT), no lo mide",
+    ),
+    (
+        "loading_bar_fill_duration_s",
+        "fill width frame-a-frame del render — NO está en el aggregate JSON (Phase 2) y el SPEC solo declara el span de visibilidad",
+    ),
 )
 
 
@@ -147,6 +170,7 @@ def classify_segment(text):
 # LÓGICA PURA — testeable sin filesystem
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 def _band_for(bands, *path):
     """Navega bands['params'][path...] y devuelve (p25, p75, n_samples) o (None, None, 0)."""
     node = (bands or {}).get("params", {})
@@ -168,24 +192,53 @@ def _check_against_band(param_name, value, p25, p75, n_samples, *, unit="s", rol
     """
     label = f"{param_name}" + (f"[{role}]" if role else "")
     if value is None:
-        return gate(label, "report_only",
-                    f"{label} no medible desde el SPEC en este contexto (sin valor declarado)",
-                    value=None, role=role)
+        return gate(
+            label,
+            "report_only",
+            f"{label} no medible desde el SPEC en este contexto (sin valor declarado)",
+            value=None,
+            role=role,
+        )
     v = round(float(value), 3)
     if p25 is None or p75 is None or n_samples < MIN_VALUES_FOR_BAND:
-        return gate(label, "report_only",
-                    (f"{label} = {v}{unit} — banda DÉBIL (n_samples={n_samples} < {MIN_VALUES_FOR_BAND}) "
-                     f"→ report-only, no falla (banda medida: p25={p25} p75={p75})"),
-                    value=v, p25=p25, p75=p75, n_samples=n_samples, role=role)
+        return gate(
+            label,
+            "report_only",
+            (
+                f"{label} = {v}{unit} — banda DÉBIL (n_samples={n_samples} < {MIN_VALUES_FOR_BAND}) "
+                f"→ report-only, no falla (banda medida: p25={p25} p75={p75})"
+            ),
+            value=v,
+            p25=p25,
+            p75=p75,
+            n_samples=n_samples,
+            role=role,
+        )
     lo, hi = float(p25), float(p75)
     if lo <= v <= hi:
-        return gate(label, "pass",
-                    f"{label} = {v}{unit} ∈ banda [{lo}, {hi}]{unit} (n={n_samples}) ✓",
-                    value=v, p25=lo, p75=hi, n_samples=n_samples, role=role)
-    return gate(label, "fail",
-                (f"{label} = {v}{unit} FUERA de banda canónica [{lo}, {hi}]{unit} (n={n_samples}) — "
-                 f"decision-UI pacing diverge del medido en los 8 refs (Q22a)"),
-                value=v, p25=lo, p75=hi, n_samples=n_samples, role=role)
+        return gate(
+            label,
+            "pass",
+            f"{label} = {v}{unit} ∈ banda [{lo}, {hi}]{unit} (n={n_samples}) ✓",
+            value=v,
+            p25=lo,
+            p75=hi,
+            n_samples=n_samples,
+            role=role,
+        )
+    return gate(
+        label,
+        "fail",
+        (
+            f"{label} = {v}{unit} FUERA de banda canónica [{lo}, {hi}]{unit} (n={n_samples}) — "
+            f"decision-UI pacing diverge del medido en los 8 refs (Q22a)"
+        ),
+        value=v,
+        p25=lo,
+        p75=hi,
+        n_samples=n_samples,
+        role=role,
+    )
 
 
 def evaluate_decision_ui_pacing(decision_shots, bands):
@@ -195,7 +248,10 @@ def evaluate_decision_ui_pacing(decision_shots, bands):
     Devuelve (ok, results) donde results es lista de dicts por shot. ok=False si ALGÚN param
     medible cae fuera de una banda FUERTE (n≥4). Bandas débiles / params render-only NO fallan.
     """
-    cd_p25, cd_p75, cd_n = _band_for(bands, "countdown_digit_duration_s", )
+    cd_p25, cd_p75, cd_n = _band_for(
+        bands,
+        "countdown_digit_duration_s",
+    )
     pb_p25, pb_p75, pb_n = _band_for(bands, "countdown_pause_beat_s")
 
     results = []
@@ -205,9 +261,11 @@ def evaluate_decision_ui_pacing(decision_shots, bands):
         checks = []
 
         # 1. countdown digit duration (banda n=1 en el JSON canónico → report-only)
-        checks.append(_check_against_band(
-            "countdown_digit_duration_s", s.get("countdown_digit_duration_s"),
-            cd_p25, cd_p75, cd_n))
+        checks.append(
+            _check_against_band(
+                "countdown_digit_duration_s", s.get("countdown_digit_duration_s"), cd_p25, cd_p75, cd_n
+            )
+        )
 
         # 2. pause beat narración→countdown (banda n=14 → fuerte). SOLO se mide si narración y
         #    countdown viven en el MISMO clock (mismo shot, anclas consistentes). Si las dos
@@ -215,68 +273,98 @@ def evaluate_decision_ui_pacing(decision_shots, bands):
         #    en el decision shot → cross-clock no confiable → report-only (NO inventamos el número).
         pb_val = s.get("countdown_pause_beat_s")
         if pb_val is not None and s.get("pause_beat_clock_consistent"):
-            checks.append(_check_against_band(
-                "countdown_pause_beat_s", pb_val, pb_p25, pb_p75, pb_n))
+            checks.append(_check_against_band("countdown_pause_beat_s", pb_val, pb_p25, pb_p75, pb_n))
         elif pb_val is not None:
-            checks.append(gate(
-                "countdown_pause_beat_s", "report_only",
-                (f"countdown_pause_beat_s ≈ {pb_val}s NO confiable: el SPEC tiene dos relojes de "
-                 f"timeline (cumulative duration_intent_s vs narration timestamp_intent_s absoluto) "
-                 f"que divergen en este decision shot → restar countdown_start(rel)−narración_end(abs) "
-                 f"mezcla clocks. Medición de pause-beat measurement-grade = forward (render o SPEC "
-                 f"con un único clock declarado)"),
-                value=pb_val, p25=pb_p25, p75=pb_p75, n_samples=pb_n))
+            checks.append(
+                gate(
+                    "countdown_pause_beat_s",
+                    "report_only",
+                    (
+                        f"countdown_pause_beat_s ≈ {pb_val}s NO confiable: el SPEC tiene dos relojes de "
+                        f"timeline (cumulative duration_intent_s vs narration timestamp_intent_s absoluto) "
+                        f"que divergen en este decision shot → restar countdown_start(rel)−narración_end(abs) "
+                        f"mezcla clocks. Medición de pause-beat measurement-grade = forward (render o SPEC "
+                        f"con un único clock declarado)"
+                    ),
+                    value=pb_val,
+                    p25=pb_p25,
+                    p75=pb_p75,
+                    n_samples=pb_n,
+                )
+            )
         else:
-            checks.append(_check_against_band(
-                "countdown_pause_beat_s", None, pb_p25, pb_p75, pb_n))
+            checks.append(_check_against_band("countdown_pause_beat_s", None, pb_p25, pb_p75, pb_n))
 
         # 3. WPM por rol del segmento de decisión (gatea solo decision_question/decision_setup)
         for wc in s.get("wpm_checks") or []:
             role = wc.get("role")
             if role not in GATING_WPM_ROLES:
                 # rol no-gating: reportar sin gatear
-                checks.append(gate(
-                    f"per_segment_wpm[{role}]", "report_only",
-                    f"segmento clasificado como '{role}' (no gating en decision shot) — wpm={wc.get('wpm')}",
-                    value=wc.get("wpm"), role=role))
+                checks.append(
+                    gate(
+                        f"per_segment_wpm[{role}]",
+                        "report_only",
+                        f"segmento clasificado como '{role}' (no gating en decision shot) — wpm={wc.get('wpm')}",
+                        value=wc.get("wpm"),
+                        role=role,
+                    )
+                )
                 continue
             r_p25, r_p75, r_n = _band_for(bands, "per_segment_wpm_bands", role)
-            checks.append(_check_against_band(
-                "per_segment_wpm", wc.get("wpm"), r_p25, r_p75, r_n, unit=" wpm", role=role))
+            checks.append(
+                _check_against_band(
+                    "per_segment_wpm", wc.get("wpm"), r_p25, r_p75, r_n, unit=" wpm", role=role
+                )
+            )
 
         # 4. freeze DECLARADO (contexto report-only — NO medición del render)
         if "freeze_declared" in s:
             fz = s.get("freeze_declared")
-            checks.append(gate(
-                "freeze_declared_context", "report_only",
-                ("freeze/near-frozen DECLARADO en el SPEC (pov_traversal/LUT/avu) — contexto, NO "
-                 "medición del render (freeze SSIM real = gate de render, forward)")
-                if fz else
-                "freeze NO declarado en este decision shot (¿decision moment sin freeze? — revisar a ojo)",
-                value=bool(fz)))
+            checks.append(
+                gate(
+                    "freeze_declared_context",
+                    "report_only",
+                    (
+                        "freeze/near-frozen DECLARADO en el SPEC (pov_traversal/LUT/avu) — contexto, NO "
+                        "medición del render (freeze SSIM real = gate de render, forward)"
+                    )
+                    if fz
+                    else "freeze NO declarado en este decision shot (¿decision moment sin freeze? — revisar a ojo)",
+                    value=bool(fz),
+                )
+            )
 
         # 5. loading bar span declarado (sin banda en el aggregate JSON → report-only)
         if s.get("loading_visible_s") is not None:
-            checks.append(gate(
-                "loading_bar_visible_span_s", "report_only",
-                (f"loading bar visible {s['loading_visible_s']}s declarado — SIN banda canónica en el "
-                 f"aggregate JSON (loading_bar_fill_duration_s = Phase 2, no medido) → report-only"),
-                value=s["loading_visible_s"]))
+            checks.append(
+                gate(
+                    "loading_bar_visible_span_s",
+                    "report_only",
+                    (
+                        f"loading bar visible {s['loading_visible_s']}s declarado — SIN banda canónica en el "
+                        f"aggregate JSON (loading_bar_fill_duration_s = Phase 2, no medido) → report-only"
+                    ),
+                    value=s["loading_visible_s"],
+                )
+            )
 
         shot_fail = [c for c in checks if c["status"] == "fail"]
         if shot_fail:
             ok = False
-        results.append({
-            "shot_id": sid,
-            "status": "fail" if shot_fail else "pass",
-            "checks": checks,
-        })
+        results.append(
+            {
+                "shot_id": sid,
+                "status": "fail" if shot_fail else "pass",
+                "checks": checks,
+            }
+        )
     return ok, results
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════
 # EXTRACCIÓN — runtime (parsea el SPEC + arma las estructuras puras)
 # ════════════════════════════════════════════════════════════════════════════════════════════
+
 
 def _ui_active(shot):
     ui = shot.get("ui_active")
@@ -293,8 +381,12 @@ def _is_decision_shot(shot):
             continue
         eid = str(el.get("element_id") or "")
         font = str(el.get("font") or "")
-        if COUNTDOWN_ID_RE.search(eid) or LOADING_ID_RE.search(eid) or \
-           COUNTDOWN_FONT_RE.search(font) or LOADING_FONT_RE.search(font):
+        if (
+            COUNTDOWN_ID_RE.search(eid)
+            or LOADING_ID_RE.search(eid)
+            or COUNTDOWN_FONT_RE.search(font)
+            or LOADING_FONT_RE.search(font)
+        ):
             return True
     avu = str(shot.get("avu_overlay_clip") or "")
     if avu and AVU_DECISION_RE.search(avu):
@@ -485,21 +577,24 @@ def extract_decision_shots(spec):
             if cum_start is not None:
                 clock_consistent = abs(cum_start - nar_start_abs) <= PAUSE_BEAT_CLOCK_TOLERANCE_S
 
-        out.append({
-            "shot_id": sid,
-            "countdown_digit_duration_s": (round(digit_dur, 3) if digit_dur is not None else None),
-            "countdown_pause_beat_s": pause_beat,
-            "pause_beat_clock_consistent": clock_consistent,
-            "wpm_checks": shot_narration_wpm_checks(s),
-            "freeze_declared": shot_freeze_declared(s),
-            "loading_visible_s": extract_loading_visible_s(s),
-        })
+        out.append(
+            {
+                "shot_id": sid,
+                "countdown_digit_duration_s": (round(digit_dur, 3) if digit_dur is not None else None),
+                "countdown_pause_beat_s": pause_beat,
+                "pause_beat_clock_consistent": clock_consistent,
+                "wpm_checks": shot_narration_wpm_checks(s),
+                "freeze_declared": shot_freeze_declared(s),
+                "loading_visible_s": extract_loading_visible_s(s),
+            }
+        )
     return out
 
 
 # ════════════════════════════════════════════════════════════════════════════════════════════
 # RUNTIME
 # ════════════════════════════════════════════════════════════════════════════════════════════
+
 
 def find_bands_json(start, override):
     """Resuelve el aggregate JSON: --bands-json explícito > path canónico subiendo desde start."""
@@ -525,12 +620,19 @@ def find_bands_json(start, override):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="formato del SPEC (agnostic-by-design — el path de bandas usa horror-choice namespaced)")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format",
+        required=True,
+        help="formato del SPEC (agnostic-by-design — el path de bandas usa horror-choice namespaced)",
+    )
     parser.add_argument("--spec", required=True, help="path al CREATIVE-SPEC.yaml")
-    parser.add_argument("--bands-json", default=None,
-                        help=f"override del aggregate JSON (default: sube buscando {DEFAULT_BANDS_RELPATH})")
+    parser.add_argument(
+        "--bands-json",
+        default=None,
+        help=f"override del aggregate JSON (default: sube buscando {DEFAULT_BANDS_RELPATH})",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -544,8 +646,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     fmt_type = str(caps.get("format_type") or "")
@@ -553,24 +657,38 @@ def main():
     applies = (fmt_type in UI_FORMAT_TYPES) or has_ui
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nformat_type: {fmt_type}\n"
-              f"has_layer_4_ui: {has_ui}\nbranch: {'decision_ui_pacing_check' if applies else 'not_applicable'}\n"
-              f"decision_shots: {len(extract_decision_shots(spec))}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nformat_type: {fmt_type}\n"
+            f"has_layer_4_ui: {has_ui}\nbranch: {'decision_ui_pacing_check' if applies else 'not_applicable'}\n"
+            f"decision_shots: {len(extract_decision_shots(spec))}"
+        )
         return 0
 
     if not applies:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": (f"format_type='{fmt_type}' ∉ {list(UI_FORMAT_TYPES)} y has_layer_4_ui=false → "
-                       "sin capa UI de decisión que validar (Q22a no aplica)"),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": (
+                        f"format_type='{fmt_type}' ∉ {list(UI_FORMAT_TYPES)} y has_layer_4_ui=false → "
+                        "sin capa UI de decisión que validar (Q22a no aplica)"
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     bands_path = find_bands_json(spec_path, args.bands_json)
     if bands_path is None:
-        print("ERROR: aggregate-canonical-bands.json no encontrado (ni --bands-json ni el path "
-              f"canónico {DEFAULT_BANDS_RELPATH}). Sin bandas medidas no se puede validar. "
-              "Correr measure-canonical-decision-ui-pacing.py primero.", file=sys.stderr)
+        print(
+            "ERROR: aggregate-canonical-bands.json no encontrado (ni --bands-json ni el path "
+            f"canónico {DEFAULT_BANDS_RELPATH}). Sin bandas medidas no se puede validar. "
+            "Correr measure-canonical-decision-ui-pacing.py primero.",
+            file=sys.stderr,
+        )
         return 2
     try:
         with open(bands_path) as f:

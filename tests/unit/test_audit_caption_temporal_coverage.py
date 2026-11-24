@@ -13,6 +13,7 @@ Cases (per spec):
   BAD   → cues cover only ~50% of the spoken span                        → FAIL
   + edge: zero cues / silent clip / >2-line cue / interval merge / runtime e2e PASS+FAIL.
 """
+
 import importlib.util
 import json
 import sys
@@ -53,20 +54,29 @@ def test_good_full_coverage_passes():
     ]
     ok, reasons = M.evaluate_caption_temporal(cues, (0.5, 10.5), total_dur=11.0)
     check(ok, f"GOOD case should PASS but failed: {reasons}")
-    check(any("coverage=0.9" in r or "coverage=1.0" in r for r in reasons),
-          f"coverage ratio not reported as ≥0.90: {reasons}")
+    check(
+        any("coverage=0.9" in r or "coverage=1.0" in r for r in reasons),
+        f"coverage ratio not reported as ≥0.90: {reasons}",
+    )
     print("OK: GOOD full-coverage cues (95%, <3.5s each, ≤2 lines) → PASS")
 
 
 def test_collapsed_block_6s_cue_fails():
     # THE V5/V6 BUG: one static cue carrying the whole narration. spoken span 10s,
     # a single cue 0..6 (covers 60%) AND it spans 6s > 3.5s → must FAIL (collapsed block).
-    cues = [{"start_s": 0.0, "end_s": 6.0,
-             "text": "Aterrizas de noche y la torre te espera con dos figuras", "id": "blob"}]
+    cues = [
+        {
+            "start_s": 0.0,
+            "end_s": 6.0,
+            "text": "Aterrizas de noche y la torre te espera con dos figuras",
+            "id": "blob",
+        }
+    ]
     ok, reasons = M.evaluate_caption_temporal(cues, (0.0, 10.0), total_dur=11.0)
     check(not ok, f"collapsed-block 6s cue MUST FAIL but passed: {reasons}")
-    check(any("collapsed static block" in r for r in reasons),
-          f"collapsed-block reason not present: {reasons}")
+    check(
+        any("collapsed static block" in r for r in reasons), f"collapsed-block reason not present: {reasons}"
+    )
     print("OK: BAD collapsed 6s static cue (V5/V6 burn bug) → FAIL")
 
 
@@ -78,10 +88,8 @@ def test_half_coverage_fails():
     ]
     ok, reasons = M.evaluate_caption_temporal(cues, (0.0, 10.0), total_dur=11.0)
     check(not ok, f"50% coverage MUST FAIL but passed: {reasons}")
-    check(any(r.startswith("coverage=0.5") for r in reasons),
-          f"coverage ~0.50 not reported: {reasons}")
-    check(any("do NOT span" in r for r in reasons),
-          f"coverage-fail reason not present: {reasons}")
+    check(any(r.startswith("coverage=0.5") for r in reasons), f"coverage ~0.50 not reported: {reasons}")
+    check(any("do NOT span" in r for r in reasons), f"coverage-fail reason not present: {reasons}")
     print("OK: BAD 50% temporal coverage → FAIL")
 
 
@@ -120,7 +128,8 @@ def test_merge_intervals_and_clipping():
     check(merged == [(0.0, 3.0), (5.0, 6.0)], f"merge_intervals wrong: {merged}")
     # cue extends beyond the spoken span — only the overlap counts
     covered = M.covered_within_span(
-        [{"start_s": 0.0, "end_s": 20.0, "text": "x"}], span_start=2.0, span_end=10.0)
+        [{"start_s": 0.0, "end_s": 20.0, "text": "x"}], span_start=2.0, span_end=10.0
+    )
     check(abs(covered - 8.0) < 1e-6, f"clipping to spoken span wrong: {covered}")
     print("OK: EDGE interval merge (no double-count) + clip caption to spoken span")
 
@@ -149,10 +158,18 @@ def _mock_runtime(span, total_dur):
 def _write_sidecar(dirpath: Path, captions: list[dict]) -> Path:
     """Write a build_clip_atomic-style sidecar (build_caption_sidecar schema)."""
     p = dirpath / "shot_01_captions.json"
-    p.write_text(json.dumps({
-        "shot_id": "shot_01", "duration_s": 11.0, "global_window_s": [0.0, 11.0],
-        "captions": captions, "format_version": "atomic_v1",
-    }), encoding="utf-8")
+    p.write_text(
+        json.dumps(
+            {
+                "shot_id": "shot_01",
+                "duration_s": 11.0,
+                "global_window_s": [0.0, 11.0],
+                "captions": captions,
+                "format_version": "atomic_v1",
+            }
+        ),
+        encoding="utf-8",
+    )
     return p
 
 
@@ -160,6 +177,7 @@ def _run_main(argv):
     """Call main() with patched sys.argv; capture exit code + stdout."""
     import contextlib
     import io
+
     old_argv = sys.argv
     sys.argv = ["audit-caption-temporal-coverage.py"] + argv
     buf = io.StringIO()
@@ -173,39 +191,52 @@ def _run_main(argv):
 
 def test_runtime_e2e_good_passes():
     tmp = Path(tempfile.mkdtemp())
-    video = tmp / "draft.mp4"; video.write_bytes(b"fake")  # existence only; IO is mocked
-    _write_sidecar(tmp, [
-        {"id": "n1", "text": "Aterrizas de noche", "global_start_s": 0.5, "global_end_s": 3.0},
-        {"id": "n2", "text": "y la torre te espera", "global_start_s": 3.0, "global_end_s": 6.0},
-        {"id": "n3", "text": "Dos figuras", "global_start_s": 6.0, "global_end_s": 8.5},
-        {"id": "n4", "text": "Elige", "global_start_s": 8.5, "global_end_s": 10.0},
-    ])
+    video = tmp / "draft.mp4"
+    video.write_bytes(b"fake")  # existence only; IO is mocked
+    _write_sidecar(
+        tmp,
+        [
+            {"id": "n1", "text": "Aterrizas de noche", "global_start_s": 0.5, "global_end_s": 3.0},
+            {"id": "n2", "text": "y la torre te espera", "global_start_s": 3.0, "global_end_s": 6.0},
+            {"id": "n3", "text": "Dos figuras", "global_start_s": 6.0, "global_end_s": 8.5},
+            {"id": "n4", "text": "Elige", "global_start_s": 8.5, "global_end_s": 10.0},
+        ],
+    )
     _mock_runtime(span=(0.5, 10.5), total_dur=11.0)
-    code, out = _run_main(["--format", "horror-choice", "--video", str(video),
-                           "--project-dir", str(tmp)])
+    code, out = _run_main(["--format", "horror-choice", "--video", str(video), "--project-dir", str(tmp)])
     rep = json.loads(out)
     check(code == 0, f"runtime GOOD should exit 0, got {code}\n{out}")
     check(rep["overall_status"] == "pass", f"expected pass, got {rep['overall_status']}")
-    check(rep["cue_count"] == 4 and rep["cue_source"].startswith("sidecar"),
-          f"sidecar cues not loaded: {rep}")
+    check(
+        rep["cue_count"] == 4 and rep["cue_source"].startswith("sidecar"), f"sidecar cues not loaded: {rep}"
+    )
     print("OK: RUNTIME e2e GOOD (mocked whisper+ffprobe+sidecar) → exit 0 PASS")
 
 
 def test_runtime_e2e_collapsed_block_fails():
     tmp = Path(tempfile.mkdtemp())
-    video = tmp / "draft.mp4"; video.write_bytes(b"fake")
-    _write_sidecar(tmp, [  # the V5/V6 bug: ONE 6s cue carrying the whole narration
-        {"id": "blob", "text": "Aterrizas de noche y la torre te espera con dos figuras",
-         "global_start_s": 0.0, "global_end_s": 6.0},
-    ])
+    video = tmp / "draft.mp4"
+    video.write_bytes(b"fake")
+    _write_sidecar(
+        tmp,
+        [  # the V5/V6 bug: ONE 6s cue carrying the whole narration
+            {
+                "id": "blob",
+                "text": "Aterrizas de noche y la torre te espera con dos figuras",
+                "global_start_s": 0.0,
+                "global_end_s": 6.0,
+            },
+        ],
+    )
     _mock_runtime(span=(0.0, 10.0), total_dur=11.0)
-    code, out = _run_main(["--format", "horror-choice", "--video", str(video),
-                           "--project-dir", str(tmp)])
+    code, out = _run_main(["--format", "horror-choice", "--video", str(video), "--project-dir", str(tmp)])
     rep = json.loads(out)
     check(code == 1, f"runtime collapsed-block should exit 1, got {code}\n{out}")
     check(rep["overall_status"] == "fail", f"expected fail, got {rep['overall_status']}")
-    check(any("collapsed static block" in r for r in rep["reasons"]),
-          f"collapsed-block reason missing in report: {rep['reasons']}")
+    check(
+        any("collapsed static block" in r for r in rep["reasons"]),
+        f"collapsed-block reason missing in report: {rep['reasons']}",
+    )
     print("OK: RUNTIME e2e BAD collapsed 6s cue → exit 1 FAIL")
 
 
@@ -220,10 +251,10 @@ def test_runtime_capability_gate_not_applicable():
 def test_runtime_no_cues_cant_measure_exit2():
     # No sidecar + no --ocr → can't read cues → exit 2 (NOT a false PASS).
     tmp = Path(tempfile.mkdtemp())
-    video = tmp / "draft.mp4"; video.write_bytes(b"fake")
+    video = tmp / "draft.mp4"
+    video.write_bytes(b"fake")
     _mock_runtime(span=(0.0, 10.0), total_dur=11.0)
-    code, out = _run_main(["--format", "horror-choice", "--video", str(video),
-                           "--project-dir", str(tmp)])
+    code, out = _run_main(["--format", "horror-choice", "--video", str(video), "--project-dir", str(tmp)])
     check(code == 2, f"no cues + no ocr must exit 2 (can't-measure), got {code}\n{out}")
     print("OK: RUNTIME no sidecar + no --ocr → exit 2 (can't-measure, no false PASS)")
 

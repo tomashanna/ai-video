@@ -28,6 +28,7 @@ Aprendizajes amargos que originaron este script:
 
 Documentado en: .claude/skills/video-director/ANTI-PATTERNS.md
 """
+
 import re
 import sys
 from collections import defaultdict
@@ -65,14 +66,16 @@ def extract_imgs(content: str):
         style = get("style") or ""
         # If inline style explicitly sets opacity:0, element starts hidden.
         starts_visible = "opacity:0" not in style.replace(" ", "")
-        out.append({
-            "id": eid,
-            "src": src,
-            "data_start": ds_f,
-            "data_duration": dd_f,
-            "data_end": ds_f + dd_f,
-            "starts_visible": starts_visible,
-        })
+        out.append(
+            {
+                "id": eid,
+                "src": src,
+                "data_start": ds_f,
+                "data_duration": dd_f,
+                "data_end": ds_f + dd_f,
+                "starts_visible": starts_visible,
+            }
+        )
     return out
 
 
@@ -142,9 +145,11 @@ def get_effective_visibility(img, gsap_events):
 
     reason = None
     if hide > img["data_end"]:
-        reason = (f"GSAP opacity:0 at {hide:.2f}s but data-duration ends at "
-                  f"{img['data_end']:.2f}s — image disappears early because "
-                  f"data-duration too short")
+        reason = (
+            f"GSAP opacity:0 at {hide:.2f}s but data-duration ends at "
+            f"{img['data_end']:.2f}s — image disappears early because "
+            f"data-duration too short"
+        )
     return (eff_start, eff_end, eff_seconds, reason)
 
 
@@ -157,10 +162,13 @@ def check_visibility(imgs, gsap_events):
             sev = "ERROR" if eff_seconds < 0.5 else "WARN"
             extra = f" — {reason}" if reason else ""
             findings.append(
-                (sev, "visibility_under_1s",
-                 f"#{img['id']} effective visibility = {eff_seconds:.2f}s "
-                 f"(data-start={img['data_start']}, data-end={img['data_end']}, "
-                 f"eff window=[{eff_start},{eff_end}]){extra}")
+                (
+                    sev,
+                    "visibility_under_1s",
+                    f"#{img['id']} effective visibility = {eff_seconds:.2f}s "
+                    f"(data-start={img['data_start']}, data-end={img['data_end']}, "
+                    f"eff window=[{eff_start},{eff_end}]){extra}",
+                )
             )
     return findings
 
@@ -176,11 +184,14 @@ def check_duration_vs_gsap(imgs, gsap_events):
         last_hide = max(hide_events)
         if last_hide > img["data_end"] + 0.01:
             findings.append(
-                ("WARN", "data_duration_too_short",
-                 f"#{img['id']} GSAP keeps opacity:1 until {last_hide:.2f}s but "
-                 f"data-duration ends at {img['data_end']:.2f}s "
-                 f"(diff = {last_hide - img['data_end']:.2f}s). "
-                 f"Fix: data-duration={last_hide - img['data_start'] + 0.05:.2f}")
+                (
+                    "WARN",
+                    "data_duration_too_short",
+                    f"#{img['id']} GSAP keeps opacity:1 until {last_hide:.2f}s but "
+                    f"data-duration ends at {img['data_end']:.2f}s "
+                    f"(diff = {last_hide - img['data_end']:.2f}s). "
+                    f"Fix: data-duration={last_hide - img['data_start'] + 0.05:.2f}",
+                )
             )
     return findings
 
@@ -200,8 +211,11 @@ def check_z_index_conflicts(z_indices):
         if z > caption_z:
             sev = "WARN" if sel == "#fade-out" else "ERROR"
             findings.append(
-                (sev, "z_index_covers_captions",
-                 f"{sel} z-index={z} > caption-wrap z-index={caption_z}. {note}")
+                (
+                    sev,
+                    "z_index_covers_captions",
+                    f"{sel} z-index={z} > caption-wrap z-index={caption_z}. {note}",
+                )
             )
     return findings
 
@@ -236,17 +250,16 @@ def check_orphan_assets(html_dir: Path, content: str):
             continue
         if rel in content or asset.name in content:
             continue
-        findings.append(
-            ("WARN", "orphan_asset",
-             f"{rel} exists in filesystem but is not referenced in HTML")
-        )
+        findings.append(("WARN", "orphan_asset", f"{rel} exists in filesystem but is not referenced in HTML"))
     return findings
 
 
 def main():
     import argparse
 
-    ap = argparse.ArgumentParser(description="Pre-render narrative + structural audit of a HyperFrames index.html")
+    ap = argparse.ArgumentParser(
+        description="Pre-render narrative + structural audit of a HyperFrames index.html"
+    )
     ap.add_argument("html", nargs="?", default="index.html", help="Path to index.html (default ./index.html)")
     html_path = Path(ap.parse_args().html).resolve()
     if not html_path.exists():

@@ -40,6 +40,7 @@ Authority: CLAUDE.md HR#8 + ai-video-production/SFX-PIPELINE.md §"Conectar en
 index.html (track-index 60-110)" + GAPS-LOG matadero gap #13. HR#26 companion test:
 test_audit-sfx-layer.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -65,7 +66,9 @@ MIN_WIRED_SFX = 1  # HR#8: ≥1 SFX dedicado en el mix
 SFX_EXTS = (".mp3", ".wav", ".m4a", ".ogg", ".aac")
 
 # Roles que NO son SFX (para excluir música/narración de la banda de track-index).
-_NON_SFX_RE = re.compile(r"music|musica|música|narrat|narrac|voiceover|score|theme|crescendo|accent", re.IGNORECASE)
+_NON_SFX_RE = re.compile(
+    r"music|musica|música|narrat|narrac|voiceover|score|theme|crescendo|accent", re.IGNORECASE
+)
 # Un id/clase explícitamente SFX.
 _SFX_CLASS_RE = re.compile(r"^(?:sfx|sound_?effect|effect|fx)$", re.IGNORECASE)
 
@@ -79,8 +82,19 @@ def is_sfx_role(*, declared_class=None, name=""):
         c = str(declared_class).strip().lower()
         if _SFX_CLASS_RE.match(c) or c == "flash":
             return True
-        if c in ("music", "musica", "música", "narration", "narracion", "narración",
-                 "ambient", "ambience", "voice", "voiceover", "score"):
+        if c in (
+            "music",
+            "musica",
+            "música",
+            "narration",
+            "narracion",
+            "narración",
+            "ambient",
+            "ambience",
+            "voice",
+            "voiceover",
+            "score",
+        ):
             # ambient lo tratamos aparte: NO es la capa SFX dedicada de eventos puntuales.
             return False
     if name and _NON_SFX_RE.search(name):
@@ -103,26 +117,37 @@ def evaluate_sfx_layer(wired_sfx, ondisk_sfx, *, min_sfx=MIN_WIRED_SFX):
     n_disk = len(ondisk_sfx)
     reasons = []
     if n_wired >= min_sfx:
-        reasons.append({
-            "status": "ok", "wired_sfx_count": n_wired, "ondisk_sfx_count": n_disk,
-            "detail": (f"{n_wired} SFX wired (≥{min_sfx} requerido por HR#8) ✓ "
-                       f"[{n_disk} en disco]"),
-            "wired_sample": wired_sfx[:10],
-        })
+        reasons.append(
+            {
+                "status": "ok",
+                "wired_sfx_count": n_wired,
+                "ondisk_sfx_count": n_disk,
+                "detail": (f"{n_wired} SFX wired (≥{min_sfx} requerido por HR#8) ✓ [{n_disk} en disco]"),
+                "wired_sample": wired_sfx[:10],
+            }
+        )
         return True, reasons
     # FAIL — distinguir el sub-caso matadero (en disco pero no wired).
     if n_disk > 0:
-        detail = (f"capa SFX dedicada obligatoria (HR#8) pero {n_wired} SFX WIRED — "
-                  f"hay {n_disk} stem(s) en disco SIN conectar (caso matadero gap #13: "
-                  f"existencia-en-disco ≠ wired; el render saldría sin capa SFX)")
+        detail = (
+            f"capa SFX dedicada obligatoria (HR#8) pero {n_wired} SFX WIRED — "
+            f"hay {n_disk} stem(s) en disco SIN conectar (caso matadero gap #13: "
+            f"existencia-en-disco ≠ wired; el render saldría sin capa SFX)"
+        )
     else:
-        detail = (f"capa SFX dedicada obligatoria (HR#8) pero {n_wired} SFX wired y "
-                  f"{n_disk} en disco — no se generó ni conectó ninguna capa SFX")
-    reasons.append({
-        "status": "fail", "wired_sfx_count": n_wired, "ondisk_sfx_count": n_disk,
-        "detail": detail,
-        "ondisk_sample": ondisk_sfx[:10],
-    })
+        detail = (
+            f"capa SFX dedicada obligatoria (HR#8) pero {n_wired} SFX wired y "
+            f"{n_disk} en disco — no se generó ni conectó ninguna capa SFX"
+        )
+    reasons.append(
+        {
+            "status": "fail",
+            "wired_sfx_count": n_wired,
+            "ondisk_sfx_count": n_disk,
+            "detail": detail,
+            "ondisk_sample": ondisk_sfx[:10],
+        }
+    )
     return False, reasons
 
 
@@ -183,23 +208,25 @@ def list_ondisk_sfx(sfx_dir):
     """Lista de nombres de archivo de audio en assets/sfx/ (evidencia de huérfanos)."""
     if not sfx_dir or not Path(sfx_dir).is_dir():
         return []
-    return sorted(
-        f.name for f in Path(sfx_dir).iterdir()
-        if f.is_file() and f.suffix.lower() in SFX_EXTS)
+    return sorted(f.name for f in Path(sfx_dir).iterdir() if f.is_file() and f.suffix.lower() in SFX_EXTS)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="formato activo (agnostic-by-design)")
     parser.add_argument("--spec", required=True, help="creative-specs/<id>.yaml (capability gate)")
-    parser.add_argument("--manifest", default=None,
-                        help="audio-manifest.json (path HYBRID). Default: <project-dir>/assets/audio-manifest.json")
+    parser.add_argument(
+        "--manifest",
+        default=None,
+        help="audio-manifest.json (path HYBRID). Default: <project-dir>/assets/audio-manifest.json",
+    )
     parser.add_argument("--html", default=None, help="index.html (path LEGACY)")
-    parser.add_argument("--sfx-dir", default=None,
-                        help="dir de stems SFX. Default: <project-dir>/assets/sfx")
-    parser.add_argument("--project-dir", default=None,
-                        help="dir del proyecto. Default: <spec_dir>/../<spec_stem>")
+    parser.add_argument("--sfx-dir", default=None, help="dir de stems SFX. Default: <project-dir>/assets/sfx")
+    parser.add_argument(
+        "--project-dir", default=None, help="dir del proyecto. Default: <spec_dir>/../<spec_stem>"
+    )
     parser.add_argument("--min-sfx", type=int, default=MIN_WIRED_SFX)
     parser.add_argument("--track-lo", type=int, default=SFX_TRACK_INDEX_LO)
     parser.add_argument("--track-hi", type=int, default=SFX_TRACK_INDEX_HI)
@@ -216,8 +243,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_sfx = bool(caps.get("has_sfx_layer", False))
@@ -228,19 +257,28 @@ def main():
     sfx_dir = Path(args.sfx_dir) if args.sfx_dir else (project_dir / "assets" / "sfx")
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nhas_sfx_layer: {has_sfx}\n"
-              f"branch: {'sfx_layer_check' if has_sfx else 'not_applicable'}\n"
-              f"manifest: {manifest_path} (exists={manifest_path.exists()})\n"
-              f"html: {html_path} (exists={html_path.exists()})\n"
-              f"sfx_dir: {sfx_dir} (exists={Path(sfx_dir).is_dir()})\n"
-              f"track-index band: [{args.track_lo}, {args.track_hi}], min_sfx: {args.min_sfx}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nhas_sfx_layer: {has_sfx}\n"
+            f"branch: {'sfx_layer_check' if has_sfx else 'not_applicable'}\n"
+            f"manifest: {manifest_path} (exists={manifest_path.exists()})\n"
+            f"html: {html_path} (exists={html_path.exists()})\n"
+            f"sfx_dir: {sfx_dir} (exists={Path(sfx_dir).is_dir()})\n"
+            f"track-index band: [{args.track_lo}, {args.track_hi}], min_sfx: {args.min_sfx}"
+        )
         return 0
 
     if not has_sfx:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_sfx_layer=false → SFX layer check skipped (este video no requiere capa SFX)",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": "has_sfx_layer=false → SFX layer check skipped (este video no requiere capa SFX)",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     wired = []
@@ -255,8 +293,11 @@ def main():
             print(f"WARNING: no se pudo parsear manifest {manifest_path}: {e}", file=sys.stderr)
     if html_path.exists():
         try:
-            wired.extend(extract_wired_sfx_from_html(
-                html_path.read_text(errors="ignore"), lo=args.track_lo, hi=args.track_hi))
+            wired.extend(
+                extract_wired_sfx_from_html(
+                    html_path.read_text(errors="ignore"), lo=args.track_lo, hi=args.track_hi
+                )
+            )
             sources.append(str(html_path))
         except OSError as e:
             print(f"WARNING: no se pudo leer html {html_path}: {e}", file=sys.stderr)
@@ -266,22 +307,36 @@ def main():
     if not sources:
         # Sin manifest NI html no podemos medir "wired"; pero SI hay disco, es el
         # gap matadero en su forma más cruda (archivos sin ninguna fuente de wiring).
-        print(json.dumps({
-            "format": args.format, "overall_status": "cant_measure",
-            "ondisk_sfx_count": len(ondisk),
-            "detail": (f"no se encontró ni manifest ({manifest_path}) ni html ({html_path}) — "
-                       f"no hay fuente de wiring que auditar ({len(ondisk)} stem(s) en disco)"),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "cant_measure",
+                    "ondisk_sfx_count": len(ondisk),
+                    "detail": (
+                        f"no se encontró ni manifest ({manifest_path}) ni html ({html_path}) — "
+                        f"no hay fuente de wiring que auditar ({len(ondisk)} stem(s) en disco)"
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 2
 
     ok, reasons = evaluate_sfx_layer(wired, ondisk, min_sfx=args.min_sfx)
 
     report = {
-        "format": args.format, "spec": str(spec_path), "sources": sources,
+        "format": args.format,
+        "spec": str(spec_path),
+        "sources": sources,
         "sfx_dir": str(sfx_dir),
-        "track_index_band": [args.track_lo, args.track_hi], "min_wired_sfx": args.min_sfx,
-        "overall_status": "pass" if ok else "fail", "overall_pass": ok,
-        "wired_sfx_count": len(wired), "ondisk_sfx_count": len(ondisk),
+        "track_index_band": [args.track_lo, args.track_hi],
+        "min_wired_sfx": args.min_sfx,
+        "overall_status": "pass" if ok else "fail",
+        "overall_pass": ok,
+        "wired_sfx_count": len(wired),
+        "ondisk_sfx_count": len(ondisk),
         "reasons": reasons,
     }
     print(json.dumps(report, indent=2, ensure_ascii=False))

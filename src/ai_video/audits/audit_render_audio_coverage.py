@@ -27,6 +27,7 @@ Authority: HR#13 (audio coverage técnicos) + HR#23/#25 (HYBRID per-clip-atomic)
 (coverage = temporal, 1-frame existence insufficient). GAP: audit-audio.py wrong-artefact in HYBRID.
 Companion test: test_audit-render-audio-coverage.py (HR#26 — TDD, mocks whisper + silencedetect).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -44,8 +45,8 @@ try:
 except ImportError:  # pyyaml only needed when reading a SPEC for capabilities/strategy
     yaml = None
 
-MIN_COVERAGE_DEFAULT = 40.0     # %. pueblo-v2 failed at 30.9%; the 3 success videos sit 70-77%.
-MAX_NARRATIVE_GAP_S = 2.0       # s. dead-zone inside the narrated span longer than this → FAIL.
+MIN_COVERAGE_DEFAULT = 40.0  # %. pueblo-v2 failed at 30.9%; the 3 success videos sit 70-77%.
+MAX_NARRATIVE_GAP_S = 2.0  # s. dead-zone inside the narrated span longer than this → FAIL.
 
 
 # ---------------------------------------------------------------------------
@@ -82,19 +83,21 @@ def narrated_span(transcript_segments: list[dict]) -> tuple[float, float] | None
     starts, ends = [], []
     for s in transcript_segments or []:
         try:
-            a = float(s["start"]); b = float(s["end"])
+            a = float(s["start"])
+            b = float(s["end"])
         except (KeyError, TypeError, ValueError):
             continue
         if b > a:
-            starts.append(a); ends.append(b)
+            starts.append(a)
+            ends.append(b)
     if not starts:
         return None
     return (min(starts), max(ends))
 
 
-def narrative_gaps_in_span(silence_zones: list[tuple[float, float]],
-                           span: tuple[float, float],
-                           max_gap_s: float) -> list[dict]:
+def narrative_gaps_in_span(
+    silence_zones: list[tuple[float, float]], span: tuple[float, float], max_gap_s: float
+) -> list[dict]:
     """Silence zones that overlap the narrated span and whose IN-SPAN portion exceeds max_gap_s.
 
     silence_zones: list of (start, end) seconds from ffmpeg silencedetect.
@@ -105,7 +108,8 @@ def narrative_gaps_in_span(silence_zones: list[tuple[float, float]],
     out = []
     for z in silence_zones or []:
         try:
-            zs = float(z[0]); ze = float(z[1])
+            zs = float(z[0])
+            ze = float(z[1])
         except (TypeError, ValueError, IndexError):
             continue
         # clip the silence zone to the narrated span
@@ -117,10 +121,12 @@ def narrative_gaps_in_span(silence_zones: list[tuple[float, float]],
     return out
 
 
-def evaluate_audio_coverage(transcript_segments: list[dict],
-                            total_dur: float,
-                            silence_zones: list[tuple[float, float]],
-                            min_coverage: float) -> tuple[bool, list[str]]:
+def evaluate_audio_coverage(
+    transcript_segments: list[dict],
+    total_dur: float,
+    silence_zones: list[tuple[float, float]],
+    min_coverage: float,
+) -> tuple[bool, list[str]]:
     """PURE decision. Returns (ok, reasons).
 
     ok = coverage_pct >= min_coverage AND no narrative dead-zone > MAX_NARRATIVE_GAP_S inside the
@@ -161,42 +167,62 @@ def resolve_min_coverage_pct(narrated_seconds: float, total_dur: float) -> float
 # ---------------------------------------------------------------------------
 def ffprobe_duration(video_path: str) -> float:
     out = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "csv=p=0", video_path],
-        capture_output=True, text=True, check=True,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video_path],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(out.stdout.strip())
 
 
-def whisper_transcribe_mp4(video_path: str, language: str = "es",
-                           model_name: str = "base") -> list[dict]:
+def whisper_transcribe_mp4(video_path: str, language: str = "es", model_name: str = "base") -> list[dict]:
     """Transcribe the rendered MP4's audio track. Returns whisper-style segments
     [{'start','end','text'}]. Lazy import so the test never needs whisper installed."""
     import whisper  # lazy
+
     model = whisper.load_model(model_name)
     result = model.transcribe(
-        video_path, language=language, verbose=False, fp16=False,
+        video_path,
+        language=language,
+        verbose=False,
+        fp16=False,
         condition_on_previous_text=False,
     )
     segs = []
     for s in result.get("segments", []) or []:
         if (s.get("text") or "").strip():
-            segs.append({"start": float(s.get("start", 0)),
-                         "end": float(s.get("end", 0)),
-                         "text": (s.get("text") or "").strip()})
+            segs.append(
+                {
+                    "start": float(s.get("start", 0)),
+                    "end": float(s.get("end", 0)),
+                    "text": (s.get("text") or "").strip(),
+                }
+            )
     return segs
 
 
-def ffmpeg_silence_zones(video_path: str, noise_db: float = -35.0,
-                         min_silence_s: float = 0.5) -> list[tuple[float, float]]:
+def ffmpeg_silence_zones(
+    video_path: str, noise_db: float = -35.0, min_silence_s: float = 0.5
+) -> list[tuple[float, float]]:
     """Run ffmpeg silencedetect on the MP4. Returns [(start, end)] silence intervals.
     Parses silence_start / silence_end pairs from stderr."""
     out = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-i", video_path,
-         "-af", f"silencedetect=noise={noise_db}dB:d={min_silence_s}",
-         "-f", "null", "-"],
-        capture_output=True, text=True,
-     timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-i",
+            video_path,
+            "-af",
+            f"silencedetect=noise={noise_db}dB:d={min_silence_s}",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return parse_silencedetect(out.stderr)
 
 
@@ -256,14 +282,19 @@ def read_has_tts(spec_path: str | None) -> bool | None:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="delivery/genre format (Pattern 7 gate)")
     parser.add_argument("--video", help="path to the rendered MP4 (the artefact we audit)")
     parser.add_argument("--html", help="legacy index.html — DISALLOWED for per_clip_atomic (guard)")
     parser.add_argument("--spec", help="SPEC yaml (capabilities + assembly_strategy)")
     parser.add_argument("--manifest", help="batch manifest json (_batch_manifest.json)")
-    parser.add_argument("--min-coverage", type=float, default=MIN_COVERAGE_DEFAULT,
-                        help=f"min audible-narration coverage %% (default {MIN_COVERAGE_DEFAULT})")
+    parser.add_argument(
+        "--min-coverage",
+        type=float,
+        default=MIN_COVERAGE_DEFAULT,
+        help=f"min audible-narration coverage %% (default {MIN_COVERAGE_DEFAULT})",
+    )
     parser.add_argument("--language", default="es", help="whisper language (default es)")
     parser.add_argument("--whisper-model", default="base")
     parser.add_argument("--noise-db", type=float, default=-35.0)
@@ -275,36 +306,61 @@ def main(argv=None):
     has_tts = read_has_tts(args.spec)
 
     if args.dry_run:
-        print(json.dumps({
-            "format": args.format, "assembly_strategy": strategy,
-            "has_tts_narration": has_tts, "min_coverage": args.min_coverage,
-            "branch": "audit" if (has_tts is not False) else "not_applicable",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "assembly_strategy": strategy,
+                    "has_tts_narration": has_tts,
+                    "min_coverage": args.min_coverage,
+                    "branch": "audit" if (has_tts is not False) else "not_applicable",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     # GUARD (HR#23/#25): atomic render + HTML passed → wrong-architecture. Refuse to read legacy HTML.
     if strategy == "per_clip_atomic" and args.html:
-        print(json.dumps({
-            "format": args.format, "overall_status": "wrong_architecture",
-            "assembly_strategy": strategy,
-            "detail": ("assembly_strategy=per_clip_atomic but --html was passed. Narration is muxed "
-                       "per-clip; there are no <audio> tags. Audit the rendered MP4 (--video), NOT "
-                       "the HTML — reading legacy index.html here yields a false PASS (the audit-audio "
-                       "bug this validator replaces)."),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "wrong_architecture",
+                    "assembly_strategy": strategy,
+                    "detail": (
+                        "assembly_strategy=per_clip_atomic but --html was passed. Narration is muxed "
+                        "per-clip; there are no <audio> tags. Audit the rendered MP4 (--video), NOT "
+                        "the HTML — reading legacy index.html here yields a false PASS (the audit-audio "
+                        "bug this validator replaces)."
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 2
 
     # Capability gate (Pattern 7): explicit has_tts=false → not_applicable.
     if has_tts is False:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_tts_narration=false → no narration to cover.",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": "has_tts_narration=false → no narration to cover.",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     if not args.video:
-        print("ERROR: --video is required (this validator audits the rendered MP4, not HTML).",
-              file=sys.stderr)
+        print(
+            "ERROR: --video is required (this validator audits the rendered MP4, not HTML).", file=sys.stderr
+        )
         return 2
     if not Path(args.video).exists():
         print(f"ERROR: video not found: {args.video}", file=sys.stderr)
@@ -313,10 +369,10 @@ def main(argv=None):
     # Runtime measurement (mocked in tests).
     try:
         total_dur = ffprobe_duration(args.video)
-        segments = whisper_transcribe_mp4(args.video, language=args.language,
-                                          model_name=args.whisper_model)
-        silence_zones = ffmpeg_silence_zones(args.video, noise_db=args.noise_db,
-                                             min_silence_s=args.min_silence_s)
+        segments = whisper_transcribe_mp4(args.video, language=args.language, model_name=args.whisper_model)
+        silence_zones = ffmpeg_silence_zones(
+            args.video, noise_db=args.noise_db, min_silence_s=args.min_silence_s
+        )
     except FileNotFoundError as e:
         print(f"ERROR: required tool not found ({e}). Need ffprobe/ffmpeg + whisper.", file=sys.stderr)
         return 2
@@ -328,7 +384,8 @@ def main(argv=None):
 
     narrated_s = segments_coverage_seconds(segments)
     report = {
-        "format": args.format, "video": args.video,
+        "format": args.format,
+        "video": args.video,
         "assembly_strategy": strategy,
         "overall_status": "pass" if ok else "fail",
         "overall_pass": ok,

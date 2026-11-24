@@ -6,6 +6,7 @@ silencioso (sport pre-empírico → None), fallback EXPLÍCITO, lectura real de 
 F1 JSON del repo (smoke contra horror-choice), y el caso disparador Y52:
 la banda de captions_narration.y_pct medida debe contener ~62-64, NO 48.
 """
+
 from __future__ import annotations
 
 import json
@@ -28,16 +29,14 @@ def _mk_fixture_tree(tmp: Path, fmt: str = "horror-choice"):
             "audio": {"lufs_integrated": -14.0},
             "pacing": {"cuts_per_min": cuts, "cuts_per_min_raw": cuts * 2},
         }
-    (d / "F1-INGENIERO-MEASUREMENTS.json").write_text(
-        json.dumps({"metadata": {}, "per_referent": per_ref}))
+    (d / "F1-INGENIERO-MEASUREMENTS.json").write_text(json.dumps({"metadata": {}, "per_referent": per_ref}))
     ui = {}
     for i, y in enumerate([62.0, 63.0, 64.0, 62.5, 63.5]):
         ui[f"ref-{i:02d}"] = {
             "captions_narration": {"x_pct": 50.0, "y_pct": y},
             "character_name_labels": {"y_pct_avg": 20.0 + i},
         }
-    (d / "F1-UI-SAFE-ZONES.json").write_text(
-        json.dumps({"metadata": {}, "per_referent": ui}))
+    (d / "F1-UI-SAFE-ZONES.json").write_text(json.dumps({"metadata": {}, "per_referent": ui}))
     return tmp / "referent-analysis"
 
 
@@ -93,13 +92,13 @@ class TestPerFormatRouting(unittest.TestCase):
         self.assertEqual(n, 0)
 
     def test_explicit_fallback_inherits(self):
-        lo, hi, n = eb.band("sport-choice", "pacing", "cuts_per_min",
-                            base=self.base, fallback_format="horror-choice")
+        lo, hi, n = eb.band(
+            "sport-choice", "pacing", "cuts_per_min", base=self.base, fallback_format="horror-choice"
+        )
         self.assertEqual(n, 5)
 
     def test_ui_band_handles_avg_variant(self):
-        lo, hi, n = eb.ui_band("horror-choice", "character_name_labels", "y_pct",
-                               base=self.base)
+        lo, hi, n = eb.ui_band("horror-choice", "character_name_labels", "y_pct", base=self.base)
         self.assertEqual(n, 5)  # lee y_pct_avg cuando y_pct no existe
 
 

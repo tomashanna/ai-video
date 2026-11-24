@@ -33,6 +33,7 @@ Output: <output> (default assets/final/master_final.mp4) + sidecar manifest JSON
 
 Build Paso 4.3 (2026-05-27) — TDD + Hard Rule #26 companion test.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -51,10 +52,10 @@ except ImportError:
     print("ERROR: pyyaml not installed. Run: pip install pyyaml", file=sys.stderr)
     sys.exit(2)
 
-TARGET_LUFS = -14.0          # canonical-anchored F1 (-14.06 ±0.41)
-TARGET_TP = -1.0             # SPEC-declared headroom
+TARGET_LUFS = -14.0  # canonical-anchored F1 (-14.06 ±0.41)
+TARGET_TP = -1.0  # SPEC-declared headroom
 TARGET_LRA = 11.0
-DEFAULT_DUCK_DB = -8.0       # PRE-4.C sidechain duck (SPEC-declared plumbing)
+DEFAULT_DUCK_DB = -8.0  # PRE-4.C sidechain duck (SPEC-declared plumbing)
 
 
 def load_spec(spec_path):
@@ -77,8 +78,12 @@ def determine_branch(caps):
 
 
 def ffprobe_duration(path):
-    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                        "-of", "csv=p=0", str(path)], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+    r = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     try:
         return float(r.stdout.strip())
     except ValueError:
@@ -122,7 +127,9 @@ def build_mix(input_video, music_files, narrator, out_wav):
         fc.append(f"{music_labels[0]}anull[music]")
         music_bed = "[music]"
     else:
-        fc.append(f"{''.join(music_labels)}amix=inputs={len(music_labels)}:duration=longest:normalize=0[music]")
+        fc.append(
+            f"{''.join(music_labels)}amix=inputs={len(music_labels)}:duration=longest:normalize=0[music]"
+        )
         music_bed = "[music]"
 
     duck_applied = False
@@ -148,50 +155,113 @@ def build_mix(input_video, music_files, narrator, out_wav):
     else:
         fc.append("[mixraw]apad=pad_dur=0.05,asetpts=N/SR/TB[mixout]")
 
-    cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"] + inputs + [
-        "-filter_complex", ";".join(fc), "-map", "[mixout]",
-        "-c:a", "pcm_s16le", "-ar", "48000", str(out_wav),
-    ]
+    cmd = (
+        ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"]
+        + inputs
+        + [
+            "-filter_complex",
+            ";".join(fc),
+            "-map",
+            "[mixout]",
+            "-c:a",
+            "pcm_s16le",
+            "-ar",
+            "48000",
+            str(out_wav),
+        ]
+    )
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
     return r.returncode, r.stderr, duck_applied
 
 
 def loudnorm_measure(audio_src):
-    r = subprocess.run([
-        "ffmpeg", "-i", str(audio_src),
-        "-af", f"loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA={TARGET_LRA}:print_format=json",
-        "-f", "null", "-",
-    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+    r = subprocess.run(
+        [
+            "ffmpeg",
+            "-i",
+            str(audio_src),
+            "-af",
+            f"loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA={TARGET_LRA}:print_format=json",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     err = r.stderr
     start = err.rfind("{")
     end = err.rfind("}")
     if start == -1 or end == -1 or end < start:
         return None
     try:
-        return json.loads(err[start:end + 1])
+        return json.loads(err[start : end + 1])
     except json.JSONDecodeError:
         return None
 
 
 def loudnorm_apply(audio_src, m, out_wav):
-    af = (f"loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA={TARGET_LRA}"
-          f":measured_I={m['input_i']}:measured_TP={m['input_tp']}"
-          f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
-          f":offset={m['target_offset']}:linear=true:print_format=summary")
-    r = subprocess.run([
-        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(audio_src),
-        "-af", af, "-ar", "48000", "-c:a", "pcm_s16le", str(out_wav),
-    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+    af = (
+        f"loudnorm=I={TARGET_LUFS}:TP={TARGET_TP}:LRA={TARGET_LRA}"
+        f":measured_I={m['input_i']}:measured_TP={m['input_tp']}"
+        f":measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}"
+        f":offset={m['target_offset']}:linear=true:print_format=summary"
+    )
+    r = subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            str(audio_src),
+            "-af",
+            af,
+            "-ar",
+            "48000",
+            "-c:a",
+            "pcm_s16le",
+            str(out_wav),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return r.returncode, r.stderr
 
 
 def mux(input_video, mastered_audio, output):
-    r = subprocess.run([
-        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-        "-i", str(input_video), "-i", str(mastered_audio),
-        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
-        "-ar", "48000", str(output),
-    ], capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+    r = subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            str(input_video),
+            "-i",
+            str(mastered_audio),
+            "-map",
+            "0:v:0",
+            "-map",
+            "1:a:0",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            "-ar",
+            "48000",
+            str(output),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return r.returncode, r.stderr
 
 
@@ -207,8 +277,7 @@ def master_audio_source(audio_src, output_video, mux_video, tmpdir):
     return mux(mux_video, master_wav, output_video)
 
 
-def write_manifest(output, branch, fmt, music_count, duck_db, narrator_used,
-                   input_dur, output_dur):
+def write_manifest(output, branch, fmt, music_count, duck_db, narrator_used, input_dur, output_dur):
     manifest = {
         "stage": "layer3_master",
         "branch": branch,
@@ -229,15 +298,19 @@ def write_manifest(output, branch, fmt, music_count, duck_db, narrator_used,
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="Format name. REQUIRED — no silent assumption.")
-    parser.add_argument("--spec", required=True, help="SPEC.yaml (video_capabilities + music_continuous_layers)")
-    parser.add_argument("--input", default=None,
-                        help="4.4 output (default: assets/concat/clips_with_effects.mp4)")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("--format", required=True, help="Format name. REQUIRED — no silent assumption.")
+    parser.add_argument(
+        "--spec", required=True, help="SPEC.yaml (video_capabilities + music_continuous_layers)"
+    )
+    parser.add_argument(
+        "--input", default=None, help="4.4 output (default: assets/concat/clips_with_effects.mp4)"
+    )
     parser.add_argument("--music-dir", default=None, help="Music layer mp3 dir (default: assets/music)")
-    parser.add_argument("--narrator", default=None,
-                        help="Narrator master mp3 (default: assets/narration/narrator_master.mp3)")
+    parser.add_argument(
+        "--narrator", default=None, help="Narrator master mp3 (default: assets/narration/narrator_master.mp3)"
+    )
     parser.add_argument("--output", default=None, help="Output (default: assets/final/master_final.mp4)")
     parser.add_argument("--dry-run", action="store_true", help="Print resolved paths + branch, exit 0")
     args = parser.parse_args()
@@ -285,14 +358,27 @@ def main():
 
     # ── PASSTHROUGH ───────────────────────────────────────────────────────
     if branch == "passthrough":
-        r = subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                            "-i", str(input_path), "-c", "copy", str(output)],
-                           capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_S)
+        r = subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-i",
+                str(input_path),
+                "-c",
+                "copy",
+                str(output),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if r.returncode != 0:
             print(f"ERROR: passthrough copy failed: {r.stderr[:300]}", file=sys.stderr)
             return 1
-        write_manifest(output, "passthrough", args.format, 0, None, False,
-                       in_dur, ffprobe_duration(output))
+        write_manifest(output, "passthrough", args.format, 0, None, False, in_dur, ffprobe_duration(output))
         print(f"✅ passthrough (audio_mix_target=none): {input_path} → {output}")
         return 0
 
@@ -303,8 +389,9 @@ def main():
             if rc != 0:
                 print(f"ERROR: master_only failed: {err[-300:]}", file=sys.stderr)
                 return 1
-            write_manifest(output, "master_only", args.format, 0, None, False,
-                           in_dur, ffprobe_duration(output))
+            write_manifest(
+                output, "master_only", args.format, 0, None, False, in_dur, ffprobe_duration(output)
+            )
             print(f"✅ master_only (has_layer_3_music=false): mastered → {output}")
             return 0
 
@@ -318,8 +405,16 @@ def main():
             if rc != 0:
                 print(f"ERROR: master degrade failed: {err[-300:]}", file=sys.stderr)
                 return 1
-            write_manifest(output, "master_only", args.format, 0, None, narrator_available,
-                           in_dur, ffprobe_duration(output))
+            write_manifest(
+                output,
+                "master_only",
+                args.format,
+                0,
+                None,
+                narrator_available,
+                in_dur,
+                ffprobe_duration(output),
+            )
             print(f"✅ master_only (no music files): mastered → {output}")
             return 0
 
@@ -336,10 +431,13 @@ def main():
 
         out_dur = ffprobe_duration(output)
         duck_db = DEFAULT_DUCK_DB if duck_applied else None
-        manifest = write_manifest(output, "full", args.format, len(music_files), duck_db,
-                                  narrator_available, in_dur, out_dur)
-        print(f"✅ full Layer 3: {len(music_files)} music layers, narrator={narrator_available}, "
-              f"duck={duck_db}dB, master -14 LUFS → {output}")
+        manifest = write_manifest(
+            output, "full", args.format, len(music_files), duck_db, narrator_available, in_dur, out_dur
+        )
+        print(
+            f"✅ full Layer 3: {len(music_files)} music layers, narrator={narrator_available}, "
+            f"duck={duck_db}dB, master -14 LUFS → {output}"
+        )
         return 0
 
 

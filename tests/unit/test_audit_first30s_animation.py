@@ -10,6 +10,7 @@ Fixtures sintéticas que MODELAN EL CASO DISPARADOR HISTÓRICO:
 Más capability gates (Bug #9, not_applicable) + ambos modos (manifest + HTML) +
 edge cases (ventana boundary, share boundary).
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -32,12 +33,12 @@ _spec.loader.exec_module(sut)
 # LÓGICA PURA — HR#6 first-30s animation
 # ═══════════════════════════════════════════════════════════════════════════
 
-class TestEvaluateFirst30sHR6(unittest.TestCase):
 
+class TestEvaluateFirst30sHR6(unittest.TestCase):
     def test_hook_static_at_start_0_fails(self):
         """CASO DISPARADOR cabana-tormenta: hook estático en start 0 → FAIL HR#6."""
         shots = [
-            {"shot_id": "hook", "start_s": 0.0, "is_animated": False},      # <img> estático
+            {"shot_id": "hook", "start_s": 0.0, "is_animated": False},  # <img> estático
             {"shot_id": "s2", "start_s": 3.0, "is_animated": True},
         ]
         ok, reasons = sut.evaluate_first30s_hr6(shots)
@@ -49,7 +50,7 @@ class TestEvaluateFirst30sHR6(unittest.TestCase):
     def test_hook_animated_passes(self):
         """Versión sana: hook = clip animado AI → PASS."""
         shots = [
-            {"shot_id": "hook", "start_s": 0.0, "is_animated": True},       # <video>
+            {"shot_id": "hook", "start_s": 0.0, "is_animated": True},  # <video>
             {"shot_id": "s2", "start_s": 5.0, "is_animated": True},
         ]
         ok, reasons = sut.evaluate_first30s_hr6(shots)
@@ -59,7 +60,7 @@ class TestEvaluateFirst30sHR6(unittest.TestCase):
         """Refuta el check INGENUO ('hay AL MENOS un clip animado'): aunque haya
         clips animados después, el hook estático <30s sigue siendo FAIL."""
         shots = [
-            {"shot_id": "hook", "start_s": 0.0, "is_animated": False},      # estático
+            {"shot_id": "hook", "start_s": 0.0, "is_animated": False},  # estático
             {"shot_id": "s2", "start_s": 4.0, "is_animated": True},
             {"shot_id": "s3", "start_s": 8.0, "is_animated": True},
         ]
@@ -89,8 +90,8 @@ class TestEvaluateFirst30sHR6(unittest.TestCase):
 # LÓGICA PURA — HR#7 Ken Burns fallback
 # ═══════════════════════════════════════════════════════════════════════════
 
-class TestEvaluateKenburnsHR7(unittest.TestCase):
 
+class TestEvaluateKenburnsHR7(unittest.TestCase):
     def test_kenburns_5s_fails_duration(self):
         """CASO DISPARADOR: Ken Burns de 5.0s → FAIL HR#7 (max 2-3s)."""
         shots = [
@@ -144,36 +145,44 @@ class TestEvaluateKenburnsHR7(unittest.TestCase):
 # WRAPPERS DE EXTRACCIÓN
 # ═══════════════════════════════════════════════════════════════════════════
 
-class TestParseManifestShots(unittest.TestCase):
 
+class TestParseManifestShots(unittest.TestCase):
     def test_cumulative_start_and_procedural_flagged(self):
-        manifest = {"shots": [
-            {"shot_id": "shot_01", "model": "kling_v2.5_pro", "procedural": False},
-            {"shot_id": "shot_02", "model": "hailuo_std", "procedural": False},
-            {"shot_id": "shot_08", "model": "procedural", "procedural": True},
-        ]}
-        spec = {"shot_list": [
-            {"shot_id": "shot_01", "duration_intent_s": 5.0},
-            {"shot_id": "shot_02", "duration_intent_s": 4.0},
-            {"shot_id": "shot_08", "duration_intent_s": 2.2},
-        ]}
+        manifest = {
+            "shots": [
+                {"shot_id": "shot_01", "model": "kling_v2.5_pro", "procedural": False},
+                {"shot_id": "shot_02", "model": "hailuo_std", "procedural": False},
+                {"shot_id": "shot_08", "model": "procedural", "procedural": True},
+            ]
+        }
+        spec = {
+            "shot_list": [
+                {"shot_id": "shot_01", "duration_intent_s": 5.0},
+                {"shot_id": "shot_02", "duration_intent_s": 4.0},
+                {"shot_id": "shot_08", "duration_intent_s": 2.2},
+            ]
+        }
         shots = sut.parse_manifest_shots(manifest, spec)
         self.assertEqual(shots[0]["start_s"], 0.0)
         self.assertEqual(shots[1]["start_s"], 5.0)
         self.assertEqual(shots[2]["start_s"], 9.0)
         self.assertTrue(shots[0]["is_animated"])
-        self.assertTrue(shots[2]["is_static_kenburns"])   # procedural bridge
+        self.assertTrue(shots[2]["is_static_kenburns"])  # procedural bridge
 
     def test_procedural_bridge_under_30s_fails_hr6(self):
         """Un bridge procedural que cae <30s viola HR#6 (no-AI en la ventana)."""
-        manifest = {"shots": [
-            {"shot_id": "shot_01", "model": "kling_v2.5_pro", "procedural": False},
-            {"shot_id": "shot_08", "model": "procedural", "procedural": True},
-        ]}
-        spec = {"shot_list": [
-            {"shot_id": "shot_01", "duration_intent_s": 5.0},
-            {"shot_id": "shot_08", "duration_intent_s": 2.2},   # start 5.0s (<30)
-        ]}
+        manifest = {
+            "shots": [
+                {"shot_id": "shot_01", "model": "kling_v2.5_pro", "procedural": False},
+                {"shot_id": "shot_08", "model": "procedural", "procedural": True},
+            ]
+        }
+        spec = {
+            "shot_list": [
+                {"shot_id": "shot_01", "duration_intent_s": 5.0},
+                {"shot_id": "shot_08", "duration_intent_s": 2.2},  # start 5.0s (<30)
+            ]
+        }
         shots = sut.parse_manifest_shots(manifest, spec)
         ok, reasons = sut.evaluate_first30s_hr6(shots)
         self.assertFalse(ok)
@@ -181,7 +190,6 @@ class TestParseManifestShots(unittest.TestCase):
 
 
 class TestParseHtmlShots(unittest.TestCase):
-
     def test_video_animated_img_static(self):
         html = (
             '<video id="v-hook" src="assets/hook.mp4" class="clip" data-start="0" data-duration="3.31"></video>\n'
@@ -189,7 +197,7 @@ class TestParseHtmlShots(unittest.TestCase):
             '<div id="countdown" data-start="5.5" data-duration="3.0"></div>\n'  # overlay, no <video>/<img>
         )
         shots = sut.parse_html_shots(html)
-        self.assertEqual(len(shots), 2)   # div ignorado
+        self.assertEqual(len(shots), 2)  # div ignorado
         v = [s for s in shots if s["shot_id"] == "v-hook"][0]
         i = [s for s in shots if s["shot_id"] == "kb1"][0]
         self.assertTrue(v["is_animated"])
@@ -201,15 +209,13 @@ class TestParseHtmlShots(unittest.TestCase):
 # RUNTIME (end-to-end vía subprocess) — capability gates + casos disparadores
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def _run(args):
-    res = subprocess.run(
-        [sys.executable, str(_SUT_PATH)] + args,
-        capture_output=True, text=True)
+    res = subprocess.run([sys.executable, str(_SUT_PATH)] + args, capture_output=True, text=True)
     return res
 
 
-def _spec_yaml(has_clips=True, format_type="interactive_choice", shot_list=None,
-               with_caps=True):
+def _spec_yaml(has_clips=True, format_type="interactive_choice", shot_list=None, with_caps=True):
     d = {}
     if with_caps:
         d["video_capabilities"] = {
@@ -221,7 +227,6 @@ def _spec_yaml(has_clips=True, format_type="interactive_choice", shot_list=None,
 
 
 class TestRuntimeCLI(unittest.TestCase):
-
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.dir = Path(self.tmp.name)
@@ -233,6 +238,7 @@ class TestRuntimeCLI(unittest.TestCase):
         p = self.dir / name
         if name.endswith((".yaml", ".yml")):
             import yaml
+
             p.write_text(yaml.safe_dump(obj), encoding="utf-8")
         else:
             p.write_text(obj, encoding="utf-8")
@@ -265,9 +271,11 @@ class TestRuntimeCLI(unittest.TestCase):
 
     def test_html_hook_static_fails(self):
         spec = self._write("spec.yaml", _spec_yaml())
-        html = self._write("index.html",
+        html = self._write(
+            "index.html",
             '<img id="hook" src="assets/hook.png" data-start="0" data-duration="3"/>\n'
-            '<video id="s2" src="assets/s2.mp4" data-start="3" data-duration="3"></video>\n')
+            '<video id="s2" src="assets/s2.mp4" data-start="3" data-duration="3"></video>\n',
+        )
         res = _run(["--format", "horror-choice", "--spec", str(spec), "--html", str(html)])
         self.assertEqual(res.returncode, 1, res.stdout + res.stderr)
         report = json.loads(res.stdout)
@@ -275,9 +283,11 @@ class TestRuntimeCLI(unittest.TestCase):
 
     def test_html_all_video_passes(self):
         spec = self._write("spec.yaml", _spec_yaml())
-        html = self._write("index.html",
+        html = self._write(
+            "index.html",
             '<video id="hook" src="assets/hook.mp4" data-start="0" data-duration="3"></video>\n'
-            '<video id="s2" src="assets/s2.mp4" data-start="3" data-duration="3"></video>\n')
+            '<video id="s2" src="assets/s2.mp4" data-start="3" data-duration="3"></video>\n',
+        )
         res = _run(["--format", "horror-choice", "--spec", str(spec), "--html", str(html)])
         self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
 
@@ -285,30 +295,42 @@ class TestRuntimeCLI(unittest.TestCase):
         """Ken Burns de 5s (<img> 5s) → FAIL HR#7 incluso si está fuera de los 30s
         (la regla HR#7 es global). Lo ponemos en start 40 para aislar HR#7 de HR#6."""
         spec = self._write("spec.yaml", _spec_yaml())
-        html = self._write("index.html",
+        html = self._write(
+            "index.html",
             '<video id="a" src="a.mp4" data-start="0" data-duration="6"></video>\n'
             '<video id="b" src="b.mp4" data-start="6" data-duration="6"></video>\n'
             '<video id="c" src="c.mp4" data-start="12" data-duration="6"></video>\n'
             '<video id="d" src="d.mp4" data-start="18" data-duration="6"></video>\n'
-            '<img id="kb5" src="kb.png" data-start="40" data-duration="5"/>\n')  # 1/5=20% but 5s>3s
+            '<img id="kb5" src="kb.png" data-start="40" data-duration="5"/>\n',
+        )  # 1/5=20% but 5s>3s
         res = _run(["--format", "horror-choice", "--spec", str(spec), "--html", str(html)])
         self.assertEqual(res.returncode, 1, res.stdout + res.stderr)
         report = json.loads(res.stdout)
-        self.assertTrue(report["hr6_first30s_animation"]["pass"])     # 30s window clean
-        self.assertFalse(report["hr7_kenburns_fallback"]["pass"])     # but 5s static
+        self.assertTrue(report["hr6_first30s_animation"]["pass"])  # 30s window clean
+        self.assertFalse(report["hr7_kenburns_fallback"]["pass"])  # but 5s static
         self.assertIn("kb5", report["hr7_kenburns_fallback"]["summary"]["over_duration_shots"])
 
     # — Manifest mode end-to-end —
 
     def test_manifest_hook_static_model_fails(self):
-        spec = self._write("spec.yaml", _spec_yaml(shot_list=[
-            {"shot_id": "shot_01", "duration_intent_s": 5.0},
-            {"shot_id": "shot_02", "duration_intent_s": 4.0},
-        ]))
-        man = self._write("m.yaml", {"shots": [
-            {"shot_id": "shot_01", "model": "ken-burns", "procedural": True},  # hook no-AI
-            {"shot_id": "shot_02", "model": "hailuo_std", "procedural": False},
-        ]})
+        spec = self._write(
+            "spec.yaml",
+            _spec_yaml(
+                shot_list=[
+                    {"shot_id": "shot_01", "duration_intent_s": 5.0},
+                    {"shot_id": "shot_02", "duration_intent_s": 4.0},
+                ]
+            ),
+        )
+        man = self._write(
+            "m.yaml",
+            {
+                "shots": [
+                    {"shot_id": "shot_01", "model": "ken-burns", "procedural": True},  # hook no-AI
+                    {"shot_id": "shot_02", "model": "hailuo_std", "procedural": False},
+                ]
+            },
+        )
         res = _run(["--format", "horror-choice", "--spec", str(spec), "--manifest", str(man)])
         self.assertEqual(res.returncode, 1, res.stdout + res.stderr)
 

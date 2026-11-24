@@ -103,10 +103,18 @@ def ffprobe_duration(video_path: str) -> float:
     try:
         result = subprocess.run(
             [
-                "ffprobe", "-v", "error", "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1", video_path,
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                video_path,
             ],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         return float(result.stdout.strip())
     except Exception:
@@ -117,11 +125,25 @@ def extract_audio(video_path: str, out_wav: str) -> bool:
     try:
         subprocess.run(
             [
-                "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
-                "-c:a", "pcm_s16le", out_wav,
+                "ffmpeg",
+                "-y",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-i",
+                video_path,
+                "-vn",
+                "-ac",
+                "1",
+                "-ar",
+                "16000",
+                "-c:a",
+                "pcm_s16le",
+                out_wav,
             ],
-            check=True, capture_output=True, timeout=120,
+            check=True,
+            capture_output=True,
+            timeout=120,
         )
         return os.path.exists(out_wav)
     except Exception as e:
@@ -133,11 +155,24 @@ def extract_frame(video_path: str, t: float, out_png: str) -> bool:
     try:
         subprocess.run(
             [
-                "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-                "-ss", str(t), "-i", video_path,
-                "-frames:v", "1", "-q:v", "2", out_png,
+                "ffmpeg",
+                "-y",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-ss",
+                str(t),
+                "-i",
+                video_path,
+                "-frames:v",
+                "1",
+                "-q:v",
+                "2",
+                out_png,
             ],
-            check=False, capture_output=True, timeout=30,
+            check=False,
+            capture_output=True,
+            timeout=30,
         )
         return os.path.exists(out_png) and os.path.getsize(out_png) > 1000
     except Exception:
@@ -172,9 +207,11 @@ def gemini_call(client, prompt: str, image_paths: list, retries: int = 3) -> str
     for p in image_paths:
         try:
             with open(p, "rb") as f:
-                parts.append({
-                    "inline_data": {"mime_type": "image/png", "data": f.read()},
-                })
+                parts.append(
+                    {
+                        "inline_data": {"mime_type": "image/png", "data": f.read()},
+                    }
+                )
         except Exception as e:
             print(f"  WARN failed to load image {p}: {e}", file=sys.stderr)
 
@@ -188,8 +225,11 @@ def gemini_call(client, prompt: str, image_paths: list, retries: int = 3) -> str
             return (r.text or "").strip()
         except Exception as e:
             last_err = e
-            wait = 2 ** attempt
-            print(f"  Gemini call attempt {attempt+1}/{retries} failed: {e}; retry in {wait}s", file=sys.stderr)
+            wait = 2**attempt
+            print(
+                f"  Gemini call attempt {attempt + 1}/{retries} failed: {e}; retry in {wait}s",
+                file=sys.stderr,
+            )
             time.sleep(wait)
     raise RuntimeError(f"Gemini call failed after {retries} attempts: {last_err}")
 
@@ -398,7 +438,7 @@ def parse_caption_ocr(response_text: str) -> tuple[str | None, float | None]:
     if first.upper().startswith("ABSENT") or first.upper() == "ABSENT":
         text = None
     elif first.upper().startswith("CAPTION:"):
-        text = first[len("CAPTION:"):].strip() or None
+        text = first[len("CAPTION:") :].strip() or None
     else:
         # fallback: treat first non-empty line as caption (legacy prompt path)
         if first.upper() == "NONE":
@@ -468,6 +508,7 @@ def find_canonical_text_for_shot(spec: dict, shot_id: str) -> str | None:
                         tc = it.get("text_canonical")
                         if tc:
                             return tc.strip()
+
     # search all top-level lists too (some SPECs nest differently)
     def _walk(node):
         if isinstance(node, dict):
@@ -483,6 +524,7 @@ def find_canonical_text_for_shot(spec: dict, shot_id: str) -> str | None:
                 if r:
                     return r
         return None
+
     walked = _walk(spec)
     if walked:
         return walked
@@ -514,12 +556,32 @@ def _is_silent_marker(text: str) -> bool:
 def verify_dim0_scope_creep(shot_id: str, shot_in_spec: bool, clip_exists: bool) -> dict:
     """Shot exists in BOTH filesystem and SPEC?"""
     if shot_in_spec and clip_exists:
-        return {"shot_in_spec": True, "clip_exists": True, "pass": True, "reason": "Shot exists in SPEC and filesystem"}
+        return {
+            "shot_in_spec": True,
+            "clip_exists": True,
+            "pass": True,
+            "reason": "Shot exists in SPEC and filesystem",
+        }
     if not shot_in_spec and clip_exists:
-        return {"shot_in_spec": False, "clip_exists": True, "pass": False, "reason": "SCOPE CREEP: clip exists in filesystem but NOT in SPEC"}
+        return {
+            "shot_in_spec": False,
+            "clip_exists": True,
+            "pass": False,
+            "reason": "SCOPE CREEP: clip exists in filesystem but NOT in SPEC",
+        }
     if shot_in_spec and not clip_exists:
-        return {"shot_in_spec": True, "clip_exists": False, "pass": False, "reason": "Clip missing in filesystem (SPEC declares it)"}
-    return {"shot_in_spec": False, "clip_exists": False, "pass": False, "reason": "Shot in neither SPEC nor filesystem"}
+        return {
+            "shot_in_spec": True,
+            "clip_exists": False,
+            "pass": False,
+            "reason": "Clip missing in filesystem (SPEC declares it)",
+        }
+    return {
+        "shot_in_spec": False,
+        "clip_exists": False,
+        "pass": False,
+        "reason": "Shot in neither SPEC nor filesystem",
+    }
 
 
 def verify_dim1_narrator(whisper_text: str, spec_text: str) -> dict:
@@ -646,7 +708,10 @@ def audit_shot(
 
     # ── dim 0 ── scope creep
     result["dim0_scope_creep"] = verify_dim0_scope_creep(shot_id, shot_in_spec, clip_exists)
-    print(f"  dim0 scope_creep: {'PASS' if result['dim0_scope_creep']['pass'] else 'FAIL'} — {result['dim0_scope_creep']['reason']}", file=sys.stderr)
+    print(
+        f"  dim0 scope_creep: {'PASS' if result['dim0_scope_creep']['pass'] else 'FAIL'} — {result['dim0_scope_creep']['reason']}",
+        file=sys.stderr,
+    )
 
     if not clip_exists:
         # cannot run other dims, return early
@@ -707,7 +772,11 @@ def audit_shot(
             caption_text_by_t[tt] = None
 
     # primary caption text = best non-empty from mid → end → start
-    caption_priority = [caption_text_by_t.get(t_mid), caption_text_by_t.get(t_end), caption_text_by_t.get(t_start)]
+    caption_priority = [
+        caption_text_by_t.get(t_mid),
+        caption_text_by_t.get(t_end),
+        caption_text_by_t.get(t_start),
+    ]
     primary_caption = next((c for c in caption_priority if c), None)
 
     # estimate caption appears_at_s = earliest scan time where caption text non-empty
@@ -723,30 +792,49 @@ def audit_shot(
 
     # ── dim 2 ── caption shows SPEC
     result["dim2_caption_shows_spec"] = verify_dim2_caption(primary_caption, spec_narration)
-    result["dim2_caption_shows_spec"]["caption_scan_per_frame"] = {f"{tt:.2f}s": c for tt, c in caption_text_by_t.items()}
+    result["dim2_caption_shows_spec"]["caption_scan_per_frame"] = {
+        f"{tt:.2f}s": c for tt, c in caption_text_by_t.items()
+    }
     print(f"  dim2 caption_vs_spec: {_fmt_pass(result['dim2_caption_shows_spec'])}", file=sys.stderr)
 
     # ── dim 3 ── caption matches narrator + offset
     result["dim3_caption_matches_narrator"] = verify_dim3_caption_vs_narrator(
-        primary_caption, whisper_text, caption_appears_at_s, whisper_segments,
+        primary_caption,
+        whisper_text,
+        caption_appears_at_s,
+        whisper_segments,
     )
-    print(f"  dim3 caption_vs_narrator: {_fmt_pass(result['dim3_caption_matches_narrator'])}", file=sys.stderr)
+    print(
+        f"  dim3 caption_vs_narrator: {_fmt_pass(result['dim3_caption_matches_narrator'])}", file=sys.stderr
+    )
 
     # ── dim 4+5 ── visual matches SPEC.visual_intent
     result["dim4_5_visual_matches_intent"] = verify_dim45_visual(
-        client, frame_mid, spec_visual, warnings,
+        client,
+        frame_mid,
+        spec_visual,
+        warnings,
     )
     print(f"  dim4_5 visual_vs_intent: {_fmt_pass(result['dim4_5_visual_matches_intent'])}", file=sys.stderr)
 
     # ── dim 6 ── characters
     result["dim6_characters_correct"] = verify_dim6_characters(
-        client, frame_mid, expected_chars_visible, expected_chars_raw, anchors_dir, workdir, warnings,
+        client,
+        frame_mid,
+        expected_chars_visible,
+        expected_chars_raw,
+        anchors_dir,
+        workdir,
+        warnings,
     )
     print(f"  dim6 characters: {_fmt_pass(result['dim6_characters_correct'])}", file=sys.stderr)
 
     # ── dim 7 ── action sequence
     result["dim7_action_matches_narration"] = verify_dim7_action(
-        client, [frame_start, frame_mid, frame_end], spec_who_does_what, warnings,
+        client,
+        [frame_start, frame_mid, frame_end],
+        spec_who_does_what,
+        warnings,
     )
     print(f"  dim7 action: {_fmt_pass(result['dim7_action_matches_narration'])}", file=sys.stderr)
 
@@ -784,7 +872,10 @@ def audit_shot(
     result["overall_pass"] = len(fail_dims) == 0
     result["fail_dimensions"] = fail_dims
     result["warnings"] = warnings
-    print(f"  ━ overall: {'PASS' if result['overall_pass'] else 'FAIL'} (failures: {fail_dims})", file=sys.stderr)
+    print(
+        f"  ━ overall: {'PASS' if result['overall_pass'] else 'FAIL'} (failures: {fail_dims})",
+        file=sys.stderr,
+    )
     return result
 
 
@@ -834,7 +925,9 @@ def verify_dim45_visual(client, frame_path: str, spec_visual: str, warnings: lis
             "reason": f"Gemini describe failed: {e}",
         }
     # 2. compare to spec
-    compare_prompt = PROMPT_COMPARE_VISUAL + f"\n\nA (SPEC visual intent):\n{spec_visual}\n\nB (Observed):\n{desc}\n"
+    compare_prompt = (
+        PROMPT_COMPARE_VISUAL + f"\n\nA (SPEC visual intent):\n{spec_visual}\n\nB (Observed):\n{desc}\n"
+    )
     try:
         cmp = gemini_call(client, compare_prompt, [])
         score, reason = parse_score(cmp)
@@ -985,7 +1078,10 @@ def verify_dim7_action(client, keyframes: list, spec_action: str, warnings: list
             "pass": False,
             "reason": f"Gemini describe failed: {e}",
         }
-    compare_prompt = PROMPT_COMPARE_ACTION + f"\n\nA (SPEC who_does_what):\n{spec_action}\n\nB (Observed action sequence):\n{action_obs}\n"
+    compare_prompt = (
+        PROMPT_COMPARE_ACTION
+        + f"\n\nA (SPEC who_does_what):\n{spec_action}\n\nB (Observed action sequence):\n{action_obs}\n"
+    )
     try:
         cmp = gemini_call(client, compare_prompt, [])
         score, reason = parse_score(cmp)
@@ -1120,7 +1216,13 @@ def main():
                 return 1
             in_spec = args.shot_id in spec_shot_ids
             res = audit_shot(
-                client, args.shot_id, args.atomic_clip_path, spec, args.anchors_dir, workdir, in_spec,
+                client,
+                args.shot_id,
+                args.atomic_clip_path,
+                spec,
+                args.anchors_dir,
+                workdir,
+                in_spec,
             )
             results.append(res)
             out_path = args.output or args.atomic_clip_path.replace(".mp4", "_audit.json")

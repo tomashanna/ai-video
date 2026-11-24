@@ -173,7 +173,9 @@ class CreativeSpec(_Open):
         if dupes:
             raise ValueError(f"duplicate shot_id(s): {dupes}")
         known = set(ids)
-        orphans = [n.segment_id for n in self.narration_script if n.shot_id_anchor and n.shot_id_anchor not in known]
+        orphans = [
+            n.segment_id for n in self.narration_script if n.shot_id_anchor and n.shot_id_anchor not in known
+        ]
         if orphans:
             raise ValueError(f"narration segments anchored to unknown shots: {orphans}")
         seg_ids = [n.segment_id for n in self.narration_script]

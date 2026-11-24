@@ -103,8 +103,14 @@ def try_create(path: Path, payload: dict[str, Any]) -> bool:
     return True
 
 
-def acquire(project: str, duration_min: float = 15, agent: str = "", *, pid: int | None = None,
-            path: Path | None = None) -> int:
+def acquire(
+    project: str,
+    duration_min: float = 15,
+    agent: str = "",
+    *,
+    pid: int | None = None,
+    path: Path | None = None,
+) -> int:
     p = path or lock_path()
     payload = _payload(project, duration_min, agent, pid if pid is not None else os.getppid())
     if try_create(p, payload):
@@ -133,8 +139,11 @@ def _cmd_acquire(a: argparse.Namespace) -> int:
     rc = acquire(a.project, a.duration, a.agent)
     if rc == EXIT_HELD:
         lk = read_lock() or {}
-        print(f"render-lock: held by project={lk.get('project')} pid={lk.get('pid')} "
-              f"started={lk.get('started_at')}", file=sys.stderr)
+        print(
+            f"render-lock: held by project={lk.get('project')} pid={lk.get('pid')} "
+            f"started={lk.get('started_at')}",
+            file=sys.stderr,
+        )
     else:
         print(f"render-lock: acquired project={a.project}" + (" (stale lock recovered)" if rc else ""))
     return rc
@@ -144,8 +153,11 @@ def _cmd_release(a: argparse.Namespace) -> int:
     rc = release(a.project, force=a.force)
     if rc == EXIT_HELD:
         lk = read_lock() or {}
-        print(f"render-lock: cannot release — live lock held by project={lk.get('project')}. "
-              f"Use --force only if you know what you're doing.", file=sys.stderr)
+        print(
+            f"render-lock: cannot release — live lock held by project={lk.get('project')}. "
+            f"Use --force only if you know what you're doing.",
+            file=sys.stderr,
+        )
     else:
         print("render-lock: released")
     return rc
@@ -160,8 +172,10 @@ def _cmd_wait(a: argparse.Namespace) -> int:
             return EXIT_OK
         if time.monotonic() >= deadline:
             lk = read_lock() or {}
-            print(f"render-lock: timeout after {a.timeout}s waiting for project={lk.get('project')}",
-                  file=sys.stderr)
+            print(
+                f"render-lock: timeout after {a.timeout}s waiting for project={lk.get('project')}",
+                file=sys.stderr,
+            )
             return EXIT_TIMEOUT
         time.sleep(a.poll)
 
@@ -172,9 +186,11 @@ def _cmd_status(_: argparse.Namespace) -> int:
         print("render-lock: free")
         return EXIT_OK
     live = is_live(lk)
-    print(f"render-lock: {'LIVE' if live else 'STALE'} project={lk.get('project')} pid={lk.get('pid')} "
-          f"agent={lk.get('agent_label')} started={lk.get('started_at')} "
-          f"expected_min={lk.get('expected_duration_min')}")
+    print(
+        f"render-lock: {'LIVE' if live else 'STALE'} project={lk.get('project')} pid={lk.get('pid')} "
+        f"agent={lk.get('agent_label')} started={lk.get('started_at')} "
+        f"expected_min={lk.get('expected_duration_min')}"
+    )
     return EXIT_OK if live else EXIT_STALE_RECOVERED
 
 

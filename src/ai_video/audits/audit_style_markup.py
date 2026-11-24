@@ -44,6 +44,7 @@ Exit: 0 PASS·not_applicable / 1 FAIL / 2 can't-measure (Bug #9 / SPEC|HTML ause
 Authority: pre-render-gate Q19/Q20 + referent_validated_patterns (monospaced para
   names + vignette, 2026-05-13) + referent-analysis/REFERENT-PATTERNS.md. HR#26 companion test.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -73,8 +74,15 @@ _VIGNETTE_PATTERNS = (
 # monospaced (refuta proportional). Familia canónica de fuentes mono aceptadas.
 # NO medido en F1 (presencia de font-family, no banda). Override via --mono-fonts.
 _DEFAULT_MONO_FONTS = (
-    "VT323", "Space Mono", "Courier", "Menlo", "Monaco",
-    "Consolas", "Roboto Mono", "IBM Plex Mono", "monospace",
+    "VT323",
+    "Space Mono",
+    "Courier",
+    "Menlo",
+    "Monaco",
+    "Consolas",
+    "Roboto Mono",
+    "IBM Plex Mono",
+    "monospace",
 )
 
 # Selectores/atributos que delatan un character name label en el HTML del formato
@@ -87,6 +95,7 @@ _NAME_LABEL_SELECTOR_RE = re.compile(
 
 
 # ─────────────────────────── lógica pura (testeable) ───────────────────────────
+
 
 def evaluate_vignette(html_text, *, patterns=_VIGNETTE_PATTERNS):
     """PURE. Q19 — ¿el HTML contiene markup de vignette?
@@ -104,8 +113,9 @@ def evaluate_vignette(html_text, *, patterns=_VIGNETTE_PATTERNS):
         "status": "ok" if ok else "fail",
         "patterns_matched": matched,
         "detail": (
-            f"vignette markup presente (matched: {matched})" if ok else
-            "NINGÚN markup de vignette (vignette|radial-gradient|box-shadow inset) "
+            f"vignette markup presente (matched: {matched})"
+            if ok
+            else "NINGÚN markup de vignette (vignette|radial-gradient|box-shadow inset) "
             "en el HTML — render plano sin oscurecimiento de bordes (Q19 FAIL)"
         ),
     }
@@ -117,8 +127,7 @@ def _html_text_tokens(html_text):
     # quitar comentarios HTML para no matchear nombres mencionados en comentarios
     no_comments = re.sub(r"<!--.*?-->", " ", html_text or "", flags=re.DOTALL)
     # quitar contenido de <script>/<style> (no es texto renderizado)
-    no_scripts = re.sub(r"<(script|style)\b.*?</\1>", " ", no_comments,
-                        flags=re.DOTALL | re.IGNORECASE)
+    no_scripts = re.sub(r"<(script|style)\b.*?</\1>", " ", no_comments, flags=re.DOTALL | re.IGNORECASE)
     inner = re.sub(r"<[^>]+>", " ", no_scripts)  # strip tags
     return inner.upper()
 
@@ -133,7 +142,7 @@ def detect_name_labels(html_text, character_names):
     selector_hits = _NAME_LABEL_SELECTOR_RE.findall(html_text or "")
     visible = _html_text_tokens(html_text)
     name_hits = []
-    for nm in (character_names or []):
+    for nm in character_names or []:
         if not nm:
             continue
         # match palabra completa (los names son tokens en mayúsculas en el label)
@@ -165,13 +174,14 @@ def evaluate_mono_names(html_text, character_names, *, mono_fonts=_DEFAULT_MONO_
             "check": "Q20_monospaced_names",
             "status": "not_applicable",
             "applies": False,
-            "detail": ("HTML sin character name labels (ni selector name-label/"
-                       "choice_button ni texto matching characters[].name) → Q20 no aplica"),
+            "detail": (
+                "HTML sin character name labels (ni selector name-label/"
+                "choice_button ni texto matching characters[].name) → Q20 no aplica"
+            ),
             "evidence": evidence,
         }
 
-    mono_found = [f for f in mono_fonts
-                  if re.search(rf"\b{re.escape(f)}\b", html_text or "", re.IGNORECASE)]
+    mono_found = [f for f in mono_fonts if re.search(rf"\b{re.escape(f)}\b", html_text or "", re.IGNORECASE)]
     ok = bool(mono_found)
     return ok, {
         "check": "Q20_monospaced_names",
@@ -181,8 +191,8 @@ def evaluate_mono_names(html_text, character_names, *, mono_fonts=_DEFAULT_MONO_
         "evidence": evidence,
         "detail": (
             f"name labels presentes + fuente monospaced declarada ({mono_found}) ✓"
-            if ok else
-            "name labels de personaje PRESENTES pero NINGUNA fuente monospaced "
+            if ok
+            else "name labels de personaje PRESENTES pero NINGUNA fuente monospaced "
             f"({list(mono_fonts)}) en el HTML — los nombres salen en fuente proporcional "
             "(Q20 FAIL: referent_validated_patterns exige monospaced para names)"
         ),
@@ -202,10 +212,11 @@ def evaluate_style_markup(html_text, character_names, *, mono_fonts=_DEFAULT_MON
 
 # ─────────────────────────── wrapper runtime ───────────────────────────
 
+
 def extract_character_names(spec):
     """Lee characters[].name (o .character_name / .name_label) del SPEC."""
     names = []
-    for c in (spec.get("characters") or []):
+    for c in spec.get("characters") or []:
         if not isinstance(c, dict):
             continue
         for k in ("name", "character_name", "name_label"):
@@ -226,13 +237,16 @@ def resolve_html_path(args, spec_path):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True)
     parser.add_argument("--spec", required=True)
-    parser.add_argument("--html", default=None,
-                        help="index.html del proyecto. Default: <spec_dir>/../<spec_stem>/index.html")
-    parser.add_argument("--mono-fonts", default=None,
-                        help="CSV override de fuentes monospaced aceptadas (Q20).")
+    parser.add_argument(
+        "--html", default=None, help="index.html del proyecto. Default: <spec_dir>/../<spec_stem>/index.html"
+    )
+    parser.add_argument(
+        "--mono-fonts", default=None, help="CSV override de fuentes monospaced aceptadas (Q20)."
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -250,33 +264,45 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_captions = bool(caps.get("has_captions_baked", False))
     character_names = extract_character_names(spec)
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\n"
-              f"has_captions_baked: {has_captions}\n"
-              f"character_names: {character_names}\n"
-              f"branch: {'style_markup_check' if has_captions else 'not_applicable'}\n"
-              f"mono_fonts: {list(mono_fonts)}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\n"
+            f"has_captions_baked: {has_captions}\n"
+            f"character_names: {character_names}\n"
+            f"branch: {'style_markup_check' if has_captions else 'not_applicable'}\n"
+            f"mono_fonts: {list(mono_fonts)}"
+        )
         return 0
 
     if not has_captions:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": ("has_captions_baked=false → style markup check skipped "
-                       "(sin overlay de UI/captions horneada que estilizar en HTML)"),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": (
+                        "has_captions_baked=false → style markup check skipped "
+                        "(sin overlay de UI/captions horneada que estilizar en HTML)"
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     html_path = resolve_html_path(args, spec_path)
     if not html_path.exists():
-        print(f"ERROR: index.html not found: {html_path}. Bug #9 (can't measure markup).",
-              file=sys.stderr)
+        print(f"ERROR: index.html not found: {html_path}. Bug #9 (can't measure markup).", file=sys.stderr)
         return 2
 
     html_text = html_path.read_text(encoding="utf-8")

@@ -14,6 +14,7 @@ Usage:
 
 For project-specific use, run with --text "..." to generate per-video outro.
 """
+
 import argparse
 import subprocess
 import sys
@@ -97,8 +98,7 @@ def wrap_text(text, font, max_width):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--text", default="OUTRO CARD\nTEXT PLACEHOLDER",
-                        help="Outro text (newline OK)")
+    parser.add_argument("--text", default="OUTRO CARD\nTEXT PLACEHOLDER", help="Outro text (newline OK)")
     parser.add_argument("--output", default=str(AVU_DIR / "outro-card-template.mp4"))
     args = parser.parse_args()
 
@@ -108,47 +108,114 @@ def main():
         draw_frame(i, text).save(TMP / f"frame_{i:04d}.png")
 
     silent = TMP / "silent.mp4"
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-framerate", str(FPS),
-        "-i", str(TMP / "frame_%04d.png"),
-        "-c:v", "libx264", "-preset", "fast", "-crf", "18",
-        "-pix_fmt", "yuv420p", "-vf", "format=yuv420p",
-        "-color_range", "tv",
-        "-r", str(FPS),
-        str(silent),
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-framerate",
+            str(FPS),
+            "-i",
+            str(TMP / "frame_%04d.png"),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "18",
+            "-pix_fmt",
+            "yuv420p",
+            "-vf",
+            "format=yuv420p",
+            "-color_range",
+            "tv",
+            "-r",
+            str(FPS),
+            str(silent),
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
 
     # Audio: drone -15 dB
     audio = TMP / "audio.mp3"
     if DRONE_PATH.exists():
-        subprocess.run([
-            "ffmpeg", "-y", "-loglevel", "error",
-            "-stream_loop", "-1", "-i", str(DRONE_PATH),
-            "-t", str(DUR_S),
-            "-af", "volume=-15dB",
-            "-c:a", "libmp3lame", "-b:a", "192k",
-            str(audio),
-        ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-loglevel",
+                "error",
+                "-stream_loop",
+                "-1",
+                "-i",
+                str(DRONE_PATH),
+                "-t",
+                str(DUR_S),
+                "-af",
+                "volume=-15dB",
+                "-c:a",
+                "libmp3lame",
+                "-b:a",
+                "192k",
+                str(audio),
+            ],
+            check=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
     else:
         # Fallback: silence
-        subprocess.run([
-            "ffmpeg", "-y", "-loglevel", "error",
-            "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
-            "-t", str(DUR_S),
-            "-c:a", "libmp3lame", "-b:a", "192k",
-            str(audio),
-        ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-loglevel",
+                "error",
+                "-f",
+                "lavfi",
+                "-i",
+                "anullsrc=r=44100:cl=mono",
+                "-t",
+                str(DUR_S),
+                "-c:a",
+                "libmp3lame",
+                "-b:a",
+                "192k",
+                str(audio),
+            ],
+            check=True,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
 
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-i", str(silent), "-i", str(audio),
-        "-map", "0:v:0", "-map", "1:a:0",
-        "-c:v", "copy",
-        "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
-        "-shortest",
-        args.output,
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-i",
+            str(silent),
+            "-i",
+            str(audio),
+            "-map",
+            "0:v:0",
+            "-map",
+            "1:a:0",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "256k",
+            "-ar",
+            "48000",
+            "-shortest",
+            args.output,
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
 
     print(f"✓ AVU built: {args.output}")
     return 0

@@ -23,6 +23,7 @@ Methodology:
 6. Librosa ambient duck (RMS pre/during)
 7. Aggregate cross-canonical bands median + p25/p75
 """
+
 import argparse
 import json
 import re
@@ -77,6 +78,7 @@ def resolve_format_paths(format_name, sources_override=None, out_override=None, 
         "ref_dir": Path(ref_dir_override) if ref_dir_override else defaults["ref_dir"],
     }
 
+
 # Map ref-XX → source MP4 basename (from spec)
 REF_TO_SOURCE = {
     "ref-03": "ScreenRecording_05-13-2026 00-01-36_1.MP4",
@@ -102,10 +104,21 @@ DECISION_PATTERNS = [
 # Per-segment role classifier (heuristic patterns)
 ROLE_PATTERNS = {
     "hook_framing": [r"\b(?:escoge|elige|decid[íi]).*\bcompañer", r"\b(matarife|cocinera|ó o)\b"],
-    "setup_establishing": [r"\bplanta el", r"\b(turno|cámara|gancho|despiese)", r"\bsi (?:elegiste|escogiste)\b"],
+    "setup_establishing": [
+        r"\bplanta el",
+        r"\b(turno|cámara|gancho|despiese)",
+        r"\bsi (?:elegiste|escogiste)\b",
+    ],
     "decision_setup": [r"\b(empieza a|empieza|aparece|se voltea|se acerca|empezás)\b"],
-    "decision_question": [r"\bdecid[íi]s?\b", r"\bahora decides?\b", r"\b(?:miras|mirás|salís|seguís|te incomoda|prefieres)\b\?"],
-    "consequence_narration": [r"\bsi (?:miras|mirás|seguís|salís|esper|te quieres|sabes|te incomoda)", r"\b(?:envía|enoja|sonríe|deja de|empieza a|abre la)\b"],
+    "decision_question": [
+        r"\bdecid[íi]s?\b",
+        r"\bahora decides?\b",
+        r"\b(?:miras|mirás|salís|seguís|te incomoda|prefieres)\b\?",
+    ],
+    "consequence_narration": [
+        r"\bsi (?:miras|mirás|seguís|salís|esper|te quieres|sabes|te incomoda)",
+        r"\b(?:envía|enoja|sonríe|deja de|empieza a|abre la)\b",
+    ],
     "cliffhanger": [r"\b(?:nunca|sirena|seis|saliste|vive tu|aprendiste|loop|eterno|para siempre|baila)\b"],
     "climax_staccato": [r"^\s*(?:la (?:olla|sirena)|cena|nunca|fin|ya)\b"],
 }
@@ -130,14 +143,16 @@ def find_decision_windows(segments):
         text_lower = seg["text"].lower().strip()
         for pat in DECISION_PATTERNS:
             if re.search(pat, text_lower):
-                windows.append({
-                    "segment_idx": i,
-                    "segment_text": seg["text"].strip(),
-                    "narration_start_s": seg["start"],
-                    "narration_end_s": seg["end"],
-                    "expected_window_start_s": seg["end"],
-                    "expected_window_end_s": min(seg["end"] + 5.0, segments[-1]["end"]),
-                })
+                windows.append(
+                    {
+                        "segment_idx": i,
+                        "segment_text": seg["text"].strip(),
+                        "narration_start_s": seg["start"],
+                        "narration_end_s": seg["end"],
+                        "expected_window_start_s": seg["end"],
+                        "expected_window_end_s": min(seg["end"] + 5.0, segments[-1]["end"]),
+                    }
+                )
                 break
     return windows
 
@@ -155,12 +170,14 @@ def measure_per_segment_wpm(segments):
             continue
         wpm = words / dur * 60.0
         role = classify_segment(text)
-        per_role.setdefault(role, []).append({
-            "text": text[:60],
-            "duration_s": round(dur, 2),
-            "words": words,
-            "wpm": round(wpm, 1),
-        })
+        per_role.setdefault(role, []).append(
+            {
+                "text": text[:60],
+                "duration_s": round(dur, 2),
+                "words": words,
+                "wpm": round(wpm, 1),
+            }
+        )
     # Aggregate per role
     agg = {}
     for role, items in per_role.items():
@@ -185,16 +202,29 @@ def extract_frames_dense(mp4_path, start_s, end_s, interval_s=0.1, out_dir=None)
     # ffmpeg fps filter for dense extraction
     fps = 1.0 / interval_s
     pattern = str(out_dir / "frame_%04d.jpg")
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-ss", str(start_s),
-        "-i", str(mp4_path),
-        "-t", str(duration),
-        "-vf", f"fps={fps},scale=540:960",  # downscale for OCR speed
-        "-q:v", "3",
-        "-pix_fmt", "yuvj420p",
-        pattern,
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-ss",
+            str(start_s),
+            "-i",
+            str(mp4_path),
+            "-t",
+            str(duration),
+            "-vf",
+            f"fps={fps},scale=540:960",  # downscale for OCR speed
+            "-q:v",
+            "3",
+            "-pix_fmt",
+            "yuvj420p",
+            pattern,
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return sorted(out_dir.glob("frame_*.jpg"))
 
 
@@ -207,6 +237,7 @@ def detect_countdown_digits(frame_paths, easyocr_reader, start_s, interval_s):
     for i, fp in enumerate(frame_paths):
         t = start_s + i * interval_s
         import cv2
+
         img = cv2.imread(str(fp))
         if img is None:
             continue
@@ -237,6 +268,7 @@ def detect_freeze_via_ssim(frame_paths, start_s, interval_s, ssim_threshold=0.96
     """SSIM consecutive frames. If >threshold for >2s consecutive → freeze."""
     import cv2
     from skimage.metrics import structural_similarity as ssim
+
     if len(frame_paths) < 2:
         return {"freeze_detected": False, "duration_s": 0.0}
     ssims = []
@@ -269,6 +301,7 @@ def detect_freeze_via_ssim(frame_paths, start_s, interval_s, ssim_threshold=0.96
 def measure_ambient_duck(mp4_path, decision_window):
     """Librosa RMS pre vs during decision window."""
     import librosa
+
     pre_start = max(0.0, decision_window["narration_start_s"] - 2.0)
     pre_end = decision_window["narration_start_s"]
     dur_start = decision_window["expected_window_start_s"]
@@ -317,7 +350,7 @@ def measure_ref(ref_id, easyocr_reader):
     # 3. Per decision window: countdown digit detection + freeze + duck
     per_window_results = []
     for wi, win in enumerate(decision_windows[:3]):  # cap 3 per ref
-        print(f"  window {wi+1}: '{win['segment_text'][:50]}' end={win['narration_end_s']:.2f}s")
+        print(f"  window {wi + 1}: '{win['segment_text'][:50]}' end={win['narration_end_s']:.2f}s")
         # Dense frames at 0.1s in narration_end → +5s window
         tmp_frames = Path(tempfile.mkdtemp(prefix=f"ai-video-pacing-{ref_id}-w{wi}-"))
         try:
@@ -330,27 +363,36 @@ def measure_ref(ref_id, easyocr_reader):
             )
         except subprocess.CalledProcessError as e:
             print(f"    ⚠ frame extract failed: {e}")
-            per_window_results.append({"window_idx": wi, "narration_end_s": win["narration_end_s"], "error": "frame_extract_failed"})
+            per_window_results.append(
+                {"window_idx": wi, "narration_end_s": win["narration_end_s"], "error": "frame_extract_failed"}
+            )
             continue
 
         # OCR digits
         try:
             transitions = detect_countdown_digits(
-                frame_paths, easyocr_reader,
+                frame_paths,
+                easyocr_reader,
                 start_s=win["expected_window_start_s"],
                 interval_s=0.1,
             )
         except Exception as e:
             print(f"    ⚠ OCR failed: {e}")
             transitions = []
-        print(f"    countdown transitions: {len(transitions)} → {[(t['t'], t['digit']) for t in transitions[:6]]}")
+        print(
+            f"    countdown transitions: {len(transitions)} → {[(t['t'], t['digit']) for t in transitions[:6]]}"
+        )
 
         # Compute digit durations
         digit_durations = []
         if len(transitions) >= 2:
             for i in range(len(transitions) - 1):
-                if transitions[i]["digit"] in {"3", "2", "1"} and transitions[i+1]["digit"] in {"2", "1", "0"}:
-                    dur = transitions[i+1]["t"] - transitions[i]["t"]
+                if transitions[i]["digit"] in {"3", "2", "1"} and transitions[i + 1]["digit"] in {
+                    "2",
+                    "1",
+                    "0",
+                }:
+                    dur = transitions[i + 1]["t"] - transitions[i]["t"]
                     digit_durations.append(round(dur, 2))
 
         # Pause beat (narration_end → first countdown digit)
@@ -368,17 +410,19 @@ def measure_ref(ref_id, easyocr_reader):
         # Audio duck
         duck = measure_ambient_duck(source_mp4, win)
 
-        per_window_results.append({
-            "window_idx": wi,
-            "narration_text": win["segment_text"],
-            "narration_end_s": round(win["narration_end_s"], 2),
-            "expected_window_start_s": round(win["expected_window_start_s"], 2),
-            "countdown_transitions": transitions[:8],
-            "digit_durations_s": digit_durations,
-            "pause_beat_s": pause_beat,
-            "freeze": freeze,
-            "ambient_duck": duck,
-        })
+        per_window_results.append(
+            {
+                "window_idx": wi,
+                "narration_text": win["segment_text"],
+                "narration_end_s": round(win["narration_end_s"], 2),
+                "expected_window_start_s": round(win["expected_window_start_s"], 2),
+                "countdown_transitions": transitions[:8],
+                "digit_durations_s": digit_durations,
+                "pause_beat_s": pause_beat,
+                "freeze": freeze,
+                "ambient_duck": duck,
+            }
+        )
 
     return {
         "ref_id": ref_id,
@@ -452,7 +496,9 @@ def aggregate_refs(per_ref_results):
                 "pct_windows_with_freeze": round(n_with_freeze / max(n_windows, 1), 2),
                 "n_windows_total": n_windows,
                 "n_windows_with_freeze": n_with_freeze,
-                "median_freeze_duration_s": round(float(median(all_freeze_durations)), 2) if all_freeze_durations else None,
+                "median_freeze_duration_s": round(float(median(all_freeze_durations)), 2)
+                if all_freeze_durations
+                else None,
             },
             "per_segment_wpm_bands": per_role_bands,
         },
@@ -468,16 +514,22 @@ def aggregate_refs(per_ref_results):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
-    parser.add_argument("--sources-dir", default=None,
-                        help="Override sources MP4 dir (default: format-aware)")
-    parser.add_argument("--out-dir", default=None,
-                        help="Override output dir (default: format-aware empirical-decision-ui-pacing)")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="Format name (e.g., horror-choice). REQUIRED — no silent assumption."
+    )
+    parser.add_argument(
+        "--sources-dir", default=None, help="Override sources MP4 dir (default: format-aware)"
+    )
+    parser.add_argument(
+        "--out-dir",
+        default=None,
+        help="Override output dir (default: format-aware empirical-decision-ui-pacing)",
+    )
     parser.add_argument("--refs", nargs="+", help="Specific refs (default: all 8)")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Print resolved paths + exit 0 (testability)")
+    parser.add_argument("--dry-run", action="store_true", help="Print resolved paths + exit 0 (testability)")
     args = parser.parse_args()
 
     global SOURCES_DIR, OUT_DIR, REF_DIR
@@ -500,6 +552,7 @@ def main():
     # Init OCR once
     print("Initializing EasyOCR...")
     import easyocr
+
     reader = easyocr.Reader(["en"], gpu=False, verbose=False)
     print("EasyOCR ready.")
 
@@ -514,6 +567,7 @@ def main():
                 per_ref_results.append(result)
         except Exception as e:
             import traceback
+
             print(f"  ❌ {ref_id} failed: {e}")
             traceback.print_exc()
 

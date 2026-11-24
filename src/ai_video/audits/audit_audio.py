@@ -42,10 +42,10 @@ SUBPROCESS_TIMEOUT_S = 1800
 
 
 # UMBRALES validados contra los 3 videos exitosos (2026-05-13)
-MIN_NARRATION_COVERAGE = 70.0    # %. mina 77, bosque 70.3, elige 72.9, pueblo 30.9 ❌
-MIN_AVG_BLOCK_DURATION = 4.5     # s. mina 6.07, bosque 5.24, elige 4.73, pueblo 2.34 ❌
-MIN_BLOCK_DURATION = 3.0         # s. para bloques NO transicionales
-MIN_SOUND_FABRIC_COVERAGE = 99.0 # %. todos los exitosos: 100. dead zones >1s = fail.
+MIN_NARRATION_COVERAGE = 70.0  # %. mina 77, bosque 70.3, elige 72.9, pueblo 30.9 ❌
+MIN_AVG_BLOCK_DURATION = 4.5  # s. mina 6.07, bosque 5.24, elige 4.73, pueblo 2.34 ❌
+MIN_BLOCK_DURATION = 3.0  # s. para bloques NO transicionales
+MIN_SOUND_FABRIC_COVERAGE = 99.0  # %. todos los exitosos: 100. dead zones >1s = fail.
 
 # LUFS target (Instagram Reels standard, validado contra 7 referentes -13.76 a -14.45)
 TARGET_LUFS = -14.0
@@ -54,23 +54,37 @@ LUFS_TOLERANCE = 0.5  # ±0.5 dB acceptable
 
 def get_video_duration(video_path: str) -> float:
     import subprocess
+
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "csv=p=0", video_path],
-        capture_output=True, text=True, check=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video_path],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     return float(result.stdout.strip())
 
 
 def measure_lufs(video_path: str) -> dict:
     """Measure integrated LUFS via ffmpeg loudnorm. Returns dict with input_i, input_tp, input_lra."""
     import subprocess
+
     result = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-i", video_path,
-         "-af", f"loudnorm=I={TARGET_LUFS}:TP=-1:LRA=11:print_format=json",
-         "-f", "null", "-"],
-        capture_output=True, text=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        [
+            "ffmpeg",
+            "-hide_banner",
+            "-i",
+            video_path,
+            "-af",
+            f"loudnorm=I={TARGET_LUFS}:TP=-1:LRA=11:print_format=json",
+            "-f",
+            "null",
+            "-",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     # ffmpeg writes loudnorm JSON to stderr
     output = result.stderr
     # Find JSON block
@@ -108,9 +122,21 @@ def categorize_track(src: str, duration: float) -> str:
         return "music"
     if "tick" in src_lower:
         return "tick"
-    if any(kw in src_lower for kw in ["ambient", "forest-wind", "desert-wind", "cave-drone",
-                                       "footsteps-loop", "fire-crackle", "fire-loop",
-                                       "wind-full", "wind-loop", "loop"]):
+    if any(
+        kw in src_lower
+        for kw in [
+            "ambient",
+            "forest-wind",
+            "desert-wind",
+            "cave-drone",
+            "footsteps-loop",
+            "fire-crackle",
+            "fire-loop",
+            "wind-full",
+            "wind-loop",
+            "loop",
+        ]
+    ):
         return "ambient_continuous"
     if duration >= 8.0:
         return "ambient_long"
@@ -127,7 +153,7 @@ def parse_html_tracks(html_path: str) -> list:
         content = f.read()
     pattern = re.compile(
         r'<audio[^>]+src="([^"]+)"[^>]+data-start="([\d.]+)"[^>]+data-duration="([\d.]+)"[^>]+data-track-index="(\d+)"[^>]*?(?:data-volume="([\d.]+)")?',
-        re.DOTALL
+        re.DOTALL,
     )
     tracks = []
     for m in pattern.finditer(content):
@@ -137,11 +163,17 @@ def parse_html_tracks(html_path: str) -> list:
         track_idx = int(m.group(4))
         vol = float(m.group(5)) if m.group(5) else 1.0
         category = categorize_track(src, duration)
-        tracks.append({
-            "src": src, "start": start, "duration": duration,
-            "end": start + duration, "track": track_idx,
-            "vol": vol, "category": category
-        })
+        tracks.append(
+            {
+                "src": src,
+                "start": start,
+                "duration": duration,
+                "end": start + duration,
+                "track": track_idx,
+                "vol": vol,
+                "category": category,
+            }
+        )
     return tracks
 
 
@@ -158,8 +190,9 @@ def coverage_pct(tracks: list, video_duration: float, resolution: float = 0.1) -
     return (len(covered) / units) * 100
 
 
-def find_dead_zones(tracks: list, video_duration: float,
-                     min_gap_seconds: float = 1.0, resolution: float = 0.1) -> list:
+def find_dead_zones(
+    tracks: list, video_duration: float, min_gap_seconds: float = 1.0, resolution: float = 0.1
+) -> list:
     """Find segments with NO active tracks. Returns list of (start, end, duration)."""
     if not tracks:
         return [(0, video_duration, video_duration)]
@@ -306,8 +339,9 @@ def main():
     )
     parser.add_argument("--video", required=True, help="Path to MP4 render")
     parser.add_argument("--html", required=True, help="Path to index.html (REQUIRED)")
-    parser.add_argument("--max-issues", type=int, default=0,
-                        help="Fail if more than N issues (default 0 — vara estricta)")
+    parser.add_argument(
+        "--max-issues", type=int, default=0, help="Fail if more than N issues (default 0 — vara estricta)"
+    )
     parser.add_argument("--output", help="Save JSON report")
     args = parser.parse_args()
 
@@ -325,21 +359,31 @@ def main():
     report = analyze(args.video, args.html)
 
     print(f"Duration:                 {report['video_duration']}s")
-    print(f"Tracks count:             narr={report['counts']['narration']} "
-          f"music={report['counts']['music']} "
-          f"ambient_cont={report['counts']['ambient_continuous']} "
-          f"ambient_long={report['counts']['ambient_long']} "
-          f"ambient_short={report['counts']['ambient_short']} "
-          f"events={report['counts']['event']} "
-          f"ticks={report['counts']['tick']}")
+    print(
+        f"Tracks count:             narr={report['counts']['narration']} "
+        f"music={report['counts']['music']} "
+        f"ambient_cont={report['counts']['ambient_continuous']} "
+        f"ambient_long={report['counts']['ambient_long']} "
+        f"ambient_short={report['counts']['ambient_short']} "
+        f"events={report['counts']['event']} "
+        f"ticks={report['counts']['tick']}"
+    )
     print()
-    print(f"Narration coverage:       {report['coverage']['narration_pct']}%  (vara ≥{MIN_NARRATION_COVERAGE}%)")
-    print(f"Avg narration block:      {report['narration_quality']['avg_block']}s  (vara ≥{MIN_AVG_BLOCK_DURATION}s)")
+    print(
+        f"Narration coverage:       {report['coverage']['narration_pct']}%  (vara ≥{MIN_NARRATION_COVERAGE}%)"
+    )
+    print(
+        f"Avg narration block:      {report['narration_quality']['avg_block']}s  (vara ≥{MIN_AVG_BLOCK_DURATION}s)"
+    )
     print(f"Short blocks (<{MIN_BLOCK_DURATION}s):     {report['narration_quality']['short_blocks_count']}")
-    print(f"Sound fabric:             {report['coverage']['sound_fabric_pct']}%  (vara ≥{MIN_SOUND_FABRIC_COVERAGE}%)")
+    print(
+        f"Sound fabric:             {report['coverage']['sound_fabric_pct']}%  (vara ≥{MIN_SOUND_FABRIC_COVERAGE}%)"
+    )
     print(f"Dead zones (≥1s):         {len(report['dead_zones'])}")
     if report['mastering']['lufs_integrated'] is not None:
-        print(f"LUFS integrated:          {report['mastering']['lufs_integrated']} dB  (target {TARGET_LUFS} ±{LUFS_TOLERANCE})")
+        print(
+            f"LUFS integrated:          {report['mastering']['lufs_integrated']} dB  (target {TARGET_LUFS} ±{LUFS_TOLERANCE})"
+        )
         print(f"True peak:                {report['mastering']['true_peak']} dBTP")
         print(f"LRA:                      {report['mastering']['lra']} LU")
     print()

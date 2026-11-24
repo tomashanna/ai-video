@@ -11,6 +11,7 @@ Core adversarial cases (per the V7 brief):
 Plus minimal synthetic fixtures: CLI/capability/buffer-floor/same-speaker-abut/dry-run, and direct
 unit tests of the L3 assert_voice_exclusivity() shift-or-abort logic.
 """
+
 import importlib.util
 import json
 import shutil
@@ -38,26 +39,37 @@ def _load(path, name):
 
 # ── synthetic SPEC builders ───────────────────────────────────────────────────
 
-_CAPS = ('video_capabilities:\n'
-         '  has_tts_narration: true\n'
-         '  format_type: "interactive_choice"\n')
+_CAPS = 'video_capabilities:\n  has_tts_narration: true\n  format_type: "interactive_choice"\n'
 
 
 def _spec_yaml(narration, has_tts=True, omit_caps=False):
-    caps = "" if omit_caps else (_CAPS if has_tts else
-                                 'video_capabilities:\n  has_tts_narration: false\n')
+    caps = "" if omit_caps else (_CAPS if has_tts else 'video_capabilities:\n  has_tts_narration: false\n')
     lines = ['schema_version: "v11.1"', caps.rstrip("\n"), "narration_script:"]
     for seg, spk, ts0, text in narration:
-        lines += [f"  - segment_id: {seg}", f"    speaker: {spk}",
-                  f"    timestamp_intent_s: [{ts0}, {ts0 + 1}]",
-                  f'    text_canonical: "{text}"']
+        lines += [
+            f"  - segment_id: {seg}",
+            f"    speaker: {spk}",
+            f"    timestamp_intent_s: [{ts0}, {ts0 + 1}]",
+            f'    text_canonical: "{text}"',
+        ]
     return "\n".join(lines) + "\n"
 
 
 def _manifest(entries):
     """entries: (segment_id, speaker, duration_s, shot_id_anchor)."""
-    return json.dumps([{"segment_id": s, "speaker": sp, "duration_s": d, "shot_id_anchor": sh,
-                        "voice_id": "x", "file": f"assets/tts/{s}.mp3"} for s, sp, d, sh in entries])
+    return json.dumps(
+        [
+            {
+                "segment_id": s,
+                "speaker": sp,
+                "duration_s": d,
+                "shot_id_anchor": sh,
+                "voice_id": "x",
+                "file": f"assets/tts/{s}.mp3",
+            }
+            for s, sp, d, sh in entries
+        ]
+    )
 
 
 def _spec_with_shots(narration, shot_starts):
@@ -68,9 +80,13 @@ def _spec_with_shots(narration, shot_starts):
         lines.append(f"  - shot_id: {sh}")
     lines.append("narration_script:")
     for seg, spk, ts0, sh in narration:
-        lines += [f"  - segment_id: {seg}", f"    speaker: {spk}",
-                  f"    timestamp_intent_s: [{ts0}, {ts0 + 1}]",
-                  f"    shot_id_anchor: {sh}", '    text_canonical: "x x x"']
+        lines += [
+            f"  - segment_id: {seg}",
+            f"    speaker: {spk}",
+            f"    timestamp_intent_s: [{ts0}, {ts0 + 1}]",
+            f"    shot_id_anchor: {sh}",
+            '    text_canonical: "x x x"',
+        ]
     return "\n".join(lines) + "\n"
 
 
@@ -103,9 +119,13 @@ class TestSpecMode(unittest.TestCase):
         # Reconstructed v2 bug: narrator (12w @165WPM ≈ 4.36s from 1.8 → ends ~6.16s) and a CHARACTER
         # window starting at 3.2s OVERLAP → two voices at once. MUST FAIL.
         narr = [
-            ("narrator_hook", "narrator", 1.8,
-             "El ultimo tren ya paso Elige a tu companero Dario o Tobias"),  # 12 words
-            ("char_lure", "char_b", 3.2, "Ven conmigo abajo hace frio"),    # starts inside narrator
+            (
+                "narrator_hook",
+                "narrator",
+                1.8,
+                "El ultimo tren ya paso Elige a tu companero Dario o Tobias",
+            ),  # 12 words
+            ("char_lure", "char_b", 3.2, "Ven conmigo abajo hace frio"),  # starts inside narrator
         ]
         self.spec.write_text(_spec_yaml(narr))
         r = _run(["--mode", "spec", "--format", "horror-choice", "--spec", str(self.spec)])
@@ -118,8 +138,8 @@ class TestSpecMode(unittest.TestCase):
     def test_v3_layout_no_overlap_PASSES(self):
         # v3: narrator finishes, THEN the character speaks with a >=0.3s handoff gap. No overlap.
         narr = [
-            ("narrator_hook", "narrator", 1.8, "uno dos tres"),       # ~1.09s → ends ~2.89s
-            ("char_dario", "char_a", 4.0, "cuatro cinco seis"),       # starts 4.0 > 2.89 + 0.3
+            ("narrator_hook", "narrator", 1.8, "uno dos tres"),  # ~1.09s → ends ~2.89s
+            ("char_dario", "char_a", 4.0, "cuatro cinco seis"),  # starts 4.0 > 2.89 + 0.3
         ]
         self.spec.write_text(_spec_yaml(narr))
         r = _run(["--mode", "spec", "--format", "horror-choice", "--spec", str(self.spec)])
@@ -153,12 +173,18 @@ class TestTtsMode(unittest.TestCase):
         # REAL durations: narrator 5.2s from shot_01 (start 0 → 0.1..5.3), Dario 2.7s from shot_01
         #   at the SAME shot start (0 → 0.45..3.15) → overlaps the narrator. MUST FAIL.
         mf = self.tmp / "manifest.json"
-        mf.write_text(_manifest([("narrator_hook", "narrator", 5.2, "shot_01"),
-                                 ("dario_lure", "char_a", 2.7, "shot_01")]))
+        mf.write_text(
+            _manifest(
+                [("narrator_hook", "narrator", 5.2, "shot_01"), ("dario_lure", "char_a", 2.7, "shot_01")]
+            )
+        )
         spec = self.tmp / "spec.yaml"
-        spec.write_text(_spec_with_shots(
-            [("narrator_hook", "narrator", 0.0, "shot_01"), ("dario_lure", "char_a", 0.0, "shot_01")],
-            ["shot_01"]))
+        spec.write_text(
+            _spec_with_shots(
+                [("narrator_hook", "narrator", 0.0, "shot_01"), ("dario_lure", "char_a", 0.0, "shot_01")],
+                ["shot_01"],
+            )
+        )
         r = _run(["--mode", "tts", "--manifest", str(mf), "--spec", str(spec)])
         self.assertEqual(r.returncode, 1, f"tts v2 overlap must FAIL.\n{r.stdout}")
         self.assertIn("overlap", r.stdout)
@@ -166,12 +192,18 @@ class TestTtsMode(unittest.TestCase):
     def test_tts_v3_separated_PASSES(self):
         # v3: narrator on shot_01 (start 0), Dario on a LATER shot start (10) → no overlap.
         mf = self.tmp / "manifest.json"
-        mf.write_text(_manifest([("narrator_hook", "narrator", 5.2, "shot_01"),
-                                 ("dario_rule", "char_a", 2.7, "shot_05")]))
+        mf.write_text(
+            _manifest(
+                [("narrator_hook", "narrator", 5.2, "shot_01"), ("dario_rule", "char_a", 2.7, "shot_05")]
+            )
+        )
         spec = self.tmp / "spec.yaml"
-        spec.write_text(_spec_with_shots(
-            [("narrator_hook", "narrator", 0.0, "shot_01"), ("dario_rule", "char_a", 10.0, "shot_05")],
-            ["shot_01", "shot_05"]))
+        spec.write_text(
+            _spec_with_shots(
+                [("narrator_hook", "narrator", 0.0, "shot_01"), ("dario_rule", "char_a", 10.0, "shot_05")],
+                ["shot_01", "shot_05"],
+            )
+        )
         r = _run(["--mode", "tts", "--manifest", str(mf), "--spec", str(spec)])
         self.assertEqual(r.returncode, 0, f"tts v3 separated must PASS.\n{r.stdout}")
         self.assertIn('"pass"', r.stdout)
@@ -179,14 +211,21 @@ class TestTtsMode(unittest.TestCase):
     def test_tts_exclude_segment_removes_overlap(self):
         # The v2-overlapping char window, but EXCLUDED (a fix-pack muted it in the cut) → PASS.
         mf = self.tmp / "manifest.json"
-        mf.write_text(_manifest([("narrator_hook", "narrator", 5.2, "shot_01"),
-                                 ("tobias_lure", "char_b", 2.7, "shot_01")]))
+        mf.write_text(
+            _manifest(
+                [("narrator_hook", "narrator", 5.2, "shot_01"), ("tobias_lure", "char_b", 2.7, "shot_01")]
+            )
+        )
         spec = self.tmp / "spec.yaml"
-        spec.write_text(_spec_with_shots(
-            [("narrator_hook", "narrator", 0.0, "shot_01"), ("tobias_lure", "char_b", 0.0, "shot_01")],
-            ["shot_01"]))
-        r = _run(["--mode", "tts", "--manifest", str(mf), "--spec", str(spec),
-                  "--exclude-segments", "tobias_lure"])
+        spec.write_text(
+            _spec_with_shots(
+                [("narrator_hook", "narrator", 0.0, "shot_01"), ("tobias_lure", "char_b", 0.0, "shot_01")],
+                ["shot_01"],
+            )
+        )
+        r = _run(
+            ["--mode", "tts", "--manifest", str(mf), "--spec", str(spec), "--exclude-segments", "tobias_lure"]
+        )
         self.assertEqual(r.returncode, 0, f"excluding the muted voice must PASS.\n{r.stdout}")
 
 
@@ -254,7 +293,7 @@ class TestL3Assertion(unittest.TestCase):
             {"seg": "n", "speaker": "narrator", "t0": 0.1, "dur": 5.0, "shot": "shot_x", "priority": 1},
             {"seg": "d", "speaker": "char_a", "t0": 0.5, "dur": 2.0, "shot": "shot_x", "priority": 2},
         ]
-        bounds = {"shot_x": (0.0, 7.0)}   # to clear the narrator (ends 5.1) dialog needs t0>=5.4 = +4.9s
+        bounds = {"shot_x": (0.0, 7.0)}  # to clear the narrator (ends 5.1) dialog needs t0>=5.4 = +4.9s
         with self.assertRaises(SystemExit):
             self.mod.assert_voice_exclusivity(voices, bounds)
 

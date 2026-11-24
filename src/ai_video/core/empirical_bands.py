@@ -27,6 +27,7 @@ resuelven filesystem. Band computation idéntica a audit-against-referent.py
 Authority: referent-analysis/<format>/F1-INGENIERO-MEASUREMENTS.json +
 F1-UI-SAFE-ZONES.json + F1-UI-TIMING.json. HR#26 companion: test_empirical_bands.py.
 """
+
 from __future__ import annotations
 
 import json
@@ -106,8 +107,7 @@ def _format_dir(format_name: str, base: Path | None) -> Path | None:
     return d if d.is_dir() else None
 
 
-def load_measurements(format_name: str, base: Path | None = None,
-                      fallback_format: str | None = None):
+def load_measurements(format_name: str, base: Path | None = None, fallback_format: str | None = None):
     """per_referent de F1-INGENIERO-MEASUREMENTS.json del formato, o None.
 
     Sin fallback silencioso: si el formato no tiene F1 propio devuelve None
@@ -124,8 +124,7 @@ def load_measurements(format_name: str, base: Path | None = None,
     return None
 
 
-def load_ui_safe_zones(format_name: str, base: Path | None = None,
-                       fallback_format: str | None = None):
+def load_ui_safe_zones(format_name: str, base: Path | None = None, fallback_format: str | None = None):
     """per_referent de F1-UI-SAFE-ZONES.json del formato, o None (sin fallback silencioso)."""
     d = _format_dir(format_name, base)
     if d is not None:
@@ -137,9 +136,15 @@ def load_ui_safe_zones(format_name: str, base: Path | None = None,
     return None
 
 
-def band(format_name: str, section: str, key: str, *,
-         tolerance: str = "p25-p75", base: Path | None = None,
-         fallback_format: str | None = None):
+def band(
+    format_name: str,
+    section: str,
+    key: str,
+    *,
+    tolerance: str = "p25-p75",
+    base: Path | None = None,
+    fallback_format: str | None = None,
+):
     """Banda (lo, hi, n) de una métrica F1-INGENIERO (ej. 'pacing','cuts_per_min').
 
     ⚠️ cuts: F1 trae 'cuts_per_min' (curated) Y 'cuts_per_min_raw' — elegí la key
@@ -159,9 +164,15 @@ def band(format_name: str, section: str, key: str, *,
     return compute_band(values, tolerance)
 
 
-def ui_band(format_name: str, element: str, field: str = "y_pct", *,
-            tolerance: str = "p25-p75", base: Path | None = None,
-            fallback_format: str | None = None):
+def ui_band(
+    format_name: str,
+    element: str,
+    field: str = "y_pct",
+    *,
+    tolerance: str = "p25-p75",
+    base: Path | None = None,
+    fallback_format: str | None = None,
+):
     """Banda (lo, hi, n) de un campo de UI safe zone (ej. 'captions_narration','y_pct').
 
     Maneja la variante '<field>_avg' que usan algunos elementos

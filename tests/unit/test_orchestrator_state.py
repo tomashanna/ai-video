@@ -2,6 +2,7 @@
 """Companion test (HR#26) para lib/orchestrator_state.py —
 parse_verdict (vocab emoji GO/NO-GO de AUDITOR-PROTOCOL §5) + detect_multi_cp_prompt (bypass ES).
 Corre: python3 lib/test_orchestrator_state.py"""
+
 import sys
 import tempfile
 from pathlib import Path
@@ -29,15 +30,19 @@ def test_emoji_verdicts():
 
 
 def test_prompt_scope_es_bypass():
-    assert O.detect_multi_cp_prompt("ejecuta todos los checkpoints de corrido sin parar"), \
+    assert O.detect_multi_cp_prompt("ejecuta todos los checkpoints de corrido sin parar"), (
         "bypass ES 'de corrido / sin parar' no detectado"
-    assert O.detect_multi_cp_prompt("hazlo autónomo de punta a punta"), \
+    )
+    assert O.detect_multi_cp_prompt("hazlo autónomo de punta a punta"), (
         "bypass ES 'autónomo / de punta a punta' no detectado"
-    assert O.detect_multi_cp_prompt("corré todo sin auditar"), \
+    )
+    assert O.detect_multi_cp_prompt("corré todo sin auditar"), (
         "bypass ES 'corré todo / sin auditar' no detectado"
+    )
     assert O.detect_multi_cp_prompt("execute cp1-cp5"), "EN literal dejó de detectar (regresión)"
-    assert O.detect_multi_cp_prompt("generá el anchor del CP1 nomás") is None, \
+    assert O.detect_multi_cp_prompt("generá el anchor del CP1 nomás") is None, (
         "falso positivo en prompt single-CP legítimo"
+    )
 
 
 def main():

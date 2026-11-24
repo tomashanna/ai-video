@@ -116,12 +116,7 @@ def default_decisions_path() -> Path:
         )
         if candidate.exists():
             return candidate
-        candidate2 = (
-            parent
-            / "creative-director"
-            / "master-flow-v2"
-            / "ARCHITECTURAL-DECISIONS.md"
-        )
+        candidate2 = parent / "creative-director" / "master-flow-v2" / "ARCHITECTURAL-DECISIONS.md"
         if candidate2.exists():
             return candidate2
     # Fallback: relative to cwd
@@ -324,9 +319,7 @@ def gate_check_handoff_exists(ctx: GateContext, cp_id: str) -> None:
         entry = _override_to_entry(o, ctx)
         if entry is not None:
             ctx.architectural_log.append(entry)
-        ctx.warnings.append(
-            f"OVERRIDE: --{o.flag_name} bypassed handoff requirement for {prev}"
-        )
+        ctx.warnings.append(f"OVERRIDE: --{o.flag_name} bypassed handoff requirement for {prev}")
         return
 
     raise GateHalt(
@@ -352,9 +345,7 @@ def gate_check_verdict(ctx: GateContext, cp_id: str) -> None:
             entry = _override_to_entry(o, ctx)
             if entry is not None:
                 ctx.architectural_log.append(entry)
-            ctx.warnings.append(
-                f"OVERRIDE: --{o.flag_name} bypassed audit verdict requirement for {prev}"
-            )
+            ctx.warnings.append(f"OVERRIDE: --{o.flag_name} bypassed audit verdict requirement for {prev}")
             return
         raise GateHalt(
             HaltReason(
@@ -368,9 +359,7 @@ def gate_check_verdict(ctx: GateContext, cp_id: str) -> None:
     if verdict == "PASS":
         return
     if verdict == "NB":
-        ctx.warnings.append(
-            f"PREVIOUS CP VERDICT NB — {prev} passed conditionally, continuing with warning"
-        )
+        ctx.warnings.append(f"PREVIOUS CP VERDICT NB — {prev} passed conditionally, continuing with warning")
         return
     if verdict in ("FAIL", "ESCALATE"):
         # Check force-pass override
@@ -380,9 +369,7 @@ def gate_check_verdict(ctx: GateContext, cp_id: str) -> None:
             entry = _override_to_entry(o, ctx)
             if entry is not None:
                 ctx.architectural_log.append(entry)
-            ctx.warnings.append(
-                f"OVERRIDE: --{o.flag_name} bypassed {verdict} verdict for {prev}"
-            )
+            ctx.warnings.append(f"OVERRIDE: --{o.flag_name} bypassed {verdict} verdict for {prev}")
             return
         raise GateHalt(
             HaltReason(
@@ -415,9 +402,7 @@ def gate_check_timeout(ctx: GateContext) -> None:
             entry = _override_to_entry(o, ctx)
             if entry is not None:
                 ctx.architectural_log.append(entry)
-            ctx.warnings.append(
-                f"OVERRIDE: --{o.flag_name} bypassed timeout cap ({elapsed_min:.1f} min)"
-            )
+            ctx.warnings.append(f"OVERRIDE: --{o.flag_name} bypassed timeout cap ({elapsed_min:.1f} min)")
             return
         raise GateHalt(
             HaltReason(
@@ -439,9 +424,7 @@ def gate_check_cost(ctx: GateContext) -> None:
             entry = _override_to_entry(o, ctx)
             if entry is not None:
                 ctx.architectural_log.append(entry)
-            ctx.warnings.append(
-                f"OVERRIDE: --{o.flag_name} bypassed cost cap (${cost:.2f})"
-            )
+            ctx.warnings.append(f"OVERRIDE: --{o.flag_name} bypassed cost cap (${cost:.2f})")
             return
         raise GateHalt(
             HaltReason(
@@ -507,17 +490,20 @@ def gate_check_canonical_floor_cp5(ctx: GateContext) -> None:
         raise GateHalt(
             HaltReason(
                 "MISSING_RENDER",
-                f"REQUIRED FILE MISSING: {render_path}. "
-                f"CP5 canonical floor needs final render before audit.",
+                f"REQUIRED FILE MISSING: {render_path}. CP5 canonical floor needs final render before audit.",
             )
         )
 
     # Run the packaged audit with the *current* interpreter (the old code shelled out to
     # whatever `python3` was first on PATH, which may lack the project's dependencies).
     import subprocess
+
     result = subprocess.run(
         [sys.executable, "-m", "ai_video.audits.audit_against_referent", "--video", str(render_path)],
-        capture_output=True, text=True, cwd=str(ctx.project_dir), timeout=1800,
+        capture_output=True,
+        text=True,
+        cwd=str(ctx.project_dir),
+        timeout=1800,
     )
 
     # Exit code semantics from audit-against-referent.py:
@@ -841,9 +827,7 @@ def main(argv: list[str] | None = None) -> int:
 
     project_dir = Path(args.project_dir)
     spec_path = Path(args.spec)
-    decisions_path = (
-        Path(args.decisions_path) if args.decisions_path else default_decisions_path()
-    )
+    decisions_path = Path(args.decisions_path) if args.decisions_path else default_decisions_path()
     cost_log_path = Path(args.cost_log) if args.cost_log else None
 
     if not args.dry_run and not project_dir.exists():

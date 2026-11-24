@@ -17,6 +17,7 @@ shared check logic is exercised via horror fixtures (TestSyntheticFixtures) AND 
 (TestSportChoice), plus per-genre real-SPEC regressions (V6 horror = invernadero, sport = champions).
 Build 2026-06-01.
 """
+
 import json
 import shutil
 import subprocess
@@ -241,12 +242,12 @@ class TestV6RealRegression(unittest.TestCase):
         # REAL artifact MUST now PASS the § 2 invariant. (Pre-F2 it FAILED; the FAIL path is now
         # covered by the mutation regression below + the synthetic fixtures.)
         r = _run(["--format", "horror-choice", "--spec", str(V6_SPEC)])
-        self.assertEqual(r.returncode, 0,
-                         f"V6 (post-F2) MUST pass.\nstdout {r.stdout}\nstderr {r.stderr}")
+        self.assertEqual(r.returncode, 0, f"V6 (post-F2) MUST pass.\nstdout {r.stdout}\nstderr {r.stderr}")
         data = json.loads(r.stdout)
         self.assertEqual(data["overall_status"], "pass")
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "pass", f"invariant gate must PASS on fixed V6, got {inv}")
 
     @unittest.skipUnless(V6_SPEC.exists(), f"real V6 SPEC not found at {V6_SPEC}")
@@ -257,6 +258,7 @@ class TestV6RealRegression(unittest.TestCase):
         import tempfile
 
         import yaml
+
         spec = yaml.safe_load(V6_SPEC.read_text())
         for sh in spec.get("shot_list", []):
             if sh.get("shot_id") == "shot_06":
@@ -266,8 +268,11 @@ class TestV6RealRegression(unittest.TestCase):
             mp = Path(td) / "v6_mutated.yaml"
             mp.write_text(yaml.safe_dump(spec, allow_unicode=True))
             r = _run(["--format", "horror-choice", "--spec", str(mp)])
-            self.assertEqual(r.returncode, 1,
-                             f"Mutated V6 (char_b injected into played-path shot_06) MUST fail.\n{r.stdout}")
+            self.assertEqual(
+                r.returncode,
+                1,
+                f"Mutated V6 (char_b injected into played-path shot_06) MUST fail.\n{r.stdout}",
+            )
         finally:
             shutil.rmtree(td, ignore_errors=True)
 
@@ -277,8 +282,7 @@ class TestV6RealRegression(unittest.TestCase):
         # counterfactual_opening shot_02, cliffhanger shot_22). The "present in allowed" gate passes.
         r = _run(["--format", "horror-choice", "--spec", str(V6_SPEC)])
         data = json.loads(r.stdout)
-        allowed = next(g for g in data["gates"]
-                       if g["name"] == "invariant_bueno_aparente_present_in_allowed")
+        allowed = next(g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_present_in_allowed")
         self.assertEqual(allowed["status"], "pass", f"Celeste should be allowed in hook/cf/cliff: {allowed}")
 
 
@@ -304,13 +308,15 @@ class TestSyntheticFixtures(unittest.TestCase):
             "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
             "    scene_context:\n      who_is_there: [viewer_pov]",
             "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
-            "    scene_context:\n      who_is_there: [char_b, viewer_pov]")
+            "    scene_context:\n      who_is_there: [char_b, viewer_pov]",
+        )
         _write(self.spec, bad)
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"bueno_aparente in decision must FAIL.\nstdout {r.stdout}")
         data = json.loads(r.stdout)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "fail")
         self.assertIn("shot_04", inv["detail"])
 
@@ -322,38 +328,54 @@ class TestSyntheticFixtures(unittest.TestCase):
             "    duration_intent_s: 6.0\n    scene_context:\n      who_is_there: [viewer_pov]",
             "  - shot_id: shot_08\n    section_id: consequence_d2\n    consequence_branch: A\n"
             "    duration_intent_s: 6.0\n    anchor_id_required: {char_b: char_b_v1}\n"
-            "    scene_context:\n      who_is_there: [viewer_pov]")
+            "    scene_context:\n      who_is_there: [viewer_pov]",
+        )
         _write(self.spec, bad)
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 1, f"bueno_aparente anchor in consequence must FAIL.\nstdout {r.stdout}")
+        self.assertEqual(
+            r.returncode, 1, f"bueno_aparente anchor in consequence must FAIL.\nstdout {r.stdout}"
+        )
         data = json.loads(r.stdout)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "fail")
         self.assertIn("shot_08", inv["detail"])
 
     def test_interleaved_counterfactual_fails_sequential(self):
         # Move the counterfactual to sit BETWEEN played-path sections (after decision_1) → § 3 FAIL.
-        bad = CLEAN_SPEC.format(caps=_caps_block()).replace(
-            "  - shot_id: shot_02\n    section_id: counterfactual_opening",
-            "  - shot_id: shot_02\n    section_id: setup_pre_decision").replace(
-            "  - shot_id: shot_06\n    section_id: consequence_d1\n    consequence_branch: B",
-            "  - shot_id: shot_06\n    section_id: counterfactual_mid\n    consequence_branch: B")
+        bad = (
+            CLEAN_SPEC.format(caps=_caps_block())
+            .replace(
+                "  - shot_id: shot_02\n    section_id: counterfactual_opening",
+                "  - shot_id: shot_02\n    section_id: setup_pre_decision",
+            )
+            .replace(
+                "  - shot_id: shot_06\n    section_id: consequence_d1\n    consequence_branch: B",
+                "  - shot_id: shot_06\n    section_id: counterfactual_mid\n    consequence_branch: B",
+            )
+        )
         _write(self.spec, bad)
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         data = json.loads(r.stdout)
         seq = next(g for g in data["gates"] if g["name"] == "sequential_paths")
-        self.assertEqual(seq["status"], "fail",
-                         f"interleaved counterfactual must FAIL § 3.\nstdout {r.stdout}")
+        self.assertEqual(
+            seq["status"], "fail", f"interleaved counterfactual must FAIL § 3.\nstdout {r.stdout}"
+        )
         self.assertEqual(r.returncode, 1)
 
     def test_missing_decisions_flags_structure(self):
         # A SPEC with only ONE decision → structure skeleton FLAG (not fail), exit 0.
-        bad = CLEAN_SPEC.format(caps=_caps_block()).replace(
-            "  - shot_id: shot_07\n    section_id: decision_2\n    duration_intent_s: 4.0\n"
-            "    scene_context:\n      who_is_there: [viewer_pov]\n"
-            '    narration_in_this_shot: "Ahora decides. La alimentas o no te acercas."\n', "").replace(
-            "    section_id: consequence_d2\n", "    section_id: consequence_d1_extra\n")
+        bad = (
+            CLEAN_SPEC.format(caps=_caps_block())
+            .replace(
+                "  - shot_id: shot_07\n    section_id: decision_2\n    duration_intent_s: 4.0\n"
+                "    scene_context:\n      who_is_there: [viewer_pov]\n"
+                '    narration_in_this_shot: "Ahora decides. La alimentas o no te acercas."\n',
+                "",
+            )
+            .replace("    section_id: consequence_d2\n", "    section_id: consequence_d1_extra\n")
+        )
         _write(self.spec, bad)
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 0, f"missing decision must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
@@ -377,11 +399,14 @@ class TestSportChoice(unittest.TestCase):
         # (a) A valid sport SPEC — foil (Dembele) ONLY in hook/counterfactual/cliffhanger → PASS.
         _write(self.spec, SPORT_CLEAN_SPEC.format(caps=_caps_block()))
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 0, f"Clean sport SPEC must pass.\nstdout {r.stdout}\nstderr {r.stderr}")
+        self.assertEqual(
+            r.returncode, 0, f"Clean sport SPEC must pass.\nstdout {r.stdout}\nstderr {r.stderr}"
+        )
         data = json.loads(r.stdout)
         self.assertEqual(data["overall_status"], "pass", data)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "pass", f"invariant must PASS on clean sport SPEC, got {inv}")
 
     def test_foil_in_played_path_decision_fails(self):
@@ -391,13 +416,15 @@ class TestSportChoice(unittest.TestCase):
             "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
             "    scene_context:\n      who_is_there: [viewer_pov]",
             "  - shot_id: shot_04\n    section_id: decision_1\n    duration_intent_s: 4.0\n"
-            "    scene_context:\n      who_is_there: [char_a, viewer_pov]")
+            "    scene_context:\n      who_is_there: [char_a, viewer_pov]",
+        )
         _write(self.spec, bad)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"foil in sport decision must FAIL.\nstdout {r.stdout}")
         data = json.loads(r.stdout)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "fail")
         self.assertIn("shot_04", inv["detail"])
         self.assertIn("foil", inv["detail"].lower())
@@ -409,13 +436,15 @@ class TestSportChoice(unittest.TestCase):
             "    duration_intent_s: 6.0\n    scene_context:\n      who_is_there: [viewer_pov]",
             "  - shot_id: shot_08\n    section_id: consequence_d2\n    consequence_branch: A\n"
             "    duration_intent_s: 6.0\n    anchor_id_required: {char_a: char_a_v1}\n"
-            "    scene_context:\n      who_is_there: [viewer_pov]")
+            "    scene_context:\n      who_is_there: [viewer_pov]",
+        )
         _write(self.spec, bad)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"foil anchor in sport consequence must FAIL.\nstdout {r.stdout}")
         data = json.loads(r.stdout)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "fail")
         self.assertIn("shot_08", inv["detail"])
 
@@ -425,11 +454,13 @@ class TestSportChoice(unittest.TestCase):
         # known-broken pre-rebuild attempt — foil Dembele in played-path shots 05/06/07/12/17/19)
         # MUST FAIL the agnostic § 2 invariant. Same bug class as V6, validated on a real sport SPEC.
         r = _run(["--format", "sport-choice", "--spec", str(SPORT_SPEC)])
-        self.assertEqual(r.returncode, 1,
-                         f"Real champions sport SPEC (foil in played path) MUST fail.\nstdout {r.stdout}")
+        self.assertEqual(
+            r.returncode, 1, f"Real champions sport SPEC (foil in played path) MUST fail.\nstdout {r.stdout}"
+        )
         data = json.loads(r.stdout)
-        inv = next(g for g in data["gates"]
-                   if g["name"] == "invariant_bueno_aparente_absent_from_played_path")
+        inv = next(
+            g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_absent_from_played_path"
+        )
         self.assertEqual(inv["status"], "fail", f"foil leak must be caught on real sport SPEC, got {inv}")
         self.assertIn("foil", inv["detail"].lower())
 
@@ -439,36 +470,48 @@ class TestSportChoice(unittest.TestCase):
         # opening). The "present in allowed" companion gate passes on the real sport SPEC.
         r = _run(["--format", "sport-choice", "--spec", str(SPORT_SPEC)])
         data = json.loads(r.stdout)
-        allowed = next(g for g in data["gates"]
-                       if g["name"] == "invariant_bueno_aparente_present_in_allowed")
-        self.assertEqual(allowed["status"], "pass",
-                         f"foil should be allowed in hook/counterfactual: {allowed}")
+        allowed = next(g for g in data["gates"] if g["name"] == "invariant_bueno_aparente_present_in_allowed")
+        self.assertEqual(
+            allowed["status"], "pass", f"foil should be allowed in hook/counterfactual: {allowed}"
+        )
 
     def test_sport_interleaved_counterfactual_fails_sequential(self):
         # Agnostic § 3 on the SPORT fixture (parity w/ the horror sequential test): move the
         # counterfactual to sit BETWEEN played-path sections → § 3 FAIL (the two recorridos are
         # sequential, never interleaved — CHOICE-MECHANIC § 2.3).
-        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
-            "  - shot_id: shot_02\n    section_id: counterfactual_opening",
-            "  - shot_id: shot_02\n    section_id: setup_pre_decision").replace(
-            "  - shot_id: shot_06\n    section_id: consequence_d1\n    consequence_branch: B",
-            "  - shot_id: shot_06\n    section_id: counterfactual_mid\n    consequence_branch: B")
+        bad = (
+            SPORT_CLEAN_SPEC.format(caps=_caps_block())
+            .replace(
+                "  - shot_id: shot_02\n    section_id: counterfactual_opening",
+                "  - shot_id: shot_02\n    section_id: setup_pre_decision",
+            )
+            .replace(
+                "  - shot_id: shot_06\n    section_id: consequence_d1\n    consequence_branch: B",
+                "  - shot_id: shot_06\n    section_id: counterfactual_mid\n    consequence_branch: B",
+            )
+        )
         _write(self.spec, bad)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         data = json.loads(r.stdout)
         seq = next(g for g in data["gates"] if g["name"] == "sequential_paths")
-        self.assertEqual(seq["status"], "fail",
-                         f"interleaved counterfactual must FAIL § 3 for sport.\nstdout {r.stdout}")
+        self.assertEqual(
+            seq["status"], "fail", f"interleaved counterfactual must FAIL § 3 for sport.\nstdout {r.stdout}"
+        )
         self.assertEqual(r.returncode, 1)
 
     def test_sport_missing_decisions_flags_structure(self):
         # Agnostic § 1 skeleton on the SPORT fixture (parity w/ the horror skeleton test): only ONE
         # decision → structure skeleton FLAG (not fail), exit 0.
-        bad = SPORT_CLEAN_SPEC.format(caps=_caps_block()).replace(
-            "  - shot_id: shot_07\n    section_id: decision_2\n    duration_intent_s: 4.0\n"
-            "    scene_context:\n      who_is_there: [viewer_pov]\n"
-            '    narration_in_this_shot: "Ahora decides. Buscas el angulo o asistes a Saka."\n', "").replace(
-            "    section_id: consequence_d2\n", "    section_id: consequence_d1_extra\n")
+        bad = (
+            SPORT_CLEAN_SPEC.format(caps=_caps_block())
+            .replace(
+                "  - shot_id: shot_07\n    section_id: decision_2\n    duration_intent_s: 4.0\n"
+                "    scene_context:\n      who_is_there: [viewer_pov]\n"
+                '    narration_in_this_shot: "Ahora decides. Buscas el angulo o asistes a Saka."\n',
+                "",
+            )
+            .replace("    section_id: consequence_d2\n", "    section_id: consequence_d1_extra\n")
+        )
         _write(self.spec, bad)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 0, f"missing decision must FLAG (exit 0) not FAIL.\nstdout {r.stdout}")
@@ -503,7 +546,9 @@ class TestCapabilityGate(unittest.TestCase):
     def test_bug9_video_capabilities_missing(self):
         _write(self.spec, CLEAN_SPEC.format(caps=_caps_block(omit=True)))
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 2, f"Bug #9 (missing video_capabilities) must exit 2. stderr: {r.stderr}")
+        self.assertEqual(
+            r.returncode, 2, f"Bug #9 (missing video_capabilities) must exit 2. stderr: {r.stderr}"
+        )
 
     def test_missing_spec_exits_2(self):
         r = _run(["--format", "horror-choice", "--spec", str(Path(self.tmp) / "nope.yaml")])

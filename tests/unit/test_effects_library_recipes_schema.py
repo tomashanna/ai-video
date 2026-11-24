@@ -11,6 +11,7 @@ Validates the ACTUAL global library (universal + per-format layers):
 
 Read-only against real recipe files (validates the library, not synthetic fixtures).
 """
+
 import json
 import unittest
 from pathlib import Path
@@ -33,8 +34,7 @@ LEGAL_FIDELITY = {"literal", "approximate"}
 def _layer_dirs():
     if ROOT is None:
         return []
-    return sorted(p / "transitions" for p in ROOT.iterdir()
-                  if p.is_dir() and (p / "transitions").is_dir())
+    return sorted(p / "transitions" for p in ROOT.iterdir() if p.is_dir() and (p / "transitions").is_dir())
 
 
 def _all_recipes():
@@ -45,7 +45,6 @@ def _all_recipes():
 
 
 class TestRecipesSchema(unittest.TestCase):
-
     def test_transitions_root_found(self):
         self.assertIsNotNone(ROOT, "global transitions/catalog.json not found walking up from scripts dir")
 
@@ -57,17 +56,25 @@ class TestRecipesSchema(unittest.TestCase):
                 data = json.loads(f.read_text(encoding="utf-8"))  # raises if invalid JSON
                 for field in ("xfade_transition", "xfade_fidelity", "native_mechanism_note"):
                     self.assertIn(field, data, f"{f.name} missing Option D field '{field}'")
-                self.assertTrue(str(data["native_mechanism_note"]).strip(),
-                                f"{f.name} native_mechanism_note must be non-empty")
+                self.assertTrue(
+                    str(data["native_mechanism_note"]).strip(),
+                    f"{f.name} native_mechanism_note must be non-empty",
+                )
 
     def test_xfade_values_legal(self):
         for f in _all_recipes():
             with self.subTest(recipe=f.name):
                 data = json.loads(f.read_text(encoding="utf-8"))
-                self.assertIn(data["xfade_transition"], LEGAL_XFADE,
-                              f"{f.name} xfade_transition '{data['xfade_transition']}' not legal")
-                self.assertIn(data["xfade_fidelity"], LEGAL_FIDELITY,
-                              f"{f.name} xfade_fidelity '{data['xfade_fidelity']}' not in {LEGAL_FIDELITY}")
+                self.assertIn(
+                    data["xfade_transition"],
+                    LEGAL_XFADE,
+                    f"{f.name} xfade_transition '{data['xfade_transition']}' not legal",
+                )
+                self.assertIn(
+                    data["xfade_fidelity"],
+                    LEGAL_FIDELITY,
+                    f"{f.name} xfade_fidelity '{data['xfade_fidelity']}' not in {LEGAL_FIDELITY}",
+                )
 
 
 class TestCatalogSync(unittest.TestCase):
@@ -89,9 +96,14 @@ class TestCatalogSync(unittest.TestCase):
         for tid, entry in self.entries.items():
             with self.subTest(transition=tid):
                 path = ROOT / entry["recipe"]
-                self.assertTrue(path.is_file(), f"catalog entry '{tid}' recipe path missing: {entry['recipe']}")
-                self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["id"], tid,
-                                 f"catalog id '{tid}' != recipe JSON id")
+                self.assertTrue(
+                    path.is_file(), f"catalog entry '{tid}' recipe path missing: {entry['recipe']}"
+                )
+                self.assertEqual(
+                    json.loads(path.read_text(encoding="utf-8"))["id"],
+                    tid,
+                    f"catalog id '{tid}' != recipe JSON id",
+                )
 
     def test_entries_declare_formats_and_layer(self):
         for tid, entry in self.entries.items():
@@ -99,8 +111,11 @@ class TestCatalogSync(unittest.TestCase):
                 self.assertTrue(entry.get("formats"), f"'{tid}' has empty formats")
                 self.assertTrue(entry.get("layer"), f"'{tid}' has empty layer")
                 if entry["layer"] != "universal":
-                    self.assertNotIn("*", entry["formats"],
-                                     f"'{tid}' is per-format ({entry['layer']}) but declares formats ['*']")
+                    self.assertNotIn(
+                        "*",
+                        entry["formats"],
+                        f"'{tid}' is per-format ({entry['layer']}) but declares formats ['*']",
+                    )
 
     def test_format_resolution_layers_exist(self):
         for fmt, layers in self.catalog["format_resolution"].items():
@@ -108,8 +123,10 @@ class TestCatalogSync(unittest.TestCase):
                 continue
             for layer in layers:
                 with self.subTest(format=fmt, layer=layer):
-                    self.assertTrue((ROOT / layer / "transitions").is_dir(),
-                                    f"format_resolution['{fmt}'] references missing layer dir '{layer}'")
+                    self.assertTrue(
+                        (ROOT / layer / "transitions").is_dir(),
+                        f"format_resolution['{fmt}'] references missing layer dir '{layer}'",
+                    )
 
 
 if __name__ == "__main__":

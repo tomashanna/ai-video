@@ -64,8 +64,14 @@ def grep_count(html_path: Path, pattern: str) -> int:
 
 def collect_ui_active_per_shot(spec: dict) -> dict:
     """Extract ui_active list per shot from SPEC. shot_list can be list or {shots: [...]}."""
-    ui_counts = {"countdown": 0, "choice_button": 0, "loading_bar": 0,
-                 "name_label": 0, "watermark": 0, "caption": 0}
+    ui_counts = {
+        "countdown": 0,
+        "choice_button": 0,
+        "loading_bar": 0,
+        "name_label": 0,
+        "watermark": 0,
+        "caption": 0,
+    }
     shot_list = spec.get("shot_list", [])
     if isinstance(shot_list, dict):
         shots = shot_list.get("shots", [])
@@ -98,15 +104,16 @@ def collect_ui_active_per_shot(spec: dict) -> dict:
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--spec", required=True, help="Path to SPEC.yaml")
     p.add_argument("--project-dir", default=".", help="Project root (default: cwd)")
-    p.add_argument("--cp", type=int, default=5, choices=[4, 5],
-                   help="Checkpoint level (4=video only, 5=full inventory)")
+    p.add_argument(
+        "--cp", type=int, default=5, choices=[4, 5], help="Checkpoint level (4=video only, 5=full inventory)"
+    )
     p.add_argument("--html", default="index.html", help="HTML file relative to project")
-    p.add_argument("--strict", action="store_true",
-                   help="Exit 1 on ANY mismatch (default: only on critical gaps)")
+    p.add_argument(
+        "--strict", action="store_true", help="Exit 1 on ANY mismatch (default: only on critical gaps)"
+    )
     args = p.parse_args()
 
     spec_path = Path(args.spec)

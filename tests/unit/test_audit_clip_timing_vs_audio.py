@@ -10,6 +10,7 @@ any real mp4/ffprobe. We also stub Path.exists for the --video file presence che
 
 Run: python3 test_audit-clip-timing-vs-audio.py  (prints "OK: ..." + sys.exit(1) on failure)
 """
+
 import importlib.util
 import io
 import json
@@ -65,8 +66,7 @@ def _run_main(argv, fake_durs):
 
 CLIP = "/tmp/shot_07.mp4"
 RENDER = "/tmp/final_render.mp4"
-BASE = ["--format", "horror-choice", "--has-ai-generated-clips", "true",
-        "--has-tts-narration", "true"]
+BASE = ["--format", "horror-choice", "--has-ai-generated-clips", "true", "--has-tts-narration", "true"]
 
 
 class TestPureClipTiming(unittest.TestCase):
@@ -75,8 +75,8 @@ class TestPureClipTiming(unittest.TestCase):
     def test_good_clip_passes(self):
         # Brief's GOOD case: visual 6.2 >= audio 6.0 >= intent (6.1-0.1=6.0), av_diff 0.1.
         ok, reasons = mod.evaluate_clip_timing(
-            visual_dur=6.2, narration_dur=6.0, intent_dur=6.1, av_len_diff_s=0.1,
-            i2v_clip_cap=5.9)
+            visual_dur=6.2, narration_dur=6.0, intent_dur=6.1, av_len_diff_s=0.1, i2v_clip_cap=5.9
+        )
         # visual 6.2 > cap 5.9+0.25 → advisory FLAG present, but ok stays True (no FAIL).
         self.assertTrue(ok, f"good clip should PASS, reasons={reasons}")
         self.assertFalse(any(r.startswith("FAIL:") for r in reasons), reasons)
@@ -84,21 +84,24 @@ class TestPureClipTiming(unittest.TestCase):
     def test_visual_shorter_than_narration_fails(self):
         # Brief's BAD case #1: visual 5.9 < audio 6.5 → narration on frozen frame → FAIL.
         ok, reasons = mod.evaluate_clip_timing(
-            visual_dur=5.9, narration_dur=6.5, intent_dur=6.0, av_len_diff_s=0.6, i2v_clip_cap=5.9)
+            visual_dur=5.9, narration_dur=6.5, intent_dur=6.0, av_len_diff_s=0.6, i2v_clip_cap=5.9
+        )
         self.assertFalse(ok, f"visual<narration must FAIL, reasons={reasons}")
         self.assertTrue(any("frozen/black frame" in r for r in reasons), reasons)
 
     def test_visual_shorter_than_intent_fails(self):
         # visual 5.5 < intent 6.1 - 0.1 = 6.0 → clip too short for its beat → FAIL.
         ok, reasons = mod.evaluate_clip_timing(
-            visual_dur=5.5, narration_dur=5.4, intent_dur=6.1, av_len_diff_s=0.1, i2v_clip_cap=10.0)
+            visual_dur=5.5, narration_dur=5.4, intent_dur=6.1, av_len_diff_s=0.1, i2v_clip_cap=10.0
+        )
         self.assertFalse(ok, f"visual<intent must FAIL, reasons={reasons}")
         self.assertTrue(any("duration_intent_s" in r for r in reasons), reasons)
 
     def test_av_stream_mismatch_fails(self):
         # Brief's BAD case #2: av_diff 1.2 > 0.3 → amix tail → FAIL.
         ok, reasons = mod.evaluate_clip_timing(
-            visual_dur=6.2, narration_dur=6.0, intent_dur=6.1, av_len_diff_s=1.2, i2v_clip_cap=10.0)
+            visual_dur=6.2, narration_dur=6.0, intent_dur=6.1, av_len_diff_s=1.2, i2v_clip_cap=10.0
+        )
         self.assertFalse(ok, f"av_diff 1.2 must FAIL, reasons={reasons}")
         self.assertTrue(any("stream tail mismatch" in r for r in reasons), reasons)
 
@@ -135,24 +138,25 @@ class TestCliClipMode(unittest.TestCase):
     def test_good_clip_cli_passes(self):
         code, rep, raw, err = _run_main(
             BASE + ["--mode", "clip", "--video", CLIP, "--intent-dur", "6.1", "--narration-dur", "6.0"],
-            {"v": 6.2, "a": 6.0})
+            {"v": 6.2, "a": 6.0},
+        )
         self.assertEqual(code, 0, f"good clip CLI must exit 0. raw={raw} err={err}")
         self.assertEqual(rep["overall_status"], "pass")
 
     def test_bad_visual_shorter_than_audio_cli_fails(self):
         # visual 5.9 < audio 6.5 (measured narration) → FAIL exit 1.
         code, rep, raw, err = _run_main(
-            BASE + ["--mode", "clip", "--video", CLIP, "--intent-dur", "5.0"],
-            {"v": 5.9, "a": 6.5})
+            BASE + ["--mode", "clip", "--video", CLIP, "--intent-dur", "5.0"], {"v": 5.9, "a": 6.5}
+        )
         self.assertEqual(code, 1, f"visual<audio must exit 1. raw={raw}")
         self.assertEqual(rep["overall_status"], "fail")
         self.assertTrue(any("frozen/black frame" in r for r in rep["reasons"]), rep["reasons"])
 
     def test_capability_gate_not_applicable(self):
         code, rep, raw, err = _run_main(
-            ["--format", "tutorial", "--has-ai-generated-clips", "false",
-             "--mode", "clip", "--video", CLIP],
-            {"v": 6.2, "a": 6.0})
+            ["--format", "tutorial", "--has-ai-generated-clips", "false", "--mode", "clip", "--video", CLIP],
+            {"v": 6.2, "a": 6.0},
+        )
         self.assertEqual(code, 0)
         self.assertEqual(rep["overall_status"], "not_applicable")
 
@@ -167,8 +171,13 @@ class TestMatrixRead(unittest.TestCase):
     """HR#29: clip cap read from the REAL MODEL-CAPABILITIES-MATRIX.md (no hardcoded assumption)."""
 
     def test_reads_hailuo_std_cap_from_matrix(self):
-        matrix = (Path(__file__).resolve().parents[2] / ".claude" / "skills"
-                  / "ai-video-production" / "MODEL-CAPABILITIES-MATRIX.md")
+        matrix = (
+            Path(__file__).resolve().parents[2]
+            / ".claude"
+            / "skills"
+            / "ai-video-production"
+            / "MODEL-CAPABILITIES-MATRIX.md"
+        )
         if not matrix.exists():
             self.skipTest("MATRIX not at expected path")
         caps = mod.load_i2v_caps(matrix)
@@ -179,23 +188,23 @@ class TestMatrixRead(unittest.TestCase):
 class TestCliRenderMode(unittest.TestCase):
     def test_render_av_diff_passes(self):
         code, rep, raw, err = _run_main(
-            ["--format", "horror-choice", "--mode", "render", "--video", RENDER],
-            {"v": 90.1, "a": 90.0})
+            ["--format", "horror-choice", "--mode", "render", "--video", RENDER], {"v": 90.1, "a": 90.0}
+        )
         self.assertEqual(code, 0, f"raw={raw}")
         self.assertEqual(rep["overall_status"], "pass")
 
     def test_render_av_tail_fails(self):
         # |video - audio| = 1.2 > 0.3 → FAIL exit 1 (amix duration=longest tail).
         code, rep, raw, err = _run_main(
-            ["--format", "horror-choice", "--mode", "render", "--video", RENDER],
-            {"v": 91.2, "a": 90.0})
+            ["--format", "horror-choice", "--mode", "render", "--video", RENDER], {"v": 91.2, "a": 90.0}
+        )
         self.assertEqual(code, 1, f"av tail must exit 1. raw={raw}")
         self.assertEqual(rep["overall_status"], "fail")
 
     def test_render_no_audio_cannot_measure(self):
         code, rep, raw, err = _run_main(
-            ["--format", "horror-choice", "--mode", "render", "--video", RENDER],
-            {"v": 90.0, "a": None})
+            ["--format", "horror-choice", "--mode", "render", "--video", RENDER], {"v": 90.0, "a": None}
+        )
         self.assertEqual(code, 2, f"no audio → exit 2. raw={raw}")
 
 
@@ -207,8 +216,10 @@ def _suite_runner():
         suite.addTests(loader.loadTestsFromTestCase(tc))
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if result.wasSuccessful():
-        print("OK: audit-clip-timing-vs-audio — pure logic (good/visual<narration/visual<intent/"
-              "av-tail) + CLI clip/render modes + capability gate + ffprobe MOCKED, no media used")
+        print(
+            "OK: audit-clip-timing-vs-audio — pure logic (good/visual<narration/visual<intent/"
+            "av-tail) + CLI clip/render modes + capability gate + ffprobe MOCKED, no media used"
+        )
         sys.exit(0)
     else:
         print("FAIL: audit-clip-timing-vs-audio tests failed")

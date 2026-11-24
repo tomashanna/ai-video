@@ -8,6 +8,7 @@ Spec:
 - Audio: cut-warm-whoosh.mp3 from library (-10 dB ducked)
 - Purpose: shot-to-shot warm transition signal (matadero→cliffhanger cut at ~67s)
 """
+
 import subprocess
 import sys
 import tempfile
@@ -61,37 +62,88 @@ def main():
         draw_frame(i).save(TMP / f"frame_{i:04d}.png")
 
     silent = TMP / "silent.mp4"
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-framerate", str(FPS),
-        "-i", str(TMP / "frame_%04d.png"),
-        "-c:v", "libx264", "-preset", "fast", "-crf", "18",
-        "-pix_fmt", "yuv420p", "-vf", "format=yuv420p",
-        "-color_range", "tv",
-        "-r", str(FPS),
-        str(silent),
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-framerate",
+            str(FPS),
+            "-i",
+            str(TMP / "frame_%04d.png"),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "18",
+            "-pix_fmt",
+            "yuv420p",
+            "-vf",
+            "format=yuv420p",
+            "-color_range",
+            "tv",
+            "-r",
+            str(FPS),
+            str(silent),
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
 
     # Audio: cut-warm-whoosh trimmed to 0.5s + -10 dB
     audio = TMP / "audio.mp3"
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-i", str(WHOOSH_PATH),
-        "-t", str(DUR_S),
-        "-af", "volume=-10dB",
-        "-c:a", "libmp3lame", "-b:a", "192k",
-        str(audio),
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-i",
+            str(WHOOSH_PATH),
+            "-t",
+            str(DUR_S),
+            "-af",
+            "volume=-10dB",
+            "-c:a",
+            "libmp3lame",
+            "-b:a",
+            "192k",
+            str(audio),
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
 
-    subprocess.run([
-        "ffmpeg", "-y", "-loglevel", "error",
-        "-i", str(silent), "-i", str(audio),
-        "-map", "0:v:0", "-map", "1:a:0",
-        "-c:v", "copy",
-        "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
-        "-shortest",
-        str(OUT_VIDEO),
-    ], check=True, timeout=SUBPROCESS_TIMEOUT_S)
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-i",
+            str(silent),
+            "-i",
+            str(audio),
+            "-map",
+            "0:v:0",
+            "-map",
+            "1:a:0",
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "256k",
+            "-ar",
+            "48000",
+            "-shortest",
+            str(OUT_VIDEO),
+        ],
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
 
     print(f"✓ AVU built: {OUT_VIDEO}")
     return 0

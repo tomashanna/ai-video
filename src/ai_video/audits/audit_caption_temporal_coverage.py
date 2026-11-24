@@ -42,6 +42,7 @@ Exit codes: 0 = PASS / not_applicable · 1 = FAIL (coverage gate violated)
 Authority: HR#30 + AUDITOR-PROTOCOL §6 (instance 6 user_perceptual_detects_what_
 validators_miss) + build_clip_atomic build_caption_sidecar/build_manifest.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -52,9 +53,9 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Tunable thresholds (HR#30 defaults)
 # ---------------------------------------------------------------------------
-COVERAGE_MIN_DEFAULT = 0.90    # captioned span must cover ≥90% of spoken span
-MAX_CUE_SPAN_S_DEFAULT = 3.5   # any cue longer than this = collapsed-block (V5/V6 bug)
-MAX_CUE_LINES_DEFAULT = 2      # ≤2 lines per cue (reel safe zone)
+COVERAGE_MIN_DEFAULT = 0.90  # captioned span must cover ≥90% of spoken span
+MAX_CUE_SPAN_S_DEFAULT = 3.5  # any cue longer than this = collapsed-block (V5/V6 bug)
+MAX_CUE_LINES_DEFAULT = 2  # ≤2 lines per cue (reel safe zone)
 # small float epsilon so "exactly at threshold" doesn't false-fail on rounding
 _EPS = 1e-6
 
@@ -80,7 +81,8 @@ def merge_intervals(intervals: list[tuple[float, float]]) -> list[tuple[float, f
     clean = []
     for a, b in intervals:
         try:
-            a = float(a); b = float(b)
+            a = float(a)
+            b = float(b)
         except (TypeError, ValueError):
             continue
         if b < a:
@@ -94,19 +96,18 @@ def merge_intervals(intervals: list[tuple[float, float]]) -> list[tuple[float, f
     merged = [clean[0]]
     for a, b in clean[1:]:
         la, lb = merged[-1]
-        if a <= lb + _EPS:               # overlap or touch → extend
+        if a <= lb + _EPS:  # overlap or touch → extend
             merged[-1] = (la, max(lb, b))
         else:
             merged.append((a, b))
     return merged
 
 
-def covered_within_span(
-    cues: list[dict], span_start: float, span_end: float
-) -> float:
+def covered_within_span(cues: list[dict], span_start: float, span_end: float) -> float:
     """Total seconds of [span_start, span_end] covered by cue intervals (clipped to
     the spoken span — caption time before/after spoken audio doesn't count)."""
-    span_start = float(span_start); span_end = float(span_end)
+    span_start = float(span_start)
+    span_end = float(span_end)
     if span_end - span_start <= 0:
         return 0.0
     clipped = []
@@ -158,7 +159,8 @@ def evaluate_caption_temporal(
     if not cues:
         reasons.append(
             f"coverage=0.00 — NO caption cues at all over a {spoken_len:.1f}s spoken span "
-            f"(existence FAIL, the strongest form of the V5/V6 bug)")
+            f"(existence FAIL, the strongest form of the V5/V6 bug)"
+        )
         return False, reasons
 
     # --- (C1) temporal coverage ratio over the spoken span ---
@@ -171,7 +173,8 @@ def evaluate_caption_temporal(
         ok = False
         reasons.append(
             f"FAIL coverage {ratio:.2f} < min {coverage_min:.2f} — captions do NOT span "
-            f"the whole narration (V5/V6: only the 1st sentence shows)")
+            f"the whole narration (V5/V6: only the 1st sentence shows)"
+        )
 
     # --- (C2) collapsed-block detector: any single cue spanning too long ---
     for c in cues:
@@ -185,7 +188,8 @@ def evaluate_caption_temporal(
             reasons.append(
                 f"FAIL cue '{_short(cid)}' spans {dur:.1f}s > {max_cue_span_s:.1f}s — "
                 f"collapsed static block (the exact V5/V6 burn bug: one cue carries "
-                f"the whole narration and wrap truncates it to line 1)")
+                f"the whole narration and wrap truncates it to line 1)"
+            )
 
     # --- (C3) line count per cue (reel safe zone) ---
     for c in cues:
@@ -195,7 +199,8 @@ def evaluate_caption_temporal(
             cid = c.get("id", c.get("text", "?"))
             reasons.append(
                 f"FAIL cue '{_short(cid)}' has {lines} lines > {max_cue_lines} "
-                f"(overflows the reel caption safe zone)")
+                f"(overflows the reel caption safe zone)"
+            )
 
     return ok, reasons
 
@@ -211,19 +216,32 @@ def _short(v) -> str:
 def ffprobe_duration(video_path: Path) -> float | None:
     """Render duration in seconds via ffprobe. None if it can't be read."""
     import subprocess
+
     try:
         out = subprocess.run(
-            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-             "-of", "default=noprint_wrappers=1:nokey=1", str(video_path)],
-            capture_output=True, text=True, timeout=60)
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "format=duration",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                str(video_path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
         v = out.stdout.strip()
         return float(v) if v else None
     except Exception:
         return None
 
 
-def whisper_spoken_span(video_path: Path, language: str = "es",
-                        model_name: str = "base") -> tuple[float, float] | None:
+def whisper_spoken_span(
+    video_path: Path, language: str = "es", model_name: str = "base"
+) -> tuple[float, float] | None:
     """Return (first_word_start_s, last_word_end_s) of narration in the render via
     Whisper word-timestamps. None if no speech / whisper unavailable. THIN — the
     pure layer does all the deciding."""
@@ -233,9 +251,14 @@ def whisper_spoken_span(video_path: Path, language: str = "es",
         return None
     try:
         model = whisper.load_model(model_name)
-        res = model.transcribe(str(video_path), language=language,
-                               word_timestamps=True, verbose=False, fp16=False,
-                               condition_on_previous_text=False)
+        res = model.transcribe(
+            str(video_path),
+            language=language,
+            word_timestamps=True,
+            verbose=False,
+            fp16=False,
+            condition_on_previous_text=False,
+        )
     except Exception:
         return None
     starts, ends = [], []
@@ -267,10 +290,14 @@ def load_cues_from_sidecars(sidecar_paths: list[Path]) -> list[dict]:
             ge = cap.get("global_end_s", cap.get("local_end_s", cap.get("end_s")))
             if gs is None or ge is None:
                 continue
-            cues.append({
-                "start_s": float(gs), "end_s": float(ge),
-                "text": cap.get("text", ""), "id": cap.get("id", cap.get("speaker", "?")),
-            })
+            cues.append(
+                {
+                    "start_s": float(gs),
+                    "end_s": float(ge),
+                    "text": cap.get("text", ""),
+                    "id": cap.get("id", cap.get("speaker", "?")),
+                }
+            )
     cues.sort(key=lambda c: c["start_s"])
     return cues
 
@@ -306,11 +333,27 @@ def ocr_sample_cues(video_path: Path, interval_s: float = 0.5) -> list[dict] | N
 
         import pytesseract
         from PIL import Image
+
         last_text, run_start = None, None
         while t < dur:
-            frame = tmp / f"f_{int(t*1000)}.png"
-            sp.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", str(video_path),
-                    "-frames:v", "1", "-y", str(frame)], capture_output=True, timeout=60)
+            frame = tmp / f"f_{int(t * 1000)}.png"
+            sp.run(
+                [
+                    "ffmpeg",
+                    "-v",
+                    "error",
+                    "-ss",
+                    f"{t:.3f}",
+                    "-i",
+                    str(video_path),
+                    "-frames:v",
+                    "1",
+                    "-y",
+                    str(frame),
+                ],
+                capture_output=True,
+                timeout=60,
+            )
             txt = ""
             if frame.exists():
                 try:
@@ -328,25 +371,33 @@ def ocr_sample_cues(video_path: Path, interval_s: float = 0.5) -> list[dict] | N
             cues.append({"start_s": run_start, "end_s": dur, "text": last_text or "", "id": "ocr"})
     finally:
         import shutil
+
         shutil.rmtree(tmp, ignore_errors=True)
     return cues
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="delivery/genre format (Pattern 7 gate)")
     parser.add_argument("--video", help="final render mp4 (spoken-span source + OCR fallback)")
     parser.add_argument("--project-dir", help="dir to auto-discover *_captions.json sidecars")
-    parser.add_argument("--sidecar", action="append", default=[],
-                        help="explicit caption sidecar JSON (repeatable)")
-    parser.add_argument("--has-captions-baked", choices=["true", "false"], default="true",
-                        help="capability flag (Pattern 7); false → not_applicable")
+    parser.add_argument(
+        "--sidecar", action="append", default=[], help="explicit caption sidecar JSON (repeatable)"
+    )
+    parser.add_argument(
+        "--has-captions-baked",
+        choices=["true", "false"],
+        default="true",
+        help="capability flag (Pattern 7); false → not_applicable",
+    )
     parser.add_argument("--coverage-min", type=float, default=COVERAGE_MIN_DEFAULT)
     parser.add_argument("--max-cue-span-s", type=float, default=MAX_CUE_SPAN_S_DEFAULT)
     parser.add_argument("--max-cue-lines", type=int, default=MAX_CUE_LINES_DEFAULT)
-    parser.add_argument("--ocr", action="store_true",
-                        help="if no sidecar, OCR-sample the render to reconstruct cues")
+    parser.add_argument(
+        "--ocr", action="store_true", help="if no sidecar, OCR-sample the render to reconstruct cues"
+    )
     parser.add_argument("--lang", default="es")
     parser.add_argument("--whisper-model", default="base")
     parser.add_argument("--dry-run", action="store_true")
@@ -355,25 +406,37 @@ def main() -> int:
     # ---- Pattern 7 capability gate ----
     if args.has_captions_baked == "false":
         report = {
-            "format": args.format, "overall_status": "not_applicable",
+            "format": args.format,
+            "overall_status": "not_applicable",
             "detail": "has_captions_baked=false → no burned captions to span-check (HR#30 N/A)",
         }
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
 
     if args.dry_run:
-        print(json.dumps({
-            "format": args.format, "branch": "temporal_coverage_check",
-            "coverage_min": args.coverage_min, "max_cue_span_s": args.max_cue_span_s,
-            "max_cue_lines": args.max_cue_lines,
-            "video": args.video, "project_dir": args.project_dir,
-            "explicit_sidecars": args.sidecar, "ocr_fallback": args.ocr,
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "branch": "temporal_coverage_check",
+                    "coverage_min": args.coverage_min,
+                    "max_cue_span_s": args.max_cue_span_s,
+                    "max_cue_lines": args.max_cue_lines,
+                    "video": args.video,
+                    "project_dir": args.project_dir,
+                    "explicit_sidecars": args.sidecar,
+                    "ocr_fallback": args.ocr,
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     if not args.video:
-        print("ERROR: --video required (spoken-span source) unless --has-captions-baked false",
-              file=sys.stderr)
+        print(
+            "ERROR: --video required (spoken-span source) unless --has-captions-baked false", file=sys.stderr
+        )
         return 2
     video = Path(args.video)
     if not video.exists():
@@ -393,37 +456,52 @@ def main() -> int:
         cues = ocr_sample_cues(video)
         cue_source = "ocr-sampling"
         if cues is None:
-            print("ERROR: --ocr requested but pytesseract/PIL/ffmpeg unavailable → can't measure cues",
-                  file=sys.stderr)
+            print(
+                "ERROR: --ocr requested but pytesseract/PIL/ffmpeg unavailable → can't measure cues",
+                file=sys.stderr,
+            )
             return 2
     else:
-        print("ERROR: no caption sidecar found and --ocr not given → can't read cues. "
-              "Pass --sidecar / --project-dir, or --ocr to reconstruct from the render.",
-              file=sys.stderr)
+        print(
+            "ERROR: no caption sidecar found and --ocr not given → can't read cues. "
+            "Pass --sidecar / --project-dir, or --ocr to reconstruct from the render.",
+            file=sys.stderr,
+        )
         return 2
 
     # ---- spoken span (Whisper) ----
     span = whisper_spoken_span(video, language=args.lang, model_name=args.whisper_model)
     if span is None:
-        print("ERROR: could not derive spoken span (whisper unavailable or no speech in render) "
-              "→ can't measure temporal coverage", file=sys.stderr)
+        print(
+            "ERROR: could not derive spoken span (whisper unavailable or no speech in render) "
+            "→ can't measure temporal coverage",
+            file=sys.stderr,
+        )
         return 2
 
     total_dur = ffprobe_duration(video) or (span[1] if span else 0.0)
 
     # ---- pure evaluation ----
     ok, reasons = evaluate_caption_temporal(
-        cues, span, total_dur,
-        coverage_min=args.coverage_min, max_cue_span_s=args.max_cue_span_s,
-        max_cue_lines=args.max_cue_lines)
+        cues,
+        span,
+        total_dur,
+        coverage_min=args.coverage_min,
+        max_cue_span_s=args.max_cue_span_s,
+        max_cue_lines=args.max_cue_lines,
+    )
 
     report = {
-        "format": args.format, "video": str(video),
-        "overall_status": "pass" if ok else "fail", "overall_pass": ok,
-        "cue_source": cue_source, "cue_count": len(cues),
+        "format": args.format,
+        "video": str(video),
+        "overall_status": "pass" if ok else "fail",
+        "overall_pass": ok,
+        "cue_source": cue_source,
+        "cue_count": len(cues),
         "spoken_span_s": [round(span[0], 3), round(span[1], 3)],
         "total_dur_s": round(total_dur, 3) if total_dur else None,
-        "coverage_min": args.coverage_min, "max_cue_span_s": args.max_cue_span_s,
+        "coverage_min": args.coverage_min,
+        "max_cue_span_s": args.max_cue_span_s,
         "max_cue_lines": args.max_cue_lines,
         "reasons": reasons,
     }

@@ -8,6 +8,7 @@ de Q20 (sin name labels → not_applicable) + capability gate + Bug #9.
 
 Run: python3 test_audit-style-markup.py
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -137,8 +138,7 @@ class TestEvaluateMonoNames(unittest.TestCase):
     def test_detection_by_selector_when_text_burned(self):
         # name labels detectados por selector choice_button aunque el texto
         # del nombre no esté presente (texto horneado en el clip, HR#25)
-        html = ('<style>.x{font-family:monospace}</style>'
-                '<div id="choice_button_a"></div>')
+        html = '<style>.x{font-family:monospace}</style><div id="choice_button_a"></div>'
         present, _ = mod.detect_name_labels(html, [])
         self.assertTrue(present, "selector choice_button debe contar como name label")
 
@@ -146,19 +146,16 @@ class TestEvaluateMonoNames(unittest.TestCase):
         # los nombres SOLO en comentario no deben disparar detección por-texto;
         # pero el selector choice_button está ausente acá → no aplica.
         present, ev = mod.detect_name_labels(HTML_NAME_IN_COMMENT_ONLY, CHARACTER_NAMES)
-        self.assertFalse(present,
-                         "nombre solo en comentario HTML + sin selector → no hay label")
+        self.assertFalse(present, "nombre solo en comentario HTML + sin selector → no hay label")
         self.assertEqual(ev["name_text_hits"], [])
 
     def test_mono_fonts_override(self):
-        html = ('<div class="name-label">DARIO</div>'
-                '<style>.name-label{font-family:"Brand Mono";}</style>')
+        html = '<div class="name-label">DARIO</div><style>.name-label{font-family:"Brand Mono";}</style>'
         # con default NO está → fail
         ok_default, _ = mod.evaluate_mono_names(html, CHARACTER_NAMES)
         self.assertFalse(ok_default)
         # con override que incluye Brand Mono → pass
-        ok_override, _ = mod.evaluate_mono_names(
-            html, CHARACTER_NAMES, mono_fonts=("Brand Mono",))
+        ok_override, _ = mod.evaluate_mono_names(html, CHARACTER_NAMES, mono_fonts=("Brand Mono",))
         self.assertTrue(ok_override)
 
 
@@ -187,6 +184,7 @@ class TestEvaluateCombined(unittest.TestCase):
 
 # ─────────── tests de integración runtime (SPEC + HTML en tempfile) ───────────
 
+
 def _write(tmp, name, content):
     p = Path(tmp) / name
     p.write_text(content, encoding="utf-8")
@@ -194,13 +192,14 @@ def _write(tmp, name, content):
 
 
 def _spec_yaml(*, has_captions=True, with_caps=True, names=("Dario", "Tobias")):
-    chars = "\n".join(
-        f'  - character_id: "c{i}"\n    name: "{n}"' for i, n in enumerate(names))
+    chars = "\n".join(f'  - character_id: "c{i}"\n    name: "{n}"' for i, n in enumerate(names))
     caps = ""
     if with_caps:
-        caps = ("video_capabilities:\n"
-                f"  has_captions_baked: {str(bool(has_captions)).lower()}\n"
-                "  has_ai_generated_clips: true\n")
+        caps = (
+            "video_capabilities:\n"
+            f"  has_captions_baked: {str(bool(has_captions)).lower()}\n"
+            "  has_ai_generated_clips: true\n"
+        )
     return f"{caps}characters:\n{chars}\n"
 
 
@@ -276,8 +275,8 @@ class TestRuntime(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             spec = _write(tmp, "s.yaml", _spec_yaml())
             r = subprocess.run(
-                [sys.executable, str(_SCRIPT), "--spec", str(spec)],
-                capture_output=True, text=True)
+                [sys.executable, str(_SCRIPT), "--spec", str(spec)], capture_output=True, text=True
+            )
             self.assertNotEqual(r.returncode, 0, "--format es REQUIRED (agnostic-by-design)")
 
 

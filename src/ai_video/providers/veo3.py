@@ -94,7 +94,9 @@ def generate_video(
             raise ValueError(f"unsupported reference format ({ext})")
         image = types.Image(image_bytes=image_ref_path.read_bytes(), mime_type=_MIME[ext])
 
-    config = types.GenerateVideosConfig(aspect_ratio=aspect_ratio, duration_seconds=duration_s, number_of_videos=1)
+    config = types.GenerateVideosConfig(
+        aspect_ratio=aspect_ratio, duration_seconds=duration_s, number_of_videos=1
+    )
     start = time.monotonic()
     with guard.charge("gemini", f"veo-{tier}-{duration_s}s", cost):
         operation = retry_call(
@@ -110,8 +112,13 @@ def generate_video(
             return operation if operation.done else None
 
         if not operation.done:
-            operation = poll_until(_done, timeout_s=settings.poll_timeout_s, interval_s=15, sleep=sleep,
-                                   describe="Veo generation")
+            operation = poll_until(
+                _done,
+                timeout_s=settings.poll_timeout_s,
+                interval_s=15,
+                sleep=sleep,
+                describe="Veo generation",
+            )
     gen_s = time.monotonic() - start
 
     response = operation.response
@@ -123,8 +130,9 @@ def generate_video(
         raise ProviderError("Veo returned no video")
 
     video = videos[0].video
-    data = retry_call(lambda: client.files.download(file=video), attempts=settings.max_retries + 1,
-                      describe="veo download")
+    data = retry_call(
+        lambda: client.files.download(file=video), attempts=settings.max_retries + 1, describe="veo download"
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_bytes(data)
     size_mb = output_path.stat().st_size / 1e6
@@ -154,12 +162,16 @@ def main() -> int:
     if args.dry_run:
         get_settings().dry_run = True
     try:
-        result = generate_video(args.prompt, args.output, args.aspect, args.duration, args.tier, args.image_ref)
+        result = generate_video(
+            args.prompt, args.output, args.aspect, args.duration, args.tier, args.image_ref
+        )
     except (ValueError, FileNotFoundError, AIVideoError, TimeoutError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
     if not result.get("dry_run"):
-        print(f"generated {result['output_path']} ({result['size_mb']:.1f} MB, ~${result['estimated_usd']:.2f})")
+        print(
+            f"generated {result['output_path']} ({result['size_mb']:.1f} MB, ~${result['estimated_usd']:.2f})"
+        )
     return 0
 
 

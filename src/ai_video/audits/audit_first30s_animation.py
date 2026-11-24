@@ -48,6 +48,7 @@ Authority: CLAUDE.md HR#6 (animation_30s_rule.md) + HR#7 (MOTION-LAYER.md +
   <format>-format/INGENIERO-PAUTA-MASTER §5.6) + ai-video-production/animation_30s_rule.
   HR#26 companion test: test_audit-first30s-animation.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -71,18 +72,18 @@ FIRST_WINDOW_S = 30.0
 # HR#7 fallback acotado. Authority: CLAUDE.md HR#7 + MOTION-LAYER.md
 #   ("Animation AI preferred; Ken Burns fallback ≤20%, max 2-3s") — NO medida en F1.
 #   Override via --kenburns-max-share / --kenburns-max-dur-s.
-KENBURNS_MAX_SHARE = 0.20      # ≤20% de los shots
-KENBURNS_MAX_DUR_S = 3.0       # cada estático/Ken Burns ≤3.0s ("max 2-3s")
+KENBURNS_MAX_SHARE = 0.20  # ≤20% de los shots
+KENBURNS_MAX_DUR_S = 3.0  # cada estático/Ken Burns ≤3.0s ("max 2-3s")
 
 # Models que NO son animación AI (no-AI): el manifest los marca procedural:true.
 # Cualquier nombre de model que matchee estos tokens = estático/Ken Burns (no-AI).
-NON_AI_MODEL_TOKENS = ("procedural", "ken-burns", "ken_burns", "kenburns", "static",
-                       "still", "css", "none")
+NON_AI_MODEL_TOKENS = ("procedural", "ken-burns", "ken_burns", "kenburns", "static", "still", "css", "none")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # LÓGICA PURA (testeable sin filesystem)
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def evaluate_first30s_hr6(shots, *, window_s=FIRST_WINDOW_S):
     """PURE (HR#6). shots = [{shot_id, start_s, is_animated, ...}].
@@ -102,27 +103,44 @@ def evaluate_first30s_hr6(shots, *, window_s=FIRST_WINDOW_S):
             start = 1e9
         is_anim = bool(s.get("is_animated"))
         if start >= window_s:
-            reasons.append({
-                "shot_id": sid, "start_s": round(start, 2), "is_animated": is_anim,
-                "status": "ok", "rule_applies": False,
-                "detail": f"start {start:.1f}s ≥ {window_s:.0f}s → fuera de la ventana HR#6",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "start_s": round(start, 2),
+                    "is_animated": is_anim,
+                    "status": "ok",
+                    "rule_applies": False,
+                    "detail": f"start {start:.1f}s ≥ {window_s:.0f}s → fuera de la ventana HR#6",
+                }
+            )
             continue
         if not is_anim:
             ok = False
-            reasons.append({
-                "shot_id": sid, "start_s": round(start, 2), "is_animated": is_anim,
-                "status": "fail", "rule_applies": True,
-                "detail": (f"shot '{sid}' arranca a {start:.1f}s (<{window_s:.0f}s) y NO es "
-                           f"animación AI (estático/Ken Burns/procedural) — HR#6 exige clip "
-                           f"animado AI en TODA la ventana de retención (riesgo PowerPoint-narrado)"),
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "start_s": round(start, 2),
+                    "is_animated": is_anim,
+                    "status": "fail",
+                    "rule_applies": True,
+                    "detail": (
+                        f"shot '{sid}' arranca a {start:.1f}s (<{window_s:.0f}s) y NO es "
+                        f"animación AI (estático/Ken Burns/procedural) — HR#6 exige clip "
+                        f"animado AI en TODA la ventana de retención (riesgo PowerPoint-narrado)"
+                    ),
+                }
+            )
         else:
-            reasons.append({
-                "shot_id": sid, "start_s": round(start, 2), "is_animated": is_anim,
-                "status": "ok", "rule_applies": True,
-                "detail": f"start {start:.1f}s (<{window_s:.0f}s) con clip animado AI ✓",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "start_s": round(start, 2),
+                    "is_animated": is_anim,
+                    "status": "ok",
+                    "rule_applies": True,
+                    "detail": f"start {start:.1f}s (<{window_s:.0f}s) con clip animado AI ✓",
+                }
+            )
     return ok, reasons
 
 
@@ -150,13 +168,21 @@ def evaluate_kenburns_hr7(shots, *, max_share=KENBURNS_MAX_SHARE, max_dur_s=KENB
         too_long = dur > max_dur_s
         if too_long:
             over_dur.append(sid)
-        per_shot.append({
-            "shot_id": sid, "duration_s": round(dur, 2),
-            "status": "fail" if too_long else "ok",
-            "detail": (f"estático/Ken Burns '{sid}' dura {dur:.1f}s "
-                       + (f"> {max_dur_s:.0f}s — HR#7 exige ≤{max_dur_s:.0f}s c/u"
-                          if too_long else f"≤{max_dur_s:.0f}s ✓")),
-        })
+        per_shot.append(
+            {
+                "shot_id": sid,
+                "duration_s": round(dur, 2),
+                "status": "fail" if too_long else "ok",
+                "detail": (
+                    f"estático/Ken Burns '{sid}' dura {dur:.1f}s "
+                    + (
+                        f"> {max_dur_s:.0f}s — HR#7 exige ≤{max_dur_s:.0f}s c/u"
+                        if too_long
+                        else f"≤{max_dur_s:.0f}s ✓"
+                    )
+                ),
+            }
+        )
 
     share_ok = share <= max_share + 1e-9
     dur_ok = len(over_dur) == 0
@@ -171,9 +197,10 @@ def evaluate_kenburns_hr7(shots, *, max_share=KENBURNS_MAX_SHARE, max_dur_s=KENB
         "over_duration_shots": over_dur,
         "duration_ok": dur_ok,
         "detail": (
-            f"share Ken Burns/estático {share*100:.0f}% > {max_share*100:.0f}% — "
-             f"HR#7 lo limita a fallback ({n_static}/{total} shots)" if not share_ok else
-             f"share Ken Burns/estático {share*100:.0f}% ≤ {max_share*100:.0f}% ✓ ({n_static}/{total})"
+            f"share Ken Burns/estático {share * 100:.0f}% > {max_share * 100:.0f}% — "
+            f"HR#7 lo limita a fallback ({n_static}/{total} shots)"
+            if not share_ok
+            else f"share Ken Burns/estático {share * 100:.0f}% ≤ {max_share * 100:.0f}% ✓ ({n_static}/{total})"
         ),
     }
     return ok, summary, per_shot
@@ -183,13 +210,14 @@ def evaluate_kenburns_hr7(shots, *, max_share=KENBURNS_MAX_SHARE, max_dur_s=KENB
 # WRAPPERS DE EXTRACCIÓN (filesystem)
 # ═══════════════════════════════════════════════════════════════════════════
 
+
 def _model_is_non_ai(model, procedural):
     """True si el shot del manifest NO es animación AI (no-AI / estático / Ken Burns)."""
     if procedural is True:
         return True
     m = (str(model) if model is not None else "").strip().lower()
     if not m:
-        return True   # sin model declarado → no es un clip AI confiable
+        return True  # sin model declarado → no es un clip AI confiable
     return any(tok in m for tok in NON_AI_MODEL_TOKENS)
 
 
@@ -213,7 +241,9 @@ def parse_manifest_shots(manifest, spec):
             continue
         spec_order.append(sid)
         try:
-            spec_dur[sid] = float(s.get("duration_intent_s")) if s.get("duration_intent_s") is not None else None
+            spec_dur[sid] = (
+                float(s.get("duration_intent_s")) if s.get("duration_intent_s") is not None else None
+            )
         except (TypeError, ValueError):
             spec_dur[sid] = None
 
@@ -240,15 +270,17 @@ def parse_manifest_shots(manifest, spec):
                 dur = 0.0
 
         start = cumulative
-        cumulative += (dur or 0.0)
-        out.append({
-            "shot_id": sid,
-            "start_s": start,
-            "duration_s": dur or 0.0,
-            "model": model,
-            "is_animated": not non_ai,
-            "is_static_kenburns": non_ai,
-        })
+        cumulative += dur or 0.0
+        out.append(
+            {
+                "shot_id": sid,
+                "start_s": start,
+                "duration_s": dur or 0.0,
+                "model": model,
+                "is_animated": not non_ai,
+                "is_static_kenburns": non_ai,
+            }
+        )
     return out
 
 
@@ -282,21 +314,24 @@ def parse_html_shots(html_content):
             dur = float(dd)
         except ValueError:
             continue
-        is_video = (kind == "video")
-        out.append({
-            "shot_id": eid,
-            "start_s": start,
-            "duration_s": dur,
-            "tag": kind,
-            "is_animated": is_video,            # <video> = clip animado AI
-            "is_static_kenburns": (not is_video),  # <img> = estático / Ken Burns CSS
-        })
+        is_video = kind == "video"
+        out.append(
+            {
+                "shot_id": eid,
+                "start_s": start,
+                "duration_s": dur,
+                "tag": kind,
+                "is_animated": is_video,  # <video> = clip animado AI
+                "is_static_kenburns": (not is_video),  # <img> = estático / Ken Burns CSS
+            }
+        )
     return out
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # RUNTIME
 # ═══════════════════════════════════════════════════════════════════════════
+
 
 def _load_yaml(path: Path):
     with open(path) as f:
@@ -315,12 +350,21 @@ def _detect_mode(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="agnostic-by-design (horror-choice / sport-choice / ...)")
-    parser.add_argument("--mode", choices=["auto", "manifest", "html"], default="auto",
-                        help="auto-detecta por --manifest/--html, o forzá el modo")
-    parser.add_argument("--spec", help="CREATIVE-SPEC.yaml (video_capabilities + shot_list). REQUERIDO en modo manifest y para la capability-gate.")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="agnostic-by-design (horror-choice / sport-choice / ...)"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["auto", "manifest", "html"],
+        default="auto",
+        help="auto-detecta por --manifest/--html, o forzá el modo",
+    )
+    parser.add_argument(
+        "--spec",
+        help="CREATIVE-SPEC.yaml (video_capabilities + shot_list). REQUERIDO en modo manifest y para la capability-gate.",
+    )
     parser.add_argument("--manifest", help="cp4-manifest*.yaml (HYBRID per-clip)")
     parser.add_argument("--html", help="index.html (legacy)")
     parser.add_argument("--window-s", type=float, default=FIRST_WINDOW_S)
@@ -331,8 +375,7 @@ def main():
 
     mode = _detect_mode(args)
     if mode == "auto":
-        print("ERROR: no input — pasá --manifest (HYBRID) o --html (legacy), o --mode.",
-              file=sys.stderr)
+        print("ERROR: no input — pasá --manifest (HYBRID) o --html (legacy), o --mode.", file=sys.stderr)
         return 2
 
     # ── Capability gate (necesita el SPEC) ──────────────────────────────────
@@ -340,8 +383,10 @@ def main():
     # SÍ requerido para la capability-gate. Si no hay SPEC en modo HTML, exigimos uno
     # (la capability-gate de HR#6 vive en el SPEC — no se puede saltear).
     if not args.spec:
-        print("ERROR: --spec requerido (capability-gate HR#6 vive en video_capabilities del SPEC).",
-              file=sys.stderr)
+        print(
+            "ERROR: --spec requerido (capability-gate HR#6 vive en video_capabilities del SPEC).",
+            file=sys.stderr,
+        )
         return 2
     spec_path = Path(args.spec)
     if not spec_path.exists():
@@ -351,8 +396,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_clips = bool(caps.get("has_ai_generated_clips", False))
@@ -360,25 +407,45 @@ def main():
     GATED_FORMAT_TYPES = {"interactive_choice", "reel"}
 
     if args.dry_run:
-        print(f"format: {args.format}\nmode: {mode}\nspec: {spec_path}\n"
-              f"has_ai_generated_clips: {has_clips}\nformat_type: {fmt_type}\n"
-              f"window_s: {args.window_s}\nkenburns_max_share: {args.kenburns_max_share}\n"
-              f"kenburns_max_dur_s: {args.kenburns_max_dur_s}\n"
-              f"branch: {'first30s_animation_check' if (has_clips and fmt_type in GATED_FORMAT_TYPES) else 'not_applicable'}")
+        print(
+            f"format: {args.format}\nmode: {mode}\nspec: {spec_path}\n"
+            f"has_ai_generated_clips: {has_clips}\nformat_type: {fmt_type}\n"
+            f"window_s: {args.window_s}\nkenburns_max_share: {args.kenburns_max_share}\n"
+            f"kenburns_max_dur_s: {args.kenburns_max_dur_s}\n"
+            f"branch: {'first30s_animation_check' if (has_clips and fmt_type in GATED_FORMAT_TYPES) else 'not_applicable'}"
+        )
         return 0
 
     if not has_clips:
-        print(json.dumps({
-            "format": args.format, "mode": mode, "overall_status": "not_applicable",
-            "detail": "has_ai_generated_clips=false → first-30s animation gate skipped (no AI clips).",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "mode": mode,
+                    "overall_status": "not_applicable",
+                    "detail": "has_ai_generated_clips=false → first-30s animation gate skipped (no AI clips).",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
     if fmt_type not in GATED_FORMAT_TYPES:
-        print(json.dumps({
-            "format": args.format, "mode": mode, "overall_status": "not_applicable",
-            "detail": (f"format_type='{fmt_type}' ∉ {sorted(GATED_FORMAT_TYPES)} → "
-                       f"HR#6 first-30s rule no aplica (gating exacto de CLAUDE.md)."),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "mode": mode,
+                    "overall_status": "not_applicable",
+                    "detail": (
+                        f"format_type='{fmt_type}' ∉ {sorted(GATED_FORMAT_TYPES)} → "
+                        f"HR#6 first-30s rule no aplica (gating exacto de CLAUDE.md)."
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     # ── Extracción de shots según modo ──────────────────────────────────────
@@ -405,14 +472,17 @@ def main():
         input_ref = str(html_path)
 
     if not shots:
-        print("ERROR: 0 shots extraídos del input — no se puede medir (input vacío/no parseable). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: 0 shots extraídos del input — no se puede medir (input vacío/no parseable). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     # ── Evaluación pura ─────────────────────────────────────────────────────
     ok6, reasons6 = evaluate_first30s_hr6(shots, window_s=args.window_s)
     ok7, summary7, per_shot7 = evaluate_kenburns_hr7(
-        shots, max_share=args.kenburns_max_share, max_dur_s=args.kenburns_max_dur_s)
+        shots, max_share=args.kenburns_max_share, max_dur_s=args.kenburns_max_dur_s
+    )
 
     overall_ok = ok6 and ok7
     report = {

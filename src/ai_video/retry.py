@@ -18,7 +18,12 @@ log = get_logger(__name__)
 
 
 def backoff_delays(
-    attempts: int, *, base_s: float = 2.0, max_s: float = 60.0, jitter: float = 0.25, rng: random.Random | None = None
+    attempts: int,
+    *,
+    base_s: float = 2.0,
+    max_s: float = 60.0,
+    jitter: float = 0.25,
+    rng: random.Random | None = None,
 ) -> list[float]:
     """Delays to wait *between* ``attempts`` tries (len == attempts - 1)."""
     r = rng or random.Random()
@@ -58,7 +63,15 @@ def retry_call(
             if last or (should_retry is not None and not should_retry(exc)):
                 raise
             wait = delays[i]
-            log.warning("%s failed (%s: %s); retry %d/%d in %.1fs", describe, type(exc).__name__, exc, i + 1, attempts - 1, wait)
+            log.warning(
+                "%s failed (%s: %s); retry %d/%d in %.1fs",
+                describe,
+                type(exc).__name__,
+                exc,
+                i + 1,
+                attempts - 1,
+                wait,
+            )
             sleep(wait)
     raise AssertionError("unreachable")  # pragma: no cover
 

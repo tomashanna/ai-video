@@ -11,6 +11,7 @@ same object when already canonical or when no transitions are declared.
 Reusable helper for apply-effects-between-clips.py (Paso 4.4) + future consumers (4.3/4.1).
 Build PRE-4.J (2026-05-27) + companion test_spec_transitions_adapter.py (Hard Rule #26).
 """
+
 from __future__ import annotations
 
 import copy
@@ -63,8 +64,7 @@ def normalize_transitions(spec):
     if not legacy:
         return spec
     out = copy.deepcopy(spec)
-    by_id = {s["shot_id"]: s for s in (out.get("shot_list") or [])
-             if isinstance(s, dict) and "shot_id" in s}
+    by_id = {s["shot_id"]: s for s in (out.get("shot_list") or []) if isinstance(s, dict) and "shot_id" in s}
     for entry in legacy:
         frm = entry.get("from_shot_id")
         ttype = entry.get("transition_type") or entry.get("transition_id")

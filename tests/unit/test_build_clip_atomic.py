@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Companion test (HR#26) para build_clip_atomic.py — caza el regreso del bug V5/V6
 (caption colapsado a 1 cue estático). Corre con un venv que tenga las deps del módulo."""
+
 import sys
 from pathlib import Path
 
@@ -14,13 +15,16 @@ def _fake_whisper(n_words, total_s):
         {"word": f"w{i}", "start": round(i * step, 3), "end": round((i + 1) * step, 3)}
         for i in range(n_words)
     ]
-    return {"words": words,
-            "segments": [{"start": 0.0, "end": total_s,
-                          "text": " ".join(w["word"] for w in words), "words": words}]}
+    return {
+        "words": words,
+        "segments": [
+            {"start": 0.0, "end": total_s, "text": " ".join(w["word"] for w in words), "words": words}
+        ],
+    }
 
 
 def test_spec_override_chunks_not_single():
-    spec = " ".join(f"palabra{i}" for i in range(28))   # 28 palabras / ~9s
+    spec = " ".join(f"palabra{i}" for i in range(28))  # 28 palabras / ~9s
     cues = B._build_caption_cues_from_whisper(_fake_whisper(30, 9.0), spec, "NARRATOR")
     assert len(cues) >= 4, f"colapso V5/V6: {len(cues)} cue(s) para 28 palabras (esperado >=4)"
     assert " ".join(c["text"] for c in cues).split() == spec.split(), "texto perdido/duplicado al chunkear"
@@ -44,7 +48,7 @@ def test_short_text_single_cue_ok():
 
 def test_retime_canonical_exact_count_keeps_per_word_timing():
     """Conteo igual → override POSICIONAL 1:1 con timing EXACTO (no bucketed)."""
-    whisper = _fake_whisper(3, 3.0)["words"]          # starts 0.0/1.0/2.0
+    whisper = _fake_whisper(3, 3.0)["words"]  # starts 0.0/1.0/2.0
     retimed = B.retime_canonical("uno dos tres", whisper)
     assert [w["word"] for w in retimed] == ["uno", "dos", "tres"], "texto canónico no se aplicó"
     for r, w in zip(retimed, whisper):
@@ -54,10 +58,12 @@ def test_retime_canonical_exact_count_keeps_per_word_timing():
 def test_retime_canonical_overrides_mistranscription():
     """Whisper mis-transcribe ('a Dario'→'adario') pero el caption muestra el texto CANÓNICO del SPEC,
     conservando los timestamps Whisper (HR#30 nivel B spec_text_override_with_whisper_timing)."""
-    whisper = [{"word": "elige", "start": 0.0, "end": 0.4},
-               {"word": "adario", "start": 0.4, "end": 0.9},     # mis-transcripción pegada
-               {"word": "otobias", "start": 0.9, "end": 1.4}]
-    canon = "Elige a Dario o Tobias"                              # 5 tokens vs 3 Whisper
+    whisper = [
+        {"word": "elige", "start": 0.0, "end": 0.4},
+        {"word": "adario", "start": 0.4, "end": 0.9},  # mis-transcripción pegada
+        {"word": "otobias", "start": 0.9, "end": 1.4},
+    ]
+    canon = "Elige a Dario o Tobias"  # 5 tokens vs 3 Whisper
     retimed = B.retime_canonical(canon, whisper)
     assert [w["word"] for w in retimed] == canon.split(), "no usó el wording canónico del SPEC"
     assert retimed[0]["start"] == 0.0 and retimed[-1]["end"] <= 1.4 + 1e-6, "timing fuera del span Whisper"
@@ -100,7 +106,7 @@ def test_voice_exclusivity_aborts_when_unfittable():
         {"label": "dario", "offset_s": 0.0, "dur_s": 2.0, "is_voice": True, "speaker": "char_a"},
     ]
     try:
-        B.assert_voice_exclusivity_in_clip(srcs, clip_dur=2.1)   # no hay 0.3s de buffer disponible
+        B.assert_voice_exclusivity_in_clip(srcs, clip_dur=2.1)  # no hay 0.3s de buffer disponible
     except SystemExit:
         return
     raise AssertionError("debió abortar (no se puede deconflictar dentro del clip por ≤1s)")
@@ -111,10 +117,10 @@ def test_sfx_norm_gain_quiet_source_boosted_vs_loud_attenuated(monkeypatch=None)
     una fuerte (-10 dB) se baja — NO un multiplicador plano sobre el raw (fix de audibilidad)."""
     saved = dict(B._SFX_MEAN_CACHE)
     try:
-        B._SFX_MEAN_CACHE["/q"] = -67.0   # fuente cuasi-muda
-        B._SFX_MEAN_CACHE["/l"] = -10.0   # fuente fuerte
-        quiet = B.sfx_norm_gain("/q", "event")   # target -19 dBFS → debe AMPLIFICAR (>1.0)
-        loud = B.sfx_norm_gain("/l", "event")    # target -19 dBFS → debe ATENUAR (<1.0)
+        B._SFX_MEAN_CACHE["/q"] = -67.0  # fuente cuasi-muda
+        B._SFX_MEAN_CACHE["/l"] = -10.0  # fuente fuerte
+        quiet = B.sfx_norm_gain("/q", "event")  # target -19 dBFS → debe AMPLIFICAR (>1.0)
+        loud = B.sfx_norm_gain("/l", "event")  # target -19 dBFS → debe ATENUAR (<1.0)
         assert quiet > 1.0 > loud, f"per-clase no normaliza (quiet={quiet:.2f}, loud={loud:.2f})"
         # rel_scale duckea dentro de la clase
         assert B.sfx_norm_gain("/q", "event", rel_scale=0.5) < quiet, "rel_scale no duckea within-class"
@@ -133,8 +139,10 @@ def main():
     test_voice_exclusivity_shifts_dialog_off_narrator()
     test_voice_exclusivity_aborts_when_unfittable()
     test_sfx_norm_gain_quiet_source_boosted_vs_loud_attenuated()
-    print("OK: test_build_clip_atomic.py (caption chunking + retime_canonical + voice-exclusivity "
-          "+ sfx-audibility — 9 checks)")
+    print(
+        "OK: test_build_clip_atomic.py (caption chunking + retime_canonical + voice-exclusivity "
+        "+ sfx-audibility — 9 checks)"
+    )
 
 
 if __name__ == "__main__":

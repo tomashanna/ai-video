@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Companion test (HR#26) para image.py — caza el regreso del HORROR_SUFFIX como default
 (Capa A debe ser AGNÓSTICA). Corre con un venv que tenga google-genai."""
+
 import sys
 from pathlib import Path
 

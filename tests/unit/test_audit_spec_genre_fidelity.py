@@ -10,6 +10,7 @@ Validates that audit-spec-genre-fidelity.py:
 
 Run: python3 test_audit-spec-genre-fidelity.py   (unittest; no pytest needed).
 """
+
 import json
 import shutil
 import subprocess
@@ -115,7 +116,9 @@ class TestGenreFidelity(unittest.TestCase):
     def test_clean_sport_spec_passes(self):
         _write(self.spec, _CLEAN_SPORT)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 0, f"clean sport SPEC must pass.\nstdout {r.stdout}\nstderr {r.stderr}")
+        self.assertEqual(
+            r.returncode, 0, f"clean sport SPEC must pass.\nstdout {r.stdout}\nstderr {r.stderr}"
+        )
         self.assertIn('"pass"', r.stdout)
 
     def test_legit_sport_terms_not_flagged(self):
@@ -140,8 +143,9 @@ class TestGenreFidelity(unittest.TestCase):
         self.assertIn("cool_horror", r.stdout)
 
     def test_g3_horror_voice_id_fails(self):
-        body = _CLEAN_SPORT.replace("narrator_voice: K3TeN3ZVK8WnOeJ0NYqZ",
-                                    "narrator_voice: Tj9l48J9AJbry5yCP5eW")
+        body = _CLEAN_SPORT.replace(
+            "narrator_voice: K3TeN3ZVK8WnOeJ0NYqZ", "narrator_voice: Tj9l48J9AJbry5yCP5eW"
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"horror narrator voice_id must fail.\nstdout {r.stdout}")
@@ -151,7 +155,8 @@ class TestGenreFidelity(unittest.TestCase):
     def test_g4_dark_ambient_music_fails(self):
         body = _CLEAN_SPORT.replace(
             'eleven_labs_prompt: "low subharmonic drone, sustained deep bass tension, dark cinematic sports-thriller bed, no horror"',
-            'eleven_labs_prompt: "dark ambient drone, eerie horror pad, dread ambience"')
+            'eleven_labs_prompt: "dark ambient drone, eerie horror pad, dread ambience"',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"dark ambient horror music must fail.\nstdout {r.stdout}")
@@ -160,7 +165,8 @@ class TestGenreFidelity(unittest.TestCase):
     def test_g2_horror_sfx_scream_fails(self):
         body = _CLEAN_SPORT.replace(
             'prompt: "massive packed football stadium crowd roar swelling, ultras chanting"',
-            'prompt: "blood-curdling horror scream, uncanny whisper, jumpscare sub-bass dread"')
+            'prompt: "blood-curdling horror scream, uncanny whisper, jumpscare sub-bass dread"',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"horror SFX (scream/whisper) must fail.\nstdout {r.stdout}")
@@ -169,7 +175,8 @@ class TestGenreFidelity(unittest.TestCase):
     def test_g5_death_in_narration_fails(self):
         body = _CLEAN_SPORT.replace(
             'text_canonical: "Final de la Champions. Elige tu compañero. Saka, Arsenal. Dembele, PSG."',
-            'text_canonical: "Si fallas, mueres en el campo y tu cadaver queda en el cesped."')
+            'text_canonical: "Si fallas, mueres en el campo y tu cadaver queda en el cesped."',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"death in narration must fail.\nstdout {r.stdout}")
@@ -178,10 +185,13 @@ class TestGenreFidelity(unittest.TestCase):
     def test_g5_monster_in_visual_intent_fails(self):
         body = _CLEAN_SPORT.replace(
             'visual_intent: "Camara POV en el circulo central. Geografia: arco con red, kit rojo propio, kit azul rival, arquero, balon blanco, lineas de cal. Estadio lleno, reflectores, cesped. Accion: micro-bob."',
-            'visual_intent: "Camara POV. Un monstruo deforme y grotesco emerge del tunel del estadio, body-horror uncanny."')
+            'visual_intent: "Camara POV. Un monstruo deforme y grotesco emerge del tunel del estadio, body-horror uncanny."',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
-        self.assertEqual(r.returncode, 1, f"monster/body-horror in visual_intent must fail.\nstdout {r.stdout}")
+        self.assertEqual(
+            r.returncode, 1, f"monster/body-horror in visual_intent must fail.\nstdout {r.stdout}"
+        )
         self.assertIn("G5", r.stdout)
 
     def test_negated_no_horror_in_prompt_not_flagged(self):
@@ -189,7 +199,8 @@ class TestGenreFidelity(unittest.TestCase):
         # to ElevenLabs. That must NOT be flagged as a leak (it's the opposite).
         body = _CLEAN_SPORT.replace(
             'eleven_labs_prompt: "triumphant stadium celebration ambience, euphoric crowd cheering warm, no horror"',
-            'eleven_labs_prompt: "triumphant stadium celebration, warm uplifting tone, sin horror, without dread"')
+            'eleven_labs_prompt: "triumphant stadium celebration, warm uplifting tone, sin horror, without dread"',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 0, f"'sin horror / without dread' must NOT flag.\nstdout {r.stdout}")
@@ -200,7 +211,8 @@ class TestGenreFidelity(unittest.TestCase):
         # Guard must NOT over-suppress: a NON-negated horror mention elsewhere still fails.
         body = _CLEAN_SPORT.replace(
             'eleven_labs_prompt: "low subharmonic drone, sustained deep bass tension, dark cinematic sports-thriller bed, no horror"',
-            'eleven_labs_prompt: "horror drone, eerie dread ambience, sustained terror bed"')
+            'eleven_labs_prompt: "horror drone, eerie dread ambience, sustained terror bed"',
+        )
         _write(self.spec, body)
         r = _run(["--format", "sport-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 1, f"positive horror prompt must still fail.\nstdout {r.stdout}")

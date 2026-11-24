@@ -47,6 +47,7 @@ Exit: 0 PASS / not_applicable · 1 FAIL · 2 can't-measure (Bug #9 / SPEC|HTML a
 Authority: CLAUDE.md HR#4 + choice-format-core/INGENIERO-CHOICE-CORE §2 +
 referent-analysis/<format>/F1-UI-SAFE-ZONES.json. HR#26 companion test.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -70,14 +71,14 @@ FRAME_W = 1080
 FRAME_H = 1920
 
 # ── Tolerancia + separación ───────────────────────────────────────────────────
-DEFAULT_TOLERANCE_PP = 2.0   # ±2pp sobre la banda p25-p75 (configurable --tolerance)
-MIN_SEPARATION_PP = 6.0      # loading bar vs countdown — INGENIERO-CHOICE-CORE §2
+DEFAULT_TOLERANCE_PP = 2.0  # ±2pp sobre la banda p25-p75 (configurable --tolerance)
+MIN_SEPARATION_PP = 6.0  # loading bar vs countdown — INGENIERO-CHOICE-CORE §2
 
 # ── Defaults NO medidos en F1 (n=1, banda no confiable) ───────────────────────
 # Authority: choice-format-core/INGENIERO-CHOICE-CORE §2 — NO medida en F1;
 # override via --loading-band / --countdown-y.
-DEFAULT_LOADING_BAND = (44.0, 52.0)   # §2: "44-52% baseline / 52% en decision shots"
-DEFAULT_COUNTDOWN_Y = 46.0            # §2: countdown_y_pct = 46
+DEFAULT_LOADING_BAND = (44.0, 52.0)  # §2: "44-52% baseline / 52% en decision shots"
+DEFAULT_COUNTDOWN_Y = 46.0  # §2: countdown_y_pct = 46
 
 # Capability gate HR#4: estos format_type disparan la regla de safe zones.
 SAFE_ZONE_FORMAT_TYPES = {"interactive_choice", "reel"}
@@ -107,22 +108,29 @@ REPORT_ONLY_ELEMENTS = ("watermark", "choice_buttons")
 # Los name labels de personaje viven ARRIBA (Y~11-33%, banda F1 n=8). Lumparlos
 # daría falso-positivo (botón abajo evaluado contra banda de name-label arriba).
 ELEMENT_KEYWORDS = [
-    ("loading_bar",            ("loading_bar", "loading-bar", "loadingbar", "loader")),
-    ("countdown",              ("countdown",)),
-    ("choice_buttons",         ("choice_button", "choice-button", "choicebutton",
-                                "btn-a", "btn-b", "button-a", "button-b")),
-    ("character_name_labels",  ("name-label", "name_label", "namelabel", "char-name",
-                                "char_name", "speaker-name", "speaker_name")),
-    ("warning_text",           ("warning", "danger-text", "alert-text")),
-    ("watermark",              ("watermark", "handle")),
-    ("captions_narration",     ("caption-wrap", "caption_wrap", "captionwrap",
-                                "caption", "subtitle", "narration-caption")),
+    ("loading_bar", ("loading_bar", "loading-bar", "loadingbar", "loader")),
+    ("countdown", ("countdown",)),
+    (
+        "choice_buttons",
+        ("choice_button", "choice-button", "choicebutton", "btn-a", "btn-b", "button-a", "button-b"),
+    ),
+    (
+        "character_name_labels",
+        ("name-label", "name_label", "namelabel", "char-name", "char_name", "speaker-name", "speaker_name"),
+    ),
+    ("warning_text", ("warning", "danger-text", "alert-text")),
+    ("watermark", ("watermark", "handle")),
+    (
+        "captions_narration",
+        ("caption-wrap", "caption_wrap", "captionwrap", "caption", "subtitle", "narration-caption"),
+    ),
 ]
 
 
 # ════════════════════════════════════════════════════════════════════════════
 # LÓGICA PURA — testeable sin filesystem
 # ════════════════════════════════════════════════════════════════════════════
+
 
 def classify_element(ident: str, classes: str) -> str | None:
     """element_type desde id + class (keyword match). None si no clasifica."""
@@ -191,8 +199,14 @@ def style_to_y_pct(style: str, frame_h: int = FRAME_H) -> float | None:
     return None
 
 
-def evaluate_safe_zones(elements, bands, *, tolerance_pp=DEFAULT_TOLERANCE_PP,
-                        min_sep_pp=MIN_SEPARATION_PP, report_only=REPORT_ONLY_ELEMENTS):
+def evaluate_safe_zones(
+    elements,
+    bands,
+    *,
+    tolerance_pp=DEFAULT_TOLERANCE_PP,
+    min_sep_pp=MIN_SEPARATION_PP,
+    report_only=REPORT_ONLY_ELEMENTS,
+):
     """PURO. Valida overlays contra bandas + separación loading/countdown.
 
     elements = [{element_type, y_pct, raw}] (overlays ya extraídos y clasificados).
@@ -216,51 +230,80 @@ def evaluate_safe_zones(elements, bands, *, tolerance_pp=DEFAULT_TOLERANCE_PP,
         raw = e.get("raw", "")
         y = e.get("y_pct")
         if y is None:
-            reasons.append({
-                "element_type": etype, "y_pct": None, "status": "skipped",
-                "detail": f"'{raw}' sin posición vertical parseable → not-checked",
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": None,
+                    "status": "skipped",
+                    "detail": f"'{raw}' sin posición vertical parseable → not-checked",
+                }
+            )
             continue
         by_type.setdefault(etype, []).append(y)
 
         if etype in report_only:
-            reasons.append({
-                "element_type": etype, "y_pct": round(y, 1), "status": "skipped",
-                "detail": (f"'{raw}' y_pct={y:.1f} — '{etype}' es report-only "
-                           f"(banda F1 = artefacto screen-recording, no enforce) → not-checked"),
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": round(y, 1),
+                    "status": "skipped",
+                    "detail": (
+                        f"'{raw}' y_pct={y:.1f} — '{etype}' es report-only "
+                        f"(banda F1 = artefacto screen-recording, no enforce) → not-checked"
+                    ),
+                }
+            )
             continue
 
         band = bands.get(etype)
         if band is None:
-            reasons.append({
-                "element_type": etype, "y_pct": round(y, 1), "status": "skipped",
-                "detail": f"'{raw}' y_pct={y:.1f} — sin banda de autoridad para '{etype}' → not-checked",
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": round(y, 1),
+                    "status": "skipped",
+                    "detail": f"'{raw}' y_pct={y:.1f} — sin banda de autoridad para '{etype}' → not-checked",
+                }
+            )
             continue
         lo, hi, src = band
         if lo is None or hi is None:
-            reasons.append({
-                "element_type": etype, "y_pct": round(y, 1), "status": "skipped",
-                "detail": (f"'{raw}' y_pct={y:.1f} — banda '{etype}' no confiable "
-                           f"({src}) → not-checked"),
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": round(y, 1),
+                    "status": "skipped",
+                    "detail": (f"'{raw}' y_pct={y:.1f} — banda '{etype}' no confiable ({src}) → not-checked"),
+                }
+            )
             continue
         lo_t, hi_t = lo - tolerance_pp, hi + tolerance_pp
         if lo_t <= y <= hi_t:
-            reasons.append({
-                "element_type": etype, "y_pct": round(y, 1), "status": "ok",
-                "band": [round(lo, 1), round(hi, 1)], "tolerance_pp": tolerance_pp,
-                "detail": f"'{raw}' y_pct={y:.1f} ∈ banda [{lo:.1f},{hi:.1f}]±{tolerance_pp}pp ({src}) ✓",
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": round(y, 1),
+                    "status": "ok",
+                    "band": [round(lo, 1), round(hi, 1)],
+                    "tolerance_pp": tolerance_pp,
+                    "detail": f"'{raw}' y_pct={y:.1f} ∈ banda [{lo:.1f},{hi:.1f}]±{tolerance_pp}pp ({src}) ✓",
+                }
+            )
         else:
             ok = False
-            reasons.append({
-                "element_type": etype, "y_pct": round(y, 1), "status": "fail",
-                "band": [round(lo, 1), round(hi, 1)], "tolerance_pp": tolerance_pp,
-                "detail": (f"'{raw}' y_pct={y:.1f} FUERA de banda safe-zone "
-                           f"[{lo:.1f},{hi:.1f}]±{tolerance_pp}pp ({src}) — HR#4"),
-            })
+            reasons.append(
+                {
+                    "element_type": etype,
+                    "y_pct": round(y, 1),
+                    "status": "fail",
+                    "band": [round(lo, 1), round(hi, 1)],
+                    "tolerance_pp": tolerance_pp,
+                    "detail": (
+                        f"'{raw}' y_pct={y:.1f} FUERA de banda safe-zone "
+                        f"[{lo:.1f},{hi:.1f}]±{tolerance_pp}pp ({src}) — HR#4"
+                    ),
+                }
+            )
 
     # Separación loading bar vs countdown (si ambos presentes con y_pct conocida)
     loads = by_type.get("loading_bar", [])
@@ -275,16 +318,26 @@ def evaluate_safe_zones(elements, bands, *, tolerance_pp=DEFAULT_TOLERANCE_PP,
         sep, yl, yc = worst
         if sep < min_sep_pp:
             ok = False
-            reasons.append({
-                "element_type": "loading_bar↔countdown", "y_pct": None, "status": "fail",
-                "detail": (f"loading bar Y{yl:.1f} solapa countdown Y{yc:.1f} "
-                           f"(sep {sep:.1f}pp < {min_sep_pp}pp mínimo — INGENIERO-CHOICE-CORE §2)"),
-            })
+            reasons.append(
+                {
+                    "element_type": "loading_bar↔countdown",
+                    "y_pct": None,
+                    "status": "fail",
+                    "detail": (
+                        f"loading bar Y{yl:.1f} solapa countdown Y{yc:.1f} "
+                        f"(sep {sep:.1f}pp < {min_sep_pp}pp mínimo — INGENIERO-CHOICE-CORE §2)"
+                    ),
+                }
+            )
         else:
-            reasons.append({
-                "element_type": "loading_bar↔countdown", "y_pct": None, "status": "ok",
-                "detail": f"loading bar Y{yl:.1f} vs countdown Y{yc:.1f}: sep {sep:.1f}pp ≥ {min_sep_pp}pp ✓",
-            })
+            reasons.append(
+                {
+                    "element_type": "loading_bar↔countdown",
+                    "y_pct": None,
+                    "status": "ok",
+                    "detail": f"loading bar Y{yl:.1f} vs countdown Y{yc:.1f}: sep {sep:.1f}pp ≥ {min_sep_pp}pp ✓",
+                }
+            )
 
     return ok, reasons
 
@@ -316,17 +369,24 @@ def parse_html_overlays(html_text: str, frame_h: int = FRAME_H):
         if etype is None:
             continue
         y = style_to_y_pct(style, frame_h)
-        elements.append({
-            "element_type": etype,
-            "y_pct": y,
-            "raw": (ident or classes or "?").strip()[:48],
-        })
+        elements.append(
+            {
+                "element_type": etype,
+                "y_pct": y,
+                "raw": (ident or classes or "?").strip()[:48],
+            }
+        )
     return elements
 
 
-def resolve_bands(format_name, *, fallback_format=None,
-                  loading_band=DEFAULT_LOADING_BAND, countdown_y=DEFAULT_COUNTDOWN_Y,
-                  band_base=None):
+def resolve_bands(
+    format_name,
+    *,
+    fallback_format=None,
+    loading_band=DEFAULT_LOADING_BAND,
+    countdown_y=DEFAULT_COUNTDOWN_Y,
+    band_base=None,
+):
     """bands = {element_type: (lo, hi, source_str)}.
 
     F1 elements → lib/empirical_bands.ui_band(). loading_bar/countdown →
@@ -334,37 +394,57 @@ def resolve_bands(format_name, *, fallback_format=None,
     """
     bands = {}
     for el in F1_ELEMENTS:
-        lo, hi, n = eb.ui_band(format_name, el, "y_pct",
-                               fallback_format=fallback_format, base=band_base)
+        lo, hi, n = eb.ui_band(format_name, el, "y_pct", fallback_format=fallback_format, base=band_base)
         if lo is None:
             bands[el] = (None, None, f"F1:{format_name} n={n} (<4, banda no confiable)")
         else:
             bands[el] = (lo, hi, f"F1:{format_name} p25-p75 n={n}")
     # loading bar: banda directa (no es centro de un punto medido)
-    bands["loading_bar"] = (loading_band[0], loading_band[1],
-                            "INGENIERO-CHOICE-CORE §2 (no F1; --loading-band)")
+    bands["loading_bar"] = (
+        loading_band[0],
+        loading_band[1],
+        "INGENIERO-CHOICE-CORE §2 (no F1; --loading-band)",
+    )
     # countdown: punto único Y46 → banda simétrica ±tol manejada en evaluate
-    bands["countdown"] = (countdown_y, countdown_y,
-                          "INGENIERO-CHOICE-CORE §2 (no F1; --countdown-y)")
+    bands["countdown"] = (countdown_y, countdown_y, "INGENIERO-CHOICE-CORE §2 (no F1; --countdown-y)")
     return bands
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--format", required=True, help="formato (agnostic-by-design)")
     parser.add_argument("--spec", required=True, help="creative-specs/<id>.yaml (capabilities)")
     parser.add_argument("--html", required=True, help="<proyecto>/index.html (HyperFrames composition)")
-    parser.add_argument("--fallback-format", default=None,
-                        help="formato del que heredar F1 si el activo es pre-empírico (ej. horror-choice)")
-    parser.add_argument("--tolerance", type=float, default=DEFAULT_TOLERANCE_PP,
-                        help=f"tolerancia ±pp sobre la banda (default {DEFAULT_TOLERANCE_PP})")
-    parser.add_argument("--min-separation", type=float, default=MIN_SEPARATION_PP,
-                        help=f"separación mínima loading↔countdown pp (default {MIN_SEPARATION_PP})")
-    parser.add_argument("--loading-band", default=None,
-                        help='override banda loading bar "lo,hi" (default 44,52 — INGENIERO-CHOICE-CORE §2)')
-    parser.add_argument("--countdown-y", type=float, default=DEFAULT_COUNTDOWN_Y,
-                        help=f"override countdown y_pct (default {DEFAULT_COUNTDOWN_Y})")
+    parser.add_argument(
+        "--fallback-format",
+        default=None,
+        help="formato del que heredar F1 si el activo es pre-empírico (ej. horror-choice)",
+    )
+    parser.add_argument(
+        "--tolerance",
+        type=float,
+        default=DEFAULT_TOLERANCE_PP,
+        help=f"tolerancia ±pp sobre la banda (default {DEFAULT_TOLERANCE_PP})",
+    )
+    parser.add_argument(
+        "--min-separation",
+        type=float,
+        default=MIN_SEPARATION_PP,
+        help=f"separación mínima loading↔countdown pp (default {MIN_SEPARATION_PP})",
+    )
+    parser.add_argument(
+        "--loading-band",
+        default=None,
+        help='override banda loading bar "lo,hi" (default 44,52 — INGENIERO-CHOICE-CORE §2)',
+    )
+    parser.add_argument(
+        "--countdown-y",
+        type=float,
+        default=DEFAULT_COUNTDOWN_Y,
+        help=f"override countdown y_pct (default {DEFAULT_COUNTDOWN_Y})",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -382,8 +462,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     fmt_type = caps.get("format_type")
@@ -401,42 +483,63 @@ def main():
             return 2
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nhtml: {html_path}\n"
-              f"format_type: {fmt_type}\noutput_resolution: {resolution}\n"
-              f"rule_applies (HR#4): {rule_applies}\n"
-              f"tolerance_pp: {args.tolerance}\nmin_separation_pp: {args.min_separation}\n"
-              f"loading_band: {loading_band}\ncountdown_y: {args.countdown_y}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nhtml: {html_path}\n"
+            f"format_type: {fmt_type}\noutput_resolution: {resolution}\n"
+            f"rule_applies (HR#4): {rule_applies}\n"
+            f"tolerance_pp: {args.tolerance}\nmin_separation_pp: {args.min_separation}\n"
+            f"loading_band: {loading_band}\ncountdown_y: {args.countdown_y}"
+        )
         return 0
 
     if not rule_applies:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": (f"format_type={fmt_type!r} ∉ {sorted(SAFE_ZONE_FORMAT_TYPES)} y "
-                       f"resolución={resolution!r} no es vertical 1080x1920 → HR#4 UI safe zones no aplica"),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": (
+                        f"format_type={fmt_type!r} ∉ {sorted(SAFE_ZONE_FORMAT_TYPES)} y "
+                        f"resolución={resolution!r} no es vertical 1080x1920 → HR#4 UI safe zones no aplica"
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     bands = resolve_bands(
-        args.format, fallback_format=args.fallback_format,
-        loading_band=loading_band, countdown_y=args.countdown_y)
+        args.format,
+        fallback_format=args.fallback_format,
+        loading_band=loading_band,
+        countdown_y=args.countdown_y,
+    )
 
     html_text = html_path.read_text(encoding="utf-8", errors="replace")
     elements = parse_html_overlays(html_text)
 
     ok, reasons = evaluate_safe_zones(
-        elements, bands, tolerance_pp=args.tolerance, min_sep_pp=args.min_separation)
+        elements, bands, tolerance_pp=args.tolerance, min_sep_pp=args.min_separation
+    )
 
     fails = [r for r in reasons if r["status"] == "fail"]
     checked = [r for r in reasons if r["status"] in ("ok", "fail")]
     skipped = [r for r in reasons if r["status"] == "skipped"]
     report = {
-        "format": args.format, "spec": str(spec_path), "html": str(html_path),
-        "rule_applies": rule_applies, "tolerance_pp": args.tolerance,
+        "format": args.format,
+        "spec": str(spec_path),
+        "html": str(html_path),
+        "rule_applies": rule_applies,
+        "tolerance_pp": args.tolerance,
         "min_separation_pp": args.min_separation,
         "bands_resolved": {k: {"lo": v[0], "hi": v[1], "source": v[2]} for k, v in bands.items()},
-        "overall_status": "pass" if ok else "fail", "overall_pass": ok,
+        "overall_status": "pass" if ok else "fail",
+        "overall_pass": ok,
         "overlays_found": len(elements),
-        "checked": len(checked), "fails": len(fails), "skipped": len(skipped),
+        "checked": len(checked),
+        "fails": len(fails),
+        "skipped": len(skipped),
         "fail_elements": fails,
         "elements": reasons,
     }

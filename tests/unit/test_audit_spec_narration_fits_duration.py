@@ -5,6 +5,7 @@ Validates that SPEC narration_text per shot FITS in declared duration_intent_s
 
 7 tests: CLI/capability/Bug9 + clean PASS + WPM too high FAIL + WPM too low FLAG + missing-input skip.
 """
+
 import importlib.util
 import shutil
 import subprocess
@@ -29,12 +30,18 @@ def _run(args):
 
 
 def _write_spec(path, *, has_tts=True, shot_yaml=None, omit_caps=False):
-    caps = "" if omit_caps else (
-        "video_capabilities:\n"
-        f'  has_tts_narration: {str(has_tts).lower()}\n'
-        '  format_type: "interactive_choice"\n'
+    caps = (
+        ""
+        if omit_caps
+        else (
+            "video_capabilities:\n"
+            f'  has_tts_narration: {str(has_tts).lower()}\n'
+            '  format_type: "interactive_choice"\n'
+        )
     )
-    body = shot_yaml or """shot_list:
+    body = (
+        shot_yaml
+        or """shot_list:
   - shot_id: shot_01
     duration_intent_s: 4.0
     narration_in_this_shot:
@@ -44,6 +51,7 @@ def _write_spec(path, *, has_tts=True, shot_yaml=None, omit_caps=False):
     narration_in_this_shot:
       narrator_text: "Hay dos figuras esperándote en la torre"
 """
+    )
     Path(path).write_text(f'schema_version: "v11.1"\n{caps}{body}', encoding="utf-8")
 
 
@@ -119,7 +127,9 @@ class TestL1(unittest.TestCase):
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
         self.assertEqual(r.returncode, 0)
         # shot_visual_only shouldn't appear in fail_shots or flag_shots
-        self.assertNotIn("shot_visual_only", r.stdout.split("fail_shots")[0] if "fail_shots" in r.stdout else r.stdout)
+        self.assertNotIn(
+            "shot_visual_only", r.stdout.split("fail_shots")[0] if "fail_shots" in r.stdout else r.stdout
+        )
 
 
 _V11_STRING_SCHEMA = """schema_version: "v11.1"
@@ -152,6 +162,7 @@ shot_list:
 
 class TestV11RealSchemaRegression(unittest.TestCase):
     """pattern_class 4/5: parse REAL v11 schema (string narration_in_this_shot), not only dict fixtures."""
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         self.spec = Path(self.tmp) / "spec.yaml"
@@ -172,7 +183,9 @@ class TestV11RealSchemaRegression(unittest.TestCase):
         # Old check (WPM=22/5*60=264 ≤ 280) would have PASSED → that was the V5 gap.
         self.spec.write_text(_V5_BUG_TRUNCATION, encoding="utf-8")
         r = _run(["--format", "horror-choice", "--spec", str(self.spec)])
-        self.assertNotEqual(r.returncode, 0, f"narration exceeding canonical fit must FAIL.\nstdout {r.stdout}")
+        self.assertNotEqual(
+            r.returncode, 0, f"narration exceeding canonical fit must FAIL.\nstdout {r.stdout}"
+        )
         self.assertIn("truncated", r.stdout.lower())
 
 
@@ -219,8 +232,9 @@ class TestMatrixReaderInlineCommentRegression(unittest.TestCase):
 
     def test_hailuo_std_reads_59_not_80_with_commented_veo_key(self):
         wpm, caps = self.mod.load_matrix_values(self.matrix)
-        self.assertEqual(caps.get("hailuo_std"), 5.9,
-                         f"commented veo_3_1 key bled its cap onto hailuo_std: {caps}")
+        self.assertEqual(
+            caps.get("hailuo_std"), 5.9, f"commented veo_3_1 key bled its cap onto hailuo_std: {caps}"
+        )
         self.assertNotEqual(caps.get("hailuo_std"), 8.0)
         # the commented keys must be parsed as their OWN entries (comment stripped, then matched)
         self.assertEqual(caps.get("hailuo_pro"), 10.0, caps)

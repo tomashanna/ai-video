@@ -25,6 +25,7 @@ Output: <output-dir>/clips_concat_only.mp4
 
 Build Paso 4.2 (2026-05-26) — TDD + Hard Rule #26 (test_concat-clips-with-audio.py companion).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -120,21 +121,22 @@ def concat_clips(clip_paths, output_path, branch):
     Fallback: if stream-copy fails → re-encode.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    stream_copy = (branch == "ai_generated")
+    stream_copy = branch == "ai_generated"
     r = _run_concat(clip_paths, output_path, stream_copy=stream_copy)
     if r.returncode != 0 and stream_copy:
         # Fallback: stream-copy failed (likely heterogeneous timebase) → re-encode
-        print(f"⚠️ stream-copy concat failed, falling back to re-encode: {r.stderr[:200]}",
-              file=sys.stderr)
+        print(f"⚠️ stream-copy concat failed, falling back to re-encode: {r.stderr[:200]}", file=sys.stderr)
         r = _run_concat(clip_paths, output_path, stream_copy=False)
     return r
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="Format name (e.g., horror-choice). REQUIRED — no silent assumption.")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--format", required=True, help="Format name (e.g., horror-choice). REQUIRED — no silent assumption."
+    )
     parser.add_argument("--spec", required=True, help="Path to SPEC.yaml (video_capabilities mandatory)")
     parser.add_argument("--clips-dir", default=None, help="Atomic clips dir (default: assets/clips-atomic)")
     parser.add_argument("--output-dir", default=None, help="Output dir (default: assets/concat)")

@@ -63,8 +63,15 @@ def parse_srt(content: str) -> list[Cue]:
     return cues
 
 
-def build_ass(cues: list[Cue], width: int, height: int, font_size: int, margin_v: int,
-              bold: int = 0, font: str = "Georgia") -> str:
+def build_ass(
+    cues: list[Cue],
+    width: int,
+    height: int,
+    font_size: int,
+    margin_v: int,
+    bold: int = 0,
+    font: str = "Georgia",
+) -> str:
     if width <= 0 or height <= 0 or font_size <= 0 or margin_v < 0:
         raise ValueError("width/height/font size must be > 0 and margin >= 0")
     if bold not in (0, -1):

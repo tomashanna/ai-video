@@ -39,6 +39,7 @@ Usage:
 Authority: CLAUDE.md Hard Rule #1 + #19 + #26 (tests adversariales). Codified
 Sub-Fase 3A 2026-05-23 post pattern_class "user_perceptual_detects_what_validators_miss".
 """
+
 from __future__ import annotations
 
 import argparse
@@ -57,9 +58,7 @@ from ai_video.core.hard_rules_parser import (
 # Resolve canonical paths (repo-relative). Env vars allow test override; the legacy
 # CLAUDE_MD_PATH / HUMAN_CHECKLIST_PATH names are still honoured.
 CLAUDE_MD_PATH = Path(os.environ.get("CLAUDE_MD_PATH") or paths.hard_rules_doc())
-HUMAN_CHECKLIST_CANONICAL = Path(
-    os.environ.get("HUMAN_CHECKLIST_PATH") or paths.human_checklist_doc()
-)
+HUMAN_CHECKLIST_CANONICAL = Path(os.environ.get("HUMAN_CHECKLIST_PATH") or paths.human_checklist_doc())
 
 # Fallback thresholds when hard_rules_parser unavailable (defensive — should not happen
 # if lib/ is properly copied per BOOTSTRAP). These mirror the canonical Hard Rule #1
@@ -187,9 +186,13 @@ def _dual_branch_gate(
 
     Returns exit code: 0 = PASS, 1 = BLOCKED, 3 = AWAITING_USER_PERCEPTUAL.
     """
-    if calibrated < _STRUCTURAL_ROT_THRESHOLD and (perceptual is None or perceptual < _STRUCTURAL_ROT_THRESHOLD):
-        print(f"🚨 STRUCTURAL ROT — calibrated {calibrated} + perceptual "
-              f"{perceptual or 'N/A'} both < {_STRUCTURAL_ROT_THRESHOLD}")
+    if calibrated < _STRUCTURAL_ROT_THRESHOLD and (
+        perceptual is None or perceptual < _STRUCTURAL_ROT_THRESHOLD
+    ):
+        print(
+            f"🚨 STRUCTURAL ROT — calibrated {calibrated} + perceptual "
+            f"{perceptual or 'N/A'} both < {_STRUCTURAL_ROT_THRESHOLD}"
+        )
         print("   Algo estructural está roto. NO iterar — escalar al usuario YA.")
         return 1
 
@@ -219,8 +222,10 @@ def _dual_branch_gate(
         print(f"⏸️ {stage.upper()} QA GATE — status {status}")
         print(f"   calibrated: {calibrated} < threshold {threshold_calibrated} (FAIL)")
         print("   perceptual: NOT PROVIDED")
-        print(f"   Per Hard Rule #1 Rule D PRECEDENCE: user_perceptual ≥{threshold_perceptual} "
-              f"can override calibrated FAIL. User MUST watch render + report perceptual score.")
+        print(
+            f"   Per Hard Rule #1 Rule D PRECEDENCE: user_perceptual ≥{threshold_perceptual} "
+            f"can override calibrated FAIL. User MUST watch render + report perceptual score."
+        )
         if project_dir and project_id:
             target = auto_generate_human_checklist(
                 project_dir, project_id, calibrated, perceptual, status, stage
@@ -253,32 +258,38 @@ def main() -> int:
     # NOTE: --score and --calibrated are mutually exclusive at the semantic level,
     # but argparse allows either; main() validates explicitly.
     parser.add_argument(
-        "--score", type=float, default=None,
-        help="(LEGACY back-compat) single-threshold mode. Either --score OR --calibrated required."
+        "--score",
+        type=float,
+        default=None,
+        help="(LEGACY back-compat) single-threshold mode. Either --score OR --calibrated required.",
     )
     parser.add_argument(
-        "--calibrated", type=float, default=None,
-        help="(CANONICAL forward) gemini_calibrated_v4 score (0.0-10.0)."
+        "--calibrated",
+        type=float,
+        default=None,
+        help="(CANONICAL forward) gemini_calibrated_v4 score (0.0-10.0).",
     )
     parser.add_argument(
-        "--perceptual", type=float, default=None,
-        help="(CANONICAL forward) user_perceptual_score (0.0-10.0). Optional; if missing → AWAITING_USER_PERCEPTUAL."
+        "--perceptual",
+        type=float,
+        default=None,
+        help="(CANONICAL forward) user_perceptual_score (0.0-10.0). Optional; if missing → AWAITING_USER_PERCEPTUAL.",
+    )
+    parser.add_argument("--stage", choices=["pre-kling", "post-kling"], required=True, help="Pipeline stage.")
+    parser.add_argument(
+        "--iteration",
+        type=int,
+        default=1,
+        help="Iteration number (1-3). After 3 sub-threshold iter → ESCALATE.",
     )
     parser.add_argument(
-        "--stage", choices=["pre-kling", "post-kling"], required=True,
-        help="Pipeline stage."
+        "--project-dir",
+        type=Path,
+        default=None,
+        help="Project directory for HUMAN-CHECKLIST auto-gen target.",
     )
     parser.add_argument(
-        "--iteration", type=int, default=1,
-        help="Iteration number (1-3). After 3 sub-threshold iter → ESCALATE."
-    )
-    parser.add_argument(
-        "--project-dir", type=Path, default=None,
-        help="Project directory for HUMAN-CHECKLIST auto-gen target."
-    )
-    parser.add_argument(
-        "--project-id", type=str, default=None,
-        help="Project id (kebab-case) for HUMAN-CHECKLIST filename."
+        "--project-id", type=str, default=None, help="Project id (kebab-case) for HUMAN-CHECKLIST filename."
     )
 
     args = parser.parse_args()

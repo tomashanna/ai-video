@@ -59,6 +59,7 @@ Authority: pre-render-gate/SKILL.md Q24 + horror-choice-format/INGENIERO-PAUTA-M
   (AVU library + sync_contract § 7.11.4) + PAUTA-MASTER § 19 AVU principle + CLAUDE.md HR#25.
   HR#26 companion test: test_audit-avu-sync-contract.py.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -96,6 +97,7 @@ def gate(name, status, detail, **extra):
 # LÓGICA PURA — testeable sin filesystem
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 def evaluate_avu_sync_contract(shots):
     """PURE. shots = [{shot_id, coupled, coupling_reasons,
                        avu_present, avu_paths_checked, has_complete_sync_contract,
@@ -114,20 +116,30 @@ def evaluate_avu_sync_contract(shots):
         return True, {
             "applicable": False,
             "coupled_shots": 0,
-            "shots": [{
-                "shot_id": s.get("shot_id", "?"), "coupled": False, "status": "ok",
-                "rule_applies": False,
-                "detail": "shot sin audio+visual acoplados → regla AVU/sync_contract no aplica",
-            } for s in shots],
+            "shots": [
+                {
+                    "shot_id": s.get("shot_id", "?"),
+                    "coupled": False,
+                    "status": "ok",
+                    "rule_applies": False,
+                    "detail": "shot sin audio+visual acoplados → regla AVU/sync_contract no aplica",
+                }
+                for s in shots
+            ],
         }
 
     for s in shots:
         sid = s.get("shot_id", "?")
         if not s.get("coupled"):
-            reasons.append({
-                "shot_id": sid, "coupled": False, "status": "ok", "rule_applies": False,
-                "detail": "shot sin audio+visual acoplados → regla no aplica",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "coupled": False,
+                    "status": "ok",
+                    "rule_applies": False,
+                    "detail": "shot sin audio+visual acoplados → regla no aplica",
+                }
+            )
             continue
 
         coupling = s.get("coupling_reasons") or []
@@ -140,28 +152,39 @@ def evaluate_avu_sync_contract(shots):
                 satisfier.append("AVU .mp4 en disco")
             if contract_ok:
                 satisfier.append("sync_contract completo")
-            reasons.append({
-                "shot_id": sid, "coupled": True, "status": "ok", "rule_applies": True,
-                "coupling_reasons": coupling,
-                "satisfied_by": satisfier,
-                "avu_paths_checked": s.get("avu_paths_checked") or [],
-                "detail": f"shot acoplado ({', '.join(coupling)}) satisfecho por: {' + '.join(satisfier)} ✓",
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "coupled": True,
+                    "status": "ok",
+                    "rule_applies": True,
+                    "coupling_reasons": coupling,
+                    "satisfied_by": satisfier,
+                    "avu_paths_checked": s.get("avu_paths_checked") or [],
+                    "detail": f"shot acoplado ({', '.join(coupling)}) satisfecho por: {' + '.join(satisfier)} ✓",
+                }
+            )
         else:
             ok = False
             missing = s.get("sync_contract_missing_fields") or list(REQUIRED_SYNC_CONTRACT_FIELDS)
-            reasons.append({
-                "shot_id": sid, "coupled": True, "status": "fail", "rule_applies": True,
-                "coupling_reasons": coupling,
-                "avu_present": False,
-                "avu_paths_checked": s.get("avu_paths_checked") or [],
-                "sync_contract_missing_fields": missing,
-                "detail": (
-                    f"shot '{sid}' tiene audio+visual ACOPLADOS ({', '.join(coupling)}) pero NO tiene "
-                    f"(a) AVU pre-rendered .mp4 en disco NI (b) sync_contract completo "
-                    f"(faltan {missing}) — Q24/HR#25 compose-time fragility (matadero iter 3-4): "
-                    f"buildear el AVU .mp4 (audio bundleado) O declarar sync_contract explícito"),
-            })
+            reasons.append(
+                {
+                    "shot_id": sid,
+                    "coupled": True,
+                    "status": "fail",
+                    "rule_applies": True,
+                    "coupling_reasons": coupling,
+                    "avu_present": False,
+                    "avu_paths_checked": s.get("avu_paths_checked") or [],
+                    "sync_contract_missing_fields": missing,
+                    "detail": (
+                        f"shot '{sid}' tiene audio+visual ACOPLADOS ({', '.join(coupling)}) pero NO tiene "
+                        f"(a) AVU pre-rendered .mp4 en disco NI (b) sync_contract completo "
+                        f"(faltan {missing}) — Q24/HR#25 compose-time fragility (matadero iter 3-4): "
+                        f"buildear el AVU .mp4 (audio bundleado) O declarar sync_contract explícito"
+                    ),
+                }
+            )
 
     return ok, {
         "applicable": True,
@@ -182,6 +205,7 @@ def sync_contract_missing_fields(contract, *, required=REQUIRED_SYNC_CONTRACT_FI
 # EXTRACCIÓN — runtime (parsea el SPEC + resuelve AVU paths contra disco)
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 def extract_shots(spec):
     """shot_list[] → solo dicts con shot_id."""
     return [s for s in (spec.get("shot_list") or []) if isinstance(s, dict) and s.get("shot_id")]
@@ -201,7 +225,7 @@ def find_avu_library_dir(spec_path):
     from ai_video.paths import avu_dir
 
     try:
-        cand = avu_dir()                             # <repo>/assets/avu/
+        cand = avu_dir()  # <repo>/assets/avu/
         if cand.is_dir():
             return cand
     except ConfigError:
@@ -270,8 +294,9 @@ def _atomic_clip_for_shot(shot_id, clips_atomic_dir):
     return False, checked
 
 
-def build_shot_record(shot, *, avu_library_dir, project_dir, clips_atomic_dir,
-                      required_fields=REQUIRED_SYNC_CONTRACT_FIELDS):
+def build_shot_record(
+    shot, *, avu_library_dir, project_dir, clips_atomic_dir, required_fields=REQUIRED_SYNC_CONTRACT_FIELDS
+):
     """Arma el dict de un shot para la lógica pura: detecta acople + resuelve AVU/contract."""
     sid = shot.get("shot_id", "?")
     coupling_reasons = []
@@ -305,8 +330,11 @@ def build_shot_record(shot, *, avu_library_dir, project_dir, clips_atomic_dir,
     # 2-resolve: avu_overlay_clip
     if not _is_null_avu(overlay):
         present, checked = resolve_avu_on_disk(
-            overlay, avu_library_dir=avu_library_dir, project_dir=project_dir,
-            clips_atomic_dir=clips_atomic_dir)
+            overlay,
+            avu_library_dir=avu_library_dir,
+            project_dir=project_dir,
+            clips_atomic_dir=clips_atomic_dir,
+        )
         avu_paths_checked += checked
         avu_present = avu_present or present
     # 1-resolve: audio_visual_atomic_units[].asset_path (los de type pre_rendered_avu)
@@ -316,8 +344,11 @@ def build_shot_record(shot, *, avu_library_dir, project_dir, clips_atomic_dir,
         ap = u.get("asset_path")
         if ap:
             present, checked = resolve_avu_on_disk(
-                ap, avu_library_dir=avu_library_dir, project_dir=project_dir,
-                clips_atomic_dir=clips_atomic_dir)
+                ap,
+                avu_library_dir=avu_library_dir,
+                project_dir=project_dir,
+                clips_atomic_dir=clips_atomic_dir,
+            )
             avu_paths_checked += checked
             avu_present = avu_present or present
     # lip-sync: el audio del diálogo va bundleado en el clip atomic .mp4 (Layer 1 HYBRID)
@@ -339,7 +370,9 @@ def build_shot_record(shot, *, avu_library_dir, project_dir, clips_atomic_dir,
                 contracts.append({})  # declarado type sync_contract pero sin contract → incompleto
     has_complete = (
         any(not sync_contract_missing_fields(c, required=required_fields) for c in contracts)
-        if contracts else False)
+        if contracts
+        else False
+    )
     # campos faltantes del "mejor" contrato (el de menos faltantes) para el reporte
     if contracts:
         missing = min((sync_contract_missing_fields(c, required=required_fields) for c in contracts), key=len)
@@ -361,24 +394,35 @@ def build_shot_record(shot, *, avu_library_dir, project_dir, clips_atomic_dir,
 # RUNTIME
 # ════════════════════════════════════════════════════════════════════════════════════════════
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--format", required=True,
-                        help="formato del SPEC (agnostic-by-design)")
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("--format", required=True, help="formato del SPEC (agnostic-by-design)")
     parser.add_argument("--spec", required=True, help="path al CREATIVE-SPEC.yaml")
-    parser.add_argument("--project-dir", default=None,
-                        help="dir del proyecto (assets/). Default: <spec_dir>/../<spec_stem>/ si existe.")
-    parser.add_argument("--avu-library-dir", default=None,
-                        help="dir de la avu-library compartida. Default: autolocalizada desde el script/spec.")
-    parser.add_argument("--require-contract-fields", default=",".join(REQUIRED_SYNC_CONTRACT_FIELDS),
-                        help=f"campos requeridos del sync_contract (default: {','.join(REQUIRED_SYNC_CONTRACT_FIELDS)})")
+    parser.add_argument(
+        "--project-dir",
+        default=None,
+        help="dir del proyecto (assets/). Default: <spec_dir>/../<spec_stem>/ si existe.",
+    )
+    parser.add_argument(
+        "--avu-library-dir",
+        default=None,
+        help="dir de la avu-library compartida. Default: autolocalizada desde el script/spec.",
+    )
+    parser.add_argument(
+        "--require-contract-fields",
+        default=",".join(REQUIRED_SYNC_CONTRACT_FIELDS),
+        help=f"campos requeridos del sync_contract (default: {','.join(REQUIRED_SYNC_CONTRACT_FIELDS)})",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    required_fields = tuple(
-        f.strip() for f in args.require_contract_fields.split(",") if f.strip()
-    ) or REQUIRED_SYNC_CONTRACT_FIELDS
+    required_fields = (
+        tuple(f.strip() for f in args.require_contract_fields.split(",") if f.strip())
+        or REQUIRED_SYNC_CONTRACT_FIELDS
+    )
 
     spec_path = Path(args.spec)
     if not spec_path.exists():
@@ -390,8 +434,10 @@ def main():
 
     caps = spec.get("video_capabilities")
     if caps is None:
-        print("ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
-              file=sys.stderr)
+        print(
+            "ERROR: SPEC missing 'video_capabilities' block (Pattern 7 §1.6 mandatory). Bug #9.",
+            file=sys.stderr,
+        )
         return 2
 
     has_clips = bool(caps.get("has_ai_generated_clips", False))
@@ -403,7 +449,8 @@ def main():
         if guess.is_dir():
             project_dir = str(guess)
     avu_library_dir = args.avu_library_dir or (
-        str(find_avu_library_dir(spec_path)) if find_avu_library_dir(spec_path) else None)
+        str(find_avu_library_dir(spec_path)) if find_avu_library_dir(spec_path) else None
+    )
     clips_atomic_dir = None
     if project_dir:
         cand = Path(project_dir) / "assets" / "clips-atomic"
@@ -411,41 +458,65 @@ def main():
             clips_atomic_dir = str(cand)
 
     if args.dry_run:
-        print(f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_clips}\n"
-              f"branch: {'avu_sync_check' if has_clips else 'not_applicable'}\n"
-              f"project_dir: {project_dir}\navu_library_dir: {avu_library_dir}\n"
-              f"clips_atomic_dir: {clips_atomic_dir}\n"
-              f"required_contract_fields: {list(required_fields)}")
+        print(
+            f"format: {args.format}\nspec: {spec_path}\nhas_ai_generated_clips: {has_clips}\n"
+            f"branch: {'avu_sync_check' if has_clips else 'not_applicable'}\n"
+            f"project_dir: {project_dir}\navu_library_dir: {avu_library_dir}\n"
+            f"clips_atomic_dir: {clips_atomic_dir}\n"
+            f"required_contract_fields: {list(required_fields)}"
+        )
         return 0
 
     if not has_clips:
-        print(json.dumps({
-            "format": args.format, "overall_status": "not_applicable",
-            "detail": "has_ai_generated_clips=false → AVU/sync_contract check skipped "
-                      "(sin clips AI no hay compose-time fragility del acople que prevenir)",
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "overall_status": "not_applicable",
+                    "detail": "has_ai_generated_clips=false → AVU/sync_contract check skipped "
+                    "(sin clips AI no hay compose-time fragility del acople que prevenir)",
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     shots = extract_shots(spec)
-    records = [build_shot_record(
-        s, avu_library_dir=avu_library_dir, project_dir=project_dir,
-        clips_atomic_dir=clips_atomic_dir, required_fields=required_fields) for s in shots]
+    records = [
+        build_shot_record(
+            s,
+            avu_library_dir=avu_library_dir,
+            project_dir=project_dir,
+            clips_atomic_dir=clips_atomic_dir,
+            required_fields=required_fields,
+        )
+        for s in shots
+    ]
 
     ok, summary = evaluate_avu_sync_contract(records)
 
     if not summary["applicable"]:
-        print(json.dumps({
-            "format": args.format, "spec": str(spec_path),
-            "overall_status": "not_applicable",
-            "detail": "ningún shot tiene audio+visual acoplados (sin AVU/lip-sync/sync_contract) → "
-                      "Q24/HR#25 no aplica a este SPEC",
-            "shots_checked": len(records),
-        }, indent=2, ensure_ascii=False))
+        print(
+            json.dumps(
+                {
+                    "format": args.format,
+                    "spec": str(spec_path),
+                    "overall_status": "not_applicable",
+                    "detail": "ningún shot tiene audio+visual acoplados (sin AVU/lip-sync/sync_contract) → "
+                    "Q24/HR#25 no aplica a este SPEC",
+                    "shots_checked": len(records),
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         return 0
 
     fails = [r for r in summary["shots"] if r["status"] == "fail"]
     report = {
-        "format": args.format, "spec": str(spec_path),
+        "format": args.format,
+        "spec": str(spec_path),
         "project_dir": project_dir,
         "avu_library_dir": avu_library_dir,
         "clips_atomic_dir": clips_atomic_dir,

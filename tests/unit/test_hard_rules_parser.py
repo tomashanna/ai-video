@@ -27,6 +27,7 @@ el test asume gaps documentados, no exige contigüidad total.
 
 Authority: CLAUDE.md Hard Rules table + footnote. HR#26 companion (data-driven 2026-06-04).
 """
+
 import unittest
 from pathlib import Path
 
@@ -66,12 +67,14 @@ class TestHardRulesParser(unittest.TestCase):
         """rule_ids en orden de tabla deben ser estrictamente crecientes
         (sin duplicados, sin desorden). Detector de drift agnóstico al conteo."""
         self.assertEqual(
-            self.rule_ids, self.sorted_ids,
+            self.rule_ids,
+            self.sorted_ids,
             f"rule_ids no están en orden ascendente: {self.rule_ids}",
         )
         for a, b in zip(self.rule_ids, self.rule_ids[1:]):
             self.assertLess(
-                a, b,
+                a,
+                b,
                 f"secuencia no estrictamente creciente: {a} no < {b} en {self.rule_ids}",
             )
 
@@ -79,7 +82,8 @@ class TestHardRulesParser(unittest.TestCase):
     def test_rule_22_absent_empty_slot(self):
         """Rule #22 = empty slot canónico (CLAUDE.md footnote). NUNCA en output."""
         self.assertNotIn(
-            22, self.rule_ids,
+            22,
+            self.rule_ids,
             "Rule #22 es empty slot canónico — el parser debe omitirlo.",
         )
         # y la búsqueda directa retorna None, no crashea
@@ -90,9 +94,9 @@ class TestHardRulesParser(unittest.TestCase):
         """Conteo ≥27. Refleja el cascade HR#27/#28-29/#30(/#31) sin hardcodear
         un número exacto que vuelva a quedar stale en el próximo agregado."""
         self.assertGreaterEqual(
-            len(self.rules), MIN_RULE_COUNT,
-            f"Esperado ≥{MIN_RULE_COUNT} rules, got {len(self.rules)}. "
-            f"Secuencia: {self.rule_ids}",
+            len(self.rules),
+            MIN_RULE_COUNT,
+            f"Esperado ≥{MIN_RULE_COUNT} rules, got {len(self.rules)}. Secuencia: {self.rule_ids}",
         )
 
     def test_core_rules_present(self):
@@ -102,7 +106,8 @@ class TestHardRulesParser(unittest.TestCase):
         present = set(self.rule_ids)
         missing = core - present
         self.assertEqual(
-            missing, set(),
+            missing,
+            set(),
             f"Core rules ausentes (regresión): {sorted(missing)}",
         )
 
@@ -112,8 +117,9 @@ class TestHardRulesParser(unittest.TestCase):
         ≥8.5. Es exactamente lo que qa-gate.py lee — invariante load-bearing."""
         rule_1 = get_rule(self.rules, 1)
         self.assertIsNotNone(rule_1, "Rule #1 ausente del parse output")
-        self.assertIn("≥9.0", rule_1["text"],
-                      f"Rule #1 sin threshold calibrated ≥9.0. Excerpt: {rule_1['text'][:200]}")
+        self.assertIn(
+            "≥9.0", rule_1["text"], f"Rule #1 sin threshold calibrated ≥9.0. Excerpt: {rule_1['text'][:200]}"
+        )
         self.assertIn("≥8.5", rule_1["text"], "Rule #1 sin threshold perceptual ≥8.5")
         # via los helpers que consume qa-gate.py:
         self.assertEqual(get_quality_threshold_calibrated(self.rules), 9.0)
@@ -129,7 +135,8 @@ class TestHardRulesParser(unittest.TestCase):
             ap = rule["authority_pointer"]
             self.assertIsInstance(ap, str, f"Rule #{rid} authority_pointer no es str")
             self.assertGreater(
-                len(ap.strip()), 0,
+                len(ap.strip()),
+                0,
                 f"Rule #{rid} authority_pointer vacío: {ap!r}",
             )
 

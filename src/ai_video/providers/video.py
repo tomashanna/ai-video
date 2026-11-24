@@ -47,7 +47,9 @@ def image_to_data_uri(path: Path) -> str:
     return f"data:{_MIME[ext]};base64,{data}"
 
 
-def build_input(model: str, image_uri: str, prompt: str, duration: int, end_image_uri: str | None = None) -> dict[str, Any]:
+def build_input(
+    model: str, image_uri: str, prompt: str, duration: int, end_image_uri: str | None = None
+) -> dict[str, Any]:
     base: dict[str, Any] = {
         "start_image": image_uri,
         "prompt": prompt,
@@ -102,7 +104,9 @@ def create_prediction(
                 raise
 
 
-def wait_for_prediction(prediction: Any, *, timeout_s: float, sleep: Callable[[float], None] = time.sleep) -> Any:
+def wait_for_prediction(
+    prediction: Any, *, timeout_s: float, sleep: Callable[[float], None] = time.sleep
+) -> Any:
     def _check() -> Any:
         prediction.reload()
         if prediction.status == "succeeded":
@@ -112,8 +116,13 @@ def wait_for_prediction(prediction: Any, *, timeout_s: float, sleep: Callable[[f
         return None
 
     try:
-        return poll_until(_check, timeout_s=timeout_s, interval_s=POLL_INTERVAL_S, sleep=sleep,
-                          describe=f"prediction {prediction.id}")
+        return poll_until(
+            _check,
+            timeout_s=timeout_s,
+            interval_s=POLL_INTERVAL_S,
+            sleep=sleep,
+            describe=f"prediction {prediction.id}",
+        )
     except TimeoutError:
         try:
             prediction.cancel()
@@ -167,8 +176,9 @@ def animate(
 
         client = replicate_client(settings)
 
-    payload = build_input(model, image_to_data_uri(image), prompt, duration,
-                          image_to_data_uri(end_image) if end_image else None)
+    payload = build_input(
+        model, image_to_data_uri(image), prompt, duration, image_to_data_uri(end_image) if end_image else None
+    )
     attempts = settings.max_retries + 1
     delays = backoff_delays(attempts, base_s=15.0, max_s=120.0)
     last_exc: Exception | None = None
@@ -208,8 +218,14 @@ def main() -> int:
     if args.dry_run:
         get_settings().dry_run = True
     try:
-        n = animate(args.image, args.prompt, args.output, duration=args.duration, model=args.model,
-                    end_image=args.end_image)
+        n = animate(
+            args.image,
+            args.prompt,
+            args.output,
+            duration=args.duration,
+            model=args.model,
+            end_image=args.end_image,
+        )
     except (ValueError, FileNotFoundError, AIVideoError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

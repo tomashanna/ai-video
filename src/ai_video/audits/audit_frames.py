@@ -76,10 +76,12 @@ def extract_frames(video_path: str, interval: float, output_dir: str) -> list:
 
     # Get duration via ffprobe
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "csv=p=0", video_path],
-        capture_output=True, text=True, check=True
-    , timeout=SUBPROCESS_TIMEOUT_S)
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video_path],
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=SUBPROCESS_TIMEOUT_S,
+    )
     duration = float(result.stdout.strip())
 
     frames = []
@@ -88,10 +90,11 @@ def extract_frames(video_path: str, interval: float, output_dir: str) -> list:
     while t < duration - 0.1:
         out = os.path.join(output_dir, f"frame_{t:06.2f}.png")
         subprocess.run(
-            ["ffmpeg", "-y", "-ss", str(t), "-i", video_path,
-             "-frames:v", "1", "-q:v", "2", out],
-            capture_output=True, check=False
-        , timeout=SUBPROCESS_TIMEOUT_S)
+            ["ffmpeg", "-y", "-ss", str(t), "-i", video_path, "-frames:v", "1", "-q:v", "2", out],
+            capture_output=True,
+            check=False,
+            timeout=SUBPROCESS_TIMEOUT_S,
+        )
         if os.path.exists(out) and os.path.getsize(out) > 1000:
             frames.append((t, out))
         t += interval
@@ -106,13 +109,15 @@ def audit_frame(frame_path: str, client) -> list:
 
     response = client.models.generate_content(
         model="gemini-3.1-flash-lite",
-        contents=[{
-            "role": "user",
-            "parts": [
-                {"text": AUDIT_PROMPT},
-                {"inline_data": {"mime_type": "image/png", "data": image_bytes}}
-            ]
-        }]
+        contents=[
+            {
+                "role": "user",
+                "parts": [
+                    {"text": AUDIT_PROMPT},
+                    {"inline_data": {"mime_type": "image/png", "data": image_bytes}},
+                ],
+            }
+        ],
     )
 
     text = response.text.strip()
@@ -129,22 +134,15 @@ def audit_frame(frame_path: str, client) -> list:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Frame-by-frame visual QA con Gemini Vision."
-    )
+    parser = argparse.ArgumentParser(description="Frame-by-frame visual QA con Gemini Vision.")
     parser.add_argument("--video", required=True, help="Path to mp4")
     parser.add_argument(
-        "--interval", type=float, default=0.5,
-        help="Seconds between frame extractions (default 0.5)"
+        "--interval", type=float, default=0.5, help="Seconds between frame extractions (default 0.5)"
     )
     parser.add_argument(
-        "--max-issues", type=int, default=2,
-        help="Fail if more than N frames have issues (default 2)"
+        "--max-issues", type=int, default=2, help="Fail if more than N frames have issues (default 2)"
     )
-    parser.add_argument(
-        "--output", type=str, default=None,
-        help="Optional path to save JSON report"
-    )
+    parser.add_argument("--output", type=str, default=None, help="Optional path to save JSON report")
 
     args = parser.parse_args()
 
@@ -192,7 +190,7 @@ def main():
             "video": args.video,
             "frames_audited": len(frames),
             "frames_with_issues": len(all_issues),
-            "issues_by_timestamp": {str(t): issues for t, issues in all_issues.items()}
+            "issues_by_timestamp": {str(t): issues for t, issues in all_issues.items()},
         }
         with open(args.output, "w") as f:
             json.dump(report, f, indent=2)

@@ -10,6 +10,7 @@ Modela el CASO DISPARADOR HISTÓRICO (drift Y48/Y52 + F1 ignorado, 2026-06-04):
 
 Correr: python3 test_audit-ui-safe-zones.py
 """
+
 from __future__ import annotations
 
 import contextlib
@@ -20,7 +21,9 @@ import unittest
 from pathlib import Path
 
 _HERE = Path(__file__).parent
-_spec = importlib.util.spec_from_file_location("audit_ui_safe_zones", Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_ui_safe_zones.py")
+_spec = importlib.util.spec_from_file_location(
+    "audit_ui_safe_zones", Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_ui_safe_zones.py"
+)
 m = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(m)
 
@@ -84,8 +87,9 @@ class TestClassify(unittest.TestCase):
         self.assertEqual(m.classify_element("choice_button_ivan", "choice_button"), "choice_buttons")
 
     def test_real_name_label(self):
-        self.assertEqual(m.classify_element("name-mateo", "name-label name-label-left"),
-                         "character_name_labels")
+        self.assertEqual(
+            m.classify_element("name-mateo", "name-label name-label-left"), "character_name_labels"
+        )
 
     def test_watermark(self):
         self.assertEqual(m.classify_element("watermark_handle", ""), "watermark")
@@ -113,8 +117,9 @@ class TestEvaluate(unittest.TestCase):
         els = [{"element_type": "captions_narration", "y_pct": 40.0, "raw": "caption-wrap"}]
         ok, reasons = m.evaluate_safe_zones(els, SYNTH_BANDS)
         self.assertFalse(ok)
-        self.assertTrue(any(r["status"] == "fail" and r["element_type"] == "captions_narration"
-                            for r in reasons))
+        self.assertTrue(
+            any(r["status"] == "fail" and r["element_type"] == "captions_narration" for r in reasons)
+        )
 
     def test_loading_overlaps_countdown_fails(self):
         """CASO DISPARADOR núcleo (drift Y48/Y52): loading bar pegada al countdown.
@@ -259,12 +264,12 @@ class TestMainRuntime(unittest.TestCase):
             if extra:
                 argv += extra
             import sys
+
             old = sys.argv
             sys.argv = argv
             try:
                 # silenciar el JSON del gate (main() imprime su reporte a stdout)
-                with contextlib.redirect_stdout(io.StringIO()), \
-                        contextlib.redirect_stderr(io.StringIO()):
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                     return m.main()
             finally:
                 sys.argv = old

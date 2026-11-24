@@ -10,6 +10,7 @@ Modela los CASOS DISPARADORES HISTÓRICOS (el bug real DEBE fallar el gate):
 
 Carga el módulo con guion en el nombre vía importlib. Corre: python3 test_audit-spec-declarations.py
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -21,15 +22,24 @@ from pathlib import Path
 
 _HERE = Path(__file__).parent
 _spec = importlib.util.spec_from_file_location(
-    "audit_spec_declarations", Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_spec_declarations.py")
+    "audit_spec_declarations",
+    Path(__file__).resolve().parents[2] / "src/ai_video/audits/audit_spec_declarations.py",
+)
 mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(mod)
 
 
 # ── Fixtures: SPEC dicts sintéticos ─────────────────────────────────────────────────────────
 
-def _shot(shot_id, *, ambient="una rata cruza al fondo", motions_count=3,
-          motions_list=None, traversal="walking_forward"):
+
+def _shot(
+    shot_id,
+    *,
+    ambient="una rata cruza al fondo",
+    motions_count=3,
+    motions_list=None,
+    traversal="walking_forward",
+):
     if motions_list is None:
         motions_list = [f"motion_{i}" for i in range(motions_count)]
     return {
@@ -69,7 +79,7 @@ class TestQ26AmbientCreature(unittest.TestCase):
     def test_shot_sin_ambient_FALLA(self):
         shots = [
             {"shot_id": "shot_01", "ambient": "rata al fondo"},
-            {"shot_id": "shot_02", "ambient": ""},          # ← bug matadero: setting muerto
+            {"shot_id": "shot_02", "ambient": ""},  # ← bug matadero: setting muerto
             {"shot_id": "shot_03", "ambient": None},
         ]
         r = mod.evaluate_q26(shots, format_in_family=True, field_present_in_any=True)
@@ -78,8 +88,10 @@ class TestQ26AmbientCreature(unittest.TestCase):
         self.assertIn("shot_03", r["offender_shots"])
 
     def test_todos_con_ambient_PASA(self):
-        shots = [{"shot_id": "shot_01", "ambient": "haz de luz"},
-                 {"shot_id": "shot_02", "ambient": "fuego del horno"}]
+        shots = [
+            {"shot_id": "shot_01", "ambient": "haz de luz"},
+            {"shot_id": "shot_02", "ambient": "fuego del horno"},
+        ]
         r = mod.evaluate_q26(shots, format_in_family=True, field_present_in_any=True)
         self.assertEqual(r["status"], "pass")
 
@@ -111,8 +123,10 @@ class TestQ27AtmosphericMotions(unittest.TestCase):
         self.assertTrue(any("drift" in p for p in r["offender_shots"][0]["problems"]))
 
     def test_count_3_y_list_3_PASA(self):
-        shots = [{"shot_id": "shot_01", "motions_count": 3, "motions_list_len": 3},
-                 {"shot_id": "shot_02", "motions_count": 4, "motions_list_len": 4}]
+        shots = [
+            {"shot_id": "shot_01", "motions_count": 3, "motions_list_len": 3},
+            {"shot_id": "shot_02", "motions_count": 4, "motions_list_len": 4},
+        ]
         r = mod.evaluate_q27(shots)
         self.assertEqual(r["status"], "pass")
 
@@ -131,17 +145,21 @@ class TestQ28NotAllStatic(unittest.TestCase):
     """Q28 — GAP #25: all-static (no per-shot)."""
 
     def test_todos_static_FALLA(self):
-        shots = [{"shot_id": "shot_01", "traversal": "static"},
-                 {"shot_id": "shot_02", "traversal": "static_with_micro_bob"},
-                 {"shot_id": "shot_03", "traversal": "freeze"}]
+        shots = [
+            {"shot_id": "shot_01", "traversal": "static"},
+            {"shot_id": "shot_02", "traversal": "static_with_micro_bob"},
+            {"shot_id": "shot_03", "traversal": "freeze"},
+        ]
         r = mod.evaluate_q28(shots)
         self.assertEqual(r["status"], "fail")
 
     def test_un_static_aislado_PASA(self):
         # Per-shot static es legítimo — solo all-static falla.
-        shots = [{"shot_id": "shot_01", "traversal": "static_with_micro_bob"},
-                 {"shot_id": "shot_02", "traversal": "walking_forward"},
-                 {"shot_id": "shot_03", "traversal": "static"}]
+        shots = [
+            {"shot_id": "shot_01", "traversal": "static_with_micro_bob"},
+            {"shot_id": "shot_02", "traversal": "walking_forward"},
+            {"shot_id": "shot_03", "traversal": "static"},
+        ]
         r = mod.evaluate_q28(shots)
         self.assertEqual(r["status"], "pass")
         self.assertEqual(r["static_count"], 2)
@@ -192,15 +210,22 @@ class TestExtractionHelpers(unittest.TestCase):
         self.assertIsNone(v3)
 
     def test_shot_motions_list_no_lista(self):
-        count, list_len = mod.shot_motions({"visual_action_match": {
-            "atmospheric_motions_count": 3, "atmospheric_motions_list": "no-es-lista"}})
+        count, list_len = mod.shot_motions(
+            {
+                "visual_action_match": {
+                    "atmospheric_motions_count": 3,
+                    "atmospheric_motions_list": "no-es-lista",
+                }
+            }
+        )
         self.assertEqual(count, 3)
         self.assertIsNone(list_len)
 
     def test_shot_traversal_fallback_a_motion_type(self):
         self.assertEqual(mod.shot_traversal({"motion_type": "push_in"}), "push_in")
-        self.assertEqual(mod.shot_traversal({"pov_traversal": "walking_forward",
-                                             "motion_type": "x"}), "walking_forward")
+        self.assertEqual(
+            mod.shot_traversal({"pov_traversal": "walking_forward", "motion_type": "x"}), "walking_forward"
+        )
 
 
 class TestRunChecksIntegration(unittest.TestCase):
@@ -209,18 +234,23 @@ class TestRunChecksIntegration(unittest.TestCase):
     def test_spec_sano_los_4_PASAN(self):
         results = mod.run_checks(_healthy_spec(), "horror-choice", mod.ALL_CHECKS)
         self.assertEqual(len(results), 4)
-        self.assertTrue(all(r["status"] == "pass" for r in results),
-                        [(r["check"], r["status"]) for r in results])
+        self.assertTrue(
+            all(r["status"] == "pass" for r in results), [(r["check"], r["status"]) for r in results]
+        )
 
     def test_spec_disparador_combinado_FALLA_los_4(self):
         spec = {
             "project": {"format": "horror-choice"},
             "video_capabilities": {"has_ai_generated_clips": True},
             "shot_list": [
-                _shot("shot_01", ambient="", motions_count=2, motions_list=["a", "b"],
-                      traversal="static"),
-                _shot("shot_02", ambient=None, motions_count=4, motions_list=["a", "b"],
-                      traversal="static_with_micro_bob"),
+                _shot("shot_01", ambient="", motions_count=2, motions_list=["a", "b"], traversal="static"),
+                _shot(
+                    "shot_02",
+                    ambient=None,
+                    motions_count=4,
+                    motions_list=["a", "b"],
+                    traversal="static_with_micro_bob",
+                ),
             ],
             "editing_targets": {"canonical_validation_status": "deprecated_our_prod_only"},
         }
@@ -228,13 +258,12 @@ class TestRunChecksIntegration(unittest.TestCase):
         by = {r["check"]: r["status"] for r in results}
         self.assertEqual(by["q26_setting_ambient_creature_or_object"], "fail")
         self.assertEqual(by["q27_atmospheric_motions"], "fail")
-        self.assertEqual(by["q28_not_all_static"], "fail")     # ambos shots static
+        self.assertEqual(by["q28_not_all_static"], "fail")  # ambos shots static
         self.assertEqual(by["q22b_canonical_validation_status"], "fail")
 
     def test_checks_subset(self):
         results = mod.run_checks(_healthy_spec(), "horror-choice", ("q27", "q28"))
-        self.assertEqual({r["check"] for r in results},
-                         {"q27_atmospheric_motions", "q28_not_all_static"})
+        self.assertEqual({r["check"] for r in results}, {"q27_atmospheric_motions", "q28_not_all_static"})
 
     def test_parse_checks(self):
         self.assertEqual(mod.parse_checks("all"), mod.ALL_CHECKS)
@@ -254,6 +283,7 @@ class TestEndToEndExitCodes(unittest.TestCase):
 
     def test_spec_sin_video_capabilities_exit_2(self):
         import yaml
+
         path = self._write_spec("project:\n  format: horror-choice\nshot_list: []\n")
         spec = yaml.safe_load(Path(path).read_text())
         self.assertIsNone(spec.get("video_capabilities"))  # Bug #9 → exit 2 en main

@@ -24,9 +24,9 @@ import re
 import sys
 from pathlib import Path
 
-MAX_WORDS_PER_CAPTION = 6   # max words before splitting a new caption
-MIN_GAP_S = 0.08            # minimum silence gap to force a split
-FADE_DURATION = 0.0         # instant set (no fade) — keep captions sharp
+MAX_WORDS_PER_CAPTION = 6  # max words before splitting a new caption
+MIN_GAP_S = 0.08  # minimum silence gap to force a split
+FADE_DURATION = 0.0  # instant set (no fade) — keep captions sharp
 
 
 def transcribe(audio_path: Path, *, language: str = "es", model_name: str = "base") -> list[dict]:
@@ -67,18 +67,17 @@ def group_into_captions(words: list[dict]) -> list[dict]:
     for i, w in enumerate(words):
         current_words.append(w["word"])
         is_boundary = bool(re.search(r"[.!?:]$", w["word"]))
-        is_gap = (
-            i + 1 < len(words)
-            and (words[i + 1]["start"] - w["end"]) >= MIN_GAP_S
-        )
+        is_gap = i + 1 < len(words) and (words[i + 1]["start"] - w["end"]) >= MIN_GAP_S
         at_max = len(current_words) >= MAX_WORDS_PER_CAPTION
 
         if is_boundary or is_gap or at_max or i == len(words) - 1:
-            captions.append({
-                "text": " ".join(current_words).upper().strip(),
-                "start": round(current_start, 3),
-                "end": round(w["end"], 3),
-            })
+            captions.append(
+                {
+                    "text": " ".join(current_words).upper().strip(),
+                    "start": round(current_start, 3),
+                    "end": round(w["end"], 3),
+                }
+            )
             if i + 1 < len(words):
                 current_start = words[i + 1]["start"]
             current_words = []
@@ -93,7 +92,7 @@ def emit_gsap(captions: list[dict], element_id: str, audio_offset: float) -> str
     """
     lines = [f"      /* captions for #{element_id} (offset={audio_offset}s) */"]
     for cap in captions:
-        t_on  = round(audio_offset + cap["start"], 3)
+        t_on = round(audio_offset + cap["start"], 3)
         t_off = round(audio_offset + cap["end"] + 0.05, 3)  # tiny hold after end
         # json.dumps escapes quotes/backslashes so caption text cannot break the JS literal.
         text_js = json.dumps(cap["text"], ensure_ascii=False)
@@ -131,10 +130,14 @@ def process_spec(spec_path: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Auto-generate GSAP captions from narration audio")
     parser.add_argument("-a", "--audio", type=Path, help="Single audio file")
-    parser.add_argument("-t", "--offset", type=float, default=0.0,
-                        help="data-start offset of this audio clip in the composition")
-    parser.add_argument("-e", "--element", default="cap-narr",
-                        help="CSS id of the caption <div> element")
+    parser.add_argument(
+        "-t",
+        "--offset",
+        type=float,
+        default=0.0,
+        help="data-start offset of this audio clip in the composition",
+    )
+    parser.add_argument("-e", "--element", default="cap-narr", help="CSS id of the caption <div> element")
     parser.add_argument("--spec", type=Path, help="JSON batch spec file")
     args = parser.parse_args()
 

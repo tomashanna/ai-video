@@ -105,7 +105,9 @@ def write_chunks(chunks: Iterable[bytes], output: Path) -> int:
     return n
 
 
-def synthesize(req: TTSRequest, output: Path, *, client: Any = None, guard: budget.BudgetGuard | None = None) -> int:
+def synthesize(
+    req: TTSRequest, output: Path, *, client: Any = None, guard: budget.BudgetGuard | None = None
+) -> int:
     """Validate, budget-check, call ElevenLabs (with retries) and write ``output``."""
     req.validate()
     settings = get_settings()

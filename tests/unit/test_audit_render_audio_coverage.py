@@ -21,6 +21,7 @@ the test never touches real media, ffmpeg, or whisper). Strategy/SPEC reads use 
 
 Runnable: python3 test_audit-render-audio-coverage.py  (prints "OK: ..." / sys.exit(1) on failure).
 """
+
 import importlib.util
 import json
 import subprocess
@@ -66,9 +67,12 @@ def _fail(msg):
 def test_pure_good_passes():
     # 84% coverage over 100s with only a clean 1.0s gap (≤ 2.0s) inside the span.
     segs = _segs((0, 42.5), (43.5, 85.0))  # 42.5 + 41.5 = 84.0s coverage
-    ok, reasons = MOD.evaluate_audio_coverage(segs, total_dur=100.0,
-                                              silence_zones=[(42.5, 43.5)],  # 1.0s gap ≤ 2.0
-                                              min_coverage=40.0)
+    ok, reasons = MOD.evaluate_audio_coverage(
+        segs,
+        total_dur=100.0,
+        silence_zones=[(42.5, 43.5)],  # 1.0s gap ≤ 2.0
+        min_coverage=40.0,
+    )
     if not ok:
         _fail(f"good case should PASS, got reasons={reasons}")
     print("OK: pure good case (84% coverage, 1.0s gap) PASSES")
@@ -77,8 +81,7 @@ def test_pure_good_passes():
 def test_pure_low_coverage_fails():
     # 30% coverage — the pueblo-v2 under-narration class.
     segs = _segs((0, 15.0), (50.0, 65.0))  # 30s / 100s = 30%
-    ok, reasons = MOD.evaluate_audio_coverage(segs, total_dur=100.0,
-                                              silence_zones=[], min_coverage=40.0)
+    ok, reasons = MOD.evaluate_audio_coverage(segs, total_dur=100.0, silence_zones=[], min_coverage=40.0)
     if ok:
         _fail("30% coverage must FAIL")
     if not any("LOW_NARRATION_COVERAGE" in r for r in reasons):
@@ -90,8 +93,9 @@ def test_pure_dead_zone_fails():
     # Good coverage but a 3s silence INSIDE the narrated span → narrator vanished mid-video.
     segs = _segs((0, 40.0), (43.0, 90.0))  # 40 + 47 = 87s / 100 = 87% coverage (high)
     # silence 40.0..43.0 = 3.0s, inside span [0, 90] → narrative dead-zone.
-    ok, reasons = MOD.evaluate_audio_coverage(segs, total_dur=100.0,
-                                              silence_zones=[(40.0, 43.0)], min_coverage=40.0)
+    ok, reasons = MOD.evaluate_audio_coverage(
+        segs, total_dur=100.0, silence_zones=[(40.0, 43.0)], min_coverage=40.0
+    )
     if ok:
         _fail("3s narrative dead-zone must FAIL despite high coverage")
     if not any("NARRATIVE_DEAD_ZONE" in r for r in reasons):
@@ -102,17 +106,21 @@ def test_pure_dead_zone_fails():
 def test_pure_trailing_silence_not_a_gap():
     # Silence AFTER the last word (cliffhanger tail) is NOT a narrative gap.
     segs = _segs((0, 50.0))  # 50% coverage
-    ok, reasons = MOD.evaluate_audio_coverage(segs, total_dur=100.0,
-                                              silence_zones=[(50.0, 100.0)],  # 50s tail, outside span
-                                              min_coverage=40.0)
+    ok, reasons = MOD.evaluate_audio_coverage(
+        segs,
+        total_dur=100.0,
+        silence_zones=[(50.0, 100.0)],  # 50s tail, outside span
+        min_coverage=40.0,
+    )
     if not ok:
         _fail(f"trailing silence after last word must NOT count as a gap; reasons={reasons}")
     print("OK: trailing silence after last narrated word is NOT a narrative gap")
 
 
 def test_pure_invalid_duration():
-    ok, reasons = MOD.evaluate_audio_coverage(_segs((0, 5)), total_dur=0.0,
-                                              silence_zones=[], min_coverage=40.0)
+    ok, reasons = MOD.evaluate_audio_coverage(
+        _segs((0, 5)), total_dur=0.0, silence_zones=[], min_coverage=40.0
+    )
     if ok or not any("INVALID_DURATION" in r for r in reasons):
         _fail(f"total_dur=0 must FAIL with INVALID_DURATION; reasons={reasons}")
     print("OK: total_dur=0 → INVALID_DURATION FAIL")
@@ -173,16 +181,33 @@ def test_cli_runtime_low_coverage_fail(tmp):
 # ---------------------------------------------------------------------------
 def test_guard_atomic_plus_html_exit2(tmp):
     manifest = tmp / "_batch_manifest.json"
-    manifest.write_text(json.dumps({
-        "assembly_strategy": "per_clip_atomic",
-        "shots": [{"shot_id": "s1", "format_version": "atomic_v1", "audit_status": "PASS"}],
-    }), encoding="utf-8")
+    manifest.write_text(
+        json.dumps(
+            {
+                "assembly_strategy": "per_clip_atomic",
+                "shots": [{"shot_id": "s1", "format_version": "atomic_v1", "audit_status": "PASS"}],
+            }
+        ),
+        encoding="utf-8",
+    )
     html = tmp / "index.html"
-    html.write_text("<audio src='legacy.mp3' data-start='0' data-duration='90' data-track-index='1'>",
-                    encoding="utf-8")
-    fake_mp4 = tmp / "r.mp4"; fake_mp4.write_bytes(b"\x00")
-    r = _run_cli(["--format", "horror-choice", "--video", str(fake_mp4),
-                  "--html", str(html), "--manifest", str(manifest)])
+    html.write_text(
+        "<audio src='legacy.mp3' data-start='0' data-duration='90' data-track-index='1'>", encoding="utf-8"
+    )
+    fake_mp4 = tmp / "r.mp4"
+    fake_mp4.write_bytes(b"\x00")
+    r = _run_cli(
+        [
+            "--format",
+            "horror-choice",
+            "--video",
+            str(fake_mp4),
+            "--html",
+            str(html),
+            "--manifest",
+            str(manifest),
+        ]
+    )
     if r.returncode != 2:
         _fail(f"per_clip_atomic + --html must exit 2, got {r.returncode}\n{r.stdout}\n{r.stderr}")
     if "wrong_architecture" not in r.stdout:
@@ -193,13 +218,30 @@ def test_guard_atomic_plus_html_exit2(tmp):
 def test_guard_atomic_inferred_from_manifest(tmp):
     # No explicit assembly_strategy key, but all shots atomic_v1 → inferred per_clip_atomic.
     manifest = tmp / "_batch_manifest.json"
-    manifest.write_text(json.dumps({
-        "shots": [{"shot_id": "s1", "format_version": "atomic_v1", "audit_status": "PASS"}],
-    }), encoding="utf-8")
-    html = tmp / "index.html"; html.write_text("<audio src='x'>", encoding="utf-8")
-    fake_mp4 = tmp / "r.mp4"; fake_mp4.write_bytes(b"\x00")
-    r = _run_cli(["--format", "horror-choice", "--video", str(fake_mp4),
-                  "--html", str(html), "--manifest", str(manifest)])
+    manifest.write_text(
+        json.dumps(
+            {
+                "shots": [{"shot_id": "s1", "format_version": "atomic_v1", "audit_status": "PASS"}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    html = tmp / "index.html"
+    html.write_text("<audio src='x'>", encoding="utf-8")
+    fake_mp4 = tmp / "r.mp4"
+    fake_mp4.write_bytes(b"\x00")
+    r = _run_cli(
+        [
+            "--format",
+            "horror-choice",
+            "--video",
+            str(fake_mp4),
+            "--html",
+            str(html),
+            "--manifest",
+            str(manifest),
+        ]
+    )
     if r.returncode != 2:
         _fail(f"atomic inferred from atomic_v1 shots must exit 2, got {r.returncode}\n{r.stdout}")
     print("OK: GUARD atomic inferred from atomic_v1 manifest shots → exit 2")
@@ -207,9 +249,11 @@ def test_guard_atomic_inferred_from_manifest(tmp):
 
 def test_gate_no_tts_not_applicable(tmp):
     spec = tmp / "spec.yaml"
-    spec.write_text('schema_version: "v11.1"\n'
-                    'video_capabilities:\n  has_tts_narration: false\n', encoding="utf-8")
-    fake_mp4 = tmp / "r.mp4"; fake_mp4.write_bytes(b"\x00")
+    spec.write_text(
+        'schema_version: "v11.1"\nvideo_capabilities:\n  has_tts_narration: false\n', encoding="utf-8"
+    )
+    fake_mp4 = tmp / "r.mp4"
+    fake_mp4.write_bytes(b"\x00")
     r = _run_cli(["--format", "tutorial", "--video", str(fake_mp4), "--spec", str(spec)])
     if r.returncode != 0:
         _fail(f"has_tts_narration=false must exit 0, got {r.returncode}\n{r.stdout}")
