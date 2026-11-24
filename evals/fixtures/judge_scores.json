@@ -1,0 +1,27 @@
+{
+  "_comment": "Recorded calibrated-v4 judge outputs (synthetic). Offline stand-in for GeminiJudge.",
+  "strong-render": {
+    "dims": {"execution_continuity": 9.4, "inmersion_pov": 9.3, "sound_depth": 9.2, "atmosphere_coherence": 9.5,
+             "character_signature": 9.0, "story_logic_continuity": 9.1, "editing_modulation": 9.0,
+             "hook_retention": 9.6, "captions": 9.8, "narrative_comprehension": 9.5},
+    "perceptual": null, "expect": "PASS"
+  },
+  "teleport-cuts": {
+    "dims": {"execution_continuity": 4.8, "inmersion_pov": 9.0, "sound_depth": 9.0, "atmosphere_coherence": 9.5,
+             "character_signature": 9.0, "story_logic_continuity": 8.5, "editing_modulation": 9.0,
+             "hook_retention": 9.0, "captions": 9.5, "narrative_comprehension": 9.0},
+    "perceptual": null, "expect": "AWAITING_PERCEPTUAL", "expect_weakest": "execution_continuity"
+  },
+  "human-override": {
+    "dims": {"execution_continuity": 8.0, "inmersion_pov": 8.5, "sound_depth": 8.5, "atmosphere_coherence": 8.5,
+             "character_signature": 8.5, "story_logic_continuity": 8.5, "editing_modulation": 8.5,
+             "hook_retention": 8.5, "captions": 8.5, "narrative_comprehension": 8.5},
+    "perceptual": 8.7, "expect": "PASS"
+  },
+  "rejected": {
+    "dims": {"execution_continuity": 6.0, "inmersion_pov": 7.0, "sound_depth": 6.5, "atmosphere_coherence": 7.0,
+             "character_signature": 7.0, "story_logic_continuity": 6.0, "editing_modulation": 7.0,
+             "hook_retention": 7.5, "captions": 8.0, "narrative_comprehension": 7.0},
+    "perceptual": 7.9, "expect": "FAIL"
+  }
+}

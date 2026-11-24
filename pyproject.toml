@@ -69,6 +69,7 @@ packages = ["src/ai_video"]
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths = ["tests"]
+pythonpath = ["."]  # makes the top-level evals/ package importable from tests
 addopts = ["-ra", "--strict-markers", "--import-mode=importlib"]
 markers = [
   "ffmpeg: needs ffmpeg/ffprobe on PATH (auto-skipped otherwise)",
@@ -123,7 +124,7 @@ quote-style = "preserve"
 [tool.mypy]
 python_version = "3.11"
 mypy_path = "src"
-packages = ["ai_video"]
+packages = ["ai_video", "evals"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = false
